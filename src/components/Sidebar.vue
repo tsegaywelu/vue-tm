@@ -71,9 +71,16 @@ const close_nav = () => {
         </div>
 
         <button
+          v-if="is_open"
           @click="$emit('toggle')"
           class="grid place-items-center p-0 size-8 variant-ghost ml-auto rounded-full hover:bg-grey-50"
-          v-if="is_open"
+        >
+          <i class="*:size-6 text-grey-500" v-html="all_icons.nav"></i>
+        </button>
+        <button
+          v-else
+          @click="$emit('toggle')"
+          class="grid place-items-center p-0 size-12 variant-ghost mx-auto mt-2 rounded-full hover:bg-grey-50"
         >
           <i class="*:size-6 text-grey-500" v-html="all_icons.nav"></i>
         </button>
@@ -82,10 +89,10 @@ const close_nav = () => {
       <!-- Navigation Area -->
       <div
         class="h-full overflow-y-auto no-scrollbar"
-        :class="is_open ? 'px-4 pb-4' : 'px-0 pb-4 flex flex-col items-center'"
+        :class="is_open ? 'px-2 pb-4' : 'px-0 pb-4 flex flex-col items-center'"
       >
         <div
-          class="flex flex-col gap-8 mt-2"
+          class="flex flex-col gap-4 mt-2"
           :class="is_open ? '' : 'items-center'"
         >
           <div
@@ -95,14 +102,14 @@ const close_nav = () => {
           >
             <p
               v-if="is_open"
-              class="text-[11px] font-bold text-grey-400 uppercase tracking-widest mb-1 px-3"
+              class="text-[10px] text-grey-500 uppercase tracking-widest mb-1 px-3"
             >
               {{ group.name }}
             </p>
 
             <div
               :class="
-                is_open ? 'flex flex-col gap-4' : 'inline-flex flex-col gap-2'
+                is_open ? 'flex flex-col gap-2' : 'inline-flex flex-col gap-2'
               "
             >
               <NavButton

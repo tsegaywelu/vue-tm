@@ -1,66 +1,59 @@
 <template>
-  <div class="flex flex-col gap-6">
-    <Table
-      id="approval-requests"
-      :columns="columns"
-      :rows="response"
-      class="bg-white rounded-4xl shadow-sm overflow-hidden"
-    >
-      <!-- Custom Cells -->
-      <template #cell-driver="{ row }">
-        <div class="flex flex-col">
-          <span class="font-semibold text-gray-900">
-            {{ row.driver?.firstName }} {{ row.driver?.middleName }}
-          </span>
-          <span class="text-xs text-gray-400 font-medium">{{
-            row.plateNumber
-          }}</span>
-        </div>
-      </template>
-
-      <template #cell-total="{ value }">
-        <span class="font-bold text-gray-900">
-          {{ formatCurrency(value) }}
+  <Table id="approval-requests" :columns="columns" :rows="response">
+    <!-- Custom Cells -->
+    <template #cell-driver="{ row }">
+      <div class="flex flex-col">
+        <span class="font-semibold text-gray-900">
+          {{ row.driver?.firstName }} {{ row.driver?.middleName }}
         </span>
-      </template>
+        <span class="text-xs text-gray-400 font-medium">{{
+          row.plateNumber
+        }}</span>
+      </div>
+    </template>
 
-      <template #cell-createdAt="{ value }">
-        <span class="text-gray-500 text-xs">
-          {{ formatDate(value) }}
-        </span>
-      </template>
+    <template #cell-total="{ value }">
+      <span class="font-bold text-gray-900">
+        {{ formatCurrency(value) }}
+      </span>
+    </template>
 
-      <template #cell-actions="{ row }">
-        <div class="flex items-center gap-2 justify-end">
-          <Button
-            variant="outline"
-            size="sm"
-            class="h-9 px-4 border-gray-200 text-gray-600 hover:border-error hover:text-error transition-all"
-            @click="handleAction(row, 'reject')"
-          >
-            Reject
-          </Button>
-          <Button
-            variant="primary"
-            size="sm"
-            class="h-9 px-4"
-            @click="handleAction(row, 'approve')"
-          >
-            Approve
-          </Button>
-        </div>
-      </template>
+    <template #cell-createdAt="{ value }">
+      <span class="text-gray-500 text-xs">
+        {{ formatDate(value) }}
+      </span>
+    </template>
 
-      <template #cell-payableType="{ value }">
-        <div
-          class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider w-fit mx-auto"
-          :class="typeClasses[value] || 'bg-gray-100 text-gray-500'"
+    <template #cell-actions="{ row }">
+      <div class="flex items-center gap-2 justify-end">
+        <Button
+          variant="outline"
+          size="sm"
+          class="h-9 px-4 border-gray-200 text-gray-600 hover:border-error hover:text-error transition-all"
+          @click="handleAction(row, 'reject')"
         >
-          {{ formatType(value) }}
-        </div>
-      </template>
-    </Table>
-  </div>
+          Reject
+        </Button>
+        <Button
+          variant="primary"
+          size="sm"
+          class="h-9 px-4"
+          @click="handleAction(row, 'approve')"
+        >
+          Approve
+        </Button>
+      </div>
+    </template>
+
+    <template #cell-payableType="{ value }">
+      <div
+        class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider w-fit mx-auto"
+        :class="typeClasses[value] || 'bg-gray-100 text-gray-500'"
+      >
+        {{ formatType(value) }}
+      </div>
+    </template>
+  </Table>
 </template>
 
 <script setup lang="ts">

@@ -29,25 +29,6 @@ const initivalue = {
 const loginMutation = useMutation({
   mutationFn: (credentials: LoginCredentials) =>
     login(login_mode.value, credentials),
-  onSuccess: async (res) => {
-    if (!res.success || !res.data) {
-      error_message.value = res.error || "Login failed. Please try again.";
-      toast_store.error(res.error || "Login failed.");
-      return;
-    }
-
-    auth_store.set_tokens(res.data.accessToken);
-
-    const userRes = await fetch_current_user();
-    if (userRes.success) {
-      auth_store.set_user(userRes.data);
-    } else {
-      console.warn("Could not fetch user profile details", userRes.error);
-    }
-
-    toast_store.success("Welcome back! Login successful.");
-    router.push("/");
-  },
 });
 
 const toggle_mode = (mode: LoginMode) => {
@@ -55,8 +36,36 @@ const toggle_mode = (mode: LoginMode) => {
   error_message.value = "";
 };
 
-function submitLogin({ value }: any) {
-  loginMutation.mutate(value);
+async function submitLogin(values: any) {
+  const res = await loginMutation.mutateAsync(values);
+  if (!res.success || !res.data) {
+    error_message.value = res.error || "Login failed. Please try again.";
+    toast_store.error(res.error || "Login failed.");
+    return;
+  }
+  const payload = res.data?.data as any;
+  const accessToken =
+    payload.accessToken || payload.token || payload.access_token;
+  const refreshToken = payload.refreshToken || payload.refresh_token;
+
+  if (!accessToken) {
+    error_message.value = "Invalid token received from server.";
+    toast_store.error("Login failed: Invalid server response.");
+    console.error("Login response missing token. Data:", payload);
+    return;
+  }
+
+  auth_store.set_tokens(accessToken, refreshToken);
+
+  const userRes = await fetch_current_user();
+  if (userRes.success) {
+    auth_store.set_user(userRes.data);
+  } else {
+    console.warn("Could not fetch user profile details", userRes.error);
+  }
+
+  toast_store.success("Welcome back! Login successful.");
+  router.push("/");
 }
 </script>
 
@@ -128,7 +137,7 @@ function submitLogin({ value }: any) {
 
         <!-- Login Form -->
         <Form
-          @submit="submitLogin"
+          :onSubmit="submitLogin"
           :values="initivalue"
           id="login-form"
           class="space-y-6"

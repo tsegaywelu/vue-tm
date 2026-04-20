@@ -22,6 +22,7 @@ export interface FormProps {
   enable_unsaved_guard?: boolean;
   /** Optional pre-initialized form instance */
   instance?: any;
+  onSubmit?: (value: any, resetCb: () => void) => Promise<void> | void;
 }
 
 const props = withDefaults(defineProps<FormProps>(), {
@@ -60,7 +61,11 @@ const localForm = !props.instance
   ? (useForm({
       defaultValues: props.values,
       onSubmit: async ({ value }) => {
-        emit("submit", value, () => form.reset());
+        if (props.onSubmit) {
+          await props.onSubmit(value, () => form.reset());
+        } else {
+          emit("submit", value, () => form.reset());
+        }
       },
     }) as any)
   : null;

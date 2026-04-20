@@ -2,6 +2,13 @@
 import { ref, onMounted, onUnmounted } from "vue";
 import Sidebar from "@/components/Sidebar.vue";
 import TopNavBar from "@/components/TopNavBar.vue";
+import Breadcrumb from "@/components/Breadcrumb.vue";
+import { navigationRegistry } from "@/router/navigation";
+import type { Navs } from "@/types/navigation";
+
+const allNavs = navigationRegistry.reduce((acc, group) => {
+  return acc.concat(group.items);
+}, [] as Navs[]);
 
 const is_open = ref(window.innerWidth > 1280);
 
@@ -35,7 +42,7 @@ onUnmounted(() => {
     class="grid transition-all duration-300 ease-in-out bg-[#fafafa] h-full w-full overflow-hidden"
     :class="
       is_open
-        ? 'xl:grid-cols-[20rem_minmax(0,1fr)]'
+        ? 'xl:grid-cols-[18rem_minmax(0,1fr)]'
         : 'xl:grid-cols-[5.5rem_minmax(0,1fr)]'
     "
   >
@@ -63,11 +70,11 @@ onUnmounted(() => {
         class="grid grid-cols-1 gap-3 grid-rows-[auto_auto_1fr] overflow-auto"
       >
         <!-- Breadcrumbs Placeholder -->
-        <slot name="breadcrumbs"></slot>
+        <Breadcrumb :navs="allNavs" />
 
         <!-- Main Content -->
         <main class="w-full">
-          <slot></slot>
+          <RouterView />
         </main>
       </div>
     </div>

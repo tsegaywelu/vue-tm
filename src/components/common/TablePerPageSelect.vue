@@ -44,7 +44,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from "vue";
-import icons from "@/utils/icons.js";
+import { icons } from "@/utils/icons.js";
 
 const props = defineProps({
   page_size: { type: Number, required: true },

@@ -99,7 +99,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from "vue";
 import Button from "./Button.vue";
-import icons from "@/utils/icons.js";
+import { icons } from "@/utils/icons.js";
 
 const props = defineProps({
   total_pages: { type: Number, required: true },
