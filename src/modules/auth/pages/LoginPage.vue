@@ -74,7 +74,7 @@ async function submitLogin(values: any) {
     <!-- Left Panel: Cinematic Image -->
     <div class="hidden lg:block lg:w-1/2 relative">
       <img
-        src="/home/edi/.gemini/antigravity/brain/24dd3d63-f9ea-4d88-b27b-5a294555d86d/login_background_1776329422999.png"
+        src="/login_background.png"
         alt="Logistics Background"
         class="absolute inset-0 w-full h-full object-cover"
       />
