@@ -17,22 +17,31 @@
       >
         <div
           class="relative transition-all duration-100 p-[1.33px] rounded-full h-4 w-7.5"
-          :class="isToggledOn(field.state.value) ? 'primary-gradient bg-blue-600' : 'bg-[#F5F7F1]'"
+          :class="
+            isToggledOn(field.state.value)
+              ? 'primary-gradient bg-blue-600'
+              : 'bg-[#F5F7F1]'
+          "
         >
           <div
             class="absolute rounded-full transition-all duration-100 h-[13.3px] w-[13.3px] bg-white"
-            :class="isToggledOn(field.state.value) ? 'left-[15px]' : 'left-[1px]'"
-            style="box-shadow: 0px 1.33px 2.67px -1.33px #0A0D120F, 0px 2.67px 4px -0.67px #0A0D121A;"
+            :class="isToggledOn(field.state.value) ? 'left-[15px]' : 'left-px'"
+            style="
+              box-shadow:
+                0px 1.33px 2.67px -1.33px #0a0d120f,
+                0px 2.67px 4px -0.67px #0a0d121a;
+            "
           ></div>
         </div>
-        <span v-if="label" class="text-base text-gray-600 select-none">{{ label }}</span>
+        <span v-if="label" class="text-base text-gray-600 select-none">{{
+          label
+        }}</span>
       </div>
     </template>
   </InputParent>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
 import InputParent from "./InputParent.vue";
 import { type InputProps } from "./Input.vue";
 
@@ -47,7 +56,7 @@ const props = withDefaults(defineProps<ToggleInputProps>(), {
   validation: () => ({}),
   attributes: () => ({}),
   on_change: undefined,
-  match: ""
+  match: "",
 });
 
 function isToggledOn(fieldValue: any) {
@@ -60,17 +69,17 @@ function isToggledOn(fieldValue: any) {
 function toggle(field: any) {
   const currentState = isToggledOn(field.state.value);
   const nextOn = !currentState;
-  
+
   const onValue = props.attributes.value;
   let nextValue;
-  
+
   if (nextOn) {
     if (typeof onValue === "boolean") nextValue = true;
     else nextValue = onValue ?? true;
   } else {
     nextValue = false;
   }
-  
+
   field.handleChange(nextValue);
 }
 </script>

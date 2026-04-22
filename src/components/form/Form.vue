@@ -34,6 +34,7 @@ const props = withDefaults(defineProps<FormProps>(), {
 
 const emit = defineEmits<{
   (e: "submit", value: any, resetCb: () => void): void;
+  (e: "change", value: any): void;
 }>();
 
 function hashForCompare(val: any): string {
@@ -62,9 +63,9 @@ const localForm = !props.instance
       defaultValues: props.values,
       onSubmit: async ({ value }) => {
         if (props.onSubmit) {
-          await props.onSubmit(value, () => form.reset());
+          await props.onSubmit(value, () => form.value.reset());
         } else {
-          emit("submit", value, () => form.reset());
+          emit("submit", value, () => form.value.reset());
         }
       },
     }) as any)
@@ -72,9 +73,18 @@ const localForm = !props.instance
 
 const form = computed(() => props.instance || localForm);
 
+const is_syncing = ref(false);
 const currentValuesRef = ref(form.value.state.values);
+let emit_timeout: any = null;
+
 form.value.store.subscribe(() => {
   currentValuesRef.value = form.value.state.values;
+  if (!is_syncing.value) {
+    if (emit_timeout) clearTimeout(emit_timeout);
+    emit_timeout = setTimeout(() => {
+      emit("change", form.value.state.values);
+    }, 0);
+  }
 });
 
 const is_actually_dirty = computed(() => {
@@ -94,6 +104,7 @@ watch(
   () => props.values,
   (newValues) => {
     if (newValues) {
+      is_syncing.value = true;
       Object.keys(newValues).forEach((key) => {
         const currentValue = form.value.getFieldValue(key);
         const newValue = newValues[key];
@@ -104,6 +115,8 @@ watch(
           form.value.setFieldValue(key, newValue);
         }
       });
+      is_syncing.value = false;
+      emit("change", form.value.state.values);
     }
   },
   { deep: true },
@@ -182,5 +195,9 @@ provide("formContext", {
   id: props.id,
   form: form.value,
   is_dirty: is_actually_dirty,
+});
+
+defineExpose({
+  form: form.value,
 });
 </script>

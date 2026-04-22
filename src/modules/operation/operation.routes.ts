@@ -10,19 +10,31 @@ export const operation_routes: RouteRecordRaw[] = [
         path: "dashboard",
         name: "operation_dashboard",
         component: () => import("./pages/Dashboard.vue"),
-        meta: { title: "Operation Dashboard" },
+        meta: {
+          title: "Operation Dashboard",
+          description:
+            "Overview of your fleet operations and key performance metrics.",
+        },
       },
       {
         path: "approvals",
         name: "operation_approvals",
         component: () => import("./pages/ApprovalRequests.vue"),
-        meta: { title: "Approval Requests" },
+        meta: {
+          title: "Approval Requests",
+          description:
+            "Manage and process operational payment approvals from one central hub.",
+        },
       },
       {
         path: "shipments",
         name: "operation_shipments",
         component: () => import("./pages/Shipments.vue"),
-        meta: { title: "Shipments" },
+        meta: {
+          title: "Shipments",
+          description:
+            "Detailed overview and management of all active and historical shipments.",
+        },
       },
       {
         path: "shipments/bids",

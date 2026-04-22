@@ -4,7 +4,6 @@
     <div
       class="bg-gray-50 rounded-full cursor-pointer relative min-w-12 text-center"
       @click.stop
-      v-click-outside="() => (is_open = false)"
     >
       <span
         tabindex="0"

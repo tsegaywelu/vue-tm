@@ -1,12 +1,12 @@
 <template>
-  <div :class="['flex items-center justify-center w-full h-full', class_name]">
+  <div :class="['flex justify-center w-full h-full', class_name]">
     <transition name="fade-up" appear>
-      <div class="px-4 py-7.5 flex justify-center items-center flex-col">
+      <div class="px-4 py-4 flex justify-center flex-col">
         <transition name="pop-in" appear>
           <div class="grid place-items-center">
             <template v-if="img_url">
               <img
-                class="size-64 sm:size-80 md:size-96 lg:size-[350px] h-auto object-contain"
+                class="w-auto object-contain"
                 :src="img_url"
                 :alt="title || 'Empty data'"
               />
@@ -27,7 +27,7 @@
           </div>
         </transition>
 
-        <div class="grid place-items-center text-center mt-4">
+        <div class="grid place-items-center text-center">
           <h2 v-if="title" class="text-xl sm:text-2xl md:text-[25px] title-xl">
             {{ title }}
           </h2>

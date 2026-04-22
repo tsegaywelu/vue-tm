@@ -1,5 +1,8 @@
 <template>
-  <div class="flex flex-col w-full overflow-hidden" :class="$attrs.class">
+  <div
+    class="flex flex-col w-full overflow-hidden flex-1"
+    :class="$attrs.class"
+  >
     <!-- Header Area: Search, Title and Actions -->
     <div
       v-if="!hide_search || tabs"
@@ -49,8 +52,9 @@
     <slot name="tabs" />
 
     <!-- Desktop Table View -->
-    <div class="w-full overflow-x-auto hidden xl:block">
+    <div class="w-full overflow-x-auto hidden xl:flex flex-col flex-1 min-h-0">
       <table
+        v-if="isLoading || rows.length > 0"
         class="default-table text-sm table-auto w-full py-2.5 border-separate border-spacing-0"
         :class="table_class_name"
       >
@@ -62,7 +66,7 @@
           >
             <th
               v-if="!hide_numbers"
-              class="w-20 bg-[#F9F9F9] rounded-l-2xl text-center"
+              class="w-20 bg-grey-25 rounded-l-2xl text-center"
             >
               #
             </th>
@@ -71,7 +75,7 @@
               :key="header.id"
               @click="handleSort(header)"
               :class="[
-                'bg-[#F9F9F9] transition-colors',
+                'bg-grey-25 transition-colors',
                 hide_numbers && idx === 0 ? 'rounded-l-2xl' : '',
                 idx === headerGroup.headers.length - 1 ? 'rounded-r-2xl' : '',
                 header.column.columnDef.meta?.headerClass,
@@ -112,26 +116,30 @@
         </thead>
 
         <tbody>
-          <tr v-if="isLoading">
-            <!-- Skeleton match -->
-            <td v-if="!hide_numbers" class="h-16 border-b border-gray-100">
-              <div
-                class="h-4 animate-pulse bg-gray-100 rounded-full w-[90%] mx-auto"
-              ></div>
-            </td>
-            <td
-              v-for="col in tanstackColumns"
-              :key="col.id"
-              class="h-16 border-b border-gray-100"
-              :class="col_style?.[col.id]"
-            >
-              <div
-                class="h-4 animate-pulse bg-gray-100 rounded-full w-[90%] mx-auto"
-              ></div>
-            </td>
-          </tr>
+          <template v-if="isLoading">
+            <tr v-for="n in loadingRowCount" :key="n">
+              <td
+                v-if="!hide_numbers"
+                class="h-[88px] border-b border-gray-100"
+              >
+                <div
+                  class="h-4 animate-pulse bg-gray-100 rounded-full w-[90%] mx-auto"
+                ></div>
+              </td>
+              <td
+                v-for="col in tanstackColumns"
+                :key="col.id"
+                class="h-[88px] border-b border-gray-100"
+                :class="col_style?.[col.id]"
+              >
+                <div
+                  class="h-4 animate-pulse bg-gray-100 rounded-full w-[90%] mx-auto"
+                ></div>
+              </td>
+            </tr>
+          </template>
 
-          <template v-else-if="rows.length > 0">
+          <template v-else>
             <template
               v-for="(row, idx) in table.getRowModel().rows"
               :key="getRowKeyInternal(row.original)"
@@ -186,17 +194,16 @@
               </tr>
             </template>
           </template>
-
-          <tr v-else>
-            <td
-              :colspan="tanstackColumns.length + (hide_numbers ? 0 : 1)"
-              class="h-32"
-            >
-              <EmptyData :title="empty_text" />
-            </td>
-          </tr>
         </tbody>
       </table>
+
+      <!-- Desktop Empty State -->
+      <div
+        v-if="!isLoading && rows.length === 0"
+        class="flex-1 flex items-center justify-center py-4"
+      >
+        <EmptyData :title="empty_text" />
+      </div>
     </div>
 
     <!-- Mobile Card View -->
@@ -208,7 +215,7 @@
         <div
           v-for="n in loadingRowCount"
           :key="n"
-          class="grid gap-3 p-4 bg-white rounded-xl border border-[#F9F9F9] shadow-[0px_0px_24px_0px_#0000000A] grid-cols-2"
+          class="grid gap-3 p-4 bg-white rounded-xl border border-greybg-grey-25 shadow-[0px_0px_24px_0px_#0000000A] grid-cols-2"
         >
           <div
             v-for="c in tanstackColumns"
@@ -282,7 +289,7 @@ import {
   getCoreRowModel,
   type ColumnDef,
   type Header,
-  type Cell,
+  type RowData,
 } from "@tanstack/vue-table";
 import Button from "@/components/common/Button.vue";
 import EmptyData from "./EmptyData.vue";
@@ -333,8 +340,8 @@ interface GenericProps<T> {
   row_alignment?: Record<string, "left" | "center" | "right">;
   head_alignment?: Record<string, "left" | "center" | "right">;
   col_style?: Record<string, string>;
-  on_sm_screen_row_alignment?: Record<string, "left" | "center" | "right">;
-  on_sm_screen_column_span?: Record<string, string>;
+  on_sm_screen_row_alignment?: Record<string, number>;
+  on_sm_screen_column_span?: Record<string, number>;
   hide_on_sm_screen?: string[];
   show_labels_in_card?: boolean;
   top_right_cell_key?: string;
@@ -371,7 +378,37 @@ const props = withDefaults(defineProps<GenericProps<T>>(), {
   action_cell: "",
 });
 
+type CellSlots<T> = {
+  [K in keyof T as `cell-${string & K}`]?: (props: {
+    row: T;
+    value: T[K];
+    column: TableColumn<T>;
+  }) => any;
+};
+
+type CustomCellSlots<T> = {
+  [K in `cell-${string}`]?: (props: {
+    row: T;
+    value: any;
+    column: TableColumn<T>;
+  }) => any;
+};
+
+defineSlots<
+  CellSlots<T> &
+    CustomCellSlots<T> & {
+      [K in `header-${string}`]?: (props: { header: any }) => any;
+    } & {
+      "search-prefix"?: () => any;
+      "extra-actions"?: () => any;
+      tabs?: () => any;
+      [key: string]: any;
+    }
+>();
+
 const emit = defineEmits<{
+  (e: "items-per-page-input", limit: number): void;
+  (e: "page-change", page: number): void;
   (e: "row_click", row: T): void;
   (e: "page_change", page: number): void;
   (e: "items_per_page_input", limit: number): void;
@@ -471,7 +508,8 @@ const resolveValue = (
 
 const tanstackColumns = computed(() => {
   return props.columns.map((col) => {
-    const id = col.key || (typeof col.field === "string" ? col.field : col.label);
+    const id =
+      col.key || (typeof col.field === "string" ? col.field : col.label);
     return {
       id,
       accessorFn: (row: T) => resolveValue(row, col.field),
@@ -531,7 +569,9 @@ const handleRowClick = (row: T) => {
 };
 
 const handleSort = (header: Header<T, any>) => {
-  const meta = header.column.columnDef.meta as { originalColumn: TableColumn<T> } | undefined;
+  const meta = header.column.columnDef.meta as
+    | { originalColumn: TableColumn<T> }
+    | undefined;
   const originalCol = meta?.originalColumn;
   if (!originalCol?.sortable) return;
 

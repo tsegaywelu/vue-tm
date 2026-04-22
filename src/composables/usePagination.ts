@@ -29,6 +29,7 @@ export interface TablePaginationContext<T = any> {
   setPage: (page: number) => void;
   setLimit: (limit: number) => void;
   setSearch: (search: string) => void;
+  debouncedSearch: ComputedRef<string>;
   setSorting: (sorting: SortingState[]) => void;
   setTotalPages: (total_pages: number) => void;
   refetch: () => void;
@@ -41,7 +42,7 @@ interface UsePaginationOptions {
   sortBy?: string;
   sortDirection?: "asc" | "desc";
   autofetch?: boolean;
-  params?: Record<string, any> | Ref<Record<string, any>>;
+  params?: Record<string, any> | Ref<any>;
   resetOn?: (Ref<any> | (() => any))[];
   queryKey?: string[];
   api?: ApiService;
@@ -162,19 +163,9 @@ export function usePagination<T = any>({
   >({
     queryKey,
     queryFn: async ({ signal }) => {
-      const clean_params: Record<string, any> = {};
       const p = resolved_params.value;
 
-      if (p) {
-        Object.keys(p).forEach((key) => {
-          if (p[key] !== "" && p[key] !== null && p[key] !== undefined) {
-            clean_params[key] = p[key];
-          }
-        });
-      }
-
-      const request_params = {
-        ...clean_params,
+      const request_params: Record<string, any> = {
         page: state.value.page,
         limit: state.value.limit,
         q: debounced_search.value || undefined,
@@ -185,6 +176,17 @@ export function usePagination<T = any>({
             : "asc"
           : undefined,
       };
+
+      if (p) {
+        Object.entries(p).forEach(([key, value]) => {
+          // Allow explicit undefined to override default params (like 'q')
+          if (value === undefined) {
+            request_params[key] = undefined;
+          } else if (value !== "" && value !== null) {
+            request_params[key] = value;
+          }
+        });
+      }
 
       const caller = withAuth
         ? apiInstance.addAuthenticationHeader()
@@ -205,7 +207,9 @@ export function usePagination<T = any>({
           ? res_data
           : res_data?.items && Array.isArray(res_data.items)
             ? res_data.items
-            : [];
+            : res_data?.results && Array.isArray(res_data.results)
+              ? res_data.results
+              : [];
 
         if (items.length > 0 && !state.value.isDirty) {
           setIsDirty(true);
@@ -239,7 +243,9 @@ export function usePagination<T = any>({
       ? d
       : d?.items && Array.isArray(d.items)
         ? d.items
-        : [];
+        : d?.results && Array.isArray(d.results)
+          ? d.results
+          : [];
   });
 
   const server_error = computed(() => {
@@ -261,6 +267,7 @@ export function usePagination<T = any>({
     setPage,
     setLimit,
     setSearch,
+    debouncedSearch: computed(() => debounced_search.value),
     setSorting,
     setTotalPages,
     refetch: () => refetch(),
