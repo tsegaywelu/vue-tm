@@ -2,7 +2,7 @@
   <div class="flex items-center gap-2">
     <!-- First page button -->
     <Button
-      class="p-0 h-10 w-10 rounded-full border border-gray-100 flex items-center justify-center"
+      class="p-0! h-10 w-10 rounded-full border border-gray-100 flex items-center justify-center"
       variant="outline"
       @click="onPageChange(1)"
       :disabled="current_page <= 1"
@@ -12,7 +12,7 @@
 
     <!-- Previous page button -->
     <Button
-      class="p-0 h-10 w-10 rounded-full border border-gray-100 flex items-center justify-center"
+      class="p-0! h-10 w-10 rounded-full border border-gray-100 flex items-center justify-center"
       variant="outline"
       @click="onPageChange(current_page - 1)"
       :disabled="current_page <= 1"
@@ -59,9 +59,9 @@
             page === current_page
               ? 'primary-gradient !text-white !border-transparent'
               : 'text-black',
-            'h-10 w-10 rounded-full p-0 text-sm font-extrabold border border-gray-100 flex items-center justify-center',
+            'h-10 w-10 rounded-full p-0! text-sm font-extrabold border border-gray-100 flex items-center justify-center',
           ]"
-          @click="onPageChange(page)"
+          @click="onPageChange(+page)"
         >
           {{ page }}
         </Button>
@@ -70,7 +70,7 @@
 
     <!-- Next page button -->
     <Button
-      class="p-0 h-10 w-10 rounded-full border border-gray-100 flex items-center justify-center"
+      class="p-0! h-10 w-10 rounded-full border border-gray-100 flex items-center justify-center"
       variant="outline"
       @click="onPageChange(current_page + 1)"
       :disabled="current_page >= total_pages"
@@ -83,7 +83,7 @@
 
     <!-- Last page button -->
     <Button
-      class="p-0 h-10 w-10 rounded-full border border-gray-100 flex items-center justify-center"
+      class="p-0! h-10 w-10 rounded-full border border-gray-100 flex items-center justify-center"
       variant="outline"
       @click="onPageChange(total_pages)"
       :disabled="current_page >= total_pages"

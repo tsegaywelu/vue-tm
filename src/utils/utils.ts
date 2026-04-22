@@ -122,7 +122,9 @@ export const ShipmentStatus = [
   { label: "Terminated", value: "terminated" },
   { label: "Cancelled", value: "cancelled" },
   { label: "Delayed", value: "delayed" },
-].sort((a, b) => a.label.localeCompare(b.label));
+];
+
+//.sort((a, b) => a.label.localeCompare(b.label));
 
 export const genId = getId();
 

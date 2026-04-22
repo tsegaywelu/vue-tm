@@ -12,3 +12,19 @@ export function fetch_shipments(params: ShipmentFilterParams) {
 export function fetch_shipment_details(id: string) {
   return shipment_api.addAuthenticationHeader().get<Shipment>(`/${id}`);
 }
+
+export function update_shipment_status(id: string, statusData: any) {
+  return shipment_api.addAuthenticationHeader().patch(`/updateStatus/${id}`, statusData);
+}
+
+export function add_issue_voucher(id: string, voucherData: any) {
+  return shipment_api.addAuthenticationHeader().patch(`/addIssueVoucher/${id}`, voucherData);
+}
+
+export function add_other_voucher(id: string, voucherData: any) {
+  return shipment_api.addAuthenticationHeader().patch(`/addVouchers/${id}`, voucherData);
+}
+
+export function add_follow_up(id: string, data: any) {
+  return shipment_api.addAuthenticationHeader().patch(`/${id}/addFollowUp`, data);
+}

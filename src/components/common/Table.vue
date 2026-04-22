@@ -282,6 +282,20 @@
   </div>
 </template>
 
+<script lang="ts">
+export interface TableColumn<T = any> {
+  key?: keyof T | (string & {});
+  field?: keyof T | (string & {}) | ((row: T) => any);
+  label: string;
+  sortable?: boolean;
+  sort_key?: string;
+  cellAlign?: "left" | "center" | "right";
+  headerAlign?: "left" | "center" | "right";
+  headerClass?: string;
+  cellClass?: string;
+}
+</script>
+
 <script setup lang="ts" generic="T">
 import { ref, computed, watch, inject } from "vue";
 import {
@@ -298,22 +312,10 @@ import PaginationNumbers from "./PaginationNumbers.vue";
 import ResponsiveRow from "./ResponsiveRow.vue";
 import type { TablePaginationContext } from "@/composables/usePagination";
 
-export interface TableColumn<T = any> {
-  key?: string;
-  field?: keyof T | string | ((row: T) => any);
-  label: string;
-  sortable?: boolean;
-  sort_key?: string;
-  cellAlign?: "left" | "center" | "right";
-  headerAlign?: "left" | "center" | "right";
-  headerClass?: string;
-  cellClass?: string;
-}
-
 interface GenericProps<T> {
   columns: TableColumn<T>[];
   rows: T[];
-  row_key?: keyof T | string | ((row: T) => any);
+  row_key?: keyof T | (string & {}) | ((row: T) => any);
   loading?: boolean | null;
   items_per_page?: number | null;
   loading_rows?: number;
@@ -337,12 +339,22 @@ interface GenericProps<T> {
   tabs?: boolean;
 
   // Responsive row props
-  row_alignment?: Record<string, "left" | "center" | "right">;
-  head_alignment?: Record<string, "left" | "center" | "right">;
-  col_style?: Record<string, string>;
-  on_sm_screen_row_alignment?: Record<string, number>;
-  on_sm_screen_column_span?: Record<string, number>;
-  hide_on_sm_screen?: string[];
+  row_alignment?: {
+    [key in keyof T | (string & {})]?: "left" | "center" | "right";
+  };
+  head_alignment?: {
+    [key in keyof T | (string & {})]?: "left" | "center" | "right";
+  };
+  col_style?: {
+    [key in keyof T | (string & {})]?: string;
+  };
+  on_sm_screen_row_alignment?: {
+    [key in keyof T | (string & {})]?: number;
+  };
+  on_sm_screen_column_span?: {
+    [key in keyof T | (string & {})]?: number;
+  };
+  hide_on_sm_screen?: (keyof T | (string & {}))[];
   show_labels_in_card?: boolean;
   top_right_cell_key?: string;
   get_row_card_class_name?: (row: T) => string;
@@ -414,7 +426,11 @@ const emit = defineEmits<{
   (e: "items_per_page_input", limit: number): void;
   (
     e: "sort_change",
-    payload: { key: string; order: string; column: TableColumn<T> },
+    payload: {
+      key: string;
+      order: string;
+      column: TableColumn<T>;
+    },
   ): void;
   (e: "update:search_value", value: string): void;
   (e: "search", value: string): void;
@@ -508,11 +524,16 @@ const resolveValue = (
 
 const tanstackColumns = computed(() => {
   return props.columns.map((col) => {
-    const id =
-      col.key || (typeof col.field === "string" ? col.field : col.label);
+    const id = String(
+      col.key || (typeof col.field === "string" ? col.field : col.label),
+    );
     return {
       id,
-      accessorFn: (row: T) => resolveValue(row, col.field),
+      accessorFn: (row: T) =>
+        resolveValue(
+          row,
+          col.field || (typeof col.key === "string" ? col.key : undefined),
+        ),
       header: col.label,
       enableSorting: !!col.sortable,
       meta: {
@@ -586,9 +607,9 @@ const handleSort = (header: Header<T, any>) => {
     order = props.sort_order === "asc" ? "desc" : "asc";
   }
   if (paginationContext) {
-    paginationContext.setSorting([{ id: key, desc: order === "desc" }]);
+    paginationContext.setSorting([{ id: String(key), desc: order === "desc" }]);
   }
-  emit("sort_change", { key, order, column: originalCol });
+  emit("sort_change", { key: String(key), order, column: originalCol });
 };
 
 const onPageChange = (page: number) => {

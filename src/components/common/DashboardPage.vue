@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex flex-col gap-2 px-5 py-4 bg-white rounded-3xl max-w-[1600px] mx-auto min-h-screen animate-fade-in"
+    class="flex flex-col gap-4 px-5 py-4 bg-white rounded-3xl max-w-[2000px] mx-auto min-h-screen animate-fade-in"
   >
     <div class="flex justify-between items-center">
       <div class="flex flex-col">

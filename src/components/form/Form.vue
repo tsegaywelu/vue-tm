@@ -11,8 +11,8 @@
 
 <script setup lang="ts">
 import { useForm } from "@tanstack/vue-form";
-import { provide, watch, computed, ref } from "vue";
-import { onBeforeRouteLeave } from "vue-router";
+import { provide, watch, computed, ref, inject, onMounted, onUnmounted } from "vue";
+import { onBeforeRouteLeave, matchedRouteKey } from "vue-router";
 import { openModal } from "@customizer/modal-x";
 
 export interface FormProps {
@@ -122,25 +122,45 @@ watch(
   { deep: true },
 );
 
-onBeforeRouteLeave(async (to, from, next) => {
-  if (
-    !props.enable_unsaved_guard ||
-    !is_actually_dirty.value ||
-    form.value.state.isSubmitting
-  ) {
-    next();
-    return;
-  }
+// Route navigation guard — only register when inside a <RouterView>.
+// When Form is used inside a modal (not a route child), matchedRouteKey is null.
+const matchedRoute = inject(matchedRouteKey, null);
+if (matchedRoute) {
+  onBeforeRouteLeave(async (to, from, next) => {
+    if (
+      !props.enable_unsaved_guard ||
+      !is_actually_dirty.value ||
+      form.value.state.isSubmitting
+    ) {
+      next();
+      return;
+    }
 
-  const res = await openModal("ConfirmationModal", {
-    title: "Alert",
-    message: "You have unsaved changes. Are you sure you want to discard them?",
-    confirmText: "Proceed",
-    cancelText: "Cancel",
+    const res = await openModal("ConfirmationModal", {
+      title: "Alert",
+      message: "You have unsaved changes. Are you sure you want to discard them?",
+      confirmText: "Proceed",
+      cancelText: "Cancel",
+    });
+
+    if (res) next();
+    else next(false);
   });
+}
 
-  if (res) next();
-  else next(false);
+// Browser tab/window close guard (matches raaz's enableBeforeUnload)
+function onBeforeUnload(e: BeforeUnloadEvent) {
+  if (props.enable_unsaved_guard && is_actually_dirty.value && !form.value.state.isSubmitting) {
+    e.preventDefault();
+  }
+}
+
+onMounted(() => {
+  window.addEventListener("beforeunload", onBeforeUnload);
+});
+
+onUnmounted(() => {
+  window.removeEventListener("beforeunload", onBeforeUnload);
 });
 
 async function handleSubmit() {
@@ -199,5 +219,6 @@ provide("formContext", {
 
 defineExpose({
   form: form.value,
+  is_dirty: is_actually_dirty,
 });
 </script>

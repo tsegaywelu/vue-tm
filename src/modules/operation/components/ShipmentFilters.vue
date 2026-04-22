@@ -169,7 +169,6 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from "vue";
 import SelectInput from "@/components/form/SelectInput.vue";
 import Form from "@/components/form/Form.vue";
 import {
@@ -180,7 +179,6 @@ import {
   Triptype,
   VehicleOwnership,
 } from "@/utils/utils";
-import type { ShipmentFilterParams } from "../operation.types";
 
 const props = defineProps<{
   calendarType?: "english" | "ethiopian";
@@ -188,24 +186,4 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits(["change"]);
-
-const initValues = ref<ShipmentFilterParams>({
-  routeOrigin: "",
-  routeDestination: "",
-  status: "",
-  productType: "",
-  tripType: "",
-  vehicleOwnership: "",
-  damage: "",
-  documentedUploads: "",
-  shipper: "",
-  agent: "",
-  startDate: "",
-  endDate: "",
-  search: "",
-});
-
-watch(initValues, () => {
-  console.log(initValues.value);
-});
 </script>

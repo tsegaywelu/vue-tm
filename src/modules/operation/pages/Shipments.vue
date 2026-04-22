@@ -1,10 +1,6 @@
 <template>
   <Teleport to="#page-actions" defer>
-    <Button
-      variant="primary"
-      size="lg"
-      class="rounded-3xl px-8 shadow-lg shadow-primary/20"
-    >
+    <Button>
       <template #leading>
         <div class="size-5" v-html="all_icons.plus"></div>
       </template>
@@ -15,11 +11,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
-import ShipmentFilters from "../components/ShipmentFilters.vue";
 import ShipmentTable from "../components/ShipmentTable.vue";
 import Button from "@/components/Button.vue";
-import type { ShipmentFilterParams, Shipment } from "../operation.types";
+import { type Shipment } from "../operation.types";
 import { icons } from "@/utils/icons";
 import { raaz_icons } from "@/utils/raaz_icons";
 const all_icons = { ...icons, ...raaz_icons };

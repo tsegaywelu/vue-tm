@@ -157,12 +157,11 @@ const emit = defineEmits(['select', 'calendar-type-change'])
 const now = new Date()
 const ethNow = toEthiopian(now)
 
-const viewDate = ref(() => {
-  if (props.calendarType === 'ethiopian') {
-    return { year: ethNow.year, month: ethNow.month }
-  }
-  return { year: now.getFullYear(), month: now.getMonth() + 1 }
-})()
+const viewDate = ref(
+  props.calendarType === 'ethiopian'
+    ? { year: ethNow.year, month: ethNow.month }
+    : { year: now.getFullYear(), month: now.getMonth() + 1 }
+)
 
 const isYearPickerOpen = ref(false)
 const isMonthPickerOpen = ref(false)

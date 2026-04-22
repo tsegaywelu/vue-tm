@@ -201,8 +201,9 @@ export function usePagination<T = any>({
   watch(
     data,
     (res) => {
-      if (res?.data) {
-        const res_data = res.data.data || res.data.result || res.data;
+      const raw: any = res?.data;
+      if (raw) {
+        const res_data = raw.result || raw.data || raw;
         const items = Array.isArray(res_data)
           ? res_data
           : res_data?.items && Array.isArray(res_data.items)
@@ -215,8 +216,14 @@ export function usePagination<T = any>({
           setIsDirty(true);
         }
 
-        if (res_data && typeof res_data.totalPages === "number") {
-          setTotalPages(res_data.totalPages);
+        if (typeof raw.totalPages === "number") {
+          setTotalPages(raw.totalPages);
+        } else if (typeof raw.totalResults === "number") {
+          const computed_pages = Math.max(
+            1,
+            Math.ceil(raw.totalResults / Math.max(1, state.value.limit)),
+          );
+          setTotalPages(computed_pages);
         } else if (Array.isArray(res_data)) {
           const computed_pages = Math.max(
             1,
@@ -235,10 +242,10 @@ export function usePagination<T = any>({
   });
 
   const response = computed<T[]>(() => {
-    const raw = data.value?.data;
+    const raw: any = data.value?.data;
     if (!raw) return [];
 
-    const d = raw.data || raw.result || raw;
+    const d = raw.result || raw.data || raw;
     return Array.isArray(d)
       ? d
       : d?.items && Array.isArray(d.items)

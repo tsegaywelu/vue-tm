@@ -71,11 +71,11 @@ watchEffect(() => {
     <button
       tabindex="0"
       @click="handle_click"
-      class="duration-200 transition-all font-medium flex truncate items-center flex-1 gap-3"
+      class="duration-200 transition-all flex truncate items-center flex-1 gap-3"
       :class="[
         route_style[String(is_active) as 'true' | 'false'],
         !nested && is_active && route_style.notNested,
-        nested ? 'min-h-10 text-sm pl-12 pr-4' : 'min-h-[46px] text-[15px]',
+        nested ? 'min-h-10! pl-12 pr-4' : 'min-h-[46px] text-[15px]',
         nav_button_styles[type || 'opened'],
         is_inner_active ? route_style.trueInner : route_style.false,
         nested && is_active ? route_style.innerActive : '',
@@ -98,7 +98,11 @@ watchEffect(() => {
       ></i>
 
       <template v-if="!is_nav_closed">
-        <span class="truncate transition-colors">{{ nav.name }}</span>
+        <span
+          :class="[nested ? 'text-sm' : 'text-base']"
+          class="truncate transition-colors"
+          >{{ nav.name }}</span
+        >
       </template>
 
       <span

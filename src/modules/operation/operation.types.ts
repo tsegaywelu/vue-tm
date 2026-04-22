@@ -54,23 +54,86 @@ export interface Shipment {
   _id: string;
   shipmentCode: string;
   status: "pending" | "active" | "completed" | "cancelled";
+  order: {};
+  orderCode: string;
   route: {
+    routeName: string;
+    origin: string;
+    destination: string;
+  };
+  waypoint: {
+    name: string;
+    TAT: number;
+  };
+  freightOrder: string;
+  shipper: {
     _id: string;
     name: string;
   };
-  driver?: {
-    _id: string;
-    firstName: string;
-    lastName: string;
+  vehicleType: {
+    name: "POWER & TRAILER";
   };
-  vehicle?: {
-    _id: string;
+  vehicle: {
     plateNumber: string;
+    ownership: string;
+    trailerPlate: string;
   };
-  total: number;
-  shipmentDate: string;
-  createdAt: string;
-  updatedAt: string;
+  dispatchWeight: number;
+  odometerAtDispatch: number;
+  fuelReadingAtDispatch: number;
+  commodity: {
+    name: string;
+  }[];
+  dispatchDate: string;
+  pricingType: {
+    type: "per_kilometer" | "per_quintal";
+    amount: number;
+  };
+  packaging: {
+    name: string;
+  };
+  driver: {
+    _id?: string;
+    firstName?: string;
+    middleName?: string;
+    lastName?: string;
+    phoneNumber?: string;
+  };
+  statusTime: {
+    vehicleAssignedTime: string;
+    acceptedTime: string;
+    waitingToLoadAtOriginTime: string;
+    loadingStartedAtOriginTime: string;
+    loadedAtOriginTime: string;
+    departedTime: string;
+  };
+  transporterPrice?: string;
+  remark: string;
+  totalPrice: number;
+  tripType: string;
+  productType: string;
+  paymentDetail: {
+    paymentStatus?: string;
+  };
+  shipmentDocuments: [];
+  rejectorDrivers: [];
+  followUp: [];
+  deadHole: number;
+  CKRF: boolean;
+  isDamaged: boolean;
+  waypointDistance: number;
+  areDocumentsUploaded: boolean;
+  carrier: {
+    name: string;
+  };
+  agent: {
+    name: string;
+  };
+  civ: string;
+  shipperIssueVoucher: string;
+  createdByUser: {
+    username: string;
+  };
 }
 
 export interface ShipmentFilterParams {
@@ -79,6 +142,7 @@ export interface ShipmentFilterParams {
   productType?: string;
   tripType?: string;
   shipper?: string;
+  agent?: string;
   startDate?: string;
   endDate?: string;
   vehicleOwnership?: string;
