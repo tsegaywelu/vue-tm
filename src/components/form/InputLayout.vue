@@ -67,7 +67,7 @@ export interface InputLayoutProps {
   name?: string;
   show_validation_status?: boolean;
   parent_class_name?: string;
-  size?: "sm" | "md" | "lg";
+  size?: "xs" | "sm" | "md" | "lg";
   label?: string;
   error?: string | string[];
   validations?: Record<string, any>;
@@ -112,6 +112,7 @@ const has_right_component = computed(
 
 const gapClass = computed(() => {
   const map: Record<string, string> = {
+    xs: "gap-input-gap-xs",
     sm: "gap-input-gap-sm",
     md: "gap-input-gap-sm",
     lg: "gap-input-gap",
@@ -121,6 +122,7 @@ const gapClass = computed(() => {
 
 const labelClass = computed(() => {
   const map: Record<string, string> = {
+    xs: "input-label-xs",
     sm: "input-label-sm",
     md: "input-label",
   };
@@ -129,6 +131,7 @@ const labelClass = computed(() => {
 
 const inputClass = computed(() => {
   const map: Record<string, string> = {
+    xs: "input-style-xs",
     sm: "input-style-sm",
     md: "input-style",
   };

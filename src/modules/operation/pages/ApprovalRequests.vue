@@ -1,25 +1,10 @@
 <template>
-  <div
-    class="flex flex-col gap-8 px-5 py-4 bg-white rounded-3xl max-w-[1600px] mx-auto min-h-screen animate-fade-in"
-  >
-    <!-- Header Area -->
-    <div class="flex justify-between items-center">
-      <div class="flex flex-col gap-2">
-        <h1 class="text-3xl font-extrabold text-primary tracking-tight">
-          Approval Requests
-        </h1>
-        <p class="text-gray-500 font-medium text-lg">
-          Manage and process operational payment approvals from one central hub.
-        </p>
-      </div>
-    </div>
-    <ApprovalFilters
-      @change="handleFilterChange"
-      calendar-type="english"
-      output-calendar-type="english"
-    />
-    <ApprovalTable :filters="activeFilters" @action="handleApprovalAction" />
-  </div>
+  <ApprovalFilters
+    @change="handleFilterChange"
+    calendar-type="english"
+    output-calendar-type="english"
+  />
+  <ApprovalTable :filters="activeFilters" @action="handleApprovalAction" />
 </template>
 
 <script setup lang="ts">

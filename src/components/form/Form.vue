@@ -11,8 +11,8 @@
 
 <script setup lang="ts">
 import { useForm } from "@tanstack/vue-form";
-import { provide, watch, computed, ref } from "vue";
-import { onBeforeRouteLeave } from "vue-router";
+import { provide, watch, computed, ref, inject, onMounted, onUnmounted } from "vue";
+import { onBeforeRouteLeave, matchedRouteKey } from "vue-router";
 import { openModal } from "@customizer/modal-x";
 
 export interface FormProps {
@@ -34,6 +34,7 @@ const props = withDefaults(defineProps<FormProps>(), {
 
 const emit = defineEmits<{
   (e: "submit", value: any, resetCb: () => void): void;
+  (e: "change", value: any): void;
 }>();
 
 function hashForCompare(val: any): string {
@@ -62,9 +63,9 @@ const localForm = !props.instance
       defaultValues: props.values,
       onSubmit: async ({ value }) => {
         if (props.onSubmit) {
-          await props.onSubmit(value, () => form.reset());
+          await props.onSubmit(value, () => form.value.reset());
         } else {
-          emit("submit", value, () => form.reset());
+          emit("submit", value, () => form.value.reset());
         }
       },
     }) as any)
@@ -72,9 +73,18 @@ const localForm = !props.instance
 
 const form = computed(() => props.instance || localForm);
 
+const is_syncing = ref(false);
 const currentValuesRef = ref(form.value.state.values);
+let emit_timeout: any = null;
+
 form.value.store.subscribe(() => {
   currentValuesRef.value = form.value.state.values;
+  if (!is_syncing.value) {
+    if (emit_timeout) clearTimeout(emit_timeout);
+    emit_timeout = setTimeout(() => {
+      emit("change", form.value.state.values);
+    }, 0);
+  }
 });
 
 const is_actually_dirty = computed(() => {
@@ -94,6 +104,7 @@ watch(
   () => props.values,
   (newValues) => {
     if (newValues) {
+      is_syncing.value = true;
       Object.keys(newValues).forEach((key) => {
         const currentValue = form.value.getFieldValue(key);
         const newValue = newValues[key];
@@ -104,30 +115,52 @@ watch(
           form.value.setFieldValue(key, newValue);
         }
       });
+      is_syncing.value = false;
+      emit("change", form.value.state.values);
     }
   },
   { deep: true },
 );
 
-onBeforeRouteLeave(async (to, from, next) => {
-  if (
-    !props.enable_unsaved_guard ||
-    !is_actually_dirty.value ||
-    form.value.state.isSubmitting
-  ) {
-    next();
-    return;
-  }
+// Route navigation guard — only register when inside a <RouterView>.
+// When Form is used inside a modal (not a route child), matchedRouteKey is null.
+const matchedRoute = inject(matchedRouteKey, null);
+if (matchedRoute) {
+  onBeforeRouteLeave(async (to, from, next) => {
+    if (
+      !props.enable_unsaved_guard ||
+      !is_actually_dirty.value ||
+      form.value.state.isSubmitting
+    ) {
+      next();
+      return;
+    }
 
-  const res = await openModal("ConfirmationModal", {
-    title: "Alert",
-    message: "You have unsaved changes. Are you sure you want to discard them?",
-    confirmText: "Proceed",
-    cancelText: "Cancel",
+    const res = await openModal("ConfirmationModal", {
+      title: "Alert",
+      message: "You have unsaved changes. Are you sure you want to discard them?",
+      confirmText: "Proceed",
+      cancelText: "Cancel",
+    });
+
+    if (res) next();
+    else next(false);
   });
+}
 
-  if (res) next();
-  else next(false);
+// Browser tab/window close guard (matches raaz's enableBeforeUnload)
+function onBeforeUnload(e: BeforeUnloadEvent) {
+  if (props.enable_unsaved_guard && is_actually_dirty.value && !form.value.state.isSubmitting) {
+    e.preventDefault();
+  }
+}
+
+onMounted(() => {
+  window.addEventListener("beforeunload", onBeforeUnload);
+});
+
+onUnmounted(() => {
+  window.removeEventListener("beforeunload", onBeforeUnload);
 });
 
 async function handleSubmit() {
@@ -180,6 +213,11 @@ async function handleSubmit() {
 
 provide("formContext", {
   id: props.id,
+  form: form.value,
+  is_dirty: is_actually_dirty,
+});
+
+defineExpose({
   form: form.value,
   is_dirty: is_actually_dirty,
 });

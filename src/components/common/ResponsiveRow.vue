@@ -3,8 +3,8 @@
     @click="onClick"
     :class="[
       'grid p-4 bg-white rounded-3xl items-center transition-colors grid-cols-3',
-      onClick ? 'cursor-pointer' : '',
-      get_row_card_class_name ? get_row_card_class_name(row.original) : '',
+      $attrs.onClick ? 'cursor-pointer' : '',
+      typeof get_row_card_class_name === 'function' ? get_row_card_class_name(row.original) : '',
       class_name,
     ]"
     style="
@@ -86,11 +86,11 @@ const props = defineProps<{
   idx: number;
   row: Row<T>;
   hide_numbers?: boolean;
-  alignment?: Record<string, "left" | "center" | "right">;
-  col_style?: Record<string, string>;
-  on_sm_screen_row_alignment?: Record<string, number>;
-  on_sm_screen_column_span?: Record<string, number>;
-  hide_on_sm_screen?: string[];
+  alignment?: { [key in keyof T | (string & {})]?: "left" | "center" | "right" };
+  col_style?: { [key in keyof T | (string & {})]?: string };
+  on_sm_screen_row_alignment?: { [key in keyof T | (string & {})]?: number };
+  on_sm_screen_column_span?: { [key in keyof T | (string & {})]?: number };
+  hide_on_sm_screen?: (keyof T | (string & {}))[];
   show_labels_in_card?: boolean;
   top_right_cell_key?: string;
   get_row_card_class_name?: (row: T) => string;

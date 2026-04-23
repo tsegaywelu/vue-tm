@@ -10,7 +10,7 @@ const slots = useSlots()
 </script>
 
 <template>
-  <header class="flex items-center justify-between bg-white xl:rounded-4xl p-2 xl:px-4 h-16 xl:h-17 shadow-xs">
+  <header class="flex items-center justify-between bg-white xl:rounded-4xl p-2 xl:px-4 min-h-16 xl:min-h-17 shadow-xs">
     <div class="flex items-center gap-3">
       <!-- Mobile Toggle -->
       <button

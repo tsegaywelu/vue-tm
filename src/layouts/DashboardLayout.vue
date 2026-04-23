@@ -5,6 +5,7 @@ import TopNavBar from "@/components/TopNavBar.vue";
 import Breadcrumb from "@/components/Breadcrumb.vue";
 import { navigationRegistry } from "@/router/navigation";
 import type { Navs } from "@/types/navigation";
+import DashboardPage from "@/components/common/DashboardPage.vue";
 
 const allNavs = navigationRegistry.reduce((acc, group) => {
   return acc.concat(group.items);
@@ -28,7 +29,10 @@ const update_layout = () => {
   }
 };
 
+// because Teleport requires the parent to be mounted
+const isMounted = ref(false);
 onMounted(() => {
+  isMounted.value = true;
   window.addEventListener("resize", update_layout);
 });
 
@@ -46,16 +50,14 @@ onUnmounted(() => {
         : 'xl:grid-cols-[5.5rem_minmax(0,1fr)]'
     "
   >
-    <!-- Sidebar Component -->
     <Sidebar :is_open="is_open" @toggle="toggle_nav" @close="close_nav">
       <template #nav>
         <slot name="navigation"></slot>
       </template>
     </Sidebar>
 
-    <!-- Main Content Area -->
     <div
-      class="grid grid-cols-1 grid-rows-[4rem_1fr] xl:grid-rows-[4.25rem_1fr] overflow-hidden p-2 xl:p-4 gap-1 xl:gap-4 h-full max-h-full box-border"
+      class="grid grid-cols-1 grid-rows-[auto_1fr] overflow-hidden p-2 xl:p-4 gap-1 xl:gap-4 h-full max-h-full box-border"
     >
       <TopNavBar @toggle_nav="toggle_nav">
         <template #title>
@@ -69,12 +71,17 @@ onUnmounted(() => {
       <div
         class="grid grid-cols-1 gap-3 grid-rows-[auto_auto_1fr] overflow-auto"
       >
-        <!-- Breadcrumbs Placeholder -->
         <Breadcrumb :navs="allNavs" />
 
-        <!-- Main Content -->
         <main class="w-full">
-          <RouterView />
+          <RouterView v-slot="{ Component, route }">
+            <template v-if="isMounted">
+              <DashboardPage v-if="!route.meta.noWrapper">
+                <component :is="Component" :key="route.fullPath" />
+              </DashboardPage>
+              <component :is="Component" v-else :key="route.fullPath" />
+            </template>
+          </RouterView>
         </main>
       </div>
     </div>
@@ -82,7 +89,6 @@ onUnmounted(() => {
 </template>
 
 <style>
-/* Global override for HTML/Body to match Raaz grid layout */
 html,
 body,
 #app {

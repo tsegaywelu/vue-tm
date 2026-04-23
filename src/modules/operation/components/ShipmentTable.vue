@@ -1,140 +1,194 @@
 <template>
-  <div class="flex flex-col gap-6">
-    <Table
-      id="shipment-list"
-      :columns="columns"
-      :rows="response"
-      class="bg-white rounded-4xl shadow-sm overflow-hidden"
-    >
-      <!-- Custom Cells -->
-      <template #cell-shipmentCode="{ value }">
-        <span class="font-bold text-primary">{{ value }}</span>
-      </template>
+  <Table
+    :row_alignment="{
+      driver: 'left',
+      route: 'left',
+      total: 'left',
+      shipperIssueVoucher: 'left',
+      actions: 'center',
+    }"
+    :head_alignment="{
+      driver: 'left',
+      route: 'left',
+      total: 'left',
+      shipperIssueVoucher: 'left',
+      actions: 'center',
+    }"
+    id="shipment-list"
+    :columns="columns"
+    :rows="response"
+  >
+    <template #cell-shipmentCode="{ value }">
+      <span class="font-bold">{{ value }}</span>
+    </template>
 
-      <template #cell-driver="{ row }">
-        <div class="flex flex-col" v-if="row.driver">
-          <span class="font-semibold text-gray-900">
-            {{ row.driver.firstName }} {{ row.driver.lastName }}
-          </span>
-          <span class="text-xs text-gray-400 font-medium" v-if="row.vehicle">
-            {{ row.vehicle.plateNumber }}
-          </span>
-        </div>
-        <span v-else class="text-gray-400 italic text-sm">Not Assigned</span>
-      </template>
-
-      <template #cell-total="{ value }">
-        <span class="font-bold text-gray-900">
-          {{ formatCurrency(value) }}
+    <template #cell-driver="{ row }">
+      <div class="flex flex-col" v-if="row.vehicle">
+        <span class="font-semibold text-base text-gray-900">
+          {{ row?.vehicle?.plateNumber }}
         </span>
-      </template>
+        <span class="text-gray-400 font-medium" v-if="row.driver">
+          {{ row.driver.firstName }} {{ row.driver.lastName }}
+        </span>
+      </div>
+      <span v-else class="text-gray-400 italic text-sm">Not Assigned</span>
+    </template>
 
-      <template #cell-status="{ value }">
-        <div
-          class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider w-fit"
-          :class="statusClasses[value] || 'bg-gray-100 text-gray-500'"
+    <template #cell-route="{ row }">
+      <div class="flex flex-col items-start" v-if="row.vehicle">
+        <span class="font-bold text-base text-gray-900">
+          {{ row.route.routeName }}
+        </span>
+        <span class="text-gray-400 font-medium">{{ row.agent.name }}</span>
+      </div>
+    </template>
+
+    <template #cell-shipperIssueVoucher="{ value, row }">
+      <div
+        class="cursor-pointer hover:text-primary transition-colors flex items-center gap-2"
+        @click.stop="openVouchersModal(row)"
+      >
+        <span class="font-medium">{{ value || "Add Voucher" }}</span>
+        <i v-if="!value" class="mdi mdi-plus-circle-outline text-gray-400"></i>
+      </div>
+    </template>
+
+    <template #cell-dispatchDate="{ value }">
+      <span class="text-base">
+        {{ dateFormatter(value) }}
+      </span>
+    </template>
+
+    <template #cell-total="{ row }">
+      <div class="flex flex-col">
+        <span class="text-base"
+          >{{ numberFormatter(row?.waypointDistance) }} km</span
         >
-          {{ value }}
-        </div>
-      </template>
-
-      <template #cell-createdAt="{ value }">
-        <span class="text-gray-500 text-xs">
-          {{ formatDate(value) }}
+        <span class="text-gray-400 font-medium" v-if="row.pricingType">
+          {{ row.pricingType.type }} ({{
+            currencyFormatter(row.pricingType.amount)
+          }})
         </span>
-      </template>
+      </div>
+    </template>
 
-      <template #cell-actions="{ row }">
-        <div class="flex items-center gap-2 justify-end">
-          <Button
-            variant="ghost"
-            size="sm"
-            class="h-9 px-4 text-grey-500 hover:text-primary transition-all rounded-xl"
-            @click="handleAction(row, 'view')"
-          >
-            Details
-          </Button>
-          <Button
-            variant="primary"
-            size="sm"
-            class="h-9 px-4 rounded-xl"
-            @click="handleAction(row, 'update')"
-          >
-            Update
-          </Button>
-        </div>
-      </template>
-    </Table>
-  </div>
+    <template #tabs>
+      <ShipmentFilters
+        @change="handleFilterChange"
+        calendar-type="english"
+        output-calendar-type="english"
+      />
+    </template>
+
+    <template #cell-status="{ value }">
+      <Status :variant="value" type="wrapped">
+        {{ value?.replace(/_/g, " ") }}
+      </Status>
+    </template>
+    ````
+    <template #cell-actions="{ row }">
+      <div class="flex items-center justify-end">
+        <Dropdown>
+          <template #default="{ close }">
+            <button
+              class="w-full text-left px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors"
+              @click="
+                handleAction(row, 'view');
+                close();
+              "
+            >
+              Details
+            </button>
+            <button
+              class="w-full text-left px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-50 text-primary transition-colors"
+              @click="
+                openStatusModal(row);
+                close();
+              "
+            >
+              Update Status
+            </button>
+          </template>
+        </Dropdown>
+      </div>
+    </template>
+  </Table>
 </template>
 
 <script setup lang="ts">
-import { computed, watch } from "vue";
+import { computed, ref } from "vue";
 import Table from "@/components/common/Table.vue";
-import Button from "@/components/Button.vue";
+import Dropdown from "@/components/common/Dropdown.vue";
 import { usePagination } from "@/composables/usePagination";
 import type { ShipmentFilterParams, Shipment } from "../operation.types";
 import type { TableColumn } from "@/components/common/Table.vue";
-
+import ShipmentFilters from "./ShipmentFilters.vue";
+import Status from "@/components/common/Status.vue";
+import {
+  currencyFormatter,
+  dateFormatter,
+  numberFormatter,
+  ShipmentStatus,
+} from "@/utils/utils";
+import { openModal } from "@customizer/modal-x";
 const props = defineProps<{
-  filters: ShipmentFilterParams;
+  filters?: ShipmentFilterParams;
 }>();
 
 const emit = defineEmits(["action"]);
 
 const columns: TableColumn<Shipment>[] = [
-  { key: "shipmentCode", label: "Shipment ID", field: "shipmentCode" },
-  {
-    key: "route",
-    label: "Route",
-    field: (row: Shipment) => row.route?.name || "N/A",
-  },
   { key: "driver", label: "Driver / Vehicle", field: "driver" },
-  { key: "total", label: "Amount", field: "total" },
+  { key: "route", label: "Route & Agent", field: "shipmentCode" },
+  { key: "total", label: "Details", field: "detail" },
+  {
+    key: "shipperIssueVoucher",
+    label: "Issue Voucher",
+    field: "shipperIssueVoucher",
+  },
+  { key: "shipmentCode", label: "Shipment Code" },
+  {
+    key: "dispatchDate",
+    label: "Dispatch Info",
+    field: "dispatchDate",
+  },
   { key: "status", label: "Status", field: "status" },
-  { key: "createdAt", label: "Created At", field: "createdAt" },
   { key: "actions", label: "Actions", field: "", cellAlign: "right" },
 ];
 
-const { response, setPage, refetch } = usePagination<Shipment>({
+const activeFilters = ref<ShipmentFilterParams>({});
+const { response, refetch } = usePagination<Shipment>({
   id: "shipment-list",
-  url: "/shipment/all",
-  params: computed(() => props.filters),
+  url: "/shipment",
+  params: computed(() => activeFilters.value),
 });
 
-watch(
-  () => props.filters,
-  () => {
-    setPage(1);
-  },
-  { deep: true },
-);
-
-const formatCurrency = (val: number) => {
-  return new Intl.NumberFormat("en-ET", {
-    style: "currency",
-    currency: "ETB",
-  }).format(val || 0);
-};
-
-const formatDate = (val: string) => {
-  if (!val) return "N/A";
-  return new Date(val).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
-};
-
-const statusClasses: Record<string, string> = {
-  pending: "bg-orange-50 text-orange-600",
-  active: "bg-blue-50 text-blue-600",
-  completed: "bg-emerald-50 text-emerald-600",
-  cancelled: "bg-red-50 text-red-600",
+const handleFilterChange = (newFilters: ShipmentFilterParams) => {
+  activeFilters.value = { ...newFilters };
 };
 
 const handleAction = (row: Shipment, action: string) => {
   emit("action", { row, action });
+};
+
+const openStatusModal = (shipment: Shipment) => {
+  openModal(
+    "StatusChangeModal",
+    {
+      shipment,
+      statusList: ShipmentStatus,
+      statusListRaw: ShipmentStatus,
+    },
+    (res) => {
+      if (res) refetch();
+    },
+  );
+};
+
+const openVouchersModal = (shipment: Shipment) => {
+  openModal("VoucherModal", { shipment }, (res) => {
+    if (res) refetch();
+  });
 };
 
 defineExpose({ refetch });

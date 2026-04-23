@@ -3,12 +3,14 @@
 @layer base {
   * {
     scroll-behavior: smooth;
+    outline: none;
   }
 
   .input-focus:focus-within,
   *:focus {
     box-shadow: 0px 0px 0px 2px white, 0px 0px 0px 4px var(--color-primary);
     transition: var(--focus-trasition);
+    outline: none;
   }
 
   .input-focus:focus-within :focus:active {
@@ -49,6 +51,7 @@
 
   --spacing-input-gap: 8px;
   --spacing-input-gap-sm: 4px;
+  --spacing-input-gap-xs: 2px;
   --radius-5xl: 48px;
   --radius-6xl: 56px;
   --font-xl: 20px;
@@ -161,6 +164,13 @@
     letter-spacing: 0%;
   }
 
+  .input-label-xs {
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 100%;
+    letter-spacing: 0%;
+  }
+
   .input-style {
     border-radius: 16px;
     height: 56px;
@@ -170,6 +180,12 @@
   .input-style-sm {
     border-radius: 16px;
     height: 50px;
+    border: 1px solid #F1F1F1;
+  }
+
+  .input-style-xs {
+    border-radius: 12px;
+    height: 36px;
     border: 1px solid #F1F1F1;
   }
 
@@ -185,10 +201,22 @@
     color: #000;
   }
 
+  .input-style-xs input,
+  .input-style-xs .custom-input {
+    flex: 1;
+    height: 100%;
+    color: var(--color-grey-500);
+    font-size: 12px;
+    padding: 0 12px;
+    color: #000;
+  }
+
   .input-style input::placeholder,
   .input-style .placeholder,
   .input-style-sm input::placeholder,
   .input-style-sm .placeholder,
+  .input-style-xs input::placeholder,
+  .input-style-xs .placeholder,
   .placeholder {
     color: var(--color-grey-600);
     font-size: 12px;

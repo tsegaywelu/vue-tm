@@ -24,46 +24,80 @@
       >
         <div
           ref="containerRef"
-          class="focus:shadow-none focus:outline-0 relative cursor-pointer custom-input flex items-center h-full w-full"
+          class="focus:shadow-none focus:outline-0 active:shadow-none! outline-0 relative cursor-pointer custom-input flex-1 min-w-0 flex items-center h-full w-full"
           :tabindex="searchable ? -1 : 0"
           :data-name="name"
           @click="toggleDropdown"
           @keydown="handleKeydown($event, field)"
         >
-          <div class="flex justify-between items-center w-full h-full">
-            <template v-if="searchable">
-              <input
-                ref="searchInput"
-                type="text"
-                class="max-w-full w-0 flex-1 focus:outline-0 focus:shadow-none px-0 bg-transparent"
-                v-model="searchResult"
-                :placeholder="attributes.placeholder || 'Select'"
-                @input="handleInputSearch"
-              />
-            </template>
-            <template v-else>
-              <span v-if="isValidSelection(field.state.value)" class="truncate">
-                {{ getDisplayLabel(field.state.value) }}
-              </span>
-              <span v-else class="pointer-events-none text-gray-400">
-                {{ attributes.placeholder || "Select" }}
-              </span>
-            </template>
+          <div
+            class="flex justify-between items-center gap-1 flex-1 min-w-0 w-full h-full overflow-hidden"
+          >
+            <div class="flex items-center gap-1 flex-1 min-w-0 overflow-hidden">
+              <div
+                v-if="multiple && isValidSelection(field.state.value)"
+                class="flex items-center gap-1 overflow-x-auto no-scrollbar shrink-0 max-w-[50%]"
+              >
+                <span
+                  v-for="val in field.state.value"
+                  :key="val"
+                  class="inline-flex items-center gap-0.5 bg-gray-100 text-gray-700 rounded-full px-2 py-0.5 whitespace-nowrap shrink-0"
+                  :class="dropdownTextClass"
+                >
+                  {{ getLabelForValue(val) }}
+                  <button
+                    tabindex="-1"
+                    @click.stop="removeOne(val, field)"
+                    class="ml-0.5 hover:text-red-500 transition-colors leading-none"
+                  >
+                    <i class="*:size-3" v-html="icons.close"></i>
+                  </button>
+                </span>
+              </div>
 
-            <div class="w-auto h-5 flex text-gray-500">
-              <span
-                v-if="isPending"
-                class="mdi mdi-loading mdi-spin text-lg"
-              ></span>
+              <!-- Search input -->
+              <template v-if="searchable">
+                <input
+                  ref="searchInput"
+                  type="text"
+                  class="min-w-0 w-0 flex-1 focus:outline-none outline-none focus:shadow-none px-0 bg-transparent"
+                  v-model="searchResult"
+                  :placeholder="
+                    multiple && isValidSelection(field.state.value)
+                      ? ''
+                      : attributes.placeholder || 'Select'
+                  "
+                  @input="handleInputSearch"
+                />
+              </template>
+              <template v-else>
+                <span
+                  v-if="!multiple && isValidSelection(field.state.value)"
+                  class="truncate"
+                >
+                  {{ getDisplayLabel(field.state.value) }}
+                </span>
+                <span
+                  v-else-if="!isValidSelection(field.state.value)"
+                  class="pointer-events-none text-gray-400"
+                >
+                  {{ attributes.placeholder || "Select" }}
+                </span>
+              </template>
+            </div>
+
+            <div class="w-auto h-5 flex shrink-0 text-gray-500">
+              <i v-if="isPending" class="*:size-5" v-html="icons.spinner"></i>
               <template v-else>
                 <button
+                  tabindex="-1"
                   v-if="isValidSelection(field.state.value)"
-                  @click.stop="clearSelection(field)"
+                  @click.stop.prevent="clearSelection(field)"
                   class="text-xs whitespace-nowrap text-dark"
                 >
-                  <i class="mdi mdi-close"></i>
+                  <i class="*:size-5" v-html="icons.close"></i>
                 </button>
-                <i v-else class="mdi mdi-chevron-down text-lg"></i>
+                <i v-else class="*:size-5" v-html="icons.downIcon"></i>
               </template>
             </div>
           </div>
@@ -72,12 +106,14 @@
             <div
               v-if="open"
               ref="dropdownRef"
-              class="fixed z-[9999] bg-white border border-gray-100 shadow-lg max-h-64 overflow-y-auto flex flex-col gap-1 py-2 px-2 rounded-md"
+              class="fixed z-9999 bg-white border border-gray-100 shadow-lg max-h-64 overflow-y-auto flex flex-col gap-1 py-2 px-2"
+              :class="dropdownRoundedClass"
               :style="dropdownStyle"
             >
               <div
                 v-if="finalOptions.length === 0"
-                class="text-xs text-gray-400 p-2"
+                class="text-gray-400 p-2"
+                :class="dropdownTextClass"
               >
                 No options found
               </div>
@@ -91,19 +127,32 @@
                   'bg-gray-100': isSelected(option, field.state.value),
                 }"
               >
-                <slot name="item" :option="option">
-                  <span class="text-sm font-medium">{{
+                <slot
+                  name="item"
+                  :option="option"
+                  :label="getOptionLabel(option)"
+                  :value="getOptionValue(option)"
+                  :item="option.item"
+                  :selected="isSelected(option, field.state.value)"
+                >
+                  <span class="font-medium" :class="dropdownTextClass">{{
                     getOptionLabel(option)
                   }}</span>
                 </slot>
 
                 <div
                   v-if="multiple"
-                  class="size-4 grid place-items-center border border-gray-300 rounded"
+                  :class="[
+                    isSelected(option, field.state.value)
+                      ? 'border-transparent'
+                      : 'border-gray-300',
+                  ]"
+                  class="size-4 grid place-items-center border rounded"
                 >
                   <i
                     v-if="isSelected(option, field.state.value)"
-                    class="mdi mdi-check text-xs text-primary"
+                    v-html="icons.check"
+                    class="*:size-4"
                   ></i>
                 </div>
               </div>
@@ -123,12 +172,16 @@ import {
   onMounted,
   onBeforeUnmount,
   nextTick,
+  inject,
   type SelectHTMLAttributes,
 } from "vue";
 import InputParent from "./InputParent.vue";
 import InputLayout from "./InputLayout.vue";
 import { type InputProps } from "./Input.vue";
 import { usePagination } from "@/composables/usePagination";
+import ApiService from "@/api/ApiService";
+import { icons } from "@/utils/icons";
+import { getValueByPath } from "@/utils/utils";
 
 export interface SelectInputProps extends InputProps {
   attributes?: SelectHTMLAttributes;
@@ -138,6 +191,14 @@ export interface SelectInputProps extends InputProps {
   searchable?: boolean;
   multiple?: boolean;
   url?: string;
+  base_url?: string;
+  params?:
+    | Record<string, any>
+    | ((data: {
+        value: any;
+        search: string;
+        form: any;
+      }) => Record<string, any>);
   label_key?: string | ((item: any) => string);
   value_key?: string | ((item: any) => any);
   display_label_fn?: (item: any) => string;
@@ -154,6 +215,8 @@ const props = withDefaults(defineProps<SelectInputProps>(), {
   searchable: false,
   multiple: false,
   url: "",
+  base_url: undefined,
+  params: () => ({}),
   label_key: "label",
   value_key: "value",
   display_label_fn: undefined,
@@ -178,16 +241,81 @@ const dropdownStyle = ref({});
 
 const isRemote = computed(() => !!props.url);
 
+const customApi = props.base_url ? new ApiService(props.base_url) : undefined;
+
+const formContext = inject("formContext") as any;
+const form = formContext?.form;
+const currentSelectedValue = ref(
+  form ? form.getFieldValue(props.name) : undefined,
+);
+
+let unsubscribe: any = null;
+onMounted(() => {
+  if (form) {
+    currentSelectedValue.value = form.getFieldValue(props.name);
+    unsubscribe = form.store.subscribe(() => {
+      currentSelectedValue.value = form.getFieldValue(props.name);
+    });
+  }
+});
+
+onBeforeUnmount(() => {
+  if (typeof unsubscribe === "function") {
+    unsubscribe();
+  }
+});
+
+const syncedSearch = ref("");
+
+const computedParams = computed(() => {
+  if (typeof props.params === "function") {
+    return props.params({
+      value: currentSelectedValue.value,
+      search: syncedSearch.value,
+      form: form,
+    });
+  }
+  return props.params;
+});
+
 const {
   response: remoteData,
   state: remoteState,
   setSearch: setRemoteSearch,
+  debouncedSearch,
+  isLoading: remoteLoading,
+  isFetching: remoteFetching,
 } = usePagination({
+  queryKey: [props.name, props.size, props.base_url || ""],
   url: props.url,
   autofetch: isRemote.value,
+  params: computedParams,
+  ...(customApi ? { api: customApi } : {}),
 });
+
+watch(
+  () => debouncedSearch?.value,
+  (val) => {
+    syncedSearch.value = val || "";
+  },
+  { immediate: true },
+);
 const isPending = computed(() =>
-  isRemote.value ? remoteState.pending : props.pending,
+  isRemote.value ? remoteLoading.value || remoteFetching.value : props.pending,
+);
+
+const dropdownTextClass = computed(() => {
+  const map: Record<string, string> = {
+    xs: "text-xs",
+    sm: "text-sm",
+    md: "text-sm",
+    lg: "text-base",
+  };
+  return map[props.size] || "text-sm";
+});
+
+const dropdownRoundedClass = computed(() =>
+  props.size === "xs" ? "rounded-lg" : "rounded-xl",
 );
 
 const finalOptions = computed(() => {
@@ -203,11 +331,11 @@ const finalOptions = computed(() => {
       label:
         typeof props.label_key === "function"
           ? props.label_key(item)
-          : item[props.label_key as string] || "",
+          : getValueByPath(item, props.label_key as string) ?? "",
       value:
         typeof props.value_key === "function"
           ? props.value_key(item)
-          : item[props.value_key as string] || "",
+          : getValueByPath(item, props.value_key as string) ?? "",
       displayLabel:
         typeof props.display_label_fn === "function"
           ? props.display_label_fn(item)
@@ -241,10 +369,23 @@ function isValidSelection(value: any) {
 }
 
 function getDisplayLabel(value: any) {
-  if (props.multiple) return ` - ${(value as any[]).length} selected`;
+  if (props.multiple) return `${(value as any[]).length} selected`;
   const opt = finalOptions.value.find((o: any) => getOptionValue(o) == value);
   if (opt) return opt.displayLabel || getOptionLabel(opt);
   return value;
+}
+
+function getLabelForValue(val: any) {
+  const opt = finalOptions.value.find((o: any) => getOptionValue(o) == val);
+  if (opt) return opt.displayLabel || getOptionLabel(opt);
+  return val;
+}
+
+function removeOne(val: any, field: any) {
+  const current = Array.isArray(field.state.value)
+    ? field.state.value.filter((v: any) => v !== val)
+    : [];
+  field.handleChange(current);
 }
 
 const computedDescription = computed(() => {
@@ -261,11 +402,14 @@ function handleInputSearch(ev: Event) {
   }
   emit("input-change", val);
 
-  clearTimeout(searchTimeout);
-  searchTimeout = setTimeout(() => {
-    if (isRemote.value) setRemoteSearch(val);
-    else emit("search", val);
-  }, 500);
+  if (isRemote.value) {
+    setRemoteSearch(val);
+  } else {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+      emit("search", val);
+    }, 500);
+  }
 }
 
 function toggleDropdown() {

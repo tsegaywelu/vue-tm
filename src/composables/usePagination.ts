@@ -29,6 +29,7 @@ export interface TablePaginationContext<T = any> {
   setPage: (page: number) => void;
   setLimit: (limit: number) => void;
   setSearch: (search: string) => void;
+  debouncedSearch: ComputedRef<string>;
   setSorting: (sorting: SortingState[]) => void;
   setTotalPages: (total_pages: number) => void;
   refetch: () => void;
@@ -41,7 +42,7 @@ interface UsePaginationOptions {
   sortBy?: string;
   sortDirection?: "asc" | "desc";
   autofetch?: boolean;
-  params?: Record<string, any> | Ref<Record<string, any>>;
+  params?: Record<string, any> | Ref<any>;
   resetOn?: (Ref<any> | (() => any))[];
   queryKey?: string[];
   api?: ApiService;
@@ -162,19 +163,9 @@ export function usePagination<T = any>({
   >({
     queryKey,
     queryFn: async ({ signal }) => {
-      const clean_params: Record<string, any> = {};
       const p = resolved_params.value;
 
-      if (p) {
-        Object.keys(p).forEach((key) => {
-          if (p[key] !== "" && p[key] !== null && p[key] !== undefined) {
-            clean_params[key] = p[key];
-          }
-        });
-      }
-
-      const request_params = {
-        ...clean_params,
+      const request_params: Record<string, any> = {
         page: state.value.page,
         limit: state.value.limit,
         q: debounced_search.value || undefined,
@@ -185,6 +176,17 @@ export function usePagination<T = any>({
             : "asc"
           : undefined,
       };
+
+      if (p) {
+        Object.entries(p).forEach(([key, value]) => {
+          // Allow explicit undefined to override default params (like 'q')
+          if (value === undefined) {
+            request_params[key] = undefined;
+          } else if (value !== "" && value !== null) {
+            request_params[key] = value;
+          }
+        });
+      }
 
       const caller = withAuth
         ? apiInstance.addAuthenticationHeader()
@@ -199,20 +201,29 @@ export function usePagination<T = any>({
   watch(
     data,
     (res) => {
-      if (res?.data) {
-        const res_data = res.data.data || res.data.result || res.data;
+      const raw: any = res?.data;
+      if (raw) {
+        const res_data = raw.result || raw.data || raw;
         const items = Array.isArray(res_data)
           ? res_data
           : res_data?.items && Array.isArray(res_data.items)
             ? res_data.items
-            : [];
+            : res_data?.results && Array.isArray(res_data.results)
+              ? res_data.results
+              : [];
 
         if (items.length > 0 && !state.value.isDirty) {
           setIsDirty(true);
         }
 
-        if (res_data && typeof res_data.totalPages === "number") {
-          setTotalPages(res_data.totalPages);
+        if (typeof raw.totalPages === "number") {
+          setTotalPages(raw.totalPages);
+        } else if (typeof raw.totalResults === "number") {
+          const computed_pages = Math.max(
+            1,
+            Math.ceil(raw.totalResults / Math.max(1, state.value.limit)),
+          );
+          setTotalPages(computed_pages);
         } else if (Array.isArray(res_data)) {
           const computed_pages = Math.max(
             1,
@@ -231,15 +242,17 @@ export function usePagination<T = any>({
   });
 
   const response = computed<T[]>(() => {
-    const raw = data.value?.data;
+    const raw: any = data.value?.data;
     if (!raw) return [];
 
-    const d = raw.data || raw.result || raw;
+    const d = raw.result || raw.data || raw;
     return Array.isArray(d)
       ? d
       : d?.items && Array.isArray(d.items)
         ? d.items
-        : [];
+        : d?.results && Array.isArray(d.results)
+          ? d.results
+          : [];
   });
 
   const server_error = computed(() => {
@@ -261,6 +274,7 @@ export function usePagination<T = any>({
     setPage,
     setLimit,
     setSearch,
+    debouncedSearch: computed(() => debounced_search.value),
     setSorting,
     setTotalPages,
     refetch: () => refetch(),

@@ -71,7 +71,6 @@ async function submitLogin(values: any) {
 
 <template>
   <div class="min-h-screen flex bg-white font-sans overflow-hidden">
-    <!-- Left Panel: Cinematic Image -->
     <div class="hidden lg:block lg:w-1/2 relative">
       <img
         src="/login_background.png"
