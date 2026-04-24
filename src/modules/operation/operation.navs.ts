@@ -16,6 +16,13 @@ export const core_operations_navs: Navs[] = [
         name: "Shipments",
         path: "/operation/shipments",
         show: true,
+        children: [
+          {
+            path: "/operation/shipments/add",
+            name: "Add Shipment",
+            show: false,
+          },
+        ],
       },
       {
         name: "Shipment Adjustment",

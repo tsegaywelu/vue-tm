@@ -1,7 +1,7 @@
 import { getApi } from "@/utils/getApi";
 import type { Shipment, ShipmentFilterParams } from "../operation.types";
 
-const shipment_api = getApi("/shipments");
+const shipment_api = getApi("/shipment");
 
 export function fetch_shipments(params: ShipmentFilterParams) {
   return shipment_api
@@ -14,17 +14,29 @@ export function fetch_shipment_details(id: string) {
 }
 
 export function update_shipment_status(id: string, statusData: any) {
-  return shipment_api.addAuthenticationHeader().patch(`/updateStatus/${id}`, statusData);
+  return shipment_api
+    .addAuthenticationHeader()
+    .patch(`/updateStatus/${id}`, statusData);
 }
 
 export function add_issue_voucher(id: string, voucherData: any) {
-  return shipment_api.addAuthenticationHeader().patch(`/addIssueVoucher/${id}`, voucherData);
+  return shipment_api
+    .addAuthenticationHeader()
+    .patch(`/addIssueVoucher/${id}`, voucherData);
 }
 
 export function add_other_voucher(id: string, voucherData: any) {
-  return shipment_api.addAuthenticationHeader().patch(`/addVouchers/${id}`, voucherData);
+  return shipment_api
+    .addAuthenticationHeader()
+    .patch(`/addVouchers/${id}`, voucherData);
 }
 
 export function add_follow_up(id: string, data: any) {
-  return shipment_api.addAuthenticationHeader().patch(`/${id}/addFollowUp`, data);
+  return shipment_api
+    .addAuthenticationHeader()
+    .patch(`/${id}/addFollowUp`, data);
+}
+
+export function create_shipment(data: any) {
+  return shipment_api.addAuthenticationHeader().post("", data);
 }

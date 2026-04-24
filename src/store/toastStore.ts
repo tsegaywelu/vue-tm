@@ -7,7 +7,13 @@ export interface Toast {
   id: string;
   message: string;
   type: ToastType;
-  duration?: number;
+  duration: number;
+  /** Remaining time in ms — mutated by the Toast component for pause/resume */
+  remaining: number;
+  /** Timestamp when the current countdown segment started */
+  startedAt: number;
+  /** Whether the countdown is currently paused */
+  paused: boolean;
 }
 
 export const useToastStore = defineStore('toast', () => {
@@ -15,14 +21,16 @@ export const useToastStore = defineStore('toast', () => {
 
   function addToast(message: string, type: ToastType = 'success', duration = 3000) {
     const id = Math.random().toString(36).substring(2, 9);
-    const toast: Toast = { id, message, type, duration };
+    const toast: Toast = {
+      id,
+      message,
+      type,
+      duration,
+      remaining: duration,
+      startedAt: Date.now(),
+      paused: false,
+    };
     toasts.value.push(toast);
-
-    if (duration > 0) {
-      setTimeout(() => {
-        removeToast(id);
-      }, duration);
-    }
   }
 
   function removeToast(id: string) {
@@ -30,6 +38,30 @@ export const useToastStore = defineStore('toast', () => {
     if (index !== -1) {
       toasts.value.splice(index, 1);
     }
+  }
+
+  function pauseToast(id: string) {
+    const toast = toasts.value.find((t) => t.id === id);
+    if (toast && !toast.paused) {
+      toast.remaining = Math.max(0, toast.remaining - (Date.now() - toast.startedAt));
+      toast.paused = true;
+    }
+  }
+
+  function resumeToast(id: string) {
+    const toast = toasts.value.find((t) => t.id === id);
+    if (toast && toast.paused) {
+      toast.startedAt = Date.now();
+      toast.paused = false;
+    }
+  }
+
+  function pauseAll() {
+    toasts.value.forEach((t) => pauseToast(t.id));
+  }
+
+  function resumeAll() {
+    toasts.value.forEach((t) => resumeToast(t.id));
   }
 
   function success(message: string, duration?: number) {
@@ -52,6 +84,10 @@ export const useToastStore = defineStore('toast', () => {
     toasts,
     addToast,
     removeToast,
+    pauseToast,
+    resumeToast,
+    pauseAll,
+    resumeAll,
     success,
     error,
     info,

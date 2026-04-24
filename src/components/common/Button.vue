@@ -5,10 +5,10 @@
     :title="title"
     :form="form"
     :class="[
-      'relative btn-hover isolate flex items-center justify-center gap-1 transition-all duration-200',
+      'relative btn-hover isolate flex items-center justify-center gap-1 transition-all duration-200 rounded-full',
       sizeStyles[size],
       variantStyles[variant],
-      className,
+      class_name,
     ]"
     @click="$emit('click', $event)"
   >
@@ -40,7 +40,7 @@ export interface ButtonProps {
   size?: ButtonSize;
   variant?: ButtonVariant;
   type?: "button" | "submit" | "reset";
-  className?: string;
+  class_name?: string;
   title?: string;
   form?: string;
 }
@@ -50,7 +50,7 @@ const props = withDefaults(defineProps<ButtonProps>(), {
   size: "default",
   variant: "default",
   type: "button",
-  className: "",
+  class_name: "",
   title: "",
   form: "",
 });
@@ -58,15 +58,15 @@ const props = withDefaults(defineProps<ButtonProps>(), {
 defineEmits(["click"]);
 
 const sizeStyles: Record<ButtonSize, string> = {
-  sm: "h-7 px-[7px] rounded-3xl text-xs",
-  default: "h-9 px-3 rounded-3xl text-sm",
+  sm: "h-7 px-[7px] text-xs",
+  default: "h-9 px-3 text-sm",
   md: "min-w-0 xl:min-w-[182px] h-[42px] xl:h-12 px-3 xl:px-4 font-medium text-sm xl:text-base",
-  lg: "h-12 xl:h-14 px-3 xl:px-4 text-sm xl:text-base rounded-[100px]",
+  lg: "h-12 xl:h-14 px-3 xl:px-4 text-sm xl:text-base",
   "lg-md":
-    "h-10 xl:h-[3.125rem] w-auto xl:w-[7.375rem] px-4 text-sm rounded-[100px]",
+    "h-10 xl:h-[3.125rem] w-auto xl:w-[7.375rem] px-4 text-sm",
   "lg-sm":
-    "h-10 xl:h-12 min-w-0 xl:min-w-[6.75rem] px-4 text-xs rounded-[100px]",
-  xl: "h-[3rem] xl:h-[3.5625rem] px-4 text-base xl:text-xl rounded-[100px]",
+    "h-10 xl:h-12 min-w-0 xl:min-w-[6.75rem] px-4 text-xs",
+  xl: "h-[3rem] xl:h-[3.5625rem] px-4 text-base xl:text-xl",
 };
 
 const variantStyles: Record<ButtonVariant, string> = {

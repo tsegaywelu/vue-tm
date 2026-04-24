@@ -25,13 +25,7 @@ const navigateToAddOrder = () => {
   router.push("/order/addOrder");
 };
 
-const handleOrderAction = ({
-  row,
-  action,
-}: {
-  row: any;
-  action: string;
-}) => {
+const handleOrderAction = ({ row, action }: { row: any; action: string }) => {
   if (action === "ship") {
     // Open a confirmation or form modal for shipping
     openModal(

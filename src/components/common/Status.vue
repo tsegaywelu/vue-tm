@@ -1,7 +1,7 @@
 <template>
   <div
     :class="[
-      'flex items-center gap-1.5 border text-sm px-2 h-9 rounded-full transition-all duration-200',
+      'flex w-full items-center gap-1.5 border text-sm px-2 h-9 rounded-full transition-all duration-200',
       statusStyles.class,
     ]"
   >
@@ -11,7 +11,7 @@
         borderColor: statusStyles.dotColor,
       }"
     ></div>
-    <span class="truncate">
+    <span class="truncate flex items-center justify-center">
       <slot>{{ label }}</slot>
     </span>
   </div>
