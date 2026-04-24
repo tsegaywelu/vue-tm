@@ -86,6 +86,7 @@ const variantStyles: Record<ButtonVariant, string> = {
 .primary-gradient {
   background: var(--color-primary-gradient);
 }
+
 .secondary-gradient {
   background: var(--color-secondary-gradient);
 }
