@@ -8,8 +8,9 @@
       <Button
         :type="type"
         :form="formId"
-        :disabled="isSubmitting || !canSubmit || disabled"
-        :variant="variant"
+        :variant="
+          formContext.is_dirty.value && canSubmit ? variant : 'inactive'
+        "
         :size="size"
         :class_name="class_name"
       >
@@ -43,8 +44,8 @@ const props = withDefaults(defineProps<SubmitButtonProps>(), {
   type: "submit",
   class_name: "",
   disabled: false,
-  variant: "primary",
-  size: "default",
+  variant: "default",
+  size: "md",
 });
 
 const formContext = inject("formContext", null) as any;

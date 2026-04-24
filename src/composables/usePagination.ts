@@ -65,10 +65,12 @@ export function useTablePagination(
   default_sort?: string,
   default_direction: "asc" | "desc" = "desc",
   per_page = 10,
+  is_pending = false,
 ) {
   const store = useTablePaginationStore();
 
   const default_state: Partial<TableState> = {
+    pending: is_pending,
     limit: per_page,
     sorting: default_sort
       ? [{ id: default_sort, desc: default_direction === "desc" }]
@@ -119,7 +121,7 @@ export function usePagination<T = any>({
     setPending,
     setIsDirty,
     reset,
-  } = useTablePagination(id, sort_by, sort_direction, per_page);
+  } = useTablePagination(id, sort_by, sort_direction, per_page, autofetch);
 
   const debounced_search = ref(state.value.search);
   const update_debounced_search = useDebounceFn((val: string) => {
@@ -237,9 +239,13 @@ export function usePagination<T = any>({
   );
 
   // Sync pending state
-  watch([isLoading, isFetching], () => {
-    setPending(isLoading.value || isFetching.value);
-  });
+  watch(
+    [isLoading, isFetching],
+    () => {
+      setPending(isLoading.value || isFetching.value);
+    },
+    { immediate: true },
+  );
 
   const response = computed<T[]>(() => {
     const raw: any = data.value?.data;

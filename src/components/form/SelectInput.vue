@@ -25,7 +25,10 @@
         <div
           ref="containerRef"
           class="focus:shadow-none focus:outline-0 active:shadow-none! outline-0 relative cursor-pointer custom-input flex-1 min-w-0 flex items-center h-full w-full"
-          :tabindex="searchable ? -1 : 0"
+          :class="{
+            'pointer-events-none cursor-not-allowed': attributes?.disabled,
+          }"
+          :tabindex="attributes?.disabled ? -1 : searchable ? -1 : 0"
           :data-name="name"
           @click="toggleDropdown"
           @keydown="handleKeydown($event, field)"
@@ -62,12 +65,14 @@
                   type="text"
                   class="min-w-0 w-0 flex-1 focus:outline-none outline-none focus:shadow-none px-0 bg-transparent"
                   v-model="searchResult"
+                  :disabled="attributes?.disabled"
                   :placeholder="
                     multiple && isValidSelection(field.state.value)
                       ? ''
                       : attributes.placeholder || 'Select'
                   "
                   @input="handleInputSearch"
+                  @keydown="handleKeydown($event, field)"
                 />
               </template>
               <template v-else>
@@ -121,10 +126,22 @@
               <div
                 v-for="(option, idx) in finalOptions"
                 :key="getOptionValue(option) + '-' + idx"
+                :ref="
+                  (el) => {
+                    if (el) optionRefs[idx] = el as HTMLElement;
+                  }
+                "
                 @click.stop="selectOption(option, field)"
+                @mouseenter="highlightedIndex = idx"
                 class="flex items-center justify-between cursor-pointer rounded-md hover:bg-gray-50 p-2"
                 :class="{
                   'bg-gray-100': isSelected(option, field.state.value),
+                  'bg-primary/10':
+                    highlightedIndex === idx &&
+                    !isSelected(option, field.state.value),
+                  'bg-primary/15':
+                    highlightedIndex === idx &&
+                    isSelected(option, field.state.value),
                 }"
               >
                 <slot
@@ -238,6 +255,8 @@ const searchInput = ref<HTMLInputElement | null>(null);
 const containerRef = ref<HTMLElement | null>(null);
 const dropdownRef = ref<HTMLElement | null>(null);
 const dropdownStyle = ref({});
+const highlightedIndex = ref(-1);
+const optionRefs = ref<Record<number, HTMLElement>>({});
 
 const isRemote = computed(() => !!props.url);
 
@@ -331,11 +350,11 @@ const finalOptions = computed(() => {
       label:
         typeof props.label_key === "function"
           ? props.label_key(item)
-          : getValueByPath(item, props.label_key as string) ?? "",
+          : (getValueByPath(item, props.label_key as string) ?? ""),
       value:
         typeof props.value_key === "function"
           ? props.value_key(item)
-          : getValueByPath(item, props.value_key as string) ?? "",
+          : (getValueByPath(item, props.value_key as string) ?? ""),
       displayLabel:
         typeof props.display_label_fn === "function"
           ? props.display_label_fn(item)
@@ -413,11 +432,15 @@ function handleInputSearch(ev: Event) {
 }
 
 function toggleDropdown() {
+  if (props.attributes?.disabled) return;
   open.value = !open.value;
-  if (open.value && props.searchable) {
-    nextTick(() => {
-      searchInput.value?.focus();
-    });
+  if (open.value) {
+    highlightedIndex.value = -1;
+    if (props.searchable) {
+      nextTick(() => {
+        searchInput.value?.focus();
+      });
+    }
   }
 }
 
@@ -496,6 +519,69 @@ function clearSelection(field: any) {
 }
 
 function handleKeydown(e: KeyboardEvent, field: any) {
-  if (e.key === "Enter") toggleDropdown();
+  const opts = finalOptions.value;
+
+  switch (e.key) {
+    case "ArrowDown":
+      e.preventDefault();
+      if (!open.value) {
+        open.value = true;
+        highlightedIndex.value = 0;
+      } else {
+        highlightedIndex.value =
+          highlightedIndex.value < opts.length - 1
+            ? highlightedIndex.value + 1
+            : 0;
+      }
+      scrollToHighlighted();
+      break;
+
+    case "ArrowUp":
+      e.preventDefault();
+      if (!open.value) {
+        open.value = true;
+        highlightedIndex.value = opts.length - 1;
+      } else {
+        highlightedIndex.value =
+          highlightedIndex.value > 0
+            ? highlightedIndex.value - 1
+            : opts.length - 1;
+      }
+      scrollToHighlighted();
+      break;
+
+    case "Enter":
+      e.preventDefault();
+      if (
+        open.value &&
+        highlightedIndex.value >= 0 &&
+        highlightedIndex.value < opts.length
+      ) {
+        selectOption(opts[highlightedIndex.value], field);
+      } else if (!open.value) {
+        toggleDropdown();
+      }
+      break;
+
+    case "Escape":
+      e.preventDefault();
+      open.value = false;
+      highlightedIndex.value = -1;
+      break;
+
+    case "Tab":
+      open.value = false;
+      highlightedIndex.value = -1;
+      break;
+  }
+}
+
+function scrollToHighlighted() {
+  nextTick(() => {
+    const el = optionRefs.value[highlightedIndex.value];
+    if (el) {
+      el.scrollIntoView({ block: "nearest" });
+    }
+  });
 }
 </script>

@@ -11,7 +11,15 @@
 
 <script setup lang="ts">
 import { useForm } from "@tanstack/vue-form";
-import { provide, watch, computed, ref, inject, onMounted, onUnmounted } from "vue";
+import {
+  provide,
+  watch,
+  computed,
+  ref,
+  inject,
+  onMounted,
+  onUnmounted,
+} from "vue";
 import { onBeforeRouteLeave, matchedRouteKey } from "vue-router";
 import { openModal } from "@customizer/modal-x";
 
@@ -138,7 +146,8 @@ if (matchedRoute) {
 
     const res = await openModal("ConfirmationModal", {
       title: "Alert",
-      message: "You have unsaved changes. Are you sure you want to discard them?",
+      message:
+        "You have unsaved changes. Are you sure you want to discard them?",
       confirmText: "Proceed",
       cancelText: "Cancel",
     });
@@ -150,7 +159,11 @@ if (matchedRoute) {
 
 // Browser tab/window close guard (matches raaz's enableBeforeUnload)
 function onBeforeUnload(e: BeforeUnloadEvent) {
-  if (props.enable_unsaved_guard && is_actually_dirty.value && !form.value.state.isSubmitting) {
+  if (
+    props.enable_unsaved_guard &&
+    is_actually_dirty.value &&
+    !form.value.state.isSubmitting
+  ) {
     e.preventDefault();
   }
 }
@@ -199,7 +212,7 @@ async function handleSubmit() {
 
       if (fieldEl) {
         // Use instant scroll to avoid the race condition with smooth animation
-        fieldEl.scrollIntoView({ behavior: "instant", block: "center" });
+        fieldEl.scrollIntoView({ behavior: "smooth", block: "center" });
         fieldEl.focus({ preventScroll: true });
       }
     });

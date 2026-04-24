@@ -4,6 +4,7 @@
       order: 'left',
       details: 'left',
       carrier: 'left',
+      actions: 'center',
     }"
     :head_alignment="{
       order: 'left',

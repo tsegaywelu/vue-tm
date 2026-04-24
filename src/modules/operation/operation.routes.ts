@@ -37,6 +37,16 @@ export const operation_routes: RouteRecordRaw[] = [
         },
       },
       {
+        path: "shipments/add",
+        name: "operation_shipments_add",
+        component: () => import("./pages/AddShipment.vue"),
+        meta: {
+          title: "Add Shipment",
+          description:
+            "Create a new shipment by assigning an order to a vehicle.",
+        },
+      },
+      {
         path: "shipments/bids",
         name: "operation_shipments_bids",
         component: () => import("./pages/PendingBids.vue"),
@@ -52,8 +62,7 @@ export const operation_routes: RouteRecordRaw[] = [
         component: () => import("./pages/ShipmentAdjustment.vue"),
         meta: {
           title: "Shipment Adjustment",
-          description:
-            "Track and manage shipment adjustments and corrections.",
+          description: "Track and manage shipment adjustments and corrections.",
         },
       },
       {
@@ -92,8 +101,7 @@ export const operation_routes: RouteRecordRaw[] = [
         component: () => import("./pages/Settlements.vue"),
         meta: {
           title: "Settlements",
-          description:
-            "View settled and paid advance payment records.",
+          description: "View settled and paid advance payment records.",
         },
       },
       {
@@ -159,7 +167,8 @@ export const operation_routes: RouteRecordRaw[] = [
     component: () => import("./pages/Maintenance.vue"),
     meta: {
       title: "Maintenance",
-      description: "Schedule and track vehicle maintenance and service records.",
+      description:
+        "Schedule and track vehicle maintenance and service records.",
     },
   },
   {

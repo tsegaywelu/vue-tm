@@ -79,6 +79,7 @@ export default class ApiService {
           data: null,
           error:
             error.response?.data?.message ||
+            error.response?.data?.description ||
             error.message ||
             "Unexpected error",
           errorBody: error.response?.data,

@@ -8,6 +8,7 @@ const lease_api = getApi('/vehicle-lease-agreement')
 const order_api = getApi('/order')
 const route_api = getApi('/route')
 const shipment_api = getApi('/shipment')
+const vehicle_api = getApi('/vehicle')
 
 // ─── Approval Requests ────────────────────────────────────────
 export function fetch_approval_requests(params: ApprovalFilterParams) {
@@ -39,6 +40,10 @@ export function update_order_status(id: string, data: any) {
   return order_api.addAuthenticationHeader().patch(`/${id}`, data)
 }
 
+export function fetch_order_details(id: string) {
+  return order_api.addAuthenticationHeader().get(`/${id}`)
+}
+
 // ─── Routes ───────────────────────────────────────────────────
 export function fetch_routes_paginated(params: Record<string, any>) {
   return route_api.addAuthenticationHeader().get('/all', { params })
@@ -56,4 +61,9 @@ export function fetch_advances(params: Record<string, any>) {
 
 export function fetch_settled_advances(params: Record<string, any>) {
   return advance_api.addAuthenticationHeader().get('/settledAdvance', { params })
+}
+
+// ─── Vehicles ─────────────────────────────────────────────────
+export function fetch_vehicles(params?: Record<string, any>) {
+  return vehicle_api.addAuthenticationHeader().get('', { params })
 }

@@ -444,7 +444,12 @@ const paginationContext = inject<TablePaginationContext<T>>(
 
 const isLoading = computed(() => {
   if (props.loading != null) return props.loading;
-  return paginationContext?.state?.value?.pending ?? false;
+  return (
+    paginationContext?.isLoading?.value ||
+    paginationContext?.isFetching?.value ||
+    paginationContext?.state?.value?.pending ||
+    false
+  );
 });
 
 const currentPage = computed(() => {
