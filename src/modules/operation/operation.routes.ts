@@ -147,7 +147,7 @@ export const operation_routes: RouteRecordRaw[] = [
   {
     path: "tyres",
     name: "operation_tyres",
-    component: () => import("./pages/Tyres.vue"),
+    component: () => import("./pages/tyres/Tyres.vue"),
     meta: {
       title: "Tyres",
       description: "Monitor tyre inventory, usage and replacement schedules.",
@@ -156,11 +156,69 @@ export const operation_routes: RouteRecordRaw[] = [
   {
     path: "maintenance",
     name: "operation_maintenance",
-    component: () => import("./pages/Maintenance.vue"),
-    meta: {
-      title: "Maintenance",
-      description: "Schedule and track vehicle maintenance and service records.",
-    },
+    redirect: "/maintenance/mechanic",
+    children: [
+      {
+        path: "mechanic",
+        name: "operation_maintenance_mechanic",
+        component: () => import("./pages/maintenance/Mechanic.vue"),
+        meta: { title: "Mechanic", description: "Manage mechanics." },
+      },
+      {
+        path: "inspection",
+        name: "operation_maintenance_inspection",
+        component: () => import("./pages/maintenance/Inspection.vue"),
+        meta: { title: "Inspection", description: "Manage vehicle inspections." },
+      },
+      {
+        path: "service-record",
+        name: "operation_maintenance_service_record",
+        component: () => import("./pages/maintenance/ServiceRecord.vue"),
+        meta: { title: "Service Record", description: "View service records." },
+      },
+      {
+        path: "service-reminder",
+        name: "operation_maintenance_service_reminder",
+        component: () => import("./pages/maintenance/ServiceReminder.vue"),
+        meta: { title: "Service Reminder", description: "Manage service reminders." },
+      },
+      {
+        path: "service-task",
+        name: "operation_maintenance_service_task",
+        component: () => import("./pages/maintenance/ServiceTask.vue"),
+        meta: { title: "Service Task", description: "Manage service tasks." },
+      },
+      {
+        path: "service-type",
+        name: "operation_maintenance_service_type",
+        component: () => import("./pages/maintenance/ServiceType.vue"),
+        meta: { title: "Service Type", description: "Manage service types." },
+      },
+      {
+        path: "work-order",
+        name: "operation_maintenance_work_order",
+        component: () => import("./pages/maintenance/WorkOrder.vue"),
+        meta: { title: "Work Order", description: "Manage work orders." },
+      },
+      {
+        path: "workshop",
+        name: "operation_maintenance_workshop",
+        component: () => import("./pages/maintenance/Workshop.vue"),
+        meta: { title: "Workshop", description: "Manage workshops." },
+      },
+      {
+        path: "issue-report",
+        name: "operation_maintenance_issue_report",
+        component: () => import("./pages/maintenance/IssueReport.vue"),
+        meta: { title: "Issue Report", description: "Manage issue reports." },
+      },
+      {
+        path: "tyre-handoffs",
+        name: "operation_maintenance_tyre_handoffs",
+        component: () => import("./pages/maintenance/TyreHandoffs.vue"),
+        meta: { title: "Tyre Handoffs", description: "Manage tyre handoffs." },
+      },
+    ],
   },
   {
     path: "drivers",
