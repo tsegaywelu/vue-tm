@@ -145,12 +145,21 @@ export const operation_routes: RouteRecordRaw[] = [
     },
   },
   {
-    path: "tyres",
+    path: "vehicle-tyres",
     name: "operation_tyres",
-    component: () => import("./pages/tyres/Tyres.vue"),
+    component: () => import("./pages/tyres/vehicleTyres.vue"),
     meta: {
       title: "Tyres",
       description: "Monitor tyre inventory, usage and replacement schedules.",
+    },
+  },
+  {
+    path: "operation/vehicle-tyres/:id",
+    name: "operation_tyres_detail",
+    component: () => import("./pages/tyres/Tyres.vue"),
+    meta: {
+      title: "Tyres Detail",
+      description: "Manage individual tyres for a specific vehicle.",
     },
   },
   {

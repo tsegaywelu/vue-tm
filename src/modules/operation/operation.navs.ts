@@ -102,7 +102,7 @@ export const maintenance_navs: Navs[] = [
   {
     name: "Tyres",
     icon: "tyre",
-    path: "/tyres",
+    path: "/vehicle-tyres",
     show: true,
   },
   {

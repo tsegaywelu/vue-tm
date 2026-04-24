@@ -7,16 +7,23 @@
       New Tyre
     </Button>
   </Teleport>
-  <TyreTable @action="handleTyreAction" />
+  <VehicleTyreDetailTable :vehicle-id="vehicleId" @action="handleTyreAction" />
 </template>
 
 <script setup lang="ts">
-import TyreTable from "../../components/TyreTable.vue";
+import { computed } from "vue";
+import { useRoute } from "vue-router";
+import VehicleTyreDetailTable from "../../components/VehicleTyreDetailTable.vue";
 import Button from "@/components/Button.vue";
-import { type Tyre } from "../../operation.types";
+import type { Tyre } from "../../operation.types";
 import { icons } from "@/utils/icons";
 import { raaz_icons } from "@/utils/raaz_icons";
+
 const all_icons = { ...icons, ...raaz_icons };
+const route = useRoute();
+
+// The vehicle id passed through the URL params: /operation/vehicle-tyres/:id
+const vehicleId = computed(() => route.params.id as string | undefined);
 
 const handleTyreAction = ({
   row,
@@ -25,24 +32,7 @@ const handleTyreAction = ({
   row: Tyre;
   action: string;
 }) => {
-  console.log(`Action: ${action} on Tyre Vehicle: ${row.vehicle?.plateNumber}`);
-  // TODO: Implement modal views or navigation for tyre details
+  console.log(`Action: ${action} on Tyre: ${row.serialNumber}`);
+  // TODO: Implement modal views for actions: decommission, inspect, repair, replace, rethread, rotate, reassign
 };
 </script>
-
-<style scoped>
-.animate-fade-in {
-  animation: fadeIn 0.5s ease-out;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-</style>

@@ -2,10 +2,10 @@ export interface ApprovalRequest {
   _id: string;
   advanceNumber: string;
   payableType:
-    | "advancePayment"
-    | "transactions"
-    | "prePayments"
-    | "vehicleLeaseAgreement";
+  | "advancePayment"
+  | "transactions"
+  | "prePayments"
+  | "vehicleLeaseAgreement";
   advancePaymentId?: string;
   driver?: {
     _id: string;
@@ -159,9 +159,16 @@ export interface Tyre {
   _id: string;
   vehicle: {
     plateNumber: string;
+    _id?: string;
   };
-  totalTyres: number;
-  totalPrice: number;
+  totalTyres?: number;
+  totalPrice?: number;
+  serialNumber?: string;
+  brand?: string;
+  tyrePosition?: string;
+  price?: number;
+  status?: string;
+
 }
 
 export interface Mechanic {
