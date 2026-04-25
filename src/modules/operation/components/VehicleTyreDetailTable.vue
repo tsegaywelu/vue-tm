@@ -193,7 +193,52 @@ const formatPosition = (position?: string) => {
     .join(" ");
 };
 
+import { openModal } from "@customizer/modal-x";
+import DecommissionMdl from "@/components/modals/tyreModals/Decommission.mdl.vue";
+import InspectMdl from "@/components/modals/tyreModals/Inspect.mdl.vue";
+import RepairMdl from "@/components/modals/tyreModals/Repair.mdl.vue";
+import ReplaceMdl from "@/components/modals/tyreModals/Replace.mdl.vue";
+import RethreadMdl from "@/components/modals/tyreModals/Rethread.mdl.vue";
+import RotateMdl from "@/components/modals/tyreModals/Rotate.mdl.vue";
+
 const handleAction = (row: Tyre, action: string) => {
+  let modalComponent: any = null;
+
+  switch (action) {
+    case "decommission":
+      modalComponent = DecommissionMdl;
+      break;
+    case "inspect":
+      modalComponent = InspectMdl;
+      break;
+    case "repair":
+      modalComponent = RepairMdl;
+      break;
+    case "replace":
+      modalComponent = ReplaceMdl;
+      break;
+    case "rethread":
+      modalComponent = RethreadMdl;
+      break;
+    case "rotate":
+      modalComponent = RotateMdl;
+      break;
+    case "reassign":
+      // modalComponent = ReassignMdl; // TODO: implement Reassign
+      console.log("Reassign not implemented yet");
+      break;
+  }
+
+  if (modalComponent) {
+    openModal(
+      modalComponent, 
+      { tyre: row }, 
+      (res) => {
+        if (res) refetch();
+      }
+    );
+  }
+
   emit("action", { row, action });
 };
 

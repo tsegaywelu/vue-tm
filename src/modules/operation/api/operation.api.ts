@@ -9,6 +9,7 @@ const order_api = getApi('/order')
 const route_api = getApi('/route')
 const shipment_api = getApi('/shipment')
 const vehicle_api = getApi('/vehicle')
+const driver_api = getApi('/driver')
 
 // ─── Approval Requests ────────────────────────────────────────
 export function fetch_approval_requests(params: ApprovalFilterParams) {
@@ -66,4 +67,9 @@ export function fetch_settled_advances(params: Record<string, any>) {
 // ─── Vehicles ─────────────────────────────────────────────────
 export function fetch_vehicles(params?: Record<string, any>) {
   return vehicle_api.addAuthenticationHeader().get('', { params })
+}
+
+// ─── Drivers ──────────────────────────────────────────────────
+export function fetch_drivers(params?: Record<string, any>) {
+  return driver_api.addAuthenticationHeader().get('', { params })
 }
