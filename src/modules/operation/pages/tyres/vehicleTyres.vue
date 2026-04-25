@@ -29,7 +29,7 @@ const handleTyreAction = ({
   action: string;
 }) => {
   if (action === "view" && row.vehicle?._id) {
-    router.push(`/operation/vehicle-tyres/${row.vehicle._id}`);
+    router.push(`/vehicle-tyres/${row.vehicle._id}`);
   }
 };
 </script>

@@ -25,7 +25,7 @@
     </template>
 
     <template #cell-totalPrice="{ row }">
-      <span class="text-base font-medium">{{ currencyFormatter(row.totalPrice) }}</span>
+      <span class="text-base font-medium">{{ row.totalPrice ? currencyFormatter(row.totalPrice) : '-' }}</span>
     </template>
 
     <template #cell-actions="{ row }">

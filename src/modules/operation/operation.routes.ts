@@ -1,9 +1,11 @@
 import type { RouteRecordRaw } from "vue-router";
+import { RouterView } from "vue-router";
 
 export const operation_routes: RouteRecordRaw[] = [
   {
     path: "/operation",
     name: "operation_parent",
+    component: RouterView,
     redirect: "/operation/dashboard",
     children: [
       {
@@ -165,6 +167,7 @@ export const operation_routes: RouteRecordRaw[] = [
   {
     path: "maintenance",
     name: "operation_maintenance",
+    component: RouterView,
     redirect: "/maintenance/mechanic",
     children: [
       {

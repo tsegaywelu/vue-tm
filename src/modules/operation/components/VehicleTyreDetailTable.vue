@@ -194,44 +194,37 @@ const formatPosition = (position?: string) => {
 };
 
 import { openModal } from "@customizer/modal-x";
-import DecommissionMdl from "@/components/modals/tyreModals/Decommission.mdl.vue";
-import InspectMdl from "@/components/modals/tyreModals/Inspect.mdl.vue";
-import RepairMdl from "@/components/modals/tyreModals/Repair.mdl.vue";
-import ReplaceMdl from "@/components/modals/tyreModals/Replace.mdl.vue";
-import RethreadMdl from "@/components/modals/tyreModals/Rethread.mdl.vue";
-import RotateMdl from "@/components/modals/tyreModals/Rotate.mdl.vue";
-
 const handleAction = (row: Tyre, action: string) => {
-  let modalComponent: any = null;
+  let modalName: string | null = null;
 
   switch (action) {
     case "decommission":
-      modalComponent = DecommissionMdl;
+      modalName = "Decommission";
       break;
     case "inspect":
-      modalComponent = InspectMdl;
+      modalName = "Inspect";
       break;
     case "repair":
-      modalComponent = RepairMdl;
+      modalName = "Repair";
       break;
     case "replace":
-      modalComponent = ReplaceMdl;
+      modalName = "Replace";
       break;
     case "rethread":
-      modalComponent = RethreadMdl;
+      modalName = "Rethread";
       break;
     case "rotate":
-      modalComponent = RotateMdl;
+      modalName = "Rotate";
       break;
     case "reassign":
-      // modalComponent = ReassignMdl; // TODO: implement Reassign
+      // modalName = "Reassign"; // TODO: implement Reassign
       console.log("Reassign not implemented yet");
       break;
   }
 
-  if (modalComponent) {
+  if (modalName) {
     openModal(
-      modalComponent, 
+      modalName as any, 
       { tyre: row }, 
       (res) => {
         if (res) refetch();
