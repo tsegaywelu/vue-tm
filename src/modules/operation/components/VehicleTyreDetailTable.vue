@@ -217,8 +217,7 @@ const handleAction = (row: Tyre, action: string) => {
       modalName = "Rotate";
       break;
     case "reassign":
-      // modalName = "Reassign"; // TODO: implement Reassign
-      console.log("Reassign not implemented yet");
+      modalName = "Reassign";
       break;
   }
 
