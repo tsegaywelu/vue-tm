@@ -232,6 +232,177 @@ export interface ShipmentFilterParams {
   search?: string;
 }
 
+export interface Tyre {
+  _id: string;
+  vehicle: {
+    plateNumber: string;
+    _id?: string;
+  };
+  totalTyres?: number;
+  totalPrice?: number;
+  serialNumber?: string;
+  brand?: string;
+  tyrePosition?: string;
+  price?: number;
+  status?: string;
+
+}
+
+export interface Mechanic {
+  _id: string;
+  firstName: string;
+  middleName?: string;
+  lastName?: string;
+  isInternal: boolean;
+  phoneNumber?: string;
+  employeeNumber?: string;
+  dateOfBirth?: string;
+  certification?: string;
+  experience?: string;
+  workshop?: {
+    name: string;
+  };
+}
+
+export interface Inspection {
+  _id: string;
+  vehicle?: {
+    plateNumber: string;
+  };
+  inspectionDate?: string;
+  inspectionReason?: string;
+  inspector?: {
+    name: string;
+  };
+  odometerReading?: number;
+  remarks?: string;
+  issuesFound?: {
+    issueType: string;
+  }[];
+}
+
+export interface ServiceRecord {
+  _id: string;
+  vehicle?: {
+    plateNumber: string;
+  };
+  maintenanceDate?: string;
+  mechanics?: {
+    name?: string;
+    firstName?: string;
+    middleName?: string;
+    lastName?: string;
+  }[];
+  workshop?: {
+    name: string;
+  };
+  mileageAtService?: number;
+  totalCost?: number;
+  description?: string;
+}
+
+export interface ServiceReminder {
+  _id: string;
+  vehicle?: {
+    plateNumber: string;
+  };
+  serviceTask?: {
+    name: string;
+  };
+  mileageInterval?: number;
+  interval?: number;
+  lastServiceDate?: string;
+  lastServiceMileage?: number;
+  reminderMileage?: number;
+  reminderDays?: number;
+}
+
+export interface ServiceTask {
+  _id: string;
+  name: string;
+  code?: string;
+  requiredParts?: string[];
+  estimatedDuration?: number;
+  estimatedCost?: number;
+  priority?: string;
+  description?: string;
+}
+
+export interface ServiceType {
+  _id: string;
+  name: string;
+  description?: string;
+  serviceTasks?: {
+    _id: string;
+  }[];
+}
+
+export interface WorkOrder {
+  _id: string;
+  vehicle?: {
+    plateNumber: string;
+  };
+  createdAt?: string;
+  status?: string;
+  mechanics?: {
+    name?: string;
+    firstName?: string;
+    lastName?: string;
+  }[];
+  workType?: string;
+  workArea?: string;
+  costBreakdown?: {
+    partsCost?: number;
+  };
+}
+
+export interface Workshop {
+  _id: string;
+  name: string;
+  tradeName?: string;
+  contactPerson?: string;
+  contactPhone?: string;
+  specialization?: string;
+  tin?: string;
+  location?: {
+    street?: string;
+    city?: string;
+    region?: string;
+  };
+  latitude?: number;
+  longitude?: number;
+}
+
+export interface IssueReport {
+  _id: string;
+  driver?: {
+    firstName?: string;
+    lastName?: string;
+    email?: string;
+  };
+  type?: string;
+  severity?: string;
+  status?: string;
+  location?: string;
+  createdAt?: string;
+}
+
+export interface TyreHandoff {
+  _id: string;
+  serialNumber?: string;
+  eventType?: string;
+  status?: string;
+  toVehicle?: {
+    plateNumber?: string;
+  };
+  fromVehicle?: {
+    plateNumber?: string;
+  };
+  assignedTo?: {
+    username?: string;
+  };
+  createdAt?: string;
+}
 export interface Order {
   _id: string;
   orderCode: string;

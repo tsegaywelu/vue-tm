@@ -114,13 +114,64 @@ export const maintenance_navs: Navs[] = [
   {
     name: "Tyres",
     icon: "tyre",
-    path: "/tyres",
+    path: "/vehicle-tyres",
     show: true,
   },
   {
     name: "Maintenance",
     icon: "maintenance",
-    path: "/maintenance",
     show: true,
+    children: [
+      {
+        name: "Mechanic",
+        path: "/maintenance/mechanic",
+        show: true,
+      },
+      {
+        name: "Inspection",
+        path: "/maintenance/inspection",
+        show: true,
+      },
+      {
+        name: "Service Record",
+        path: "/maintenance/service-record",
+        show: true,
+      },
+      {
+        name: "Service Reminder",
+        path: "/maintenance/service-reminder",
+        show: true,
+      },
+      {
+        name: "Service Task",
+        path: "/maintenance/service-task",
+        show: true,
+      },
+      {
+        name: "Service Type",
+        path: "/maintenance/service-type",
+        show: true,
+      },
+      {
+        name: "Work Order",
+        path: "/maintenance/work-order",
+        show: true,
+      },
+      {
+        name: "Workshop",
+        path: "/maintenance/workshop",
+        show: true,
+      },
+      {
+        name: "Issue Report",
+        path: "/maintenance/issue-report",
+        show: true,
+      },
+      {
+        name: "Tyre Handoffs",
+        path: "/maintenance/tyre-handoffs",
+        show: true,
+      },
+    ],
   },
 ];
