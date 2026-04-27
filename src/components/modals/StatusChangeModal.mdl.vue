@@ -1,10 +1,10 @@
 <template>
   <FormModalParent
-    :values="formValues"
-    @submit="handleFormSubmit"
     modal-style="auto"
     title="Change Shipment Status"
+    :form="form"
     form-id="statusChangeForm"
+    @close="cancel"
   >
     <template #center>
       <!-- Status Select -->
@@ -23,7 +23,10 @@
         v-if="currentStatus === 'custom'"
         name="followUp"
         label="Set note"
-        :rows="4"
+        :attributes="{
+          rows: 4,
+          placeholder: 'Enter follow-up note...',
+        }"
         :validation="{ required }"
       />
 
@@ -41,8 +44,17 @@
 
     <template #bottom>
       <div class="flex justify-end gap-3">
-        <Button type="button" variant="secondary" size="lg-sm"> Cancel </Button>
-        <SubmitButton variant="primary" size="lg-sm"> Save </SubmitButton>
+        <Button type="button" variant="outline" size="md" @click="cancel">
+          Cancel
+        </Button>
+        <SubmitButton
+          :loading="isSubmitting"
+          variant="primary"
+          size="md"
+          form="statusChangeForm"
+        >
+          Save
+        </SubmitButton>
       </div>
     </template>
   </FormModalParent>
@@ -51,19 +63,20 @@
 <script setup lang="ts">
 import { ref, computed, provide } from "vue";
 import { closeModal } from "@customizer/modal-x";
+import { useToastStore } from "@/store/toastStore";
 import { useForm } from "@tanstack/vue-form";
-import FormModalParent from "./FormModalParent.vue";
+import FormModalParent from "@/components/modals/FormModalParent.vue";
 import Button from "@/components/common/Button.vue";
 import SelectInput from "@/components/form/SelectInput.vue";
 import TextareaInput from "@/components/form/TextareaInput.vue";
 import SubmitButton from "@/components/form/SubmitButton.vue";
 import DateInput from "@/components/form/DateInput.vue";
 import { required } from "@/utils/validations";
-import { useToastStore } from "@/store/toastStore";
 import {
   update_shipment_status,
   add_follow_up,
 } from "@/modules/operation/api/shipment.api";
+import { ShipmentStatus } from "@/utils/utils";
 
 export type ReturnType = boolean;
 export type Props = {
@@ -75,10 +88,10 @@ export type Props = {
 const props = defineProps<{ data: Props; close: (res: ReturnType) => void }>();
 
 const toast = useToastStore();
-const isLoading = ref(false);
 
 const shipment = computed(() => props.data.shipment ?? {});
 const currentStatus = ref(shipment.value.status ?? "");
+const isSubmitting = ref(false);
 
 const formValues = computed(() => ({
   status: shipment.value.status ?? "",
@@ -86,20 +99,35 @@ const formValues = computed(() => ({
   statusTime: "",
 }));
 
-// Initialize TanStack form at the modal level
+const form = useForm({
+  defaultValues: formValues.value,
+  onSubmit: async ({ value }) => {
+    await handleFormSubmit(value);
+  },
+}) as any;
+
+// Provide context to both slots (Center and Bottom)
+provide("formContext", {
+  id: "statusChangeForm",
+  form,
+  is_dirty: computed(() => form.state.isDirty),
+});
+
 const statusOptions = computed(() => {
   const isSingleOrCKRF =
     shipment.value.tripType === "single_trip" ||
     (shipment.value.tripType === "round_trip" && shipment.value.CKRF === true);
 
+  const rawList = props.data.statusListRaw ?? ShipmentStatus;
+  const list = props.data.statusList ?? ShipmentStatus;
+
   if (isSingleOrCKRF) {
-    return (props.data.statusListRaw ?? []).map((s: any) => ({
+    return rawList.map((s: any) => ({
       ...s,
       disabled: !isStatusSelectable(s.value),
     }));
   }
 
-  const list = props.data.statusList ?? [];
   const currentIndex = list.findIndex(
     (s: any) => s.value === shipment.value.status,
   );
@@ -142,35 +170,41 @@ function onStatusChange(val: any) {
   currentStatus.value = val;
 }
 
+function cancel() {
+  closeModal();
+}
+
 async function handleFormSubmit(values: any) {
   const id = shipment.value._id;
-  isLoading.value = true;
+  isSubmitting.value = true;
 
   try {
-    let res: any;
     if (values.status === "custom") {
-      res = await add_follow_up(id, { followUp: [values.followUp.trim()] });
+      const res = await add_follow_up(id, { followUp: [values.followUp.trim()] });
+      if (res.status === 200 || res.status === 201) {
+        toast.success("Status updated successfully!");
+        closeModal(true);
+      } else {
+        toast.error("Failed to update status");
+      }
     } else {
       const statusData: any = { status: values.status };
       if (values.statusTime) statusData.statusTime = values.statusTime;
-      res = await update_shipment_status(id, statusData);
-    }
 
-    if (res.status === 200 || res.status === 201) {
-      toast.addToast("Status updated successfully!", "success");
-      closeModal(true);
-    } else {
-      toast.addToast(
-        `Error: ${res.data?.description || "Unknown error occurred."}`,
-        "error",
-      );
+      const res = await update_shipment_status(id, statusData);
+      if (res.status === 200 || res.status === 201) {
+        toast.success("Status updated successfully!");
+        closeModal(true);
+      } else {
+        toast.error("Failed to update status");
+      }
     }
   } catch (error: any) {
     const msg =
       error.response?.data?.description || error.message || "Unexpected error";
-    toast.addToast(`Error: ${msg}`, "error");
+    toast.error(`Error: ${msg}`);
   } finally {
-    isLoading.value = false;
+    isSubmitting.value = false;
   }
 }
 </script>

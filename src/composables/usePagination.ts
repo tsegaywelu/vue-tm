@@ -149,6 +149,16 @@ export function usePagination<T = any>({
     isRef(params) ? params.value : params,
   );
 
+  // Automatically reset to page 1 when query params change
+  watch(
+    resolved_params,
+    () => {
+      if (state.value.page !== 1) setPage(1);
+    },
+    { deep: true },
+  );
+
+
   const queryKey = computed(() => [
     id, // Ensure the query ID is part of the key for easy invalidation
     ...query_key_base,

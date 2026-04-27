@@ -17,7 +17,7 @@
             value_key="orderCode"
             url="/order"
             :validation="{
-              required: (val: string) => required(val),
+              required,
             }"
             @select="(opt) => handleOrderSelect(opt.item, form)"
           />
@@ -26,90 +26,105 @@
             parent_class_name="[&_.input-focus]:bg-grey-25!"
             name="shipper"
             label="Shipper"
+            hide_icon
+            :options="autoFilledOptions.shipper"
             :attributes="{
               placeholder: 'Auto filled values based on selected order',
               disabled: true,
             }"
             :validation="{
-              required: (val: string) => required(val),
+              required,
             }"
           />
 
-          <Input
-            input_style="[&_input]:bg-grey-25"
+          <SelectInput
+            parent_class_name="[&_.input-focus]:bg-grey-25!"
             name="route"
             label="Route"
+            hide_icon
+            :options="autoFilledOptions.route"
             :attributes="{
               placeholder: 'Auto filled values based on selected order',
               disabled: true,
             }"
             :validation="{
-              required: (val: string) => required(val),
+              required,
             }"
           />
 
-          <Input
-            input_style="[&_input]:bg-grey-25"
+          <SelectInput
+            parent_class_name="[&_.input-focus]:bg-grey-25!"
             name="tripType"
             label="Trip Type"
+            hide_icon
+            :options="autoFilledOptions.tripType"
             :attributes="{
               disabled: true,
               placeholder: 'Auto filled values based on selected order',
             }"
             :validation="{
-              required: (val: string) => required(val),
+              required,
             }"
           />
 
-          <Input
-            input_style="[&_input]:bg-grey-25"
+          <SelectInput
+            parent_class_name="[&_.input-focus]:bg-grey-25!"
             name="productType"
             label="Product Type"
+            hide_icon
+            :options="autoFilledOptions.productType"
             :attributes="{
               disabled: true,
               placeholder: 'Auto filled values based on selected order',
             }"
             :validation="{
-              required: (val: string) => required(val),
+              required,
             }"
           />
 
-          <Input
-            input_style="[&_input]:bg-grey-25"
+          <SelectInput
+            parent_class_name="[&_.input-focus]:bg-grey-25!"
             name="vehicleType"
             label="Vehicle Type"
+            hide_icon
+            :options="autoFilledOptions.vehicleType"
             :attributes="{
               disabled: true,
               placeholder: 'Auto filled values based on selected order',
             }"
             :validation="{
-              required: (val: string) => required(val),
+              required,
             }"
           />
 
-          <Input
-            input_style="[&_input]:bg-grey-25"
+          <SelectInput
+            parent_class_name="[&_.input-focus]:bg-grey-25!"
             name="commodity"
             label="Commodity"
+            multiple
+            hide_icon
+            :options="autoFilledOptions.commodity"
             :attributes="{
               disabled: true,
               placeholder: 'Auto filled values based on selected order',
             }"
             :validation="{
-              required: (val: string) => required(val),
+              required: (val: any) => required(val),
             }"
           />
 
-          <Input
-            input_style="[&_input]:bg-grey-25"
+          <SelectInput
+            parent_class_name="[&_.input-focus]:bg-grey-25!"
             name="packaging"
             label="Packaging"
+            hide_icon
+            :options="autoFilledOptions.packaging"
             :attributes="{
               disabled: true,
               placeholder: 'Auto filled values based on selected order',
             }"
             :validation="{
-              required: (val: string) => required(val),
+              required,
             }"
           />
         </div>
@@ -130,7 +145,7 @@
             :options="waypointOptions"
             @select="(opt) => handleWaypointChange(opt.value, form)"
             :validation="{
-              required: (val: string) => required(val),
+              required,
             }"
           />
 
@@ -141,7 +156,7 @@
               placeholder: 'Enter freight order number',
             }"
             :validation="{
-              required: (val: string) => required(val),
+              required,
             }"
           />
 
@@ -156,7 +171,7 @@
               (val) => updateTotalPrice(form, { dispatchWeight: val })
             "
             :validation="{
-              required: (val: string) => required(val),
+              required,
             }"
           />
 
@@ -203,28 +218,39 @@
         description="Assign a vehicle and verify driver and transporter information."
       >
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <SelectInput
-            name="vehicle"
-            label="Search Vehicles"
-            :attributes="{
-              placeholder: 'Choose vehicle',
-            }"
-            label_key="plateNumber"
-            value_key="_id"
-            url="/vehicle"
-            :validation="{
-              required: (val: string) => required(val),
-            }"
-            @select="(opt) => handleVehicleSelect(opt.item, form)"
-          >
-            <template #item="{ item }">
-              <span>
-                {{ item.plateNumber }} - {{ item.vehicleType?.name }} ({{
-                  item.driver.firstName
-                }})
-              </span>
-            </template>
-          </SelectInput>
+          <div class="relative">
+            <button
+              type="button"
+              class="absolute top-0 right-0 text-primary text-[10px] font-black uppercase tracking-wider hover:underline z-10"
+              @click="openRegistrationModal(form)"
+            >
+              Add New
+            </button>
+            <SelectInput
+              name="vehicle"
+              label="Search Vehicles"
+              :attributes="{
+                placeholder: 'Choose vehicle',
+              }"
+              searchable
+              label_key="plateNumber"
+              value_key="_id"
+              url="/vehicle"
+              :options="selectedVehicle ? [selectedVehicle] : []"
+              :validation="{
+                required,
+              }"
+              @select="(opt) => handleVehicleSelect(opt.item, form)"
+            >
+              <template #item="{ item }">
+                <span>
+                  {{ item.plateNumber }} - {{ item.vehicleType?.name }} ({{
+                    item.driver.firstName
+                  }})
+                </span>
+              </template>
+            </SelectInput>
+          </div>
 
           <Input
             input_style="[&_input]:bg-grey-25"
@@ -235,13 +261,13 @@
               placeholder: 'Auto filled based on selected vehicle',
             }"
             :validation="{
-              required: (val: string) => required(val),
+              required,
             }"
           />
 
           <Input
             input_style="[&_input]:bg-grey-25"
-            v-if="selectedVehicleOwnership !== 'Owned'"
+            v-if="selectedVehicleOwnership !== VehicleOwnership.Owned"
             name="transporter"
             label="Transporter"
             :attributes="{
@@ -249,12 +275,12 @@
               placeholder: 'Auto filled based on selected vehicle',
             }"
             :validation="{
-              required: (val: string) => required(val),
+              required,
             }"
           />
 
           <Input
-            v-if="selectedVehicleOwnership === 'Rental'"
+            v-if="selectedVehicleOwnership === VehicleOwnership.Rental"
             name="transporterPrice"
             label="Transporter Price"
             :attributes="{
@@ -262,7 +288,8 @@
               type: 'number',
             }"
             :validation="{
-              required: (val: string) => required(val),
+              required,
+              price,
             }"
           />
         </div>
@@ -275,7 +302,6 @@
       >
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <Input
-            v-if="selectedVehicleOwnership !== 'Rental'"
             name="odometerAtDispatch"
             label="Odometer at Dispatch"
             :attributes="{
@@ -283,7 +309,7 @@
               type: 'number',
             }"
             :validation="{
-              required: (val: string) => required(val),
+              required,
             }"
           />
 
@@ -291,12 +317,15 @@
             name="dispatchDate"
             label="Dispatch Date"
             :validation="{
-              required: (val: string) => required(val),
+              required,
+              dateGreaterThanOrEqalToToday: dateGreaterThanOrEqalToToday,
+            }"
+            :attributes="{
+              placeholder: 'Select a Date',
             }"
           />
 
           <Input
-            v-if="selectedVehicleOwnership !== 'Rental'"
             name="fuelReadingAtDispatch"
             label="Fuel Reading"
             :attributes="{
@@ -304,7 +333,7 @@
               type: 'number',
             }"
             :validation="{
-              required: (val: string) => required(val),
+              required,
             }"
           />
 
@@ -316,22 +345,29 @@
               type: 'number',
             }"
             :validation="{
-              required: (val: string) => required(val),
+              required,
             }"
           />
 
           <Input
-            input_style="[&_input]:bg-grey-25"
             name="totalPrice"
             label="Total Price"
             :attributes="{
-              placeholder: 'Auto-calculated from pricing model',
-              disabled: true,
+              placeholder: 'Enter Total Price',
             }"
             :validation="{
-              required: (val: string) => required(val),
+              required,
+              price,
             }"
           />
+
+          <div
+            v-if="pricingWarning"
+            class="col-span-full flex items-center gap-2 rounded-2xl bg-amber-50 border border-amber-200 px-4 py-3 text-amber-800"
+          >
+            <i class="mdi mdi-alert-circle-outline text-lg text-amber-500"></i>
+            <span class="text-xs font-medium">{{ pricingWarning }}</span>
+          </div>
 
           <TextareaInput
             parent_class_name="col-span-3"
@@ -361,13 +397,15 @@ import DateInput from "@/components/form/DateInput.vue";
 import TextareaInput from "@/components/form/TextareaInput.vue";
 import Colapsable from "@/components/common/Colapsable.vue";
 import { currencyFormatter } from "@/utils/utils";
-import { icons } from "@/utils/icons";
-import { raaz_icons } from "@/utils/raaz_icons";
-import { required } from "@/utils/validations";
+import {
+  dateGreaterThanOrEqalToToday,
+  price,
+  required,
+} from "@/utils/validations";
 import type { Order } from "../operation.types";
-import { PricingType } from "../operation.types";
+import { PricingType, VehicleOwnership } from "../operation.types";
 import { fetch_order_by_id } from "../api/orders.api";
-const all_icons = { ...icons, ...raaz_icons };
+import { openModal } from "@customizer/modal-x";
 
 const props = defineProps<{
   formId: string;
@@ -382,6 +420,7 @@ const emit = defineEmits<{
 const selectedOrder = ref<Order | null>(null);
 const selectedVehicle = ref<any>(null);
 const filteredPricingType = ref<any>(null);
+const pricingWarning = ref("");
 
 const waypointOptions = computed(() => {
   if (!selectedOrder.value?.waypoints) return [];
@@ -389,6 +428,37 @@ const waypointOptions = computed(() => {
     label: waypoint.name,
     value: waypoint._id,
   }));
+});
+
+const autoFilledOptions = computed(() => {
+  const order = selectedOrder.value;
+  if (!order)
+    return {
+      shipper: [],
+      route: [],
+      vehicleType: [],
+      tripType: [],
+      productType: [],
+      packaging: [],
+      commodity: [],
+    };
+
+  return {
+    shipper: [{ label: order.shipper.name, value: order.shipper._id }],
+    route: [{ label: order.route.routeName, value: order.route._id }],
+    vehicleType: [
+      { label: order.vehicleType.name, value: order.vehicleType._id },
+    ],
+    tripType: [{ label: formatType(order.tripType), value: order.tripType }],
+    productType: [
+      { label: formatType(order.productType), value: order.productType },
+    ],
+    packaging: [{ label: order.packaging.name, value: order.packaging._id }],
+    commodity: order.commodity.map((c: any) => ({
+      label: c.name,
+      value: c._id,
+    })),
+  };
 });
 
 const selectedVehicleOwnership = computed(
@@ -410,56 +480,116 @@ const handleOrderSelect = async (order: Order, form: any) => {
     form.setFieldValue("order", order_record._id || "");
     form.setFieldValue("shipper", order_record.shipper?._id || "");
     form.setFieldValue("route", order_record.route?._id || "");
-    form.setFieldValue("tripType", formatType(order_record.tripType));
-    form.setFieldValue("productType", formatType(order_record.productType));
+    form.setFieldValue("tripType", order_record.tripType || "");
+    form.setFieldValue("productType", order_record.productType || "");
     form.setFieldValue("vehicleType", order_record.vehicleType?._id || "");
     form.setFieldValue("packaging", order_record.packaging?._id || "");
-    form.setFieldValue("commodity", order_record.commodity);
+    form.setFieldValue(
+      "commodity",
+      order_record.commodity?.map((c: any) => c._id) || [],
+    );
   }
   form.setFieldValue("waypoint", "");
   filteredPricingType.value = null;
+  pricingWarning.value = "";
 };
 
 const handleWaypointChange = (val: string, form: any) => {
+  console.log("[DEBUG] handleWaypointChange called with val:", val);
+
   if (!selectedOrder.value || !val) {
+    console.log(
+      "[DEBUG] Early return: selectedOrder=",
+      !!selectedOrder.value,
+      "val=",
+      val,
+    );
     filteredPricingType.value = null;
     form?.setFieldValue("totalPrice", "");
     return;
   }
 
   const wp = selectedOrder.value.waypoints.find((w) => w.waypoint._id === val);
+  console.log("[DEBUG] Found waypoint:", wp ? wp.waypoint.name : "NOT FOUND");
+  console.log("[DEBUG] vehiclePricing:", wp?.vehiclePricing);
 
   if (wp?.vehiclePricing) {
+    console.log(
+      "[DEBUG] Looking for match: vehicleType=",
+      selectedOrder.value?.vehicleType._id,
+      "productType=",
+      selectedOrder.value?.productType,
+    );
     const vp = wp.vehiclePricing.find(
       (pricing) =>
         pricing.vehicleType === selectedOrder.value?.vehicleType._id &&
         pricing.productType === selectedOrder.value?.productType,
     );
+    console.log("[DEBUG] Matched pricing:", vp);
     filteredPricingType.value = vp;
+    pricingWarning.value = vp
+      ? ""
+      : "No pricing configured for this vehicle type on the selected waypoint. Please contact an admin to add pricing data.";
   } else {
     filteredPricingType.value = null;
+    pricingWarning.value =
+      "No vehicle pricing data found for the selected waypoint.";
   }
 
-  updateTotalPrice(form);
+  updateTotalPrice(form, { waypoint: val });
 };
 
 const updateTotalPrice = (form: any, overrides?: Record<string, any>) => {
   if (!form) return;
   const values = { ...form.state.values, ...overrides };
+  console.log(
+    "[DEBUG] updateTotalPrice values.waypoint=",
+    values.waypoint,
+    "values.dispatchWeight=",
+    values.dispatchWeight,
+  );
+  console.log("[DEBUG] filteredPricingType=", filteredPricingType.value);
   const total = calculateTotalPrice(values);
+  console.log("[DEBUG] Calculated total=", total);
   form.setFieldValue("totalPrice", +total > 0 ? String(total) : "");
+};
+
+const openRegistrationModal = async (form: any) => {
+  const res = await openModal("AddVehicleRegistrationModal");
+  if (res && res.vehicle) {
+    // Inject the fully populated objects from the other steps into the vehicle object
+    const enrichedVehicle = {
+      ...res.vehicle,
+      driver: res.driver,
+      transporter: res.transporter,
+    };
+    handleVehicleSelect(enrichedVehicle, form);
+    form.setFieldValue("vehicle", res.vehicle._id);
+  }
 };
 
 const handleVehicleSelect = (vehicle: any, form: any) => {
   selectedVehicle.value = vehicle;
 
-  const { firstName, middleName, lastName } = vehicle.driver || {};
-  const driverName =
-    [firstName, middleName, lastName].filter(Boolean).join(" ") ||
-    "Not Assigned";
+  let driverName = "Not Assigned";
+  if (vehicle.driver && typeof vehicle.driver === "object") {
+    const { firstName, middleName, lastName } = vehicle.driver;
+    driverName = [firstName, middleName, lastName].filter(Boolean).join(" ");
+  } else if (vehicle.driverName) {
+    driverName = vehicle.driverName;
+  }
 
   form.setFieldValue("driver", driverName);
-  form.setFieldValue("transporter", vehicle.transporter?.name || "");
+
+  let transporterName = "";
+  if (vehicle.transporter && typeof vehicle.transporter === "object") {
+    transporterName =
+      vehicle.transporter.name || vehicle.transporter.tradeName || "";
+  } else if (vehicle.transporterName) {
+    transporterName = vehicle.transporterName;
+  }
+
+  form.setFieldValue("transporter", transporterName);
 };
 
 const calculateTotalPrice = (values: any) => {

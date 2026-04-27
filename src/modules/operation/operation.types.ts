@@ -6,10 +6,33 @@ export const PricingType = {
 export type PricingType = (typeof PricingType)[keyof typeof PricingType];
 
 export const ShipmentStatus = {
+  VehicleAssigned: "vehicle_assigned",
+  Accepted: "accepted",
+  WaitingToLoadAtOrigin: "waiting_to_load_at_origin",
+  LoadingStartedAtOrigin: "loading_started_at_origin",
+  LoadedAtOrigin: "loaded_at_origin",
+  Departed: "departed",
+  EnRouteToDestination: "en_route_to_destination",
+  ArrivedAtDestination: "arrived_at_destination",
+  WaitingToOffloadAtDestination: "waiting_to_offload_at_destination",
+  OffloadingStartedAtDestination: "offloading_started_at_destination",
+  OffloadedAtDestination: "offloaded_at_destination",
+  WaitingToLoadAtDestination: "waiting_to_load_at_destination",
+  LoadingStartedAtDestination: "loading_started_at_destination",
+  LoadedAtDestination: "loaded_at_destination",
+  EnRouteToOrigin: "en_route_to_origin",
+  ArrivedAtOrigin: "arrived_at_origin",
+  WaitingToOffloadAtOrigin: "waiting_to_offload_at_origin",
+  OffloadingStartedAtOrigin: "offloading_started_at_origin",
+  OffloadedAtOrigin: "offloaded_at_origin",
+  Completed: "completed",
+  Custom: "custom",
+  Terminated: "terminated",
+  Cancelled: "cancelled",
+  Delayed: "delayed",
   Pending: "pending",
   Active: "active",
-  Completed: "completed",
-  Cancelled: "cancelled",
+  Warning: "warning",
 } as const;
 export type ShipmentStatus =
   (typeof ShipmentStatus)[keyof typeof ShipmentStatus];
@@ -32,6 +55,25 @@ export const ProductType = {
   OutBound: "OUT_BOUND",
 } as const;
 export type ProductType = (typeof ProductType)[keyof typeof ProductType];
+
+export const VehicleOwnership = {
+  Leased: "Leased",
+  Rental: "Rental",
+  Owned: "Owned",
+} as const;
+export type VehicleOwnership =
+  (typeof VehicleOwnership)[keyof typeof VehicleOwnership];
+
+export const VehicleTypeName = {
+  FlatBed: "flat-bed",
+  FSR: "FSR",
+  MDV: "MDV",
+  DoubleCup: "DOUBLE CUP",
+  PowerAndTrailer: "POWER & TRAILER",
+  Power: "POWER",
+} as const;
+export type VehicleTypeName =
+  (typeof VehicleTypeName)[keyof typeof VehicleTypeName];
 
 export interface ApprovalRequest {
   _id: string;
@@ -102,11 +144,11 @@ export interface Shipment {
     name: string;
   };
   vehicleType: {
-    name: "POWER & TRAILER";
+    name: VehicleTypeName;
   };
   vehicle: {
     plateNumber: string;
-    ownership: string;
+    ownership: VehicleOwnership;
     trailerPlate: string;
   };
   dispatchWeight: number;
@@ -168,6 +210,10 @@ export interface Shipment {
 }
 
 export interface ShipmentFilterParams {
+  selectedFilterOption?: {
+    value: string;
+  };
+  searchField?: string;
   shipmentCode?: string;
   status?: string;
   productType?: string;
@@ -176,7 +222,7 @@ export interface ShipmentFilterParams {
   agent?: string;
   startDate?: string;
   endDate?: string;
-  vehicleOwnership?: string;
+  vehicleOwnership?: VehicleOwnership;
   damage?: string;
   documentedUploads?: string;
   routeOrigin?: string;
@@ -384,15 +430,15 @@ export interface Order {
   };
   vehicleType: {
     _id: string;
-    name: string;
+    name: VehicleTypeName;
   };
   priority: string;
   commodity: {
+    packaging: string;
     _id: string;
     name: string;
     createdAt: string;
     updatedAt: string;
-    __v: number;
     shipper: string;
   }[];
   packaging: {
@@ -416,6 +462,7 @@ export interface Order {
   };
   createdAt: string;
   waypoints: Waypoints[];
+  vehicleTypeName: VehicleTypeName;
 }
 
 export type VehiclePricing = {
@@ -445,4 +492,85 @@ export type Waypoints = {
   _id: string;
   vehiclePricing: VehiclePricing[];
   waypoint: Waypoint;
+};
+
+export interface Driver {
+  _id: string;
+  firstName: string;
+  middleName: string;
+  lastName: string;
+  name: string;
+  educationalBackground: any[];
+  workExperience: any[];
+  isEmployed: boolean;
+  phoneNumber: string;
+  driverLicenceNumber: string;
+  driverStatus: string;
+  isActive: boolean;
+  transporter: string;
+  bankAccount: any[];
+  driverDocuments: any[];
+  ratingCount: number;
+  carrier: Record<string, any>;
+  hasUserAccount: boolean;
+  initialSettlementBalance: number;
+  regionHistory: any[];
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+}
+
+export interface Vehicle {
+  _id: string;
+  plateNumber: string;
+  transporter: string;
+  ownership: VehicleOwnership;
+  vehicleUseType: string | null;
+  trailerPlate: string;
+  vehicleType: string;
+  driver: string;
+  status: string;
+  isOperational: boolean;
+  pastInsurances: any[];
+  driverHistory: any[];
+  vehicleDocuments: any[];
+  carrier: string;
+  vehicleTypeName: string;
+  transporterName: string;
+  driverName: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+}
+
+export interface Insurance {
+  _id: string;
+  insurer: string;
+  insuranceCategoryAmount: any[];
+  vehicle: string;
+  prePaymentDate: string;
+  prePaymentMatureDate: string;
+  JV: string;
+  withHoldTax: number;
+  CPV: string;
+  total: number;
+  insuranceDocuments: any[];
+  carrier: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+}
+
+export type Trasporter = {
+  name: string;
+  tradeName: string;
+  phoneNumber: string;
+  address: string;
+  type: string;
+  bankAccount: string[];
+  carrier: string;
+  _id: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
 };

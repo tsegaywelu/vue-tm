@@ -1,206 +1,144 @@
 <template>
-  <FormModalParent modal-style="auto" :title="formTitle" @close="closeModal()">
+  <FormModalParent
+    modal-style="auto"
+    :title="formTitle"
+    :form="form"
+    form-id="voucherForm"
+    @close="closeModal()"
+  >
     <template #center>
       <!-- Single trip — completed/offloading states -->
       <template v-if="isSingleTripComplete">
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1"
-            >Issue Voucher</label
-          >
-          <input
-            type="text"
-            v-model="form.shipperIssueVoucher"
-            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1"
-            >Receiving Voucher</label
-          >
-          <input
-            type="text"
-            v-model="form.agentReceiveVoucher"
-            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
+        <Input
+          name="shipperIssueVoucher"
+          label="Issue Voucher"
+        />
+        <Input
+          name="agentReceiveVoucher"
+          label="Receiving Voucher"
+        />
         <template v-if="isOwnedOrLeased">
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1"
-              >Odometer at Complete</label
-            >
-            <input
-              type="number"
-              v-model="form.odometerAtComplete"
-              class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1"
-              >Fuel Reading at Complete</label
-            >
-            <input
-              type="number"
-              v-model="form.fuelReadingAtComplete"
-              class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
+          <Input
+            type="number"
+            name="odometerAtComplete"
+            label="Odometer at Complete"
+          />
+          <Input
+            type="number"
+            name="fuelReadingAtComplete"
+            label="Fuel Reading at Complete"
+          />
         </template>
-        <StarRating v-model="form.driverRating" />
+        <StarRating v-model="driverRating" />
       </template>
 
       <!-- Round trip — completed/offloading states -->
       <template v-else-if="isRoundTripComplete">
-        <div class="flex items-center gap-3 mb-1">
+        <div class="flex items-center gap-3 mb-4">
           <label class="block text-sm font-medium text-gray-700">CKRF</label>
           <label class="relative inline-flex items-center cursor-pointer">
-            <input type="checkbox" v-model="form.CKRF" class="sr-only" />
+            <input type="checkbox" v-model="ckrf" class="sr-only" />
             <div
               class="w-11 h-6 rounded-full shadow-inner transition-colors duration-300"
-              :class="form.CKRF ? 'bg-orange-500' : 'bg-gray-200'"
+              :class="ckrf ? 'bg-orange-500' : 'bg-gray-200'"
             ></div>
             <div
               class="absolute left-0.5 top-0.5 bg-white w-5 h-5 rounded-full shadow transform transition-transform duration-300"
-              :class="form.CKRF ? 'translate-x-5' : 'translate-x-0'"
+              :class="ckrf ? 'translate-x-5' : 'translate-x-0'"
             ></div>
           </label>
         </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1"
-            >FPIV</label
-          >
-          <input
-            type="text"
-            v-model="form.shipperIssueVoucher"
-            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+        
+        <Input
+          name="shipperIssueVoucher"
+          label="FPIV"
+        />
+        <Input
+          name="agentReceiveVoucher"
+          label="Agent Receive Voucher"
+        />
+        <template v-if="!ckrf">
+          <Input
+            name="agentIssueVoucher"
+            label="Agent Issue Voucher"
           />
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1"
-            >Agent Receive Voucher</label
-          >
-          <input
-            type="text"
-            v-model="form.agentReceiveVoucher"
-            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          <Input
+            name="shipperReceiveVoucher"
+            label="Customer Receive Voucher"
           />
-        </div>
-        <template v-if="!form.CKRF">
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1"
-              >Agent Issue Voucher</label
-            >
-            <input
-              type="text"
-              v-model="form.agentIssueVoucher"
-              class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1"
-              >Customer Receive Voucher</label
-            >
-            <input
-              type="text"
-              v-model="form.shipperReceiveVoucher"
-              class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
         </template>
         <template v-if="isOwnedOrLeased">
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1"
-              >Odometer at Complete</label
-            >
-            <input
-              type="text"
-              v-model="formattedOdometer"
-              class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1"
-              >Fuel Reading at Complete</label
-            >
-            <input
-              type="number"
-              v-model="form.fuelReadingAtComplete"
-              class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
+          <Input
+            type="number"
+            name="odometerAtComplete"
+            label="Odometer at Complete"
+          />
+          <Input
+            type="number"
+            name="fuelReadingAtComplete"
+            label="Fuel Reading at Complete"
+          />
         </template>
-        <StarRating v-model="form.driverRating" />
+        <StarRating v-model="driverRating" />
       </template>
 
       <!-- Single trip — issue voucher only -->
-      <template v-else-if="form.tripType === 'single_trip'">
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1"
-            >Issue Voucher</label
-          >
-          <input
-            type="text"
-            v-model="form.shipperIssueVoucher"
-            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
+      <template v-else-if="tripType === 'single_trip'">
+        <Input
+          name="shipperIssueVoucher"
+          label="Issue Voucher"
+        />
       </template>
 
       <!-- Round trip — FPIV only -->
-      <template v-else-if="form.tripType === 'round_trip'">
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1"
-            >FPIV</label
-          >
-          <input
-            type="text"
-            v-model="form.shipperIssueVoucher"
-            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
+      <template v-else-if="tripType === 'round_trip'">
+        <Input
+          name="shipperIssueVoucher"
+          label="FPIV"
+        />
       </template>
     </template>
 
     <template #bottom>
       <div class="flex justify-end gap-3">
-        <button
+        <Button
+          type="button"
+          variant="outline"
+          size="md"
           @click="closeModal()"
-          class="px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200"
         >
           Cancel
-        </button>
-        <button
-          @click="confirm"
-          :disabled="isDataLoading"
-          class="px-4 py-2 rounded-lg text-sm font-medium text-white disabled:opacity-50"
-          style="
-            background: linear-gradient(
-              179.87deg,
-              #2222ff 0.12%,
-              #16169d 104.69%
-            );
-          "
+        </Button>
+        <SubmitButton
+          :loading="isSubmitting"
+          variant="primary"
+          size="md"
+          form="voucherForm"
         >
-          <span v-if="isDataLoading">Saving...</span>
-          <span v-else>OK</span>
-        </button>
+          Save
+        </SubmitButton>
       </div>
     </template>
   </FormModalParent>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed } from "vue";
+import { ref, computed, provide } from "vue";
 import { closeModal } from "@customizer/modal-x";
-import FormModalParent from "./FormModalParent.vue";
 import { useToastStore } from "@/store/toastStore";
-import { add_issue_voucher, add_other_voucher } from "@/modules/operation/api/shipment.api";
+import { useForm } from "@tanstack/vue-form";
+import FormModalParent from "@/components/modals/FormModalParent.vue";
+import Input from "@/components/form/Input.vue";
+import Button from "@/components/common/Button.vue";
+import SubmitButton from "@/components/form/SubmitButton.vue";
+import { add_other_voucher, add_issue_voucher } from "@/modules/operation/api/shipment.api";
 
-// Inline star rating — keeps the file self-contained
+// Inline star rating
 const StarRating = {
   props: { modelValue: { type: Number, default: 0 } },
   emits: ["update:modelValue"],
   template: `
-    <div class="flex items-center gap-2 my-2">
+    <div class="flex items-center gap-2 my-4">
       <span class="text-sm font-semibold text-gray-700">Rate this driver:</span>
       <div class="flex items-center gap-1">
         <svg v-for="star in 5" :key="star" @click="$emit('update:modelValue', star)"
@@ -215,10 +153,39 @@ const StarRating = {
   `,
 };
 
-const props = defineProps({ data: { type: Object, default: () => ({}) } });
+export type Props = {
+  shipment: any;
+};
+
+const props = defineProps<{ data: Props; close: (res: boolean) => void }>();
 
 const toast = useToastStore();
-const isDataLoading = ref(false);
+const isSubmitting = ref(false);
+
+const s = computed(() => props.data.shipment ?? {});
+const formTitle = computed(() => `Voucher — ${s.value.shipmentCode ?? ""}`);
+
+const tripType = computed(() => s.value.tripType);
+const status = computed(() => s.value.status);
+const isOwnedOrLeased = computed(
+  () => s.value.vehicle?.ownership === "Owned" || s.value.vehicle?.ownership === "Leased"
+);
+
+const isSingleTripComplete = computed(
+  () =>
+    tripType.value === "single_trip" &&
+    ["completed", "offloading_started_at_destination", "offloaded_at_destination"].includes(status.value)
+);
+
+const isRoundTripComplete = computed(
+  () =>
+    tripType.value === "round_trip" &&
+    ["completed", "offloading_started_at_origin", "offloaded_at_origin"].includes(status.value)
+);
+
+// Manual refs for non-input bindings
+const driverRating = ref(parseRating(s.value.driverRating));
+const ckrf = ref(s.value.CKRF || false);
 
 function parseRating(val: any) {
   if (val == null) return 0;
@@ -226,148 +193,123 @@ function parseRating(val: any) {
   return isNaN(n) ? 0 : Math.max(0, Math.min(5, n));
 }
 
-const s = props.data.shipment ?? {};
-const form = reactive({
-  _id: s._id,
-  tripType: s.tripType,
-  status: s.status,
-  shipmentCode: s.shipmentCode,
-  vehicle: s.vehicle ?? {},
-  shipperIssueVoucher: s.shipperIssueVoucher || "",
-  agentReceiveVoucher: s.agentReceiveVoucher || "",
-  agentIssueVoucher: s.agentIssueVoucher || "",
-  shipperReceiveVoucher: s.shipperReceiveVoucher || "",
-  odometerAtComplete: s.odometerAtComplete || null,
-  fuelReadingAtComplete: s.fuelReadingAtComplete || null,
-  CKRF: s.CKRF || false,
-  driverRating: parseRating(s.driverRating),
+const formValues = computed(() => ({
+  shipperIssueVoucher: s.value.shipperIssueVoucher || "",
+  agentReceiveVoucher: s.value.agentReceiveVoucher || "",
+  agentIssueVoucher: s.value.agentIssueVoucher || "",
+  shipperReceiveVoucher: s.value.shipperReceiveVoucher || "",
+  odometerAtComplete: s.value.odometerAtComplete || "",
+  fuelReadingAtComplete: s.value.fuelReadingAtComplete || "",
+}));
+
+const form = useForm({
+  defaultValues: formValues.value,
+  onSubmit: async ({ value }) => {
+    await confirm(value);
+  },
+}) as any;
+
+provide("formContext", {
+  id: "voucherForm",
+  form,
+  is_dirty: computed(() => form.state.isDirty),
 });
 
-const isOwnedOrLeased = computed(
-  () =>
-    form.vehicle.ownership === "Owned" || form.vehicle.ownership === "Leased",
-);
-const isSingleTripComplete = computed(
-  () =>
-    form.tripType === "single_trip" &&
-    [
-      "completed",
-      "offloading_started_at_destination",
-      "offloaded_at_destination",
-    ].includes(form.status),
-);
-const isRoundTripComplete = computed(
-  () =>
-    form.tripType === "round_trip" &&
-    [
-      "completed",
-      "offloading_started_at_origin",
-      "offloaded_at_origin",
-    ].includes(form.status),
-);
-
-const formattedOdometer = computed({
-  get() {
-    const val = form.odometerAtComplete;
-    return val != null
-      ? val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-      : "";
-  },
-  set(value) {
-    const n = parseInt(String(value).replace(/,/g, ""));
-    form.odometerAtComplete = isNaN(n) ? 0 : n;
-  },
-});
-
-const formTitle = computed(() => `Voucher — ${form.shipmentCode ?? ""}`);
-
-async function confirm() {
-  isDataLoading.value = true;
+async function confirm(values: any) {
+  isSubmitting.value = true;
   try {
     if (isSingleTripComplete.value || isRoundTripComplete.value) {
-      await voucherConfirm();
+      await voucherConfirm(values);
     } else {
-      await issueVoucherConfirm();
+      await issueVoucherConfirm(values);
     }
-  } catch (error: any) {
-    toast.addToast(`Error: ${error.message}`, "error");
   } finally {
-    isDataLoading.value = false;
+    isSubmitting.value = false;
   }
 }
 
-async function voucherConfirm() {
+async function voucherConfirm(values: any) {
   let payload: any = {};
 
-  if (form.tripType === "single_trip") {
-    if (form.agentReceiveVoucher === "") {
-      toast.addToast("Agent Receive Voucher is required", "error");
+  if (tripType.value === "single_trip") {
+    if (!values.agentReceiveVoucher) {
+      toast.error("Agent Receive Voucher is required");
       return;
     }
-    if (isOwnedOrLeased.value && form.odometerAtComplete === null) {
-      toast.addToast("Odometer at complete is required", "error");
+    if (isOwnedOrLeased.value && !values.odometerAtComplete) {
+      toast.error("Odometer at complete is required");
       return;
     }
-    if (isOwnedOrLeased.value && form.fuelReadingAtComplete === null) {
-      toast.addToast("Fuel Reading at complete is required", "error");
+    if (isOwnedOrLeased.value && !values.fuelReadingAtComplete) {
+      toast.error("Fuel Reading at complete is required");
       return;
     }
     payload = {
-      agentReceiveVoucher: String(form.agentReceiveVoucher),
-      shipperIssueVoucher: String(form.shipperIssueVoucher),
-      driverRating: form.driverRating,
+      agentReceiveVoucher: String(values.agentReceiveVoucher),
+      shipperIssueVoucher: String(values.shipperIssueVoucher),
+      driverRating: driverRating.value,
       ...(isOwnedOrLeased.value && {
-        odometerAtComplete: Number(form.odometerAtComplete),
-        fuelReadingAtComplete: Number(form.fuelReadingAtComplete),
+        odometerAtComplete: Number(values.odometerAtComplete),
+        fuelReadingAtComplete: Number(values.fuelReadingAtComplete),
       }),
     };
   } else {
-    if (form.agentReceiveVoucher === "") {
-      toast.addToast("Agent Receive Voucher is required", "error");
+    if (!values.agentReceiveVoucher) {
+      toast.error("Agent Receive Voucher is required");
       return;
     }
-    if (isOwnedOrLeased.value && form.odometerAtComplete === null) {
-      toast.addToast("Odometer at complete is required", "error");
+    if (isOwnedOrLeased.value && !values.odometerAtComplete) {
+      toast.error("Odometer at complete is required");
       return;
     }
-    if (isOwnedOrLeased.value && form.fuelReadingAtComplete === null) {
-      toast.addToast("Fuel at complete is required", "error");
+    if (isOwnedOrLeased.value && !values.fuelReadingAtComplete) {
+      toast.error("Fuel at complete is required");
       return;
     }
     payload = {
-      shipperIssueVoucher: String(form.shipperIssueVoucher),
-      agentIssueVoucher: String(form.agentIssueVoucher),
-      agentReceiveVoucher: String(form.agentReceiveVoucher),
-      shipperReceiveVoucher: String(form.shipperReceiveVoucher),
-      CKRF: form.CKRF,
-      driverRating: form.driverRating,
+      shipperIssueVoucher: String(values.shipperIssueVoucher),
+      agentIssueVoucher: String(values.agentIssueVoucher),
+      agentReceiveVoucher: String(values.agentReceiveVoucher),
+      shipperReceiveVoucher: String(values.shipperReceiveVoucher),
+      CKRF: ckrf.value,
+      driverRating: driverRating.value,
       ...(isOwnedOrLeased.value && {
-        odometerAtComplete: Number(form.odometerAtComplete),
-        fuelReadingAtComplete: Number(form.fuelReadingAtComplete),
+        odometerAtComplete: Number(values.odometerAtComplete),
+        fuelReadingAtComplete: Number(values.fuelReadingAtComplete),
       }),
     };
   }
 
-  const res = await add_other_voucher(form._id, payload);
-  if (res.status === 200 || res.status === 201) {
-    toast.addToast("Vouchers added successfully!", "success");
-    closeModal(true);
-  } else {
-    toast.addToast(`Error: ${res.data?.description || "Unknown error occurred."}`, "error");
+  try {
+    const res = await add_other_voucher(s.value._id, payload);
+    if (res.status === 200 || res.status === 201) {
+      toast.success("Vouchers added successfully!");
+      closeModal(true);
+    } else {
+      toast.error("Failed to add vouchers");
+    }
+  } catch (err: any) {
+    toast.error(err.response?.data?.description || err.message || "Unknown error");
   }
 }
 
-async function issueVoucherConfirm() {
-  if (!form.shipperIssueVoucher) {
-    toast.addToast("Issue Voucher is required", "error");
+async function issueVoucherConfirm(values: any) {
+  if (!values.shipperIssueVoucher) {
+    toast.error("Issue Voucher is required");
     return;
   }
-  const res = await add_issue_voucher(form._id, { shipperIssueVoucher: String(form.shipperIssueVoucher) });
-  if (res.status === 200 || res.status === 201) {
-    toast.addToast("Vouchers added successfully!", "success");
-    closeModal(true);
-  } else {
-    toast.addToast(`Error: ${res.data?.description || "Unknown error occurred."}`, "error");
+  try {
+    const res = await add_issue_voucher(s.value._id, {
+      shipperIssueVoucher: String(values.shipperIssueVoucher),
+    });
+    if (res.status === 200 || res.status === 201) {
+      toast.success("Vouchers added successfully!");
+      closeModal(true);
+    } else {
+      toast.error("Failed to add vouchers");
+    }
+  } catch (err: any) {
+    toast.error(err.response?.data?.description || err.message || "Unknown error");
   }
 }
 </script>

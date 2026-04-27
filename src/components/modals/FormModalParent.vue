@@ -13,7 +13,7 @@
     @close="handleClose"
   >
     <div
-      class="bg-white flex flex-col overflow-hidden"
+      class="bg-white flex flex-col max-h-full transition-all duration-150 ease-in-out overflow-auto"
       :class="[
         modalStyle === 'full'
           ? 'h-full border-l border-gray-100 shadow-2xl'
@@ -58,10 +58,11 @@
         @submit="onFormSubmit"
         v-bind="formProps"
         class="flex-1 flex flex-col overflow-hidden"
+        #default="{ form }"
       >
         <!-- Body -->
         <div class="p-6 flex-1 flex flex-col gap-4 overflow-auto">
-          <slot name="center" />
+          <slot :form="form" name="center" />
         </div>
 
         <!-- Footer -->
@@ -70,7 +71,7 @@
           class="p-6 border-t border-[#DFE1E7] shrink-0"
           :class="bottomClass"
         >
-          <slot name="bottom" />
+          <slot :form="form" name="bottom" />
         </div>
       </Form>
     </div>

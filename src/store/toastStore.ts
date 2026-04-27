@@ -1,7 +1,7 @@
-import { defineStore } from 'pinia';
-import { ref } from 'vue';
+import { defineStore } from "pinia";
+import { ref } from "vue";
 
-export type ToastType = 'success' | 'error' | 'info' | 'warning';
+export type ToastType = "success" | "error" | "info" | "warning";
 
 export interface Toast {
   id: string;
@@ -16,10 +16,14 @@ export interface Toast {
   paused: boolean;
 }
 
-export const useToastStore = defineStore('toast', () => {
+export const useToastStore = defineStore("toast", () => {
   const toasts = ref<Toast[]>([]);
 
-  function addToast(message: string, type: ToastType = 'success', duration = 3000) {
+  function addToast(
+    message: string,
+    type: ToastType = "success",
+    duration = 5000,
+  ) {
     const id = Math.random().toString(36).substring(2, 9);
     const toast: Toast = {
       id,
@@ -43,7 +47,10 @@ export const useToastStore = defineStore('toast', () => {
   function pauseToast(id: string) {
     const toast = toasts.value.find((t) => t.id === id);
     if (toast && !toast.paused) {
-      toast.remaining = Math.max(0, toast.remaining - (Date.now() - toast.startedAt));
+      toast.remaining = Math.max(
+        0,
+        toast.remaining - (Date.now() - toast.startedAt),
+      );
       toast.paused = true;
     }
   }
@@ -65,19 +72,19 @@ export const useToastStore = defineStore('toast', () => {
   }
 
   function success(message: string, duration?: number) {
-    addToast(message, 'success', duration);
+    addToast(message, "success", duration);
   }
 
   function error(message: string, duration?: number) {
-    addToast(message, 'error', duration);
+    addToast(message, "error", duration);
   }
 
   function info(message: string, duration?: number) {
-    addToast(message, 'info', duration);
+    addToast(message, "info", duration);
   }
 
   function warning(message: string, duration?: number) {
-    addToast(message, 'warning', duration);
+    addToast(message, "warning", duration);
   }
 
   return {

@@ -17,7 +17,23 @@
     id="shipment-list"
     :columns="columns"
     :rows="response"
+    :search_placeholder="dynamicSearchPlaceholder"
+    @row_click="handleAction($event, 'view')"
   >
+    <template #search-prefix>
+      <div
+        class="h-full flex items-center border-r border-gray-200 pr-2 mr-2 w-48"
+      >
+        <Select
+          class="[&_.custom-input]:border-none [&_.custom-input]:min-h-full min-w-48"
+          v-model="selectedSearchField"
+          :options="searchFieldOptions"
+          label_key="label"
+          value_key="value"
+          :clearable="false"
+        />
+      </div>
+    </template>
     <template #cell-shipmentCode="{ value }">
       <span class="font-bold">{{ value }}</span>
     </template>
@@ -39,17 +55,17 @@
         <span class="font-bold text-base text-gray-900">
           {{ row.route.routeName }}
         </span>
-        <span class="text-gray-400 font-medium">{{ row.agent.name }}</span>
+        <span class="text-gray-400 font-medium">{{
+          row.agent?.name || "-"
+        }}</span>
       </div>
     </template>
 
-    <template #cell-shipperIssueVoucher="{ value, row }">
-      <div
-        class="cursor-pointer hover:text-primary transition-colors flex items-center gap-2"
-        @click.stop="openVouchersModal(row)"
-      >
-        <span class="font-medium">{{ value || "Add Voucher" }}</span>
-        <i v-if="!value" class="mdi mdi-plus-circle-outline text-gray-400"></i>
+    <template #cell-shipperIssueVoucher="{ value }">
+      <div class="flex items-center gap-2">
+        <span class="font-medium text-gray-500">{{
+          value || "No Voucher"
+        }}</span>
       </div>
     </template>
 
@@ -72,12 +88,17 @@
       </div>
     </template>
 
-    <template #tabs>
-      <ShipmentFilters
-        @change="handleFilterChange"
-        calendar-type="english"
-        output-calendar-type="english"
-      />
+    <template #after-search>
+      <div
+        class="items-center gap-4 inline-flex border-l border-grey-100 overflow-x-auto px-3"
+      >
+        <i v-html="icons.filter" />
+        <ShipmentFilters
+          @change="handleFilterChange"
+          calendar-type="english"
+          output-calendar-type="english"
+        />
+      </div>
     </template>
 
     <template #cell-status="{ value }">
@@ -85,29 +106,34 @@
         {{ value?.replace(/_/g, " ") }}
       </Status>
     </template>
-    ````
     <template #cell-actions="{ row }">
       <div class="flex items-center justify-end">
         <Dropdown>
           <template #default="{ close }">
-            <button
-              class="w-full text-left px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors"
-              @click="
+            <DropDownItem
+              :icon="icons.eye"
+              label="Details"
+              @click.stop="
                 handleAction(row, 'view');
                 close();
               "
-            >
-              Details
-            </button>
-            <button
-              class="w-full text-left px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-50 text-primary transition-colors"
-              @click="
+            />
+            <DropDownItem
+              :icon="icons.editIcon"
+              label="Update Status"
+              @click.stop="
                 openStatusModal(row);
                 close();
               "
-            >
-              Update Status
-            </button>
+            />
+            <DropDownItem
+              :icon="icons.plusIcon"
+              label="Add Voucher"
+              @click.stop="
+                openVouchersModal(row);
+                close();
+              "
+            />
           </template>
         </Dropdown>
       </div>
@@ -116,9 +142,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import Table from "@/components/common/Table.vue";
+import Select from "@/components/common/Select.vue";
 import Dropdown from "@/components/common/Dropdown.vue";
+import DropDownItem from "@/components/common/DropDownItem.vue";
+import { icons } from "@/utils/icons";
 import { usePagination } from "@/composables/usePagination";
 import type { ShipmentFilterParams, Shipment } from "../operation.types";
 import type { TableColumn } from "@/components/common/Table.vue";
@@ -163,8 +192,40 @@ const { response, refetch } = usePagination<Shipment>({
   params: computed(() => activeFilters.value),
 });
 
+const searchFieldOptions = [
+  { label: "Plate Number", value: "vehiclePlateNumber" },
+  { label: "Shipment Code", value: "shipmentCode" },
+  { label: "Driver Name", value: "driverName" },
+  { label: "Shipper Issue Voucher", value: "shipperIssueVoucher" },
+  { label: "Agent Receive Voucher", value: "agentReceiveVoucher" },
+  { label: "Agent Issue Voucher", value: "agentIssueVoucher" },
+  { label: "Shipper Receive Voucher", value: "shipperReceiveVoucher" },
+  { label: "Transporter Name", value: "transporterName" },
+];
+
+const selectedSearchField = ref("shipmentCode");
+
+watch(selectedSearchField, (newField) => {
+  activeFilters.value = { ...activeFilters.value, searchField: newField };
+});
+
+// Initialize the filter
+activeFilters.value.searchField = selectedSearchField.value;
+
+const dynamicSearchPlaceholder = computed(() => {
+  const option = searchFieldOptions.find(
+    (o) => o.value === selectedSearchField.value,
+  );
+  return option ? `Search by ${option.label}...` : "Search Shipments...";
+});
+
 const handleFilterChange = (newFilters: ShipmentFilterParams) => {
-  activeFilters.value = { ...newFilters };
+  activeFilters.value = {
+    ...newFilters,
+    selectedFilterOption: {
+      value: selectedSearchField.value,
+    },
+  };
 };
 
 const handleAction = (row: Shipment, action: string) => {

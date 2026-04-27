@@ -5,9 +5,12 @@
     :class="class_name"
   >
     <div v-if="Array.isArray(error)" class="flex flex-col gap-1">
-      <span v-for="(e, idx) in error" :key="idx">{{ e }}</span>
+      <span v-for="(e, idx) in error" :key="idx">{{
+        typeof e === "string" ? e : ""
+      }}</span>
     </div>
-    <template v-else>{{ error }}</template>
+    <template v-else-if="typeof error === 'string'">{{ error }}</template>
+
   </span>
 </template>
 

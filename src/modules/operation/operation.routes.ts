@@ -39,6 +39,25 @@ export const operation_routes: RouteRecordRaw[] = [
         },
       },
       {
+        path: "shipments/add",
+        name: "operation_shipments_add",
+        component: () => import("./pages/AddShipment.vue"),
+        meta: {
+          title: "Add Shipment",
+          description:
+            "Create a new shipment by assigning an order to a vehicle.",
+        },
+      },
+      {
+        path: "shipments/:id",
+        name: "operation_shipment_details",
+        component: () => import("./pages/ShipmentDetails.vue"),
+        meta: {
+          title: "Shipment Details",
+          description: "Detailed breakdown and history of a specific shipment.",
+        },
+      },
+      {
         path: "shipments/bids",
         name: "operation_shipments_bids",
         component: () => import("./pages/PendingBids.vue"),
@@ -54,8 +73,7 @@ export const operation_routes: RouteRecordRaw[] = [
         component: () => import("./pages/ShipmentAdjustment.vue"),
         meta: {
           title: "Shipment Adjustment",
-          description:
-            "Track and manage shipment adjustments and corrections.",
+          description: "Track and manage shipment adjustments and corrections.",
         },
       },
       {
@@ -94,8 +112,7 @@ export const operation_routes: RouteRecordRaw[] = [
         component: () => import("./pages/Settlements.vue"),
         meta: {
           title: "Settlements",
-          description:
-            "View settled and paid advance payment records.",
+          description: "View settled and paid advance payment records.",
         },
       },
       {
@@ -180,7 +197,10 @@ export const operation_routes: RouteRecordRaw[] = [
         path: "inspection",
         name: "operation_maintenance_inspection",
         component: () => import("./pages/maintenance/Inspection.vue"),
-        meta: { title: "Inspection", description: "Manage vehicle inspections." },
+        meta: {
+          title: "Inspection",
+          description: "Manage vehicle inspections.",
+        },
       },
       {
         path: "service-record",
@@ -192,7 +212,10 @@ export const operation_routes: RouteRecordRaw[] = [
         path: "service-reminder",
         name: "operation_maintenance_service_reminder",
         component: () => import("./pages/maintenance/ServiceReminder.vue"),
-        meta: { title: "Service Reminder", description: "Manage service reminders." },
+        meta: {
+          title: "Service Reminder",
+          description: "Manage service reminders.",
+        },
       },
       {
         path: "service-task",

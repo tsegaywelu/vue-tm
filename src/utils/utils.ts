@@ -213,50 +213,10 @@ export function onKey(
   };
 }
 
-export const validateAll = (
-  funs: Record<string, any> = {},
-  value: any,
-  form: any,
-) => {
-  if (!funs || Object.keys(funs).length === 0) return undefined;
+import { validateAll } from "./validations";
 
-  // Prioritize required-like validations
-  const priorityKeys = [
-    "required",
-    "isChecked",
-    ...Object.keys(funs).filter((key) =>
-      key.toLowerCase().startsWith("required"),
-    ),
-  ];
-  for (const key of priorityKeys) {
-    if (funs[key] && typeof funs[key] === "function") {
-      const [isValid, error] = funs[key](value, form);
-      if (!isValid) return error;
-    }
-  }
+export { validateAll };
 
-  // Check if value is truly empty (null, undefined, or empty string)
-  // We keep 0 and false as non-empty values.
-  const isEmpty =
-    value === undefined || value === null || value === "" || value?.length == 0;
-
-  // If the value is empty and we passed all priority validations, skip further validations
-  if (isEmpty) {
-    return undefined;
-  }
-
-  // Run remaining validations
-  for (const [key, fun] of Object.entries(funs)) {
-    if (priorityKeys.includes(key) || typeof fun !== "function") continue;
-
-    const [isValid, error] = (
-      fun as (value: any, form: any) => [boolean, string]
-    )(value, form);
-    if (!isValid) return error;
-  }
-
-  return undefined;
-};
 
 export async function allLogout() {
   const res = await openModal("ConfirmationModal");

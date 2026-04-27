@@ -1,7 +1,7 @@
 <template>
   <Teleport to="body">
     <div
-      class="fixed top-5 right-5 z-[10000] flex flex-col gap-3 pointer-events-none"
+      class="fixed top-5 right-5 z-10000 flex flex-col gap-3 pointer-events-none"
     >
       <TransitionGroup name="toast">
         <div
@@ -14,23 +14,64 @@
         >
           <!-- Content row -->
           <div class="flex items-center gap-3 px-4 py-3">
-            <div class="flex-shrink-0">
-              <span
-                v-if="toast.type === 'success'"
-                v-html="icons.successBell"
-              ></span>
-              <span
-                v-else-if="toast.type === 'error'"
-                v-html="icons.rejectedBell"
-              ></span>
-              <span
-                v-else-if="toast.type === 'warning'"
-                v-html="icons.infoBell"
-              ></span>
-              <span v-else v-html="icons.infoBell"></span>
+            <div class="shrink-0 relative size-10 grid place-items-center">
+              <!-- Circular Progress SVG -->
+              <svg
+                class="absolute inset-0 size-10 -rotate-90 transform"
+                viewBox="0 0 40 40"
+              >
+                <!-- Background circle -->
+                <circle
+                  cx="20"
+                  cy="20"
+                  r="18"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                  class="text-gray-100"
+                />
+                <!-- Progress circle -->
+                <circle
+                  cx="20"
+                  cy="20"
+                  r="18"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                  :class="[textClass(toast.type)]"
+                  :style="{
+                    strokeDasharray: '113.1',
+                    strokeDashoffset: calculateOffset(toast),
+                    transition: toast.paused
+                      ? 'none'
+                      : 'stroke-dashoffset 0.1s linear',
+                  }"
+                />
+              </svg>
+
+              <!-- Bell Icon -->
+              <div class="relative z-10 size-10 grid place-items-center">
+                <span
+                  v-if="toast.type === 'success'"
+                  v-html="icons.successBell"
+                  class="*:size-10"
+                ></span>
+                <span
+                  v-else-if="toast.type === 'error'"
+                  v-html="icons.rejectedBell"
+                  class="*:size-10"
+                ></span>
+                <span
+                  v-else-if="toast.type === 'warning'"
+                  v-html="icons.infoBell"
+                  class="*:size-10"
+                ></span>
+                <span v-else v-html="icons.infoBell" class="*:size-10"></span>
+              </div>
             </div>
 
-            <div class="flex-grow">
+            <div class="grow">
               <p class="text-sm font-semibold text-gray-900 leading-tight">
                 {{ toast.type.charAt(0).toUpperCase() + toast.type.slice(1) }}
               </p>
@@ -41,19 +82,10 @@
 
             <button
               @click="removeToast(toast.id)"
-              class="flex-shrink-0 text-gray-400 hover:text-gray-600 transition-colors"
+              class="shrink-0 text-gray-400 hover:text-gray-600 transition-colors"
             >
               <i class="mdi mdi-close text-lg"></i>
             </button>
-          </div>
-
-          <!-- Progress bar -->
-          <div class="h-[3px] w-full bg-gray-100">
-            <div
-              class="h-full transition-[width] ease-linear"
-              :class="[progressClass(toast.type)]"
-              :style="{ width: progressWidth(toast) }"
-            ></div>
           </div>
         </div>
       </TransitionGroup>
@@ -62,7 +94,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 import { useToastStore, type Toast } from "@/store/toastStore";
 import { icons } from "@/utils/icons";
 import { storeToRefs } from "pinia";
@@ -72,17 +104,18 @@ const { toasts } = storeToRefs(toastStore);
 const { removeToast, pauseToast, resumeToast, pauseAll, resumeAll } =
   toastStore;
 
-// ── Timer tick ──────────────────────────────────────────────────
+// ── Reactive Time ────────────────────────────────────────────────
+const currentTime = ref(Date.now());
 let rafId: number | null = null;
 
 function tick() {
-  const now = Date.now();
+  currentTime.value = Date.now();
   // Iterate in reverse so splice doesn't shift indices
   for (let i = toasts.value.length - 1; i >= 0; i--) {
     const t = toasts.value[i];
     if (t.paused) continue;
 
-    const elapsed = now - t.startedAt;
+    const elapsed = currentTime.value - t.startedAt;
     const left = t.remaining - elapsed;
 
     if (left <= 0) {
@@ -112,17 +145,23 @@ function handleVisibility() {
 }
 
 // ── Progress helpers ────────────────────────────────────────────
-function progressWidth(toast: Toast): string {
-  if (toast.duration <= 0) return "100%";
+function calculateOffset(toast: Toast): string {
+  if (toast.duration <= 0) return "0";
 
   let remaining: number;
   if (toast.paused) {
     remaining = toast.remaining;
   } else {
-    remaining = Math.max(0, toast.remaining - (Date.now() - toast.startedAt));
+    remaining = Math.max(
+      0,
+      toast.remaining - (currentTime.value - toast.startedAt),
+    );
   }
-  const pct = (remaining / toast.duration) * 100;
-  return `${Math.max(0, Math.min(100, pct))}%`;
+
+  const pct = remaining / toast.duration;
+  // Circumference = 2 * PI * r = 2 * 3.14159 * 18 ≈ 113.1
+  const circumference = 113.1;
+  return String(circumference * (1 - pct));
 }
 
 function borderClass(type: string) {
@@ -135,14 +174,14 @@ function borderClass(type: string) {
         : "border-blue-100";
 }
 
-function progressClass(type: string) {
+function textClass(type: string) {
   return type === "success"
-    ? "bg-green-400"
+    ? "text-green-500"
     : type === "error"
-      ? "bg-red-400"
+      ? "text-red-500"
       : type === "warning"
-        ? "bg-orange-400"
-        : "bg-blue-400";
+        ? "text-orange-500"
+        : "text-blue-500";
 }
 </script>
 
