@@ -37,11 +37,19 @@
 
           <template #right_component>
             <div
-              class="grid place-items-center cursor-pointer"
+              v-if="field.state.value"
+              class="grid place-items-center cursor-pointer hover:text-red-500 transition-colors p-1"
+              @click.stop="onClear(field)"
+            >
+              <i class="*:size-4" v-html="icons.close"></i>
+            </div>
+            <div
+              v-else
+              class="grid place-items-center cursor-pointer p-1"
               @click="togglePicker"
             >
               <slot name="right_component">
-                <i class="mdi mdi-calendar-blank text-gray-600 text-xl"></i>
+                <i class="*:size-5" v-html="icons.calender"></i>
               </slot>
             </div>
           </template>
@@ -51,7 +59,7 @@
           <div
             v-if="isOpen"
             ref="dropdownRef"
-            class="fixed z-[9999]"
+            class="fixed z-999"
             :style="dropdownStyle"
           >
             <DatePicker
@@ -71,19 +79,12 @@
 </template>
 
 <script setup lang="ts">
-import {
-  ref,
-  computed,
-  watch,
-  onMounted,
-  onBeforeUnmount,
-  nextTick,
-  type InputHTMLAttributes,
-} from "vue";
+import { ref, watch, onMounted, onBeforeUnmount, nextTick } from "vue";
 import InputParent from "./InputParent.vue";
 import InputLayout from "./InputLayout.vue";
 import { type InputProps } from "./Input.vue";
 import DatePicker from "@/components/DatePicker.vue";
+import { icons } from "@/utils/icons";
 
 export interface DateInputProps extends InputProps {
   is_range?: boolean;
@@ -196,6 +197,14 @@ function onSelect(val: any, field: any) {
   }
   if (!props.is_range || (typeof val === "object" && val.end)) {
     isOpen.value = false;
+  }
+}
+
+function onClear(field: any) {
+  const newVal = props.is_range ? null : "";
+  field.handleChange(newVal);
+  if (props.on_change) {
+    props.on_change(newVal, null);
   }
 }
 </script>

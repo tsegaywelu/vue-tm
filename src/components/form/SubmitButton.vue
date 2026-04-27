@@ -16,7 +16,7 @@
       >
         <slot />
         <span
-          v-if="isSubmitting"
+          v-if="isSubmitting || loading"
           class="*:size-6 absolute inset-0 z-10 backdrop-blur-3xl rounded-[inherit] grid place-items-center"
         >
           <i v-html="icons.spinner"></i>
@@ -38,6 +38,7 @@ export interface SubmitButtonProps {
   disabled?: boolean;
   variant?: ButtonVariant;
   size?: ButtonSize;
+  loading?: boolean;
 }
 
 const props = withDefaults(defineProps<SubmitButtonProps>(), {
@@ -46,6 +47,7 @@ const props = withDefaults(defineProps<SubmitButtonProps>(), {
   disabled: false,
   variant: "default",
   size: "md",
+  loading: false,
 });
 
 const formContext = inject("formContext", null) as any;

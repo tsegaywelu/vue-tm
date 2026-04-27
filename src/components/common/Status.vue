@@ -18,40 +18,11 @@
 </template>
 
 <script setup lang="ts">
+import type { ShipmentStatus } from "@/modules/operation/operation.types";
 import { computed } from "vue";
 
-export type StatusVariant =
-  | "vehicle_assigned"
-  | "accepted"
-  | "waiting_to_load_at_origin"
-  | "loading_started_at_origin"
-  | "loaded_at_origin"
-  | "departed"
-  | "en_route_to_destination"
-  | "arrived_at_destination"
-  | "waiting_to_offload_at_destination"
-  | "offloading_started_at_destination"
-  | "offloaded_at_destination"
-  | "waiting_to_load_at_destination"
-  | "loading_started_at_destination"
-  | "loaded_at_destination"
-  | "en_route_to_origin"
-  | "arrived_at_origin"
-  | "waiting_to_offload_at_origin"
-  | "offloading_started_at_origin"
-  | "offloaded_at_origin"
-  | "completed"
-  | "custom"
-  | "terminated"
-  | "cancelled"
-  | "delayed"
-  | "pending"
-  | "active"
-  | "warning"
-  | (string & {});
-
 interface Props {
-  variant: StatusVariant;
+  variant?: ShipmentStatus;
   type?: "wrapped" | "extended";
   label?: string;
 }
@@ -109,9 +80,9 @@ const statusStyles = computed(() => {
   };
 
   // Check for partial matches or defaults
-  const variant = props.variant.toLowerCase();
+  const variant = props.variant?.toLowerCase() || "";
 
-  if (styles[variant]) return styles[variant];
+  if (variant && styles[variant]) return styles[variant];
 
   // Logical groupings for statuses that might not be exact matches
   if (

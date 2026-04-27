@@ -27,8 +27,12 @@ const handleShipmentAction = ({
   row: Shipment;
   action: string;
 }) => {
-  console.log(`Action: ${action} on Shipment: ${row.shipmentCode}`);
-  // TODO: Implement modal views or navigation for shipment details
+  if (action === 'view') {
+    router.push(`/operation/shipments/${row._id}`);
+  } else {
+    console.log(`Action: ${action} on Shipment: ${row.shipmentCode}`);
+    // TODO: Implement other actions
+  }
 };
 </script>
 

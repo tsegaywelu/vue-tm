@@ -92,7 +92,7 @@ export type Props = {
   action?: string;
   subject?: string;
   showAmountInput?: boolean;
-  type: "primary" | "danger";
+  type?: "primary" | "danger";
 };
 
 const props = defineProps<{ data: Props; close: (res: ReturnType) => void }>();

@@ -233,6 +233,7 @@ export function dateGreaterThanOrEqalToToday(value: string): [boolean, string] {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const date = new Date(value);
+
   if (date < today) return [false, t("validation.greater_than_today")];
   return [true, ""];
 }
@@ -336,83 +337,52 @@ export function validateTimeRange(value: string): [boolean, string] {
   return [true, ""];
 }
 
-const _legacyRequired = (value: any) => {
-  if (value === undefined || value === null || value === "" || (Array.isArray(value) && value.length === 0)) {
-    return "This field is required";
+export const validateAll = (
+  funs: Record<string, any> = {},
+  value: any,
+  form: any,
+): string | undefined => {
+  if (!funs || Object.keys(funs).length === 0) return undefined;
+
+  // Prioritize required-like validations
+  const priorityKeys = [
+    "required",
+    "isChecked",
+    ...Object.keys(funs).filter((key) =>
+      key.toLowerCase().startsWith("required"),
+    ),
+  ];
+
+  for (const key of priorityKeys) {
+    if (funs[key] && typeof funs[key] === "function") {
+      const result = funs[key](value, undefined, form);
+      const [isValid, error] = Array.isArray(result)
+        ? result
+        : [!result, result];
+      if (!isValid) return error;
+    }
   }
-  return undefined;
-};
 
-const _legacyEmail = (value: any) => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(value)) {
-    return "Invalid email address";
+  // Check if value is truly empty (null, undefined, or empty string)
+  // We keep 0 and false as non-empty values.
+  const isEmpty =
+    value === undefined ||
+    value === null ||
+    value === "" ||
+    (Array.isArray(value) && value.length === 0);
+
+  // If the value is empty and we passed all priority validations, skip further validations
+  if (isEmpty) {
+    return undefined;
   }
-  return undefined;
-};
 
-const _legacyPassword = (value: any) => {
-  if (String(value).length < 6) {
-    return "Password must be at least 6 characters long";
-  }
-  return undefined;
-};
+  // Run remaining validations
+  for (const [key, fun] of Object.entries(funs)) {
+    if (priorityKeys.includes(key) || typeof fun !== "function") continue;
 
-const _legacyNumber = (value: any) => {
-  if (isNaN(Number(value)) || value === "") {
-    return "Please enter a valid number";
-  }
-  return undefined;
-};
-
-export const validateAll = (rules: Record<string, any>, value: any, form: any): string | undefined => {
-  if (!rules) return undefined;
-
-  for (const [rule, param] of Object.entries(rules)) {
-    if (rule === "required" && param) {
-      const error = _legacyRequired(value);
-      if (error) return typeof param === "string" ? param : error;
-    }
-
-    if (value === undefined || value === null || value === "") continue;
-
-    if (rule === "email" && param) {
-      const error = _legacyEmail(value);
-      if (error) return typeof param === "string" ? param : error;
-    }
-
-    if (rule === "password" && param) {
-      const error = _legacyPassword(value);
-      if (error) return typeof param === "string" ? param : error;
-    }
-
-    if (rule === "number" && param) {
-      const error = _legacyNumber(value);
-      if (error) return typeof param === "string" ? param : error;
-    }
-
-    if (rule === "min" && typeof param === "number") {
-      if (String(value).length < param) {
-        return `Minimum ${param} characters required`;
-      }
-    }
-
-    if (rule === "max" && typeof param === "number") {
-      if (String(value).length > param) {
-        return `Maximum ${param} characters allowed`;
-      }
-    }
-
-    if (rule === "pattern" && param instanceof RegExp) {
-      if (!param.test(value)) {
-        return "Invalid format";
-      }
-    }
-
-    if (rule === "custom" && typeof param === "function") {
-      const error = param(value, form);
-      if (error) return error;
-    }
+    const result = (fun as Function)(value, undefined, form);
+    const [isValid, error] = Array.isArray(result) ? result : [!result, result];
+    if (!isValid) return error;
   }
 
   return undefined;

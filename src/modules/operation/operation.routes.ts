@@ -47,6 +47,15 @@ export const operation_routes: RouteRecordRaw[] = [
         },
       },
       {
+        path: "shipments/:id",
+        name: "operation_shipment_details",
+        component: () => import("./pages/ShipmentDetails.vue"),
+        meta: {
+          title: "Shipment Details",
+          description: "Detailed breakdown and history of a specific shipment.",
+        },
+      },
+      {
         path: "shipments/bids",
         name: "operation_shipments_bids",
         component: () => import("./pages/PendingBids.vue"),

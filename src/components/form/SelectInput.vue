@@ -91,7 +91,10 @@
               </template>
             </div>
 
-            <div class="w-auto h-5 flex shrink-0 text-gray-500">
+            <div
+              v-if="!hide_icon"
+              class="w-auto h-5 flex shrink-0 text-gray-500"
+            >
               <i v-if="isPending" class="*:size-5" v-html="icons.spinner"></i>
               <template v-else>
                 <button
@@ -219,6 +222,7 @@ export interface SelectInputProps extends InputProps {
   label_key?: string | ((item: any) => string);
   value_key?: string | ((item: any) => any);
   display_label_fn?: (item: any) => string;
+  hide_icon?: boolean;
 }
 
 const props = withDefaults(defineProps<SelectInputProps>(), {
@@ -237,6 +241,7 @@ const props = withDefaults(defineProps<SelectInputProps>(), {
   label_key: "label",
   value_key: "value",
   display_label_fn: undefined,
+  hide_icon: false,
 
   show_validation_status: true,
   parent_class_name: "",
@@ -283,6 +288,24 @@ onBeforeUnmount(() => {
     unsubscribe();
   }
 });
+
+// Sync searchResult when value is set programmatically (e.g. from a modal)
+watch(
+  () => currentSelectedValue.value,
+  (newVal) => {
+    if (!props.searchable) return;
+    if (!props.multiple && newVal) {
+      const opt = finalOptions.value.find(
+        (o: any) => getOptionValue(o) == newVal,
+      );
+      if (opt) {
+        searchResult.value = opt.displayLabel || getOptionLabel(opt);
+      }
+    } else if (!newVal) {
+      searchResult.value = "";
+    }
+  },
+);
 
 const syncedSearch = ref("");
 
@@ -339,10 +362,22 @@ const dropdownRoundedClass = computed(() =>
 
 const finalOptions = computed(() => {
   let list = isRemote.value
-    ? Array.isArray(remoteData.value)
-      ? remoteData.value
-      : []
+    ? [
+        ...(Array.isArray(remoteData.value) ? remoteData.value : []),
+        ...(props.options || []),
+      ]
     : props.options;
+
+  const seen = new Set();
+  list = list.filter((item: any) => {
+    const val =
+      typeof props.value_key === "function"
+        ? props.value_key(item)
+        : getValueByPath(item, props.value_key as string);
+    if (seen.has(val)) return false;
+    seen.add(val);
+    return true;
+  });
 
   let mapped = list.map((item: any) => {
     if (typeof item === "string") return { label: item, value: item, item };

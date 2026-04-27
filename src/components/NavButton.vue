@@ -134,7 +134,10 @@ watchEffect(() => {
         v-if="is_open && !is_nav_closed"
         class="overflow-hidden transition-all pl-4 duration-300 ease-in-out"
       >
-        <div class="flex flex-col gap-1 border-l border-grey-300 py-1 px-2">
+        <div
+          v-if="children_showable.length"
+          class="flex flex-col gap-1 border-l border-grey-300 py-1 px-2"
+        >
           <NavButton
             v-for="(child, index) in children_showable"
             :key="index"

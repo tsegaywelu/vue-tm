@@ -3,6 +3,7 @@ import { computed } from "vue";
 import { useRoute, RouterLink } from "vue-router";
 import { icons } from "@/utils/icons";
 import type { Navs } from "@/types/navigation";
+import { getNestedRoute } from "@/utils/utils";
 
 const props = defineProps<{
   navs: Navs[];
@@ -11,32 +12,9 @@ const props = defineProps<{
 const route = useRoute();
 const currentPath = computed(() => route.path);
 
-const getNestedRoute = (navs: Navs[], path: string): Navs[] => {
-  let breadcrumbs: Navs[] = [];
-
-  const findPath = (items: Navs[], currentPath: string): boolean => {
-    for (const item of items) {
-      if (item.path && currentPath === item.path) {
-        breadcrumbs.push(item);
-        return true;
-      }
-      if (item.children && item.children.length > 0) {
-        if (findPath(item.children, currentPath)) {
-          breadcrumbs.unshift(item);
-          return true;
-        }
-      }
-    }
-    return false;
-  };
-
-  findPath(navs, path);
-  return breadcrumbs;
-};
-
-const breadCrumbs = computed(() =>
-  getNestedRoute(props.navs, currentPath.value),
-);
+const breadCrumbs = computed(() => {
+  return getNestedRoute(props.navs as any, currentPath.value) || [];
+});
 </script>
 
 <template>

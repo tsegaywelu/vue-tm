@@ -8,22 +8,25 @@
       v-if="!hide_search || tabs"
       class="px-1 flex justify-between items-center min-h-[88px]"
     >
-      <div
-        v-if="!hide_search"
-        class="w-[800px] md:max-w-1/3 input-focus rounded-[36px] flex items-center gap-2.5 border pl-2 pr-4 border-gray-100 overflow-hidden"
-      >
-        <slot name="search-prefix"></slot>
+      <div class="flex items-center gap-4 flex-1 w-full max-w-full">
         <div
-          class="text-gray-500 *:size-4 flex justify-center items-center ml-2"
-          v-html="icons.search"
-        ></div>
-        <input
-          :value="local_search"
-          @input="onSearchInput"
-          :placeholder="search_placeholder"
-          class="focus:shadow-none h-14 w-full outline-none text-base bg-transparent"
-          type="text"
-        />
+          v-if="!hide_search"
+          class="w-full min-w-[400px] input-focus rounded-[36px] flex items-center gap-2.5 border pl-2 pr-4 border-gray-100 overflow-hidden"
+        >
+          <slot name="search-prefix"></slot>
+          <div
+            class="text-gray-500 *:size-4 flex justify-center items-center ml-2"
+            v-html="icons.search"
+          ></div>
+          <input
+            :value="local_search"
+            @input="onSearchInput"
+            :placeholder="search_placeholder"
+            class="focus:shadow-none h-14 w-full outline-none text-base bg-transparent"
+            type="text"
+          />
+        </div>
+        <slot name="after-search" />
       </div>
 
       <div class="flex items-center gap-3 w-full justify-end">
