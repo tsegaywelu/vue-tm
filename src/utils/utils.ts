@@ -47,7 +47,10 @@ export const Triptype = [
   },
 ];
 
-export const ProductType = [
+export const ProductT: {
+  label: keyof typeof ProductType;
+  value: ProductType;
+}[] = [
   {
     label: "In Bound",
     value: "IN_BOUND",
@@ -136,6 +139,17 @@ export enum PaymentTerm {
   "Escrow" = "ESCROW",
 }
 
+export const formatStatus = (status?: string) => {
+  if (!status) return "-";
+  return status.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+};
+
+export const formatPricing = (type?: string) => {
+  if (type === "per_quintal") return "Per Quintal";
+  if (type === "per_kilometer") return "Per Kilometer";
+  return formatStatus(type);
+};
+
 export function getApi(url: string, baseUrl?: string) {
   return new ApiService(`${baseUrl ?? import.meta.env.v_API_URL}${url}`);
 }
@@ -214,9 +228,9 @@ export function onKey(
 }
 
 import { validateAll } from "./validations";
+import type { ProductType } from "@/modules/operation/operation.types";
 
 export { validateAll };
-
 
 export async function allLogout() {
   const res = await openModal("ConfirmationModal");

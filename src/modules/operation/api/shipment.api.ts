@@ -1,5 +1,9 @@
 import { getApi } from "@/utils/getApi";
-import type { Shipment, ShipmentFilterParams } from "../operation.types";
+import type {
+  Shipment,
+  ShipmentFilterParams,
+  StatusSourceReport,
+} from "../operation.types";
 
 const shipment_api = getApi("/shipment");
 
@@ -39,4 +43,10 @@ export function add_follow_up(id: string, data: any) {
 
 export function create_shipment(data: any) {
   return shipment_api.addAuthenticationHeader().post("", data);
+}
+
+export function fetch_status_source_report(id: string) {
+  return shipment_api
+    .addAuthenticationHeader()
+    .get<StatusSourceReport>(`/${id}/status-change-source-report`);
 }

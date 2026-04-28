@@ -52,7 +52,9 @@ export const TripType = {
 export type TripType = (typeof TripType)[keyof typeof TripType];
 
 export const ProductType = {
-  OutBound: "OUT_BOUND",
+  "Out Bound": "OUT_BOUND",
+  "In Bound": "IN_BOUND",
+  "Site Transfer": "SITE_TRANSFER",
 } as const;
 export type ProductType = (typeof ProductType)[keyof typeof ProductType];
 
@@ -172,14 +174,7 @@ export interface Shipment {
     lastName?: string;
     phoneNumber?: string;
   };
-  statusTime: {
-    vehicleAssignedTime: string;
-    acceptedTime: string;
-    waitingToLoadAtOriginTime: string;
-    loadingStartedAtOriginTime: string;
-    loadedAtOriginTime: string;
-    departedTime: string;
-  };
+  statusTime: { [K in ShipmentStatus]: string };
   transporterPrice?: string;
   remark: string;
   totalPrice: number;
@@ -245,7 +240,6 @@ export interface Tyre {
   tyrePosition?: string;
   price?: number;
   status?: string;
-
 }
 
 export interface Mechanic {
@@ -574,3 +568,26 @@ export type Trasporter = {
   updatedAt: string;
   __v: number;
 };
+
+export interface StatusSource {
+  source: string;
+  count: number;
+  percentage: number;
+}
+
+export interface StatusSourceReport {
+  shipmentId: string;
+  totalChanges: number;
+  bySource: StatusSource[];
+  driverAppUsage: {
+    count: number;
+    eligibleTotal: number;
+    percentage: number;
+    excludedStatuses: string[];
+  };
+  statusSourceBreakdown: {
+    status: string;
+    total: number;
+    bySource: StatusSource[];
+  }[];
+}

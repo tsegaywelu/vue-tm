@@ -1,5 +1,6 @@
 import type { RouteRecordRaw } from "vue-router";
 import { RouterView } from "vue-router";
+import { icons } from "@/utils/icons";
 
 export const operation_routes: RouteRecordRaw[] = [
   {
@@ -55,6 +56,23 @@ export const operation_routes: RouteRecordRaw[] = [
         meta: {
           title: "Shipment Details",
           description: "Detailed breakdown and history of a specific shipment.",
+          tabsTeleportTo: "#shipment-details-tabs",
+          tabs: [
+            {
+              label: "Overview",
+              value: "overview",
+            },
+            {
+              label: "Document Uploads",
+              value: "uploads",
+            },
+            {
+              label: "Pre-Trip Inspections",
+              value: "pre-trip-inspections",
+            },
+            { label: "Settlements", value: "settlements" },
+            { label: "Empty Return", value: "emptyReturn" },
+          ],
         },
       },
       {
@@ -104,6 +122,16 @@ export const operation_routes: RouteRecordRaw[] = [
           title: "Advances",
           description:
             "Track driver and transporter advance payments and expenses.",
+          tabs: [
+            {
+              label: "Driver Advance Payments",
+              value: "driverAdvances",
+            },
+            {
+              label: "Transporter Advance Payments",
+              value: "transporterAdvances",
+            },
+          ],
         },
       },
       {

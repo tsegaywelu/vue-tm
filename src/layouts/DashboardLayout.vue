@@ -77,9 +77,9 @@ onUnmounted(() => {
           <RouterView v-slot="{ Component, route }">
             <template v-if="isMounted">
               <DashboardPage v-if="!route.meta.noWrapper">
-                <component :is="Component" :key="route.fullPath" />
+                <component :is="Component" :key="route.path" />
               </DashboardPage>
-              <component :is="Component" v-else :key="route.fullPath" />
+              <component :is="Component" v-else :key="route.path" />
             </template>
           </RouterView>
         </main>
