@@ -1,6 +1,6 @@
 <template>
   <nav
-    class="flex items-center p-1 space-x-2 overflow-x-auto no-scrollbar whitespace-nowrap"
+    class="flex items-center p-0.5 space-x-2 overflow-x-auto no-scrollbar whitespace-nowrap"
   >
     <button
       v-for="tab in tabs"
