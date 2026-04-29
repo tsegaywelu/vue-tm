@@ -1,0 +1,126 @@
+<template>
+  <Table
+    id="receivable-settlement-list"
+    :columns="columns"
+    :rows="response"
+    search_placeholder="Search settlements..."
+    @row_click="handleAction($event, 'view')"
+  >
+    <template #cell-advanceNumber="{ row }">
+      <span class="font-bold">{{ row.advancePayment?.advanceNumber || '-' }}</span>
+    </template>
+
+    <template #cell-driver="{ row }">
+      <div class="flex flex-col">
+        <span class="font-semibold text-gray-900">
+          {{ row.advancePayment?.shipment?.vehicle?.plateNumber || '-' }}
+        </span>
+        <span class="text-xs text-gray-400 font-medium" v-if="row.advancePayment?.driver">
+          {{ row.advancePayment.driver.firstName }} {{ row.advancePayment.driver.lastName }}
+        </span>
+      </div>
+    </template>
+
+    <template #cell-route="{ row }">
+      <span class="font-medium text-gray-700">
+        {{ row.advancePayment?.shipment?.route?.routeName || '-' }}
+      </span>
+    </template>
+
+    <template #cell-shipmentCode="{ row }">
+      <span class="text-sm text-gray-600">{{ row.advancePayment?.shipment?.shipmentCode || '-' }}</span>
+    </template>
+
+    <template #cell-fuelAdvance="{ row }">
+      <span>{{ row.category === 'FUEL' ? currencyFormatter(row.amount) : '-' }}</span>
+    </template>
+    
+    <template #cell-perdiemAdvance="{ row }">
+      <span>{{ row.category === 'PERDIEM' ? currencyFormatter(row.amount) : '-' }}</span>
+    </template>
+
+    <template #cell-otherAdvance="{ row }">
+      <span>{{ row.category === 'OTHER' ? currencyFormatter(row.amount) : '-' }}</span>
+    </template>
+
+    <template #cell-total="{ row }">
+      <span class="font-bold text-gray-900">
+        {{ currencyFormatter(row.amount) }}
+      </span>
+    </template>
+
+    <template #cell-createdAt="{ value }">
+      <span class="text-sm text-gray-600">
+        {{ dateFormatter(value) }}
+      </span>
+    </template>
+
+    <template #after-search>
+      <div class="items-center gap-4 inline-flex border-l border-grey-100 overflow-x-auto px-3">
+        <i v-html="icons.filter" />
+        <ReceivableSettlementFilters @change="handleFilterChange" />
+      </div>
+    </template>
+
+    <template #cell-actions="{ row }">
+      <div class="flex items-center justify-end">
+        <Dropdown>
+          <template #default="{ close }">
+            <DropDownItem
+              :icon="icons.eye"
+              label="Details"
+              @click.stop="
+                handleAction(row, 'view');
+                close();
+              "
+            />
+          </template>
+        </Dropdown>
+      </div>
+    </template>
+  </Table>
+</template>
+
+<script setup lang="ts">
+import { computed, ref } from "vue";
+import Table from "@/components/common/Table.vue";
+import Dropdown from "@/components/common/Dropdown.vue";
+import DropDownItem from "@/components/common/DropDownItem.vue";
+import { icons } from "@/utils/icons";
+import { usePagination } from "@/composables/usePagination";
+import type { TableColumn } from "@/components/common/Table.vue";
+import ReceivableSettlementFilters from "./ReceivableSettlementFilters.vue";
+import { currencyFormatter, dateFormatter } from "@/utils/utils";
+
+const emit = defineEmits(["action"]);
+
+const columns: TableColumn<any>[] = [
+  { key: "advanceNumber", label: "Code", field: "advanceNumber" },
+  { key: "driver", label: "Driver/Vehicle", field: "driver" },
+  { key: "createdAt", label: "Date", field: "createdAt" },
+  { key: "shipmentCode", label: "Shipment Code", field: "shipmentCode" },
+  { key: "route", label: "Route", field: "route" },
+  { key: "fuelAdvance", label: "Fuel", field: "fuelAdvance" },
+  { key: "perdiemAdvance", label: "Per Diem", field: "perdiemAdvance" },
+  { key: "otherAdvance", label: "Other", field: "otherAdvance" },
+  { key: "total", label: "Total", field: "amount" },
+  { key: "actions", label: "Actions", field: "", cellAlign: "right" },
+];
+
+const activeFilters = ref({});
+const { response, refetch } = usePagination<any>({
+  id: "receivable-settlement-list",
+  url: "/advance-payment/receivableTransaction",
+  params: computed(() => activeFilters.value),
+});
+
+const handleFilterChange = (newFilters: any) => {
+  activeFilters.value = { ...newFilters };
+};
+
+const handleAction = (row: any, action: string) => {
+  emit("action", { row, action });
+};
+
+defineExpose({ refetch });
+</script>

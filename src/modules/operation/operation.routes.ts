@@ -182,6 +182,33 @@ export const operation_routes: RouteRecordRaw[] = [
     },
   },
   {
+    path: "vehicle-tyres/add",
+    name: "operation_tyres_add",
+    component: () => import("./pages/tyres/addTyre.vue"),
+    meta: {
+      title: "Add Tyre",
+      description: "Add a new tyre to a vehicle.",
+    },
+  },
+  {
+    path: "vehicle-tyres/edit/:id",
+    name: "operation_tyres_edit",
+    component: () => import("./pages/tyres/editTyre.vue"),
+    meta: {
+      title: "Edit Tyre",
+      description: "Edit an existing tyre record.",
+    },
+  },
+  {
+    path: "vehicle-tyres/details/:id",
+    name: "operation_tyres_details",
+    component: () => import("./pages/tyres/tyreDetails.vue"),
+    meta: {
+      title: "Tyre Details",
+      description: "View detailed information about a specific tyre.",
+    },
+  },
+  {
     path: "maintenance",
     name: "operation_maintenance",
     component: RouterView,
@@ -252,6 +279,68 @@ export const operation_routes: RouteRecordRaw[] = [
         name: "operation_maintenance_tyre_handoffs",
         component: () => import("./pages/maintenance/TyreHandoffs.vue"),
         meta: { title: "Tyre Handoffs", description: "Manage tyre handoffs." },
+      },
+    ],
+  },
+  {
+    path: "finance",
+    name: "operation_finance",
+    component: RouterView,
+    redirect: "/finance/payable",
+    children: [
+      {
+        path: "payable",
+        name: "operation_finance_payable",
+        component: () => import("./pages/finance/Payable.vue"),
+        meta: { title: "Payable", description: "Manage payables." },
+      },
+      {
+        path: "receivable",
+        name: "operation_finance_receivable",
+        component: () => import("./pages/finance/Receivable.vue"),
+        meta: { title: "Receivable", description: "Manage receivables." },
+      },
+      {
+        path: "invoice-report",
+        name: "operation_finance_invoice_report",
+        component: () => import("./pages/finance/InvoiceReport.vue"),
+        meta: { title: "Invoice Report", description: "View invoice reports." },
+      },
+      {
+        path: "payment-collection",
+        name: "operation_finance_payment_collection",
+        component: () => import("./pages/finance/PaymentCollection.vue"),
+        meta: { title: "Payment Collection", description: "Manage payment collections." },
+      },
+      {
+        path: "expense",
+        name: "operation_finance_expense",
+        component: () => import("./pages/finance/Expense.vue"),
+        meta: { title: "Expense", description: "Manage expenses." },
+      },
+      {
+        path: "paid-sub-contracts",
+        name: "operation_finance_paid_sub_contracts",
+        component: () => import("./pages/finance/PaidSubContracts.vue"),
+        meta: { title: "Paid Sub-Contracts", description: "Manage paid sub-contracts." },
+      },
+      {
+        path: "expense-types",
+        name: "operation_finance_expense_types",
+        component: () => import("./pages/finance/ExpenseTypes.vue"),
+        meta: { title: "Expense Types", description: "Manage expense types." },
+      },
+      {
+        path: "fuel-transactions",
+        name: "operation_finance_fuel_transactions",
+        component: () => import("./pages/finance/FuelTransactions.vue"),
+        meta: { title: "Fuel Transactions", description: "Manage fuel transactions." },
+      },
+      {
+        path: "driver-bonuses",
+        name: "operation_finance_driver_bonuses",
+        component: () => import("./pages/finance/DriverBonuses.vue"),
+        meta: { title: "Driver Bonuses", description: "Manage driver bonuses." },
       },
     ],
   },

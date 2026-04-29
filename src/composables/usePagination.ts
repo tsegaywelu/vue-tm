@@ -47,6 +47,8 @@ interface UsePaginationOptions {
   queryKey?: string[];
   api?: ApiService;
   withAuth?: boolean;
+  method?: "GET" | "POST";
+  paginate?: boolean;
 }
 
 function useDebounceFn<T extends (...args: any[]) => any>(
@@ -108,6 +110,7 @@ export function usePagination<T = any>({
   queryKey: query_key_base = [],
   api: apiInstance = rootApi,
   withAuth = true,
+  method = "GET",
 }: UsePaginationOptions): TablePaginationContext<T> {
   const id = prop_id || query_key_base[0] || url;
 
@@ -203,6 +206,10 @@ export function usePagination<T = any>({
       const caller = withAuth
         ? apiInstance.addAuthenticationHeader()
         : apiInstance;
+
+      if (method === "POST") {
+        return await caller.post<any>(url, request_params, { signal });
+      }
       return await caller.get<any>(url, { params: request_params, signal });
     },
     enabled: autofetch,
@@ -222,7 +229,13 @@ export function usePagination<T = any>({
             ? res_data.items
             : res_data?.results && Array.isArray(res_data.results)
               ? res_data.results
-              : [];
+              : res_data?.vehicleExpenses && Array.isArray(res_data.vehicleExpenses)
+                ? res_data.vehicleExpenses
+                : res_data?.docs && Array.isArray(res_data.docs)
+                  ? res_data.docs
+                  : res_data?.documents && Array.isArray(res_data.documents)
+                    ? res_data.documents
+                    : [];
 
         if (items.length > 0 && !state.value.isDirty) {
           setIsDirty(true);
@@ -268,7 +281,11 @@ export function usePagination<T = any>({
         ? d.items
         : d?.results && Array.isArray(d.results)
           ? d.results
-          : [];
+          : d?.vehicleExpenses && Array.isArray(d.vehicleExpenses)
+            ? d.vehicleExpenses
+            : d?.docs && Array.isArray(d.docs)
+              ? d.docs
+              : [];
   });
 
   const server_error = computed(() => {

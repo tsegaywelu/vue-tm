@@ -245,6 +245,8 @@ export interface Tyre {
   tyrePosition?: string;
   price?: number;
   status?: string;
+  data?: any
+
 
 }
 

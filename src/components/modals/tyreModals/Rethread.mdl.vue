@@ -11,8 +11,8 @@
       <Input
         name="mileage"
         label="Mileage"
-        type="number"
-        :attributes="{ placeholder: 'Enter mileage', min: 0 }"
+      
+        :attributes="{ placeholder: 'Enter mileage', min: 0 ,type:'number'}"
         :validation="{ required }"
       />
 
@@ -30,8 +30,8 @@
       <Input
         name="treadDepth"
         label="Tread Depth"
-        type="number"
-        :attributes="{ placeholder: 'Enter tread depth', min: 0 }"
+       
+        :attributes="{ placeholder: 'Enter tread depth', min: 0,type:'number' }"
       />
 
       <!-- Description Input -->

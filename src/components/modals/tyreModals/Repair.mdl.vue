@@ -11,8 +11,8 @@
       <Input
         name="mileage"
         label="Mileage"
-        type="number"
-        :attributes="{ placeholder: 'Enter mileage', min: 0 }"
+      
+        :attributes="{ placeholder: 'Enter mileage',type:'number', min: 0 }"
         :validation="{ required }"
       />
 

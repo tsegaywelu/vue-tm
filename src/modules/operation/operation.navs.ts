@@ -116,6 +116,28 @@ export const maintenance_navs: Navs[] = [
     icon: "tyre",
     path: "/vehicle-tyres",
     show: true,
+    children: [
+      {
+        path: "vehicle-tyres/$id",
+        name: "Tyre Detail",
+        show: false
+      },
+      {
+        path: "/vehicle-tyres/add",
+        name: "Add Tyre",
+        show: false,
+      },
+      {
+        path: "/vehicle-tyres/edit/$id",
+        name: "Edit Tyre",
+        show: false,
+      },
+      {
+        path: "/vehicle-tyres/details/$id",
+        name: "Tyre Details",
+        show: false,
+      },
+    ],
   },
   {
     name: "Maintenance",
@@ -170,6 +192,61 @@ export const maintenance_navs: Navs[] = [
       {
         name: "Tyre Handoffs",
         path: "/maintenance/tyre-handoffs",
+        show: true,
+      },
+    ],
+  },
+];
+
+export const finance_navs: Navs[] = [
+  {
+    name: "Finance",
+    icon: "finance",
+    show: true,
+    children: [
+      {
+        name: "Payable",
+        path: "/finance/payable",
+        show: true,
+      },
+      {
+        name: "Receivable",
+        path: "/finance/receivable",
+        show: true,
+      },
+      {
+        name: "Invoice Report",
+        path: "/finance/invoice-report",
+        show: true,
+      },
+      {
+        name: "Payment Collection",
+        path: "/finance/payment-collection",
+        show: true,
+      },
+      {
+        name: "Expense",
+        path: "/finance/expense",
+        show: true,
+      },
+      {
+        name: "Paid Sub-Contracts",
+        path: "/finance/paid-sub-contracts",
+        show: true,
+      },
+      {
+        name: "Expense Types",
+        path: "/finance/expense-types",
+        show: true,
+      },
+      {
+        name: "Fuel Transactions",
+        path: "/finance/fuel-transactions",
+        show: true,
+      },
+      {
+        name: "Driver Bonuses",
+        path: "/finance/driver-bonuses",
         show: true,
       },
     ],

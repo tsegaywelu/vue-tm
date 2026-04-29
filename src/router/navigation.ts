@@ -2,7 +2,8 @@ import {
   core_operations_navs,
   stakeholders_navs,
   fleet_navs,
-  maintenance_navs
+  maintenance_navs,
+  finance_navs
 } from '@/modules/operation/operation.navs'
 import type { Navs } from '@/types/navigation'
 
@@ -27,5 +28,9 @@ export const navigationRegistry: NavGroup[] = [
   {
     name: 'ASSETS & MAINTENANCE',
     items: maintenance_navs
+  },
+  {
+    name: 'FINANCE',
+    items: finance_navs
   }
 ]

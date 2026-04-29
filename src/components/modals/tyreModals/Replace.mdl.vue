@@ -8,7 +8,7 @@
   >
     <template #center>
       <div class="grid grid-cols-2 gap-4">
-        <Input name="mileage" label="Mileage" type="number" :validation="{ required }" :attributes="{ placeholder: 'Enter mileage', type: 'number' }" />
+        <Input name="mileage" label="Mileage" :validation="{ required }" :attributes="{ placeholder: 'Enter mileage', type: 'number' }" />
         <DateInput name="date" label="Date" :validation="{ required }" :attributes="{ placeholder: 'Select date' }" />
        
       </div>
@@ -20,13 +20,13 @@
         <Input name="vehicle" label="Vehicle" :attributes="{ disabled: true, placeholder: 'Vehicle' }" />
         <Input name="tyrePosition" label="Tyre Position" :attributes="{ disabled: true, placeholder: 'Tyre position' }" />
         <Input name="brand" label="Brand" :validation="{ required }" :attributes="{ placeholder: 'Enter brand' }" />
-        <Input name="treadDepth" label="Tread Depth (mm)" type="number" :attributes="{ placeholder: 'Enter tread depth' }" />
-        <Input name="TPI" label="TPI" type="number" :attributes="{ placeholder: 'Enter TPI' }" />
-        <Input name="pressure" label="Pressure (PSI)" type="number" :attributes="{ placeholder: 'Enter pressure' }" />
-        <Input name="price" label="Price" type="number" :validation="{ required }" :attributes="{ placeholder: 'Enter price' }" />
+        <Input name="treadDepth" label="Tread Depth (mm)" :attributes="{ placeholder: 'Enter tread depth',type:'number' }" />
+        <Input name="TPI" label="TPI"  :attributes="{ placeholder: 'Enter TPI',type:'number' }" />
+        <Input name="pressure" label="Pressure (PSI)" :attributes="{ placeholder: 'Enter pressure' ,type:'number'}" />
+        <Input name="price" label="Price"  :validation="{ required }" :attributes="{ placeholder: 'Enter price',type:'number' }" />
         <Input name="type" label="Type" :attributes="{ placeholder: 'Enter type' }" />
         <DateInput name="installationDate" label="Installation Date" :validation="{ required }" :attributes="{ placeholder: 'Select installation date' }" />
-        <Input name="installationMileage" label="Installation Mileage" type="number" :validation="{ required }" :attributes="{ placeholder: 'Enter installation mileage' }" />
+        <Input name="installationMileage" label="Installation Mileage"  :validation="{ required }" :attributes="{ placeholder: 'Enter installation mileage',type:'number' }" />
         <TextareaInput
           name="description"
           label="Description"

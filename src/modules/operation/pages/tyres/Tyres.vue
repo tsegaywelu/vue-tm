@@ -1,11 +1,11 @@
 <template>
   <Teleport to="#page-actions" defer>
-    <Button>
+    <!-- <Button>
       <template #leading>
         <div class="size-5" v-html="all_icons.plus"></div>
       </template>
       New Tyre
-    </Button>
+    </Button> -->
   </Teleport>
   <VehicleTyreDetailTable :vehicle-id="vehicleId" @action="handleTyreAction" />
 </template>

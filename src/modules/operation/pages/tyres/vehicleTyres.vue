@@ -1,6 +1,6 @@
 <template>
   <Teleport to="#page-actions" defer>
-    <Button>
+    <Button @click="router.push('/vehicle-tyres/add')"  >
       <template #leading>
         <div class="size-5" v-html="all_icons.plus"></div>
       </template>

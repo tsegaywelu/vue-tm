@@ -11,8 +11,8 @@
       <Input
         name="mileage"
         label="Mileage"
-        type="number"
-        :attributes="{ placeholder: 'Enter mileage', min: 0 }"
+       
+        :attributes="{ placeholder: 'Enter mileage', type:'number', min: 0 }"
         :validation="{ required }"
       />
 
@@ -62,7 +62,7 @@ import Input from "@/components/form/Input.vue";
 import TextareaInput from "@/components/form/TextareaInput.vue";
 import SubmitButton from "@/components/form/SubmitButton.vue";
 import DateInput from "@/components/form/DateInput.vue";
-import { required } from "@/utils/validations";
+import { number, required } from "@/utils/validations";
 import { useToastStore } from "@/store/toastStore";
 import { update_tyre_status } from "@/modules/operation/api/tyre.api";
 
