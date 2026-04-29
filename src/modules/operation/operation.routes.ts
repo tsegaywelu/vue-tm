@@ -1,5 +1,6 @@
 import type { RouteRecordRaw } from "vue-router";
 import { RouterView } from "vue-router";
+import { icons } from "@/utils/icons";
 
 export const operation_routes: RouteRecordRaw[] = [
   {
@@ -55,6 +56,23 @@ export const operation_routes: RouteRecordRaw[] = [
         meta: {
           title: "Shipment Details",
           description: "Detailed breakdown and history of a specific shipment.",
+          tabsTeleportTo: "#shipment-details-tabs",
+          tabs: [
+            {
+              label: "Overview",
+              value: "overview",
+            },
+            {
+              label: "Document Uploads",
+              value: "uploads",
+            },
+            {
+              label: "Pre-Trip Inspections",
+              value: "pre-trip-inspections",
+            },
+            { label: "Settlements", value: "settlements" },
+            { label: "Empty Return", value: "emptyReturn" },
+          ],
         },
       },
       {
@@ -104,6 +122,16 @@ export const operation_routes: RouteRecordRaw[] = [
           title: "Advances",
           description:
             "Track driver and transporter advance payments and expenses.",
+          tabs: [
+            {
+              label: "Driver Advance Payments",
+              value: "driverAdvances",
+            },
+            {
+              label: "Transporter Advance Payments",
+              value: "transporterAdvances",
+            },
+          ],
         },
       },
       {
@@ -354,12 +382,136 @@ export const operation_routes: RouteRecordRaw[] = [
     },
   },
   {
-    path: "vehicles",
-    name: "operation_vehicles",
-    component: () => import("./pages/Vehicles.vue"),
+    path: "inventory",
+    name: "operation_inventory",
+    component: RouterView,
+    redirect: "/inventory/categories",
+    children: [
+      {
+        path: "categories",
+        name: "operation_inventory_categories",
+        component: () => import("./pages/Inventory/Categories.vue"),
+        meta: { title: "Categories", description: "Manage inventory categories." },
+      },
+      {
+        path: "item-groups",
+        name: "operation_inventory_item_groups",
+        component: () => import("./pages/Inventory/ItemGroups.vue"),
+        meta: { title: "Item Groups", description: "Manage inventory item groups." },
+      },
+      {
+        path: "vendor",
+        name: "operation_inventory_vendor",
+        component: () => import("./pages/Inventory/Vendor.vue"),
+        meta: { title: "Vendor", description: "Manage inventory vendors." },
+      },
+      {
+        path: "items",
+        name: "operation_inventory_items",
+        component: () => import("./pages/Inventory/Items.vue"),
+        meta: { title: "Items", description: "Manage inventory items." },
+      },
+      {
+        path: "store-requisition",
+        name: "operation_inventory_store_requisition",
+        component: () => import("./pages/Inventory/StoreRequisition.vue"),
+        meta: { title: "Store Requisition", description: "Manage store requisition vouchers." },
+      },
+      {
+        path: "purchase-requisition",
+        name: "operation_inventory_purchase_requisition",
+        component: () => import("./pages/Inventory/PurchaseRequisition.vue"),
+        meta: { title: "Purchase Requisition", description: "Manage purchase requisition requests." },
+      },
+      {
+        path: "purchase-order",
+        name: "operation_inventory_purchase_order",
+        component: () => import("./pages/Inventory/PurchaseOrder.vue"),
+        meta: { title: "Purchase Order", description: "Manage inventory purchase orders." },
+      },
+      {
+        path: "good-transfer",
+        name: "operation_inventory_good_transfer",
+        component: () => import("./pages/Inventory/GoodTransfer.vue"),
+        meta: { title: "Issue / Receive", description: "Track good transfers, issues and receipts." },
+      },
+    ],
+  },
+  {
+    path: "setting",
+    name: "operation_setting",
+    component: RouterView,
+    redirect: "/setting/user-and-role",
+    children: [
+      {
+        path: "user-and-role",
+        name: "operation_setting_user_and_role",
+        component: () => import("./pages/setting/UserAndRole.vue"),
+        meta: { title: "User and Role", description: "Manage users, roles and permissions." },
+      },
+      {
+        path: "base-configuration",
+        name: "operation_setting_base_configuration",
+        component: () => import("./pages/setting/BaseConfiguration.vue"),
+        meta: { title: "Base Configuration", description: "Configure core system settings." },
+      },
+      {
+        path: "contract",
+        name: "operation_setting_contract",
+        component: () => import("./pages/setting/Contract.vue"),
+        meta: { title: "Contract", description: "Manage business contracts." },
+      },
+      {
+        path: "commodity",
+        name: "operation_setting_commodity",
+        component: () => import("./pages/setting/Commodity.vue"),
+        meta: { title: "Commodity", description: "Manage commodities." },
+      },
+      {
+        path: "packaging",
+        name: "operation_setting_packaging",
+        component: () => import("./pages/setting/Packaging.vue"),
+        meta: { title: "Packaging", description: "Manage packaging types." },
+      },
+      {
+        path: "route-requests",
+        name: "operation_setting_route_requests",
+        component: () => import("./pages/setting/RouteRequests.vue"),
+        meta: { title: "Route Requests", description: "Manage route requests." },
+      },
+      {
+        path: "region",
+        name: "operation_setting_region",
+        component: () => import("./pages/setting/Region.vue"),
+        meta: { title: "Region", description: "Manage regions." },
+      },
+      {
+        path: "bonus-multipliers",
+        name: "operation_setting_bonus_multipliers",
+        component: () => import("./pages/setting/BonusMultipliers.vue"),
+        meta: { title: "Bonus Multipliers", description: "Manage bonus multipliers." },
+      },
+      {
+        path: "bonus-routes",
+        name: "operation_setting_bonus_routes",
+        component: () => import("./pages/setting/BonusRoutes.vue"),
+        meta: { title: "Bonus Routes", description: "Manage bonus routes." },
+      },
+      {
+        path: "announcements",
+        name: "operation_setting_announcements",
+        component: () => import("./pages/setting/Announcements.vue"),
+        meta: { title: "Announcements", description: "Manage system announcements." },
+      },
+    ],
+  },
+  {
+    path: "reports",
+    name: "operation_reports",
+    component: () => import("./pages/Reports.vue"),
     meta: {
-      title: "Vehicles",
-      description: "Manage your fleet vehicles, trailers and assignments.",
+      title: "Reports",
+      description: "Comprehensive operational and financial reports.",
     },
   },
 ];

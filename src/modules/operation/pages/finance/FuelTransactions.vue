@@ -1,10 +1,15 @@
 <template>
-  <div class="p-6">
-    <h1 class="text-2xl font-semibold mb-4">Fuel Transactions</h1>
-    <p class="text-gray-600">Sample content for Fuel Transactions.</p>
-  </div>
+  <FuelTransactionsTable @action="handleAction" />
 </template>
 
 <script setup lang="ts">
-// Logic for Fuel Transactions page goes here
+import FuelTransactionsTable from "../../components/finance/FuelTransactionsTable.vue";
+
+const handleAction = ({ row, action }: any) => {
+  if (action === 'view') {
+    console.log(`View fuel transaction details:`, row);
+  } else {
+    console.log(`Action: ${action} on FuelTransaction:`, row);
+  }
+};
 </script>

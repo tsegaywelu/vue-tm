@@ -15,18 +15,50 @@
         <!-- Teleport target for page-specific actions -->
       </div>
     </div>
+
+    <!-- Global Tabs -->
+    <template v-if="tabs && tabs.length > 0">
+      <Teleport
+        :to="route.meta.tabsTeleportTo"
+        v-if="route.meta.tabsTeleportTo"
+        defer
+      >
+        <div
+          class="flex items-center gap-3 overflow-x-auto no-scrollbar whitespace-nowrap border-b border-gray-200 mb-2"
+        >
+          <Tabs :tabs="tabs" v-model="activeTab" />
+        </div>
+      </Teleport>
+      <div
+        v-else
+        class="flex items-center gap-3 overflow-x-auto no-scrollbar whitespace-nowrap border-b border-gray-200"
+      >
+        <Tabs :tabs="tabs" v-model="activeTab" />
+      </div>
+    </template>
+
     <slot />
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
+import Tabs from "./Tabs.vue";
 
 const route = useRoute();
+const router = useRouter();
 
 const title = computed(() => route.meta.title as string);
 const description = computed(() => route.meta.description as string);
+const tabs = computed(() => route.meta.tabs as any[]);
+
+const activeTab = computed({
+  get: () => (route.query.tab as string) || tabs.value?.[0]?.value,
+  set: (val) => {
+    router.replace({ query: { ...route.query, tab: val } });
+  },
+});
 </script>
 
 <style scoped>

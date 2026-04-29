@@ -92,9 +92,9 @@
       label="Product Type"
       name="productType"
       size="xs"
-      :options="ProductType"
+      :options="ProductT"
       :attributes="{
-        placeholder: 'Please Select a Status',
+        placeholder: 'Please Select a Product Type',
       }"
     />
     <SelectInput
@@ -174,10 +174,10 @@ import Form from "@/components/form/Form.vue";
 import {
   Damage,
   DocumentedUploads,
-  ProductType,
   ShipmentStatus,
   Triptype,
   VehicleOwnership,
+  ProductT,
 } from "@/utils/utils";
 
 const props = defineProps<{

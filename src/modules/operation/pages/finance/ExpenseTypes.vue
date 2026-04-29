@@ -1,10 +1,17 @@
 <template>
-  <div class="p-6">
-    <h1 class="text-2xl font-semibold mb-4">Expense Types</h1>
-    <p class="text-gray-600">Sample content for Expense Types.</p>
-  </div>
+  <ExpenseTypeTable @action="handleExpenseTypeAction" />
 </template>
 
 <script setup lang="ts">
-// Logic for Expense Types page goes here
+import ExpenseTypeTable from "../../components/finance/ExpenseTypeTable.vue";
+
+const handleExpenseTypeAction = ({ row, action }: any) => {
+  if (action === 'edit') {
+    console.log(`Edit expense type:`, row);
+  } else if (action === 'delete') {
+    console.log(`Delete expense type:`, row);
+  } else {
+    console.log(`Action: ${action} on ExpenseType:`, row);
+  }
+};
 </script>

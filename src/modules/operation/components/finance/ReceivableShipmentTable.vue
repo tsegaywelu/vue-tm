@@ -48,12 +48,12 @@
     </template>
 
     <template #cell-areDocumentsUploaded="{ value }">
-      <Status :variant="value ? 'uploaded' : 'pending'" type="wrapped">
+      <Status :variant="value ? 'uploaded' : 'active'" type="wrapped">
         {{ value ? 'Uploaded' : 'Pending' }}
       </Status>
     </template>
 
-    <template #after-search>
+    <template #extra-actions>
       <div class="items-center gap-4 inline-flex border-l border-grey-100 overflow-x-auto px-3">
         <i v-html="icons.filter" />
         <ReceivableShipmentFilters @change="handleFilterChange" />

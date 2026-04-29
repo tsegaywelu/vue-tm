@@ -2,7 +2,7 @@
   <Form
     id="receivable-settlement-filter"
     @change="handleChange"
-    class="[&_.input-focus]:bg-grey-25 flex-1 flex max-h-16 h-16 min-h-16 *:w-[450px] *:shrink-0 px-2 gap-2 overflow-auto"
+    class="[&_.input-focus]:bg-grey-25 flex-1 flex max-h-16 h-16 min-h-16 *:w-[220px] *:shrink-0 px-2 gap-2 overflow-auto"
   >
     <SelectInput
       searchable

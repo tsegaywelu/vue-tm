@@ -47,7 +47,6 @@
             </span>
           </span>
         </div>
-        <!-- Actions Dropdown -->
         <div class="flex-1 md:flex-none justify-end flex">
           <Dropdown>
             <template #default="{ close }">
@@ -62,25 +61,7 @@
         </div>
       </div>
     </div>
-
-    <!-- Tabs List -->
-    <div
-      class="rounded-[20px] bg-white px-3 md:px-5 py-2.5 flex items-center gap-3 overflow-x-auto no-scrollbar whitespace-nowrap shadow-sm border border-gray-100"
-    >
-      <Button
-        v-for="tab in tabs"
-        :key="tab.key"
-        :variant="activeTab === tab.key ? 'default' : 'ghost'"
-        size="lg"
-        class="h-11 text-sm gap-1.5 pr-4 pl-3 shrink-0 min-w-auto transition-colors"
-        :class="{ 'text-gray-500': activeTab !== tab.key }"
-        @click="activeTab = tab.key"
-      >
-        {{ tab.label }}
-      </Button>
-    </div>
-
-    <!-- Tab Content Area -->
+    <div id="shipment-details-tabs" class="w-full mt-2"></div>
     <div class="flex-1 min-h-0 overflow-y-auto">
       <component
         :is="activeTabComponent"
@@ -92,18 +73,17 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useQuery } from "@tanstack/vue-query";
 import { fetch_shipment_details } from "../api/shipment.api";
 import type { Shipment } from "../operation.types";
 import Status from "@/components/common/Status.vue";
-import Button from "@/components/common/Button.vue";
 import Dropdown from "@/components/common/Dropdown.vue";
 import DropDownItem from "@/components/common/DropDownItem.vue";
 import { icons } from "@/utils/icons";
 import { raaz_icons } from "@/utils/raaz_icons";
-import { dateFormatter } from "@/utils/utils";
+import { dateFormatter, numberFormatter } from "@/utils/utils";
 
 // Import Tabs Content
 import ShipmentOverviewTab from "../components/shipment-details/ShipmentOverviewTab.vue";
@@ -112,31 +92,12 @@ import ShipmentPlaceholderTab from "../components/shipment-details/ShipmentPlace
 import { h } from "vue";
 
 const route = useRoute();
-const router = useRouter();
 const shipmentId = route.params.id as string;
-const all_icons = { ...icons, ...raaz_icons };
 
-const activeTab = ref("shipment-info");
-
-const tabs = [
-  {
-    label: "Basic Information",
-    key: "shipment-info",
-    icon: all_icons.infoIcon || icons.info,
-  },
-  {
-    label: "Document Uploads",
-    key: "uploads",
-    icon: all_icons.upload || icons.upload,
-  },
-  {
-    label: "Pre-Trip Inspections",
-    key: "pre-trip-inspections",
-    icon: icons.check,
-  },
-  { label: "Settlements", key: "settlements", icon: icons.wallet },
-  { label: "Empty Return", key: "emptyReturn", icon: icons.truck },
-];
+const tabs = computed(() => route.meta.tabs as any[]);
+const activeTab = computed(
+  () => (route.query.tab as string) || (tabs.value?.[0]?.value as string),
+);
 
 const { data: shipmentResponse, refetch } = useQuery({
   queryKey: ["shipment", shipmentId],
@@ -155,7 +116,7 @@ const formatStatus = (status?: string) => {
 
 const activeTabComponent = computed(() => {
   switch (activeTab.value) {
-    case "shipment-info":
+    case "overview":
       return ShipmentOverviewTab;
     case "uploads":
       return ShipmentUploadsTab;

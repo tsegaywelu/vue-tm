@@ -58,7 +58,7 @@
       </span>
     </template>
 
-    <template #after-search>
+    <template #extra-actions>
       <div class="items-center gap-4 inline-flex border-l border-grey-100 overflow-x-auto px-3 ">
         <i v-html="icons.filter" />
         <PayableFilters @change="handleFilterChange" />
@@ -113,7 +113,7 @@ const columns: TableColumn<any>[] = [
 const activeFilters = ref({});
 const { response, refetch } = usePagination<any>({
   id: "payable-list",
-  url: "/advance-payment/all",
+  url: "/advance-payment/allPayables",
   params: computed(() => activeFilters.value),
 });
 

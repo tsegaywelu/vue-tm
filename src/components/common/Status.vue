@@ -23,7 +23,7 @@ import { computed } from "vue";
 
 interface Props {
   variant?: ShipmentStatus;
-  type?: "wrapped" | "extended";
+  type?: "wrapped" | "extended" | "pending" | "warning" | "accepted" | "active" | "completed" | "cancelled" | "terminated";
   label?: string;
 }
 

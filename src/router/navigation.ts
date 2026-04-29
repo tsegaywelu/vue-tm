@@ -3,7 +3,10 @@ import {
   stakeholders_navs,
   fleet_navs,
   maintenance_navs,
-  finance_navs
+  finance_navs,
+  inventory_navs,
+  setting_navs,
+  reports_navs
 } from '@/modules/operation/operation.navs'
 import type { Navs } from '@/types/navigation'
 
@@ -32,5 +35,17 @@ export const navigationRegistry: NavGroup[] = [
   {
     name: 'FINANCE',
     items: finance_navs
+  },
+  {
+    name: 'INVENTORY',
+    items: inventory_navs
+  },
+  {
+    name: 'SETTINGS',
+    items: setting_navs
+  },
+  {
+    name: 'REPORTS',
+    items: reports_navs
   }
 ]

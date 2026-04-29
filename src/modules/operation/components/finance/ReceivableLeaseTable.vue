@@ -38,13 +38,13 @@
       </span>
     </template>
 
-    <template #after-search>
+    <template #extra-actions>
       <div class="items-center gap-4 inline-flex border-l border-grey-100 overflow-x-auto px-3">
         <i v-html="icons.filter" />
         <Form
           id="receivable-lease-filter"
           @change="handleFilterChange"
-          class="[&_.input-focus]:bg-grey-25 flex-1 flex max-h-16 h-16 min-h-16 *:w-[490px] *:shrink-0 px-2 gap-2 overflow-auto"
+          class="[&_.input-focus]:bg-grey-25 flex-1 flex max-h-16 h-16 min-h-16 *:w-[220px] *:shrink-0 px-2 gap-2 overflow-auto"
         >
           <SelectInput
             :show_validation_status="false"

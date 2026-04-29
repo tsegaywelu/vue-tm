@@ -252,3 +252,122 @@ export const finance_navs: Navs[] = [
     ],
   },
 ];
+
+export const inventory_navs: Navs[] = [
+  {
+    name: "Inventory",
+    icon: "inventory",
+    show: true,
+    children: [
+      {
+        name: "Categories",
+        path: "/inventory/categories",
+        show: true,
+      },
+      {
+        name: "Item Groups",
+        path: "/inventory/item-groups",
+        show: true,
+      },
+      {
+        name: "Vendor",
+        path: "/inventory/vendor",
+        show: true,
+      },
+      {
+        name: "Items",
+        path: "/inventory/items",
+        show: true,
+      },
+      {
+        name: "Store Requisition",
+        path: "/inventory/store-requisition",
+        show: true,
+      },
+      {
+        name: "Purchase Requisition",
+        path: "/inventory/purchase-requisition",
+        show: true,
+      },
+      {
+        name: "Purchase Order",
+        path: "/inventory/purchase-order",
+        show: true,
+      },
+      {
+        name: "Issue / Receive",
+        path: "/inventory/good-transfer",
+        show: true,
+      },
+    ],
+  },
+];
+
+export const setting_navs: Navs[] = [
+  {
+    name: "Settings",
+    icon: "settings",
+    show: true,
+    children: [
+      {
+        name: "User and Role",
+        path: "/setting/user-and-role",
+        show: true,
+      },
+      {
+        name: "Base Configuration",
+        path: "/setting/base-configuration",
+        show: true,
+      },
+      {
+        name: "Contract",
+        path: "/setting/contract",
+        show: true,
+      },
+      {
+        name: "Commodity",
+        path: "/setting/commodity",
+        show: true,
+      },
+      {
+        name: "Packaging",
+        path: "/setting/packaging",
+        show: true,
+      },
+      {
+        name: "Route Requests",
+        path: "/setting/route-requests",
+        show: true,
+      },
+      {
+        name: "Region",
+        path: "/setting/region",
+        show: true,
+      },
+      {
+        name: "Bonus Multipliers",
+        path: "/setting/bonus-multipliers",
+        show: true,
+      },
+      {
+        name: "Bonus Routes",
+        path: "/setting/bonus-routes",
+        show: true,
+      },
+      {
+        name: "Announcements",
+        path: "/setting/announcements",
+        show: true,
+      },
+    ],
+  },
+];
+
+export const reports_navs: Navs[] = [
+  {
+    name: "Reports",
+    path: "/reports",
+    icon: "reports",
+    show: true,
+  },
+];

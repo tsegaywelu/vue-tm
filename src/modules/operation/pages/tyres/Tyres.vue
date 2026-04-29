@@ -13,7 +13,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useRoute } from "vue-router";
-import VehicleTyreDetailTable from "../../components/VehicleTyreDetailTable.vue";
+import VehicleTyreDetailTable from "../../components/tyre-details/VehicleTyreDetailTable.vue";
 import Button from "@/components/Button.vue";
 import type { Tyre } from "../../operation.types";
 import { icons } from "@/utils/icons";

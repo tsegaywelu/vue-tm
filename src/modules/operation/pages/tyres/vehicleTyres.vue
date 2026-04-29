@@ -11,7 +11,7 @@
 </template>
 
 <script setup lang="ts">
-import TyreTable from "../../components/TyreTable.vue";
+import TyreTable from "../../components/tyre-details/TyreTable.vue";
 import Button from "@/components/Button.vue";
 import { useRouter } from "vue-router";
 import { type Tyre } from "../../operation.types";

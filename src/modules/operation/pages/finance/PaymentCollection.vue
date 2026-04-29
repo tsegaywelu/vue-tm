@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import PaymentCollectionTable from "../../components/PaymentCollectionTable.vue";
+import PaymentCollectionTable from "../../components/finance/PaymentCollectionTable.vue";
 
 const handlePaymentCollectionAction = ({ row, action }: any) => {
   if (action === 'view') {

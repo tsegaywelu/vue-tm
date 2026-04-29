@@ -2248,10 +2248,25 @@ export const icons: Record<string, string> = {
 
 
 `,
+	reports: `<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="mdi:report-bar">
+<path id="Vector" d="M18.3337 17.5H1.66699V2.5H3.33366V15.8333H5.00033V8.33333H8.33366V15.8333H10.0003V5H13.3337V15.8333H15.0003V11.6667H18.3337V17.5Z" fill="currentColor"/>
+</g>
+</svg>
+
+
+`,
+	inventory: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M3 9.5L12 3l9 6.5V21a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z"/>
+  <path d="M9 22V12h6v10"/>
+</svg>
+
+`,
 	maintenance: `
 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
   <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path>
 </svg>
 `,
+
 
 };
