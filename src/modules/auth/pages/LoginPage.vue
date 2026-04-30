@@ -19,7 +19,6 @@ const toast_store = useToastStore();
 
 const login_mode = ref<LoginMode>("carrier");
 const error_message = ref("");
-const password_visible = ref(false);
 
 const initivalue = {
   username: "",
@@ -141,22 +140,21 @@ async function submitLogin(values: any) {
           id="login-form"
           class="space-y-6"
         >
-          <Input name="username" label="Username" />
+          <Input
+            name="username"
+            label="Username"
+            :attributes="{ placeholder: 'Enter your username' }"
+          >
+            <template #left_component>
+              <i class="size-5 block text-grey-400" v-html="icons.users"></i>
+            </template>
+          </Input>
 
-          <div class="relative">
-            <PasswordInput name="password" label="Password" />
-            <button
-              type="button"
-              @click="password_visible = !password_visible"
-              class="absolute right-4 top-[42px] text-grey-400 hover:text-primary transition-colors"
-              aria-label="Toggle password visibility"
-            >
-              <i
-                class="size-6 block"
-                v-html="password_visible ? icons.eye : icons['eye-off']"
-              ></i>
-            </button>
-          </div>
+          <PasswordInput
+            name="password"
+            label="Password"
+            :attributes="{ placeholder: 'Enter your password' }"
+          />
 
           <!-- Action Buttons -->
           <div class="flex items-center justify-between">
@@ -190,16 +188,26 @@ async function submitLogin(values: any) {
           <SubmitButton
             class_name="w-full h-14 bg-primary text-white font-bold rounded-2xl shadow-lg shadow-primary/20 hover:bg-primary-dark hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 flex items-center justify-center gap-2"
           >
-            Sign In
+            <span>Sign In</span>
+            <i
+              class="size-5 grid place-items-center"
+              v-html="icons.arrowIcon"
+            ></i>
           </SubmitButton>
         </Form>
 
         <!-- Help Center -->
-        <p class="text-center text-sm text-grey-500">
-          Need help?
-          <a href="#" class="font-bold text-primary hover:underline"
-            >Contact Support</a
+        <p
+          class="text-center text-sm text-grey-500 flex items-center justify-center gap-1"
+        >
+          <span>Need help?</span>
+          <a
+            href="#"
+            class="font-bold text-primary hover:underline flex items-center gap-1"
           >
+            <i class="size-4 block" v-html="icons.info"></i>
+            <span>Contact Support</span>
+          </a>
         </p>
       </div>
     </div>

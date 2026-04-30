@@ -27,6 +27,11 @@ export const core_operations_navs: Navs[] = [
             name: "Shipment Details",
             show: false,
           },
+          {
+            path: "/operation/shipments/edit/$id",
+            name: "Edit Shipment",
+            show: false,
+          },
         ],
       },
       {

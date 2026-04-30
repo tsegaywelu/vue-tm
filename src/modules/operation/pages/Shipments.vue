@@ -27,11 +27,16 @@ const handleShipmentAction = ({
   row: Shipment;
   action: string;
 }) => {
-  if (action === 'view') {
+  if (action === "view") {
     router.push(`/operation/shipments/${row._id}`);
+  } else if (action === "edit") {
+    router.push(`/operation/shipments/edit/${row._id}`);
+  } else if (action === "create_advance") {
+    // For now, redirect to advances page with shipment filter
+    // Or open a modal if available. Assuming redirect for now.
+    router.push(`/operation/advances?shipmentCode=${row.shipmentCode}`);
   } else {
     console.log(`Action: ${action} on Shipment: ${row.shipmentCode}`);
-    // TODO: Implement other actions
   }
 };
 </script>

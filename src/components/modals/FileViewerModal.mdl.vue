@@ -1,11 +1,11 @@
 <template>
-  <div class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-    <div class="bg-white rounded-2xl shadow-xl w-full max-w-4xl h-[90vh] flex flex-col overflow-hidden">
+  <ModalWrapper @close="closeModal()" wrapperClass="flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-4xl h-[90vh] flex flex-col overflow-hidden relative pointer-events-auto" @click.stop>
       <!-- Header -->
       <div class="flex justify-between items-center border-b border-gray-100 px-6 py-4">
         <h2 class="text-xl font-semibold text-gray-900">Document Viewer</h2>
         <button
-          @click="$emit('close')"
+          @click="closeModal()"
           class="text-gray-400 hover:text-gray-600 transition-colors rounded-full p-1 hover:bg-gray-100"
         >
           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -69,27 +69,31 @@
         </div>
       </div>
     </div>
-  </div>
+  </ModalWrapper>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
+import { closeModal } from '@customizer/modal-x';
+import ModalWrapper from './ModalWrapper.vue';
 
-const props = defineProps<{
+export type Props = {
   fileURL: string;
-}>();
+};
 
-defineEmits(['close']);
+const props = defineProps<{ data: Props; close: (res: any) => void }>();
+
+const fileURL = computed(() => props.data.fileURL);
 
 const zoom = ref(1);
 const rotation = ref(0);
 
 const isPDF = computed(() => {
-  return props.fileURL?.toLowerCase().includes('.pdf');
+  return fileURL.value?.toLowerCase().includes('.pdf');
 });
 
 const isImage = computed(() => {
-  const url = props.fileURL?.toLowerCase() || '';
+  const url = fileURL.value?.toLowerCase() || '';
   return url.includes('.jpg') || url.includes('.jpeg') || url.includes('.png') || url.includes('.gif') || url.includes('.webp');
 });
 

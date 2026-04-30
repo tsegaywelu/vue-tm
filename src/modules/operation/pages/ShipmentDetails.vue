@@ -48,16 +48,14 @@
           </span>
         </div>
         <div class="flex-1 md:flex-none justify-end flex">
-          <Dropdown>
-            <template #default="{ close }">
-              <DropDownItem
-                :icon="icons.editIcon"
-                label="Edit Shipment"
-                @click="close"
-              />
-              <DropDownItem :icon="icons.trash" label="Delete" @click="close" />
-            </template>
-          </Dropdown>
+          <ShipmentDropdown
+            :filters="{
+              view: false,
+            }"
+            v-if="shipment"
+            :shipment="shipment"
+            :on-action-complete="refetch"
+          />
         </div>
       </div>
     </div>
@@ -74,16 +72,13 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 import { useQuery } from "@tanstack/vue-query";
 import { fetch_shipment_details } from "../api/shipment.api";
 import type { Shipment } from "../operation.types";
 import Status from "@/components/common/Status.vue";
-import Dropdown from "@/components/common/Dropdown.vue";
-import DropDownItem from "@/components/common/DropDownItem.vue";
-import { icons } from "@/utils/icons";
-import { raaz_icons } from "@/utils/raaz_icons";
-import { dateFormatter, numberFormatter } from "@/utils/utils";
+import ShipmentDropdown from "../components/ShipmentDropdown.vue";
+import { dateFormatter } from "@/utils/utils";
 
 // Import Tabs Content
 import ShipmentOverviewTab from "../components/shipment-details/ShipmentOverviewTab.vue";

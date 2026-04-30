@@ -5,6 +5,7 @@ import modal from "@customizer/modal-x";
 import './style.css'
 import App from './App.vue'
 import router from './router'
+import { roleDirective } from './directives/role'
 
 const app = createApp(App)
 const pinia = createPinia()
@@ -14,5 +15,6 @@ app.use(pinia)
 app.use(router)
 app.use(VueQueryPlugin, { queryClient: query_client })
 app.use(modal)
+app.directive('role', roleDirective)
 
 app.mount('#app')

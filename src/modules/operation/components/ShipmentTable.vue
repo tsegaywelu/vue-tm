@@ -18,7 +18,7 @@
     :columns="columns"
     :rows="response"
     :search_placeholder="dynamicSearchPlaceholder"
-    @row_click="handleAction($event, 'view')"
+    @row_click="(row) => $router.push(`/operation/shipments/${row._id}`)"
   >
     <template #search-prefix>
       <div
@@ -40,9 +40,13 @@
 
     <template #cell-driver="{ row }">
       <div class="flex flex-col" v-if="row.vehicle">
-        <span class="font-semibold text-base text-gray-900">
+        <button
+          type="button"
+          class="font-semibold text-base text-orange-600 hover:text-orange-700 hover:underline text-left cursor-pointer transition-colors"
+          @click.stop="openMapModal(row?.vehicle?._id, row.vehicle.plateNumber)"
+        >
           {{ row?.vehicle?.plateNumber }}
-        </span>
+        </button>
         <span class="text-gray-400 font-medium" v-if="row.driver">
           {{ row.driver.firstName }} {{ row.driver.lastName }}
         </span>
@@ -81,8 +85,8 @@
           >{{ numberFormatter(row?.waypointDistance) }} km</span
         >
         <span class="text-gray-400 font-medium" v-if="row.pricingType">
-          {{ row.pricingType.type }} ({{
-            currencyFormatter(row.pricingType.amount)
+          {{ (row.pricingType as PricingTypeObject).type }} ({{
+            currencyFormatter(+(row.pricingType as PricingTypeObject).amount)
           }})
         </span>
       </div>
@@ -108,34 +112,7 @@
     </template>
     <template #cell-actions="{ row }">
       <div class="flex items-center justify-end">
-        <Dropdown>
-          <template #default="{ close }">
-            <DropDownItem
-              :icon="icons.eye"
-              label="Details"
-              @click.stop="
-                handleAction(row, 'view');
-                close();
-              "
-            />
-            <DropDownItem
-              :icon="icons.editIcon"
-              label="Update Status"
-              @click.stop="
-                openStatusModal(row);
-                close();
-              "
-            />
-            <DropDownItem
-              :icon="icons.plusIcon"
-              label="Add Voucher"
-              @click.stop="
-                openVouchersModal(row);
-                close();
-              "
-            />
-          </template>
-        </Dropdown>
+        <ShipmentDropdown :shipment="row" :on-action-complete="refetch" />
       </div>
     </template>
   </Table>
@@ -145,11 +122,15 @@
 import { computed, ref, watch } from "vue";
 import Table from "@/components/common/Table.vue";
 import Select from "@/components/common/Select.vue";
-import Dropdown from "@/components/common/Dropdown.vue";
-import DropDownItem from "@/components/common/DropDownItem.vue";
+import ShipmentDropdown from "./ShipmentDropdown.vue";
 import { icons } from "@/utils/icons";
 import { usePagination } from "@/composables/usePagination";
-import type { ShipmentFilterParams, Shipment } from "../operation.types";
+import { openModal } from "@customizer/modal-x";
+import type {
+  ShipmentFilterParams,
+  Shipment,
+  PricingTypeObject,
+} from "../operation.types";
 import type { TableColumn } from "@/components/common/Table.vue";
 import ShipmentFilters from "./ShipmentFilters.vue";
 import Status from "@/components/common/Status.vue";
@@ -157,14 +138,16 @@ import {
   currencyFormatter,
   dateFormatter,
   numberFormatter,
-  ShipmentStatus,
 } from "@/utils/utils";
-import { openModal } from "@customizer/modal-x";
 const props = defineProps<{
   filters?: ShipmentFilterParams;
 }>();
 
 const emit = defineEmits(["action"]);
+
+function openMapModal(vehicleId: string, plateNumber: string) {
+  openModal("VehicleMapModal", { vehicleId, plateNumber });
+}
 
 const columns: TableColumn<Shipment>[] = [
   { key: "driver", label: "Driver / Vehicle", field: "driver" },
@@ -226,30 +209,6 @@ const handleFilterChange = (newFilters: ShipmentFilterParams) => {
       value: selectedSearchField.value,
     },
   };
-};
-
-const handleAction = (row: Shipment, action: string) => {
-  emit("action", { row, action });
-};
-
-const openStatusModal = (shipment: Shipment) => {
-  openModal(
-    "StatusChangeModal",
-    {
-      shipment,
-      statusList: ShipmentStatus,
-      statusListRaw: ShipmentStatus,
-    },
-    (res) => {
-      if (res) refetch();
-    },
-  );
-};
-
-const openVouchersModal = (shipment: Shipment) => {
-  openModal("VoucherModal", { shipment }, (res) => {
-    if (res) refetch();
-  });
 };
 
 defineExpose({ refetch });

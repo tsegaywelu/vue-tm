@@ -21,6 +21,7 @@
           >Origin</label
         >
         <SelectInput
+          name="routeOrigin"
           v-model="filters.routeOrigin"
           :options="routeOptions"
           placeholder="Select Origin"
@@ -34,6 +35,7 @@
           >Destination</label
         >
         <SelectInput
+          name="routeDestination"
           v-model="filters.routeDestination"
           :options="routeOptions"
           placeholder="Select Destination"
