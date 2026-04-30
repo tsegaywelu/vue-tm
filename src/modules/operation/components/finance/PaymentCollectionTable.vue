@@ -1,0 +1,149 @@
+<template>
+  <Table
+    id="payment-collection-list"
+    :columns="columns"
+    :rows="response"
+    search_placeholder="Search by reference..."
+    @row_click="handleAction($event, 'view')"
+  >
+    <template #cell-reference="{ value }">
+      <span class="font-bold">{{ value || '-' }}</span>
+    </template>
+
+    <template #cell-totalAmount="{ value }">
+      <span class="font-bold text-gray-900">
+        {{ currencyFormatter(value) }}
+      </span>
+    </template>
+
+    <template #cell-shipperName="{ row }">
+      <span class="font-medium text-gray-700">
+        {{ row.shipper?.name || '-' }}
+      </span>
+    </template>
+
+    <template #cell-paymentRequestedDate="{ value }">
+      <span class="text-sm text-gray-600">
+        {{ dateFormatter(value) }}
+      </span>
+    </template>
+
+    <template #cell-paymentRequestedBy="{ row }">
+      <span class="font-medium text-gray-700">
+        {{ row.paymentRequestedBy?.username || '-' }}
+      </span>
+    </template>
+
+    <template #cell-paymentApprovedBy="{ row }">
+      <span class="font-medium text-gray-700">
+        {{ row.paymentApprovedBy?.username || '-' }}
+      </span>
+    </template>
+
+    <template #cell-paymentCollectedBy="{ row }">
+      <span class="font-medium text-gray-700">
+        {{ row.paymentCollectedByCarrier?.username || '-' }}
+      </span>
+    </template>
+
+    <template #cell-remark="{ row }">
+      <span class="text-sm text-gray-600 truncate max-w-[150px] inline-block" :title="row.remarkCarrier || row.remark || '-'">
+        {{ row.remarkCarrier || row.remark || '-' }}
+      </span>
+    </template>
+
+    <template #cell-status="{ value }">
+      <Status :variant="value || 'pending'" type="wrapped">
+        {{ (value || 'Pending').replace(/_/g, " ") }}
+      </Status>
+    </template>
+
+    <template #extra-actions>
+      <div class="items-center gap-4 inline-flex border-l border-grey-100 overflow-x-auto px-3">
+        <i v-html="icons.filter" />
+        <PaymentCollectionFilters @change="handleFilterChange" />
+      </div>
+    </template>
+
+    <template #cell-actions="{ row }">
+      <div class="flex items-center justify-end">
+        <Dropdown>
+          <template #default="{ close }">
+            <DropDownItem
+              v-if="row.status === 'payment_approved'"
+              :icon="icons.check"
+              label="Collect"
+              @click.stop="
+                handleAction(row, 'collect');
+                close();
+              "
+            />
+            <DropDownItem
+              :icon="icons.edit"
+              label="Edit"
+              @click.stop="
+                handleAction(row, 'edit');
+                close();
+              "
+            />
+            <DropDownItem
+              :icon="icons.eye"
+              label="Details"
+              @click.stop="
+                handleAction(row, 'view');
+                close();
+              "
+            />
+          </template>
+        </Dropdown>
+      </div>
+    </template>
+  </Table>
+</template>
+
+<script setup lang="ts">
+import { computed, ref } from "vue";
+import Table from "@/components/common/Table.vue";
+import Dropdown from "@/components/common/Dropdown.vue";
+import DropDownItem from "@/components/common/DropDownItem.vue";
+import Status from "@/components/common/Status.vue";
+import { icons } from "@/utils/icons";
+import { usePagination } from "@/composables/usePagination";
+import type { TableColumn } from "@/components/common/Table.vue";
+import PaymentCollectionFilters from "./PaymentCollectionFilters.vue";
+import { currencyFormatter, dateFormatter } from "@/utils/utils";
+
+const emit = defineEmits(["action"]);
+
+const columns: TableColumn<any>[] = [
+  { key: "reference", label: "Reference", field: "reference" },
+  { key: "totalAmount", label: "Total Amount", field: "totalAmount" },
+  { key: "shipperName", label: "Shipper", field: "shipper" },
+  { key: "paymentRequestedDate", label: "Request Date", field: "paymentRequestedDate" },
+  { key: "paymentRequestedBy", label: "Requested By", field: "paymentRequestedBy" },
+  { key: "paymentApprovedBy", label: "Approved By", field: "paymentApprovedBy" },
+  { key: "paymentCollectedBy", label: "Collected By", field: "paymentCollectedByCarrier" },
+  { key: "crv", label: "CRV", field: "crv" },
+  { key: "csi", label: "CSI", field: "csi" },
+  { key: "remark", label: "Remark", field: "remark" },
+  { key: "status", label: "Status", field: "status" },
+  { key: "actions", label: "Actions", field: "", cellAlign: "right" },
+];
+
+const activeFilters = ref({});
+const { response, refetch } = usePagination<any>({
+  id: "payment-collection-list",
+  url: "/shipment/approvedAndCollectedInvoices",
+  params: computed(() => activeFilters.value),
+});
+
+const handleFilterChange = (newFilters: any) => {
+  activeFilters.value = { ...newFilters };
+};
+
+const handleAction = (row: any, action: string) => {
+  emit("action", { row, action });
+};
+
+defineExpose({ refetch });
+</script>

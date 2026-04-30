@@ -1,11 +1,11 @@
 <template>
   <Teleport to="#page-actions" defer>
-    <Button>
+    <!-- <Button>
       <template #leading>
         <div class="size-5" v-html="all_icons.plus"></div>
       </template>
       New Tyre
-    </Button>
+    </Button> -->
   </Teleport>
   <VehicleTyreDetailTable :vehicle-id="vehicleId" @action="handleTyreAction" />
 </template>
@@ -13,7 +13,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useRoute } from "vue-router";
-import VehicleTyreDetailTable from "../../components/VehicleTyreDetailTable.vue";
+import VehicleTyreDetailTable from "../../components/tyre-details/VehicleTyreDetailTable.vue";
 import Button from "@/components/Button.vue";
 import type { Tyre } from "../../operation.types";
 import { icons } from "@/utils/icons";

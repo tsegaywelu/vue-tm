@@ -3,19 +3,25 @@
     :row_alignment="{
       vehiclePlate: 'left',
       totalTyres: 'center',
-      totalPrice: 'right',
-      actions: 'center',
+      totalPrice: 'center',
+    
     }"
     :head_alignment="{
       vehiclePlate: 'left',
       totalTyres: 'center',
-      totalPrice: 'right',
-      actions: 'center',
+      totalPrice: 'center',
+     
     }"
     id="tyres-list"
     :columns="columns"
     :rows="response"
+    search_placeholder="Search by plate number"
+    
+    @row_click="handleAction($event, 'view')"
   >
+  <template >
+
+  </template>
     <template #cell-vehiclePlate="{ row }">
       <span class="font-bold text-gray-900">{{ row.vehicle?.plateNumber || 'N/A' }}</span>
     </template>
@@ -28,7 +34,7 @@
       <span class="text-base font-medium">{{ row.totalPrice ? currencyFormatter(row.totalPrice) : '-' }}</span>
     </template>
 
-    <template #cell-actions="{ row }">
+    <!-- <template #cell-actions="{ row }">
       <div class="flex items-center justify-end">
         <Dropdown>
           <template #default="{ close }">
@@ -44,12 +50,12 @@
           </template>
         </Dropdown>
       </div>
-    </template>
+    </template> -->
   </Table>
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import Table from "@/components/common/Table.vue";
 import Dropdown from "@/components/common/Dropdown.vue";
 import { usePagination } from "@/composables/usePagination";
@@ -60,19 +66,29 @@ import { currencyFormatter } from "@/utils/utils";
 const emit = defineEmits(["action"]);
 
 const columns: TableColumn<Tyre>[] = [
-  { key: "vehiclePlate", label: "Vehicle Plate" },
-  { key: "totalTyres", label: "Total Tyres", cellAlign: "center" },
-  { key: "totalPrice", label: "Total Price", cellAlign: "right" },
-  { key: "actions", label: "Actions", cellAlign: "right" },
+  { key: "vehiclePlate", label: "Vehicle Plate", sortable: true, sort_key: "vehicle.plateNumber" },
+  { key: "totalTyres", label: "Total Tyres", cellAlign: "center", sortable: true, sort_key: "totalTyres" },
+  { key: "totalPrice", label: "Total Price", cellAlign: "center", sortable: true, sort_key: "totalPrice" },
+ 
 ];
 
-// If there are filters for tyres in the future, add them here
-const activeFilters = ref({});
-const { response, refetch } = usePagination<Tyre>({
+const activeFilters = ref<Record<string, any>>({});
+
+const pagination = usePagination<Tyre>({
   id: "tyres-list",
-  url: "/tyre/vehicle", // Assuming this endpoint groups tyres by vehicle
+  url: "/tyre/vehicle",
   params: computed(() => activeFilters.value),
 });
+
+const { response, refetch, debouncedSearch } = pagination;
+
+watch(debouncedSearch, (newVal) => {
+  activeFilters.value = {
+    ...activeFilters.value,
+    search: newVal || undefined,
+    q: undefined
+  };
+}, { immediate: true });
 
 const handleAction = (row: Tyre, action: string) => {
   emit("action", { row, action });

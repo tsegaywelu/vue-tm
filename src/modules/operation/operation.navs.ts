@@ -121,6 +121,28 @@ export const maintenance_navs: Navs[] = [
     icon: "tyre",
     path: "/vehicle-tyres",
     show: true,
+    children: [
+      {
+        path: "vehicle-tyres/$id",
+        name: "Tyre Detail",
+        show: false
+      },
+      {
+        path: "/vehicle-tyres/add",
+        name: "Add Tyre",
+        show: false,
+      },
+      {
+        path: "/vehicle-tyres/edit/$id",
+        name: "Edit Tyre",
+        show: false,
+      },
+      {
+        path: "/vehicle-tyres/details/$id",
+        name: "Tyre Details",
+        show: false,
+      },
+    ],
   },
   {
     name: "Maintenance",
@@ -178,5 +200,179 @@ export const maintenance_navs: Navs[] = [
         show: true,
       },
     ],
+  },
+];
+
+export const finance_navs: Navs[] = [
+  {
+    name: "Finance",
+    icon: "finance",
+    show: true,
+    children: [
+      {
+        name: "Payable",
+        path: "/finance/payable",
+        show: true,
+      },
+      {
+        name: "Receivable",
+        path: "/finance/receivable",
+        show: true,
+      },
+      {
+        name: "Invoice Report",
+        path: "/finance/invoice-report",
+        show: true,
+      },
+      {
+        name: "Payment Collection",
+        path: "/finance/payment-collection",
+        show: true,
+      },
+      {
+        name: "Expense",
+        path: "/finance/expense",
+        show: true,
+      },
+      {
+        name: "Paid Sub-Contracts",
+        path: "/finance/paid-sub-contracts",
+        show: true,
+      },
+      {
+        name: "Expense Types",
+        path: "/finance/expense-types",
+        show: true,
+      },
+      {
+        name: "Fuel Transactions",
+        path: "/finance/fuel-transactions",
+        show: true,
+      },
+      {
+        name: "Driver Bonuses",
+        path: "/finance/driver-bonuses",
+        show: true,
+      },
+    ],
+  },
+];
+
+export const inventory_navs: Navs[] = [
+  {
+    name: "Inventory",
+    icon: "inventory",
+    show: true,
+    children: [
+      {
+        name: "Categories",
+        path: "/inventory/categories",
+        show: true,
+      },
+      {
+        name: "Item Groups",
+        path: "/inventory/item-groups",
+        show: true,
+      },
+      {
+        name: "Vendor",
+        path: "/inventory/vendor",
+        show: true,
+      },
+      {
+        name: "Items",
+        path: "/inventory/items",
+        show: true,
+      },
+      {
+        name: "Store Requisition",
+        path: "/inventory/store-requisition",
+        show: true,
+      },
+      {
+        name: "Purchase Requisition",
+        path: "/inventory/purchase-requisition",
+        show: true,
+      },
+      {
+        name: "Purchase Order",
+        path: "/inventory/purchase-order",
+        show: true,
+      },
+      {
+        name: "Issue / Receive",
+        path: "/inventory/good-transfer",
+        show: true,
+      },
+    ],
+  },
+];
+
+export const setting_navs: Navs[] = [
+  {
+    name: "Settings",
+    icon: "settings",
+    show: true,
+    children: [
+      {
+        name: "User and Role",
+        path: "/setting/user-and-role",
+        show: true,
+      },
+      {
+        name: "Base Configuration",
+        path: "/setting/base-configuration",
+        show: true,
+      },
+      {
+        name: "Contract",
+        path: "/setting/contract",
+        show: true,
+      },
+      {
+        name: "Commodity",
+        path: "/setting/commodity",
+        show: true,
+      },
+      {
+        name: "Packaging",
+        path: "/setting/packaging",
+        show: true,
+      },
+      {
+        name: "Route Requests",
+        path: "/setting/route-requests",
+        show: true,
+      },
+      {
+        name: "Region",
+        path: "/setting/region",
+        show: true,
+      },
+      {
+        name: "Bonus Multipliers",
+        path: "/setting/bonus-multipliers",
+        show: true,
+      },
+      {
+        name: "Bonus Routes",
+        path: "/setting/bonus-routes",
+        show: true,
+      },
+      {
+        name: "Announcements",
+        path: "/setting/announcements",
+        show: true,
+      },
+    ],
+  },
+];
+
+export const reports_navs: Navs[] = [
+  {
+    name: "Reports",
+    path: "/reports",
+    icon: "reports",
+    show: true,
   },
 ];

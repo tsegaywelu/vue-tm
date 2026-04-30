@@ -5,7 +5,7 @@
       vehiclePlate: 'left',
       brand: 'left',
       tyrePosition: 'left',
-      price: 'right',
+      price: 'left',
       status: 'left',
       actions: 'right',
     }"
@@ -14,13 +14,15 @@
       vehiclePlate: 'left',
       brand: 'left',
       tyrePosition: 'left',
-      price: 'right',
+      price: 'left',
       status: 'left',
       actions: 'right',
     }"
     id="tyre-detail-list"
     :columns="columns"
     :rows="response"
+    search_placeholder="Search by serial number..."
+    @row_click="handleRowClick"  
   >
     <template #cell-serialNumber="{ row }">
       <span class="font-medium text-gray-900">{{ row.serialNumber || '-' }}</span>
@@ -50,69 +52,55 @@
       <div class="flex items-center justify-end">
         <Dropdown>
           <template #default="{ close }">
-            <button
-              class="w-full text-left px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors"
-              @click="
+            <DropDownItem
+              label="Decommission"
+              @click.stop="
                 handleAction(row, 'decommission');
                 close();
               "
-            >
-              Decommission
-            </button>
-            <button
-              class="w-full text-left px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors"
-              @click="
+            />
+            <DropDownItem
+              label="Inspect"
+              @click.stop="
                 handleAction(row, 'inspect');
                 close();
               "
-            >
-              Inspect
-            </button>
-            <button
-              class="w-full text-left px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors"
-              @click="
+            />
+            <DropDownItem
+              label="Repair"
+              @click.stop="
                 handleAction(row, 'repair');
                 close();
               "
-            >
-              Repair
-            </button>
-            <button
-              class="w-full text-left px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors"
-              @click="
+            />
+            <DropDownItem
+              label="Replace"
+              @click.stop="
                 handleAction(row, 'replace');
                 close();
               "
-            >
-              Replace
-            </button>
-            <button
-              class="w-full text-left px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors"
-              @click="
+            />
+            <DropDownItem
+              label="Rethread"
+              @click.stop="
                 handleAction(row, 'rethread');
                 close();
               "
-            >
-              Rethread
-            </button>
-            <button
-              class="w-full text-left px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors"
-              @click="
+            />
+            <DropDownItem
+              label="Rotate"
+              @click.stop="
                 handleAction(row, 'rotate');
                 close();
               "
-            >
-              Rotate
-            </button>
-            <button
-              class="w-full text-left px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors"
-              @click="
+            />
+            <DropDownItem
+              label="Reassign"
+              @click.stop="
                 handleAction(row, 'reassign');
                 close();
               "
-            >
-              Reassign
-            </button>
+            />
           </template>
         </Dropdown>
       </div>
@@ -122,10 +110,13 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
+import { useRouter } from "vue-router"; 
 import Table from "@/components/common/Table.vue";
 import Dropdown from "@/components/common/Dropdown.vue";
+import DropDownItem from "@/components/common/DropDownItem.vue";
 import Status from "@/components/common/Status.vue";
 import { usePagination } from "@/composables/usePagination";
+import { openModal } from "@customizer/modal-x";
 import type { Tyre } from "../operation.types";
 import type { TableColumn } from "@/components/common/Table.vue";
 import { currencyFormatter } from "@/utils/utils";
@@ -135,18 +126,19 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits(["action"]);
+const router = useRouter(); 
 
 const columns: TableColumn<Tyre>[] = [
   { key: "serialNumber", label: "Serial Number" },
   { key: "vehiclePlate", label: "Vehicle" },
   { key: "brand", label: "Brand" },
   { key: "tyrePosition", label: "Tyre Position" },
-  { key: "price", label: "Price", cellAlign: "right" },
+  { key: "price", label: "Price", cellAlign: "left" },
   { key: "status", label: "Status" },
   { key: "actions", label: "Actions", cellAlign: "right" },
 ];
 
-const activeFilters = ref<{ vehicle?: string }>({});
+const activeFilters = ref<Record<string, any>>({});
 
 watch(
   () => props.vehicleId,
@@ -160,11 +152,21 @@ watch(
   { immediate: true }
 );
 
-const { response, refetch } = usePagination<Tyre>({
+const pagination = usePagination<Tyre>({
   id: "tyre-detail-list",
   url: "/tyre",
   params: computed(() => activeFilters.value),
 });
+
+const { response, refetch, debouncedSearch } = pagination;
+
+watch(debouncedSearch, (newVal) => {
+  activeFilters.value = {
+    ...activeFilters.value,
+    serialNumber: newVal || undefined,
+    q: undefined,
+  };
+}, { immediate: true });
 
 const getStatusVariant = (status?: string) => {
   if (!status) return "active";
@@ -193,7 +195,13 @@ const formatPosition = (position?: string) => {
     .join(" ");
 };
 
-import { openModal } from "@customizer/modal-x";
+const handleRowClick = (row: Tyre) => {
+  if (row?._id) {
+    router.push(`/vehicle-tyres/details/${row._id}`);
+    // /vehicle-tyres/details/$id
+  }
+};
+
 const handleAction = (row: Tyre, action: string) => {
   let modalName: string | null = null;
 
@@ -217,15 +225,14 @@ const handleAction = (row: Tyre, action: string) => {
       modalName = "Rotate";
       break;
     case "reassign":
-      // modalName = "Reassign"; // TODO: implement Reassign
-      console.log("Reassign not implemented yet");
+      modalName = "Reassign";
       break;
   }
 
   if (modalName) {
     openModal(
-      modalName as any, 
-      { tyre: row }, 
+      modalName as any,
+      { tyre: row },
       (res) => {
         if (res) refetch();
       }

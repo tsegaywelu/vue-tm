@@ -7,35 +7,33 @@
     form-id="replaceForm"
   >
     <template #center>
-      <!-- Old Tyre Details -->
       <div class="grid grid-cols-2 gap-4">
-        <Input name="mileage" label="Current Mileage" type="number" :validation="{ required }" />
+        <Input name="mileage" label="Mileage" :validation="{ required }" :attributes="{ placeholder: 'Enter mileage', type: 'number' }" />
         <DateInput name="date" label="Date" :validation="{ required }" :attributes="{ placeholder: 'Select date' }" />
+       
       </div>
 
-      <!-- New Tyre Details -->
-      <div class="text-sm font-semibold text-gray-700 mt-4 mb-2 border-b pb-1">New Tyre Details</div>
-      
+      <!-- <hr class="my-4" /> -->
+
       <div class="grid grid-cols-2 gap-4">
-        <Input name="serialNumber" label="Serial Number" :validation="{ required }" />
-        <Input name="brand" label="Brand" :validation="{ required }" />
-        <Input name="treadDepth" label="Tread Depth" type="number" />
-        <Input name="TPI" label="TPI" type="number" />
-        <Input name="pressure" label="Pressure" type="number" />
-        <Input name="price" label="Price" type="number" :validation="{ required }" />
-        <Input name="type" label="Type" />
-        <DateInput name="installationDate" label="Installation Date" :validation="{ required }" :attributes="{ placeholder: 'Select date' }" />
-        <Input name="installationMileage" label="Installation Mileage" type="number" :validation="{ required }" />
+        <Input name="serialNumber" label="Serial Number" :validation="{ required }" :attributes="{ placeholder: 'Enter serial number' }" />
+        <Input name="vehicle" label="Vehicle" :attributes="{ disabled: true, placeholder: 'Vehicle' }" />
+        <Input name="tyrePosition" label="Tyre Position" :attributes="{ disabled: true, placeholder: 'Tyre position' }" />
+        <Input name="brand" label="Brand" :validation="{ required }" :attributes="{ placeholder: 'Enter brand' }" />
+        <Input name="treadDepth" label="Tread Depth (mm)" :attributes="{ placeholder: 'Enter tread depth',type:'number' }" />
+        <Input name="TPI" label="TPI"  :attributes="{ placeholder: 'Enter TPI',type:'number' }" />
+        <Input name="pressure" label="Pressure (PSI)" :attributes="{ placeholder: 'Enter pressure' ,type:'number'}" />
+        <Input name="price" label="Price"  :validation="{ required }" :attributes="{ placeholder: 'Enter price',type:'number' }" />
+        <Input name="type" label="Type" :attributes="{ placeholder: 'Enter type' }" />
+        <DateInput name="installationDate" label="Installation Date" :validation="{ required }" :attributes="{ placeholder: 'Select installation date' }" />
+        <Input name="installationMileage" label="Installation Mileage"  :validation="{ required }" :attributes="{ placeholder: 'Enter installation mileage',type:'number' }" />
+        <TextareaInput
+          name="description"
+          label="Description"
+          :rows="2"
+          :attributes="{ placeholder: 'Enter a description...' }"
+        />
       </div>
-
-      <!-- Description Input -->
-      <TextareaInput
-        name="description"
-        label="Description"
-        :rows="3"
-        class="mt-4"
-        :attributes="{ placeholder: 'Enter a description...' }"
-      />
     </template>
 
     <template #bottom>
@@ -75,6 +73,8 @@ const formValues = computed(() => ({
   date: "",
   description: "",
   serialNumber: "",
+  vehicle: tyre.value.vehicle?.plateNumber || "",
+  tyrePosition: tyre.value.tyrePosition || "",
   brand: "",
   treadDepth: "",
   TPI: "",
