@@ -7,7 +7,7 @@
     @row_click="handleAction($event, 'view')"
   >
     <template #cell-reference="{ value }">
-      <span class="font-bold">{{ value || '-' }}</span>
+      <span class="font-bold text-primary">{{ value || '-' }}</span>
     </template>
 
     <template #cell-totalAmount="{ value }">
@@ -34,17 +34,18 @@
       </Status>
     </template>
 
-    <template #extra-actions>
-      <div class="items-center gap-4 inline-flex border-l border-grey-100 overflow-x-auto px-3">
-        <i v-html="icons.filter" />
-        <InvoiceReportFilters @change="handleFilterChange" />
-      </div>
-    </template>
-
     <template #cell-actions="{ row }">
       <div class="flex items-center justify-end">
         <Dropdown>
           <template #default="{ close }">
+            <DropDownItem
+              :icon="icons.edit"
+              label="Edit"
+              @click.stop="
+                handleAction(row, 'edit');
+                close();
+              "
+            />
             <DropDownItem
               :icon="icons.check"
               label="Approve"
@@ -85,7 +86,6 @@ import Status from "@/components/common/Status.vue";
 import { icons } from "@/utils/icons";
 import { usePagination } from "@/composables/usePagination";
 import type { TableColumn } from "@/components/common/Table.vue";
-import InvoiceReportFilters from "./InvoiceReportFilters.vue";
 import { currencyFormatter, dateFormatter } from "@/utils/utils";
 
 const emit = defineEmits(["action"]);
@@ -105,10 +105,6 @@ const { response, refetch } = usePagination<any>({
   url: "/shipment/paymentRequestedInvoices",
   params: computed(() => activeFilters.value),
 });
-
-const handleFilterChange = (newFilters: any) => {
-  activeFilters.value = { ...newFilters };
-};
 
 const handleAction = (row: any, action: string) => {
   emit("action", { row, action });

@@ -247,6 +247,7 @@ export interface Tyre {
 
 export interface Mechanic {
   _id: string;
+  data?: any;
   firstName: string;
   middleName?: string;
   lastName?: string;
@@ -257,8 +258,10 @@ export interface Mechanic {
   certification?: string;
   experience?: string;
   workshop?: {
+    _id?: string;
     name: string;
   };
+
 }
 
 export interface Inspection {
@@ -269,13 +272,17 @@ export interface Inspection {
   inspectionDate?: string;
   inspectionReason?: string;
   inspector?: {
+    _id?: string;
     name: string;
   };
   odometerReading?: number;
   remarks?: string;
   issuesFound?: {
+    description: string;
+    severity: string;
     issueType: string;
   }[];
+  nextInspectionDate?: string;
 }
 
 export interface ServiceRecord {
@@ -285,12 +292,14 @@ export interface ServiceRecord {
   };
   maintenanceDate?: string;
   mechanics?: {
+    _id?: string;
     name?: string;
     firstName?: string;
     middleName?: string;
     lastName?: string;
   }[];
   workshop?: {
+    _id?: string;
     name: string;
   };
   mileageAtService?: number;

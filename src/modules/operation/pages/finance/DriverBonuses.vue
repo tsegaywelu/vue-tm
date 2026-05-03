@@ -1,98 +1,52 @@
 <template>
-  <div class="p-6">
- 
-    <div class="flex items-center mb-4">
-      <!-- Tab Toggle -->
-      <div class="flex items-center gap-2 mr-4">
+  <div class="flex flex-col h-full">
+    <div class="mb-4 px-2">
+      <nav class="flex space-x-8 border-b border-gray-200">
         <button
-          @click="activeTab = 'pending'"
+          v-for="tab in tabs"
+          :key="tab.id"
+          @click="currentTab = tab.id"
           :class="[
-            'px-4 py-2 rounded-lg text-sm font-medium transition-colors',
-            activeTab === 'pending' ? 'bg-brightBlue text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300',
+            currentTab === tab.id
+              ? 'border-primary text-primary'
+              : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
+            'whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors'
           ]"
         >
-          Pending
+          {{ tab.name }}
         </button>
-        <button
-          @click="activeTab = 'history'"
-          :class="[
-            'px-4 py-2 rounded-lg text-sm font-medium transition-colors',
-            activeTab === 'history' ? 'bg-brightBlue text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300',
-          ]"
-        >
-          History
-        </button>
-      </div>
-      <!-- Date Filter -->
-      <div class="flex items-center gap-2">
-        <button
-          class="px-5 py-[4px] rounded-[5px] text-sm font-medium leading-normal cursor-pointer"
-          :class="{ 'bg-surface-light/50 text-black': dateFilter === 'today', 'bg-transparent text-content-subtle hover:bg-surface-light/50': dateFilter !== 'today' }"
-          @click="dateFilter = 'today'"
-        >
-          Day
-        </button>
-        <button
-          class="px-5 py-[4px] rounded-[5px] text-sm font-medium leading-normal cursor-pointer"
-          :class="{ 'bg-surface-light/50 text-black': dateFilter === 'week', 'bg-transparent text-content-subtle hover:bg-surface-light/50': dateFilter !== 'week' }"
-          @click="dateFilter = 'week'"
-        >
-          Week
-        </button>
-        <button
-          class="px-5 py-[4px] rounded-[5px] text-sm font-medium leading-normal cursor-pointer"
-          :class="{ 'bg-surface-light/50 text-black': dateFilter === 'month', 'bg-transparent text-content-subtle hover:bg-surface-light/50': dateFilter !== 'month' }"
-          @click="dateFilter = 'month'"
-        >
-          Month
-        </button>
-        <button
-          class="px-5 py-[4px] rounded-[5px] text-sm font-medium leading-normal cursor-pointer"
-          :class="{ 'bg-surface-light/50 text-black': dateFilter === '', 'bg-transparent text-content-subtle hover:bg-surface-light/50': dateFilter !== '' }"
-          @click="dateFilter = ''"
-        >
-          All
-        </button>
-      </div>
+      </nav>
     </div>
-    <!-- Table Component -->
-    <component
-      :is="activeTab === 'pending' ? PendingBonusesTable : BonusHistoryTable"
-      @action="handleAction"
-      ref="tableRef"
-    />
+
+    <div class="flex-1 min-h-0">
+      <PendingBonusesTable v-if="currentTab === 'pending'" @action="handleAction" />
+      <BonusHistoryTable v-else-if="currentTab === 'history'" @action="handleAction" />
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, watch, defineEmits, defineExpose } from 'vue';
+import { ref, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import PendingBonusesTable from '@/modules/operation/components/finance/PendingBonusesTable.vue';
 import BonusHistoryTable from '@/modules/operation/components/finance/BonusHistoryTable.vue';
 
-const emit = defineEmits(['action']);
+const route = useRoute();
+const router = useRouter();
 
-const activeTab = ref('pending');
-const dateFilter = ref('');
+const tabs = [
+  { id: 'pending', name: 'Pending Bonuses' },
+  { id: 'history', name: 'Bonus History' },
+];
 
-const tableRef = ref<any>(null);
+const currentTab = ref((route.query.tab as string) || tabs[0].id);
 
-const handleAction = (payload: any) => {
-  emit('action', payload);
+// Sync tab state with URL query
+watch(currentTab, (newTab) => {
+  router.replace({ query: { ...route.query, tab: newTab } });
+});
+
+const handleAction = ({ row, action }: any) => {
+  console.log(`Action: ${action} on Driver Bonus:`, row);
 };
-
-// When tab or date filter changes, trigger a refetch on the child table if it exists
-watch([activeTab, dateFilter], () => {
-  if (tableRef.value && typeof tableRef.value.refetch === 'function') {
-    tableRef.value.refetch();
-  }
-});
-
-// Expose a manual refetch for parent components if needed
-defineExpose({
-  refetch: () => {
-    if (tableRef.value && typeof tableRef.value.refetch === 'function') {
-      tableRef.value.refetch();
-    }
-  },
-});
 </script>

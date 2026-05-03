@@ -249,6 +249,21 @@ export const operation_routes: RouteRecordRaw[] = [
         meta: { title: "Mechanic", description: "Manage mechanics." },
       },
       {
+        path: "mechanic/add",
+        name: "operation_maintenance_mechanic_add",
+        component: () => import("./pages/maintenance/MechanicAdd.vue"),
+        meta: { title: "Add Mechanic", description: "Add a new mechanic." },
+      },
+      {
+        path: "mechanic/edit/:id",
+        name: "operation_maintenance_mechanic_edit",
+        component: () => import("./pages/maintenance/MechanicEdit.vue"),
+        meta: {
+          title: "Edit Mechanic",
+          description: "Edit an existing mechanic.",
+        },
+      },
+      {
         path: "inspection",
         name: "operation_maintenance_inspection",
         component: () => import("./pages/maintenance/Inspection.vue"),
@@ -257,11 +272,46 @@ export const operation_routes: RouteRecordRaw[] = [
           description: "Manage vehicle inspections.",
         },
       },
+
+      {
+        path: "inspection/add",
+        name: "operation_maintenance_inspection_add",
+        component: () => import("./pages/maintenance/InspectionAdd.vue"),
+        meta: { title: "Add Inspection", description: "Add a new inspection." },
+      },
+      {
+        path: "inspection/edit/:id",
+        name: "operation_maintenance_inspection_edit",
+        component: () => import("./pages/maintenance/InspectionEdit.vue"),
+        meta: {
+          title: "Edit Inspection",
+          description: "Edit an existing inspection.",
+        },
+      },
       {
         path: "service-record",
         name: "operation_maintenance_service_record",
         component: () => import("./pages/maintenance/ServiceRecord.vue"),
         meta: { title: "Service Record", description: "View service records." },
+      },
+
+      {
+        path: "service-record/add",
+        name: "operation_maintenance_service_record_add",
+        component: () => import("./pages/maintenance/ServiceRecordAdd.vue"),
+        meta: {
+          title: "Add Service Record",
+          description: "Add a new service record.",
+        },
+      },
+      {
+        path: "service-record/edit/:id",
+        name: "operation_maintenance_service_record_edit",
+        component: () => import("./pages/maintenance/ServiceRecordEdit.vue"),
+        meta: {
+          title: "Edit Service Record",
+          description: "Edit an existing service record.",
+        },
       },
       {
         path: "service-reminder",
@@ -273,10 +323,46 @@ export const operation_routes: RouteRecordRaw[] = [
         },
       },
       {
+        path: "service-reminder/add",
+        name: "operation_maintenance_service_reminder_add",
+        component: () => import("./pages/maintenance/ServiceReminderAdd.vue"),
+        meta: {
+          title: "Add Service Reminder",
+          description: "Add a new service reminder.",
+        },
+      },
+      {
+        path: "service-reminder/edit/:id",
+        name: "operation_maintenance_service_reminder_edit",
+        component: () => import("./pages/maintenance/ServiceReminderEdit.vue"),
+        meta: {
+          title: "Edit Service Reminder",
+          description: "Edit an existing service reminder.",
+        },
+      },
+      {
         path: "service-task",
         name: "operation_maintenance_service_task",
         component: () => import("./pages/maintenance/ServiceTask.vue"),
         meta: { title: "Service Task", description: "Manage service tasks." },
+      },
+      {
+        path: "service-task/add",
+        name: "operation_maintenance_service_task_add",
+        component: () => import("./pages/maintenance/ServiceTaskAdd.vue"),
+        meta: {
+          title: "Add Service Task",
+          description: "Add a new service task.",
+        },
+      },
+      {
+        path: "service-task/edit/:id",
+        name: "operation_maintenance_service_task_edit",
+        component: () => import("./pages/maintenance/ServiceTaskEdit.vue"),
+        meta: {
+          title: "Edit Service Task",
+          description: "Edit an existing service task.",
+        },
       },
       {
         path: "service-type",
@@ -285,17 +371,62 @@ export const operation_routes: RouteRecordRaw[] = [
         meta: { title: "Service Type", description: "Manage service types." },
       },
       {
+        path: "service-type/add",
+        name: "operation_maintenance_service_type_add",
+        component: () => import("./pages/maintenance/ServiceTypeAdd.vue"),
+        meta: {
+          title: "Add Service Type",
+          description: "Add a new service type.",
+        },
+      },
+      {
+        path: "service-type/edit/:id",
+        name: "operation_maintenance_service_type_edit",
+        component: () => import("./pages/maintenance/ServiceTypeEdit.vue"),
+        meta: {
+          title: "Edit Service Type",
+          description: "Edit an existing service type.",
+        },
+      },
+      {
         path: "work-order",
         name: "operation_maintenance_work_order",
         component: () => import("./pages/maintenance/WorkOrder.vue"),
         meta: { title: "Work Order", description: "Manage work orders." },
       },
       {
+        path: "work-order/add",
+        name: "operation_maintenance_work_order_add",
+        component: () => import("./pages/maintenance/WorkOrderAdd.vue"),
+        meta: { title: "Add Work Order", description: "Add a new work order." },
+      },
+      {
+        path: "work-order/edit/:id",
+        name: "operation_maintenance_work_order_edit",
+        component: () => import("./pages/maintenance/WorkOrderEdit.vue"),
+        meta: { title: "Edit Work Order", description: "Edit an existing work order." },
+      },
+      {
         path: "workshop",
         name: "operation_maintenance_workshop",
         component: () => import("./pages/maintenance/Workshop.vue"),
         meta: { title: "Workshop", description: "Manage workshops." },
+        children: [
+          {
+            path: "add",
+            name: "operation_maintenance_workshop_add",
+            component: () => import("./pages/maintenance/WorkshopAdd.vue"),
+            meta: { title: "Add Workshop", description: "Add a new workshop." },
+          },
+          {
+            path: "edit/:id",
+            name: "operation_maintenance_workshop_edit",
+            component: () => import("./pages/maintenance/WorkshopEdit.vue"),
+            meta: { title: "Edit Workshop", description: "Edit an existing workshop." },
+          },
+        ]
       },
+
       {
         path: "issue-report",
         name: "operation_maintenance_issue_report",
@@ -359,6 +490,18 @@ export const operation_routes: RouteRecordRaw[] = [
         meta: { title: "Expense Types", description: "Manage expense types." },
       },
       {
+        path: "expense-types/add",
+        name: "operation_finance_expense_types_add",
+        component: () => import("./pages/finance/ExpenseTypesAdd.vue"),
+        meta: { title: "Add Expense Type", description: "Add a new expense type." },
+      },
+      {
+        path: "expense-types/edit/:id",
+        name: "operation_finance_expense_types_edit",
+        component: () => import("./pages/finance/ExpenseTypesEdit.vue"),
+        meta: { title: "Edit Expense Type", description: "Edit an existing expense type." },
+      },
+      {
         path: "fuel-transactions",
         name: "operation_finance_fuel_transactions",
         component: () => import("./pages/finance/FuelTransactions.vue"),
@@ -392,6 +535,18 @@ export const operation_routes: RouteRecordRaw[] = [
         name: "operation_inventory_categories",
         component: () => import("./pages/Inventory/Categories.vue"),
         meta: { title: "Categories", description: "Manage inventory categories." },
+      },
+      {
+        path: "categories/add",
+        name: "operation_inventory_categories_add",
+        component: () => import("./pages/Inventory/InventoryCategoryAdd.vue"),
+        meta: { title: "Add Category", description: "Add a new inventory category." },
+      },
+      {
+        path: "categories/edit/:id",
+        name: "operation_inventory_categories_edit",
+        component: () => import("./pages/Inventory/InventoryCategoryEdit.vue"),
+        meta: { title: "Edit Category", description: "Edit an existing inventory category." },
       },
       {
         path: "item-groups",

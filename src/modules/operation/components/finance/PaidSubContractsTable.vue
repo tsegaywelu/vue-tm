@@ -97,7 +97,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
+import { computed, ref } from "vue";
 import Table from "@/components/common/Table.vue";
 import Select from "@/components/common/Select.vue";
 import Dropdown from "@/components/common/Dropdown.vue";
@@ -142,34 +142,17 @@ const dynamicSearchPlaceholder = computed(() => {
   return option ? `Search by ${option.label}...` : "Search...";
 });
 
-const activeFilters = ref<any>({
-  selectedFilterOption: {
-    value: selectedSearchField.value,
-  },
-});
+const activeFilters = ref<any>({});
 
 const { response, refetch } = usePagination<any>({
   id: "paid-sub-contracts-list",
   url: "/shipment/payableShipmentsPaid",
+  searchKey: selectedSearchField,
   params: computed(() => activeFilters.value),
 });
 
-watch(selectedSearchField, (newField) => {
-  activeFilters.value = {
-    ...activeFilters.value,
-    selectedFilterOption: {
-      value: newField,
-    },
-  };
-});
-
 const handleFilterChange = (newFilters: any) => {
-  activeFilters.value = {
-    ...newFilters,
-    selectedFilterOption: {
-      value: selectedSearchField.value,
-    },
-  };
+  activeFilters.value = newFilters;
 };
 
 const handleAction = (row: any, action: string) => {

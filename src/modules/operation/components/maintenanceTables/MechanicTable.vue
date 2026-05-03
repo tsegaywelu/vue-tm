@@ -23,9 +23,25 @@
       actions: 'right',
     }"
     id="mechanics-list"
+    v-model:search_value="searchTerm"
     :columns="columns"
     :rows="response"
+    :search_placeholder="dynamicSearchPlaceholder"
   >
+    <template #search-prefix>
+      <div
+        class="h-full flex items-center border-r border-gray-200 pr-2 mr-2 w-38"
+      >
+        <Select
+          class="[&_.custom-input]:border-none [&_.custom-input]:min-h-full w-66"
+          v-model="selectedSearchField"
+          :options="searchFieldOptions"
+          label_key="label"
+          value_key="value"
+          :clearable="false"
+        />
+      </div>
+    </template>
     <template #cell-fullName="{ row }">
       <span class="font-medium text-gray-900">{{ row.firstName }} {{ row.middleName || '' }} {{ row.lastName || '' }}</span>
     </template>
@@ -91,8 +107,9 @@
 import { computed, ref } from "vue";
 import Table from "@/components/common/Table.vue";
 import Dropdown from "@/components/common/Dropdown.vue";
+import Select from "@/components/common/Select.vue";
 import { usePagination } from "@/composables/usePagination";
-import type { Mechanic } from "../operation.types";
+import type { Mechanic } from "../../operation.types";
 import type { TableColumn } from "@/components/common/Table.vue";
 
 const emit = defineEmits(["action"]);
@@ -109,11 +126,35 @@ const columns: TableColumn<Mechanic>[] = [
   { key: "actions", label: "Actions", cellAlign: "right" },
 ];
 
-const activeFilters = ref({});
+const searchFieldOptions = [
+  { label: "First Name", value: "firstName" },
+  { label: "Middle Name", value: "middleName" },
+  { label: "Last Name", value: "lastName" },
+  { label: "Phone Number", value: "phoneNumber" },
+];
+
+const selectedSearchField = ref("firstName");
+const searchTerm = ref("");
+
+const dynamicSearchPlaceholder = computed(() => {
+  const option = searchFieldOptions.find(
+    (o) => o.value === selectedSearchField.value,
+  );
+  return option ? `Search by ${option.label}...` : "Search...";
+});
+
+const activeFilters = ref<any>({});
 const { response, refetch } = usePagination<Mechanic>({
   id: "mechanics-list",
   url: "/mechanic",
-  params: computed(() => activeFilters.value),
+  params: computed(() => {
+    const params: any = { ...activeFilters.value };
+    if (searchTerm.value) {
+      params[`${selectedSearchField.value}[regex]`] = searchTerm.value;
+      params.q = undefined;
+    }
+    return params;
+  }),
 });
 
 const handleAction = (row: Mechanic, action: string) => {

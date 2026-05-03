@@ -110,7 +110,7 @@ const columns: TableColumn<any>[] = [
 const activeFilters = ref({});
 const { response, refetch } = usePagination<any>({
   id: "receivable-settlement-list",
-  url: "/advance-payment/receivableTransaction",
+  url: "/transaction/receivableTransaction",
   params: computed(() => activeFilters.value),
 });
 

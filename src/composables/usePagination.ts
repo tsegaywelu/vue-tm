@@ -32,6 +32,7 @@ export interface TablePaginationContext<T = any> {
   debouncedSearch: ComputedRef<string>;
   setSorting: (sorting: SortingState[]) => void;
   setTotalPages: (total_pages: number) => void;
+  fullResponse: ComputedRef<any>;
   refetch: () => void;
 }
 
@@ -49,6 +50,7 @@ interface UsePaginationOptions {
   withAuth?: boolean;
   method?: "GET" | "POST";
   paginate?: boolean;
+  searchKey?: string | Ref<string>;
 }
 
 function useDebounceFn<T extends (...args: any[]) => any>(
@@ -111,6 +113,8 @@ export function usePagination<T = any>({
   api: apiInstance = rootApi,
   withAuth = true,
   method = "GET",
+  paginate = true,
+  searchKey = "q",
 }: UsePaginationOptions): TablePaginationContext<T> {
   const id = prop_id || query_key_base[0] || url;
 
@@ -169,6 +173,7 @@ export function usePagination<T = any>({
     state.value.page,
     state.value.limit,
     debounced_search.value,
+    isRef(searchKey) ? searchKey.value : searchKey,
     state.value.sorting,
     resolved_params.value,
   ]);
@@ -181,9 +186,11 @@ export function usePagination<T = any>({
       const p = resolved_params.value;
 
       const request_params: Record<string, any> = {
-        page: state.value.page,
-        limit: state.value.limit,
-        q: debounced_search.value || undefined,
+        ...(paginate ? {
+          page: state.value.page,
+          limit: state.value.limit,
+        } : {}),
+        [isRef(searchKey) ? searchKey.value : searchKey]: debounced_search.value || undefined,
         sortBy: state.value.sorting?.[0]?.id,
         sortOrder: state.value.sorting?.length
           ? state.value.sorting[0].desc
@@ -235,7 +242,9 @@ export function usePagination<T = any>({
                   ? res_data.docs
                   : res_data?.documents && Array.isArray(res_data.documents)
                     ? res_data.documents
-                    : [];
+                    : res_data?.shipments && Array.isArray(res_data.shipments)
+                      ? res_data.shipments
+                      : [];
 
         if (items.length > 0 && !state.value.isDirty) {
           setIsDirty(true);
@@ -283,9 +292,13 @@ export function usePagination<T = any>({
           ? d.results
           : d?.vehicleExpenses && Array.isArray(d.vehicleExpenses)
             ? d.vehicleExpenses
-            : d?.docs && Array.isArray(d.docs)
-              ? d.docs
-              : [];
+              : d?.docs && Array.isArray(d.docs)
+                ? d.docs
+                : d?.documents && Array.isArray(d.documents)
+                  ? d.documents
+                  : d?.shipments && Array.isArray(d.shipments)
+                    ? d.shipments
+                    : [];
   });
 
   const server_error = computed(() => {
@@ -310,6 +323,7 @@ export function usePagination<T = any>({
     debouncedSearch: computed(() => debounced_search.value),
     setSorting,
     setTotalPages,
+    fullResponse: computed(() => data.value?.data || {}),
     refetch: () => refetch(),
   };
 

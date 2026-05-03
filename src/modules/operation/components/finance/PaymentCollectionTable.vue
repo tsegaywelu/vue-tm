@@ -58,12 +58,7 @@
       </Status>
     </template>
 
-    <template #extra-actions>
-      <div class="items-center gap-4 inline-flex border-l border-grey-100 overflow-x-auto px-3">
-        <i v-html="icons.filter" />
-        <PaymentCollectionFilters @change="handleFilterChange" />
-      </div>
-    </template>
+  
 
     <template #cell-actions="{ row }">
       <div class="flex items-center justify-end">
@@ -110,7 +105,6 @@ import Status from "@/components/common/Status.vue";
 import { icons } from "@/utils/icons";
 import { usePagination } from "@/composables/usePagination";
 import type { TableColumn } from "@/components/common/Table.vue";
-import PaymentCollectionFilters from "./PaymentCollectionFilters.vue";
 import { currencyFormatter, dateFormatter } from "@/utils/utils";
 
 const emit = defineEmits(["action"]);
