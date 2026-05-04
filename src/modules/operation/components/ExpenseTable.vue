@@ -5,6 +5,7 @@
     :rows="response"
     search_placeholder="Search by plate number..."
     @row_click="handleAction($event, 'view')"
+    
   >
     <template #cell-plateNumber="{ value }">
       <span class="font-bold">{{ value || '-' }}</span>

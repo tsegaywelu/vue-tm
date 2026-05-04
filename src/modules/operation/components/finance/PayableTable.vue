@@ -110,7 +110,7 @@ const columns: TableColumn<any>[] = [
   { key: "actions", label: "Actions", field: "", cellAlign: "right" },
 ];
 
-const activeFilters = ref({});
+const activeFilters = ref({ select: 'all' });
 const { response, refetch } = usePagination<any>({
   id: "payable-list",
   url: "/advance-payment/allPayables",

@@ -329,101 +329,101 @@ export const operation_routes: RouteRecordRaw[] = [
       description: "Detailed view of the transporter profile.",
     },
   },
-      {
-        path: "vehicles",
-        name: "operation_vehicles",
-        component: () => import("./pages/Vehicles.vue"),
-        meta: {
-          title: "Vehicles",
-          description: "Manage fleet vehicles, tracking and registration.",
-        },
-      },
-      {
-        path: "vehicles/add",
-        name: "operation_vehicles_add",
-        component: () => import("./pages/AddVehicle.vue"),
-        meta: {
-          title: "Add Vehicle",
-          description: "Register a new vehicle to the fleet.",
-        },
-      },
-      {
-        path: "vehicles/edit/:id",
-        name: "operation_vehicles_edit",
-        component: () => import("./pages/EditVehicle.vue"),
-        meta: {
-          title: "Edit Vehicle",
-          description: "Update existing vehicle details and specifications.",
-        },
-      },
-      {
-        path: "vehicles/:id",
-        name: "operation_vehicle_details",
-        component: () => import("./pages/VehicleDetails.vue"),
-        meta: {
-          title: "Vehicle Details",
-          description: "Comprehensive view of vehicle history and specifications.",
-          tabs: [
-            { label: "Basic Details", value: "basic" },
-            { label: "Documents Uploaded", value: "documents" },
-            { label: "Shipments Completed", value: "shipments" },
-            { label: "Insurance History", value: "insurance" },
-            { label: "Fuel History", value: "fuel" },
-            { label: "Driver History", value: "drivers" },
-            { label: "Tyre History", value: "tyres" },
-          ],
-        },
-      },
-      {
-        path: "vehicles/leased",
-        name: "operation_leased_vehicles",
-        component: () => import("./pages/LeasedVehicles.vue"),
-        meta: {
-          title: "Leased Vehicles",
-          description: "Manage leased vehicles in the fleet.",
-        },
-      },
-      {
-        path: "vehicles/types",
-        name: "operation_vehicle_types",
-        component: () => import("./pages/VehicleTypes.vue"),
-        meta: {
-          title: "Vehicle Types",
-          description: "Manage vehicle types and specifications.",
-        },
-      },
-      {
-        path: "vehicles/goals",
-        name: "operation_vehicle_goals",
-        component: () => import("./pages/VehicleTypeGoals.vue"),
-        meta: {
-          title: "Vehicle Type Goals",
-          description: "Track performance goals for vehicle types.",
-        },
-      },
-      {
-        path: "vehicles/groups",
-        name: "operation_vehicle_groups",
-        component: () => import("./pages/VehicleGroups.vue"),
-        meta: {
-          title: "Vehicle Groups",
-          description: "Manage vehicle group classifications.",
-        },
-      },
-      {
-        path: "vehicles/standards",
-        name: "operation_vehicle_standards",
-        component: () => import("./pages/VehicleStandards.vue"),
-        meta: {
-          title: "Vehicle Standards",
-          description: "Manage vehicle performance and safety standards.",
-          tabs: [
-            { label: "Marker", value: "marker" },
-            { label: "Vehicle Model", value: "vehicle-model" },
-            { label: "Type", value: "type" },
-          ],
-        },
-      },
+  {
+    path: "vehicles",
+    name: "operation_vehicles",
+    component: () => import("./pages/Vehicles.vue"),
+    meta: {
+      title: "Vehicles",
+      description: "Manage fleet vehicles, tracking and registration.",
+    },
+  },
+  {
+    path: "vehicles/add",
+    name: "operation_vehicles_add",
+    component: () => import("./pages/AddVehicle.vue"),
+    meta: {
+      title: "Add Vehicle",
+      description: "Register a new vehicle to the fleet.",
+    },
+  },
+  {
+    path: "vehicles/edit/:id",
+    name: "operation_vehicles_edit",
+    component: () => import("./pages/EditVehicle.vue"),
+    meta: {
+      title: "Edit Vehicle",
+      description: "Update existing vehicle details and specifications.",
+    },
+  },
+  {
+    path: "vehicles/:id",
+    name: "operation_vehicle_details",
+    component: () => import("./pages/VehicleDetails.vue"),
+    meta: {
+      title: "Vehicle Details",
+      description: "Comprehensive view of vehicle history and specifications.",
+      tabs: [
+        { label: "Basic Details", value: "basic" },
+        { label: "Documents Uploaded", value: "documents" },
+        { label: "Shipments Completed", value: "shipments" },
+        { label: "Insurance History", value: "insurance" },
+        { label: "Fuel History", value: "fuel" },
+        { label: "Driver History", value: "drivers" },
+        { label: "Tyre History", value: "tyres" },
+      ],
+    },
+  },
+  {
+    path: "vehicles/leased",
+    name: "operation_leased_vehicles",
+    component: () => import("./pages/LeasedVehicles.vue"),
+    meta: {
+      title: "Leased Vehicles",
+      description: "Manage leased vehicles in the fleet.",
+    },
+  },
+  {
+    path: "vehicles/types",
+    name: "operation_vehicle_types",
+    component: () => import("./pages/VehicleTypes.vue"),
+    meta: {
+      title: "Vehicle Types",
+      description: "Manage vehicle types and specifications.",
+    },
+  },
+  {
+    path: "vehicles/goals",
+    name: "operation_vehicle_goals",
+    component: () => import("./pages/VehicleTypeGoals.vue"),
+    meta: {
+      title: "Vehicle Type Goals",
+      description: "Track performance goals for vehicle types.",
+    },
+  },
+  {
+    path: "vehicles/groups",
+    name: "operation_vehicle_groups",
+    component: () => import("./pages/VehicleGroups.vue"),
+    meta: {
+      title: "Vehicle Groups",
+      description: "Manage vehicle group classifications.",
+    },
+  },
+  {
+    path: "vehicles/standards",
+    name: "operation_vehicle_standards",
+    component: () => import("./pages/VehicleStandards.vue"),
+    meta: {
+      title: "Vehicle Standards",
+      description: "Manage vehicle performance and safety standards.",
+      tabs: [
+        { label: "Marker", value: "marker" },
+        { label: "Vehicle Model", value: "vehicle-model" },
+        { label: "Type", value: "type" },
+      ],
+    },
+  },
   {
     path: "insurances",
     name: "operation_insurances",
@@ -491,6 +491,21 @@ export const operation_routes: RouteRecordRaw[] = [
         meta: { title: "Mechanic", description: "Manage mechanics." },
       },
       {
+        path: "mechanic/add",
+        name: "operation_maintenance_mechanic_add",
+        component: () => import("./pages/maintenance/MechanicAdd.vue"),
+        meta: { title: "Add Mechanic", description: "Add a new mechanic." },
+      },
+      {
+        path: "mechanic/edit/:id",
+        name: "operation_maintenance_mechanic_edit",
+        component: () => import("./pages/maintenance/MechanicEdit.vue"),
+        meta: {
+          title: "Edit Mechanic",
+          description: "Edit an existing mechanic.",
+        },
+      },
+      {
         path: "inspection",
         name: "operation_maintenance_inspection",
         component: () => import("./pages/maintenance/Inspection.vue"),
@@ -499,11 +514,46 @@ export const operation_routes: RouteRecordRaw[] = [
           description: "Manage vehicle inspections.",
         },
       },
+
+      {
+        path: "inspection/add",
+        name: "operation_maintenance_inspection_add",
+        component: () => import("./pages/maintenance/InspectionAdd.vue"),
+        meta: { title: "Add Inspection", description: "Add a new inspection." },
+      },
+      {
+        path: "inspection/edit/:id",
+        name: "operation_maintenance_inspection_edit",
+        component: () => import("./pages/maintenance/InspectionEdit.vue"),
+        meta: {
+          title: "Edit Inspection",
+          description: "Edit an existing inspection.",
+        },
+      },
       {
         path: "service-record",
         name: "operation_maintenance_service_record",
         component: () => import("./pages/maintenance/ServiceRecord.vue"),
         meta: { title: "Service Record", description: "View service records." },
+      },
+
+      {
+        path: "service-record/add",
+        name: "operation_maintenance_service_record_add",
+        component: () => import("./pages/maintenance/ServiceRecordAdd.vue"),
+        meta: {
+          title: "Add Service Record",
+          description: "Add a new service record.",
+        },
+      },
+      {
+        path: "service-record/edit/:id",
+        name: "operation_maintenance_service_record_edit",
+        component: () => import("./pages/maintenance/ServiceRecordEdit.vue"),
+        meta: {
+          title: "Edit Service Record",
+          description: "Edit an existing service record.",
+        },
       },
       {
         path: "service-reminder",
@@ -515,10 +565,46 @@ export const operation_routes: RouteRecordRaw[] = [
         },
       },
       {
+        path: "service-reminder/add",
+        name: "operation_maintenance_service_reminder_add",
+        component: () => import("./pages/maintenance/ServiceReminderAdd.vue"),
+        meta: {
+          title: "Add Service Reminder",
+          description: "Add a new service reminder.",
+        },
+      },
+      {
+        path: "service-reminder/edit/:id",
+        name: "operation_maintenance_service_reminder_edit",
+        component: () => import("./pages/maintenance/ServiceReminderEdit.vue"),
+        meta: {
+          title: "Edit Service Reminder",
+          description: "Edit an existing service reminder.",
+        },
+      },
+      {
         path: "service-task",
         name: "operation_maintenance_service_task",
         component: () => import("./pages/maintenance/ServiceTask.vue"),
         meta: { title: "Service Task", description: "Manage service tasks." },
+      },
+      {
+        path: "service-task/add",
+        name: "operation_maintenance_service_task_add",
+        component: () => import("./pages/maintenance/ServiceTaskAdd.vue"),
+        meta: {
+          title: "Add Service Task",
+          description: "Add a new service task.",
+        },
+      },
+      {
+        path: "service-task/edit/:id",
+        name: "operation_maintenance_service_task_edit",
+        component: () => import("./pages/maintenance/ServiceTaskEdit.vue"),
+        meta: {
+          title: "Edit Service Task",
+          description: "Edit an existing service task.",
+        },
       },
       {
         path: "service-type",
@@ -527,17 +613,68 @@ export const operation_routes: RouteRecordRaw[] = [
         meta: { title: "Service Type", description: "Manage service types." },
       },
       {
+        path: "service-type/add",
+        name: "operation_maintenance_service_type_add",
+        component: () => import("./pages/maintenance/ServiceTypeAdd.vue"),
+        meta: {
+          title: "Add Service Type",
+          description: "Add a new service type.",
+        },
+      },
+      {
+        path: "service-type/edit/:id",
+        name: "operation_maintenance_service_type_edit",
+        component: () => import("./pages/maintenance/ServiceTypeEdit.vue"),
+        meta: {
+          title: "Edit Service Type",
+          description: "Edit an existing service type.",
+        },
+      },
+      {
         path: "work-order",
         name: "operation_maintenance_work_order",
         component: () => import("./pages/maintenance/WorkOrder.vue"),
         meta: { title: "Work Order", description: "Manage work orders." },
       },
       {
+        path: "work-order/add",
+        name: "operation_maintenance_work_order_add",
+        component: () => import("./pages/maintenance/WorkOrderAdd.vue"),
+        meta: { title: "Add Work Order", description: "Add a new work order." },
+      },
+      {
+        path: "work-order/edit/:id",
+        name: "operation_maintenance_work_order_edit",
+        component: () => import("./pages/maintenance/WorkOrderEdit.vue"),
+        meta: {
+          title: "Edit Work Order",
+          description: "Edit an existing work order.",
+        },
+      },
+      {
         path: "workshop",
         name: "operation_maintenance_workshop",
         component: () => import("./pages/maintenance/Workshop.vue"),
         meta: { title: "Workshop", description: "Manage workshops." },
+        children: [
+          {
+            path: "add",
+            name: "operation_maintenance_workshop_add",
+            component: () => import("./pages/maintenance/WorkshopAdd.vue"),
+            meta: { title: "Add Workshop", description: "Add a new workshop." },
+          },
+          {
+            path: "edit/:id",
+            name: "operation_maintenance_workshop_edit",
+            component: () => import("./pages/maintenance/WorkshopEdit.vue"),
+            meta: {
+              title: "Edit Workshop",
+              description: "Edit an existing workshop.",
+            },
+          },
+        ],
       },
+
       {
         path: "issue-report",
         name: "operation_maintenance_issue_report",
@@ -607,6 +744,24 @@ export const operation_routes: RouteRecordRaw[] = [
         meta: { title: "Expense Types", description: "Manage expense types." },
       },
       {
+        path: "expense-types/add",
+        name: "operation_finance_expense_types_add",
+        component: () => import("./pages/finance/ExpenseTypesAdd.vue"),
+        meta: {
+          title: "Add Expense Type",
+          description: "Add a new expense type.",
+        },
+      },
+      {
+        path: "expense-types/edit/:id",
+        name: "operation_finance_expense_types_edit",
+        component: () => import("./pages/finance/ExpenseTypesEdit.vue"),
+        meta: {
+          title: "Edit Expense Type",
+          description: "Edit an existing expense type.",
+        },
+      },
+      {
         path: "fuel-transactions",
         name: "operation_finance_fuel_transactions",
         component: () => import("./pages/finance/FuelTransactions.vue"),
@@ -659,7 +814,8 @@ export const operation_routes: RouteRecordRaw[] = [
     component: () => import("./pages/DriverDetails.vue"),
     meta: {
       title: "Driver Details",
-      description: "Comprehensive overview of driver profiles, documents, shipments, and settlements.",
+      description:
+        "Comprehensive overview of driver profiles, documents, shipments, and settlements.",
       tabs: [
         { label: "Basic Driver Information", value: "basic" },
         { label: "Documents", value: "documents" },
@@ -706,6 +862,24 @@ export const operation_routes: RouteRecordRaw[] = [
         },
       },
       {
+        path: "categories/add",
+        name: "operation_inventory_categories_add",
+        component: () => import("./pages/Inventory/InventoryCategoryAdd.vue"),
+        meta: {
+          title: "Add Category",
+          description: "Add a new inventory category.",
+        },
+      },
+      {
+        path: "categories/edit/:id",
+        name: "operation_inventory_categories_edit",
+        component: () => import("./pages/Inventory/InventoryCategoryEdit.vue"),
+        meta: {
+          title: "Edit Category",
+          description: "Edit an existing inventory category.",
+        },
+      },
+      {
         path: "item-groups",
         name: "operation_inventory_item_groups",
         component: () => import("./pages/Inventory/ItemGroups.vue"),
@@ -715,10 +889,46 @@ export const operation_routes: RouteRecordRaw[] = [
         },
       },
       {
+        path: "item-groups/add",
+        name: "operation_inventory_item_groups_add",
+        component: () => import("./pages/Inventory/ItemGroupAdd.vue"),
+        meta: {
+          title: "Add Item Group",
+          description: "Add a new inventory item group.",
+        },
+      },
+      {
+        path: "item-groups/edit/:id",
+        name: "operation_inventory_item_groups_edit",
+        component: () => import("./pages/Inventory/ItemGroupEdit.vue"),
+        meta: {
+          title: "Edit Item Group",
+          description: "Edit an existing inventory item group.",
+        },
+      },
+      {
         path: "vendor",
         name: "operation_inventory_vendor",
         component: () => import("./pages/Inventory/Vendor.vue"),
         meta: { title: "Vendor", description: "Manage inventory vendors." },
+      },
+      {
+        path: "vendor/add",
+        name: "operation_inventory_vendor_add",
+        component: () => import("./pages/Inventory/VendorAdd.vue"),
+        meta: {
+          title: "Add Vendor",
+          description: "Add a new inventory vendor.",
+        },
+      },
+      {
+        path: "vendor/edit/:id",
+        name: "operation_inventory_vendor_edit",
+        component: () => import("./pages/Inventory/VendorEdit.vue"),
+        meta: {
+          title: "Edit Vendor",
+          description: "Edit an existing inventory vendor.",
+        },
       },
       {
         path: "items",
@@ -727,12 +937,48 @@ export const operation_routes: RouteRecordRaw[] = [
         meta: { title: "Items", description: "Manage inventory items." },
       },
       {
+        path: "items/add",
+        name: "operation_inventory_items_add",
+        component: () => import("./pages/Inventory/ItemAdd.vue"),
+        meta: {
+          title: "Add Inventory Item",
+          description: "Add a new inventory item.",
+        },
+      },
+      {
+        path: "items/edit/:id",
+        name: "operation_inventory_items_edit",
+        component: () => import("./pages/Inventory/ItemEdit.vue"),
+        meta: {
+          title: "Edit Inventory Item",
+          description: "Edit an existing inventory item.",
+        },
+      },
+      {
         path: "store-requisition",
         name: "operation_inventory_store_requisition",
         component: () => import("./pages/Inventory/StoreRequisition.vue"),
         meta: {
           title: "Store Requisition",
           description: "Manage store requisition vouchers.",
+        },
+      },
+      {
+        path: "store-requisition/add",
+        name: "operation_inventory_store_requisition_add",
+        component: () => import("./pages/Inventory/StoreRequisitionAdd.vue"),
+        meta: {
+          title: "Add Requisition",
+          description: "Create a new store requisition.",
+        },
+      },
+      {
+        path: "store-requisition/edit/:id",
+        name: "operation_inventory_store_requisition_edit",
+        component: () => import("./pages/Inventory/StoreRequisitionEdit.vue"),
+        meta: {
+          title: "Edit Requisition",
+          description: "Edit an existing store requisition.",
         },
       },
       {
@@ -745,6 +991,25 @@ export const operation_routes: RouteRecordRaw[] = [
         },
       },
       {
+        path: "purchase-requisition/add",
+        name: "operation_inventory_purchase_requisition_add",
+        component: () => import("./pages/Inventory/PurchaseRequisitionAdd.vue"),
+        meta: {
+          title: "Add Purchase Requisition",
+          description: "Create a new purchase requisition.",
+        },
+      },
+      {
+        path: "purchase-requisition/edit/:id",
+        name: "operation_inventory_purchase_requisition_edit",
+        component: () =>
+          import("./pages/Inventory/PurchaseRequisitionEdit.vue"),
+        meta: {
+          title: "Edit Purchase Requisition",
+          description: "Edit an existing purchase requisition.",
+        },
+      },
+      {
         path: "purchase-order",
         name: "operation_inventory_purchase_order",
         component: () => import("./pages/Inventory/PurchaseOrder.vue"),
@@ -754,12 +1019,48 @@ export const operation_routes: RouteRecordRaw[] = [
         },
       },
       {
+        path: "purchase-order/add",
+        name: "operation_inventory_purchase_order_add",
+        component: () => import("./pages/Inventory/PurchaseOrderAdd.vue"),
+        meta: {
+          title: "Add Purchase Order",
+          description: "Create a new purchase order.",
+        },
+      },
+      {
+        path: "purchase-order/edit/:id",
+        name: "operation_inventory_purchase_order_edit",
+        component: () => import("./pages/Inventory/PurchaseOrderEdit.vue"),
+        meta: {
+          title: "Edit Purchase Order",
+          description: "Edit an existing purchase order.",
+        },
+      },
+      {
         path: "good-transfer",
         name: "operation_inventory_good_transfer",
         component: () => import("./pages/Inventory/GoodTransfer.vue"),
         meta: {
           title: "Issue / Receive",
           description: "Track good transfers, issues and receipts.",
+        },
+      },
+      {
+        path: "good-transfer/add",
+        name: "operation_inventory_good_transfer_add",
+        component: () => import("./pages/Inventory/GoodTransferAdd.vue"),
+        meta: {
+          title: "Add Transfer Voucher",
+          description: "Create a new good transfer voucher.",
+        },
+      },
+      {
+        path: "good-transfer/edit/:id",
+        name: "operation_inventory_good_transfer_edit",
+        component: () => import("./pages/Inventory/GoodTransferEdit.vue"),
+        meta: {
+          title: "Edit Transfer Voucher",
+          description: "Edit an existing good transfer voucher.",
         },
       },
     ],
@@ -780,6 +1081,42 @@ export const operation_routes: RouteRecordRaw[] = [
         },
       },
       {
+        path: "user-and-role/user/add",
+        name: "operation_setting_user_add",
+        component: () => import("./pages/setting/UserAdd.vue"),
+        meta: {
+          title: "Register User",
+          description: "Create a new user account.",
+        },
+      },
+      {
+        path: "user-and-role/user/edit/:id",
+        name: "operation_setting_user_edit",
+        component: () => import("./pages/setting/UserEdit.vue"),
+        meta: {
+          title: "Edit User",
+          description: "Edit an existing user account.",
+        },
+      },
+      {
+        path: "user-and-role/role/add",
+        name: "operation_setting_role_add",
+        component: () => import("./pages/setting/RoleAdd.vue"),
+        meta: {
+          title: "Add Role",
+          description: "Create a new role with permissions.",
+        },
+      },
+      {
+        path: "user-and-role/role/edit/:id",
+        name: "operation_setting_role_edit",
+        component: () => import("./pages/setting/RoleEdit.vue"),
+        meta: {
+          title: "Edit Role",
+          description: "Edit an existing role and its permissions.",
+        },
+      },
+      {
         path: "base-configuration",
         name: "operation_setting_base_configuration",
         component: () => import("./pages/setting/BaseConfiguration.vue"),
@@ -788,6 +1125,72 @@ export const operation_routes: RouteRecordRaw[] = [
           description: "Configure core system settings.",
         },
       },
+      // Road Type
+      {
+        path: "base-configuration/road-type/add",
+        component: () =>
+          import("./pages/setting/BaseConfiguration pages/RoadTypeAdd.vue"),
+        meta: { title: "Add Road Type" },
+      },
+      {
+        path: "base-configuration/road-type/edit/:id",
+        component: () =>
+          import("./pages/setting/BaseConfiguration pages/RoadTypeEdit.vue"),
+        meta: { title: "Edit Road Type" },
+      },
+      // Terrain Type
+      {
+        path: "base-configuration/terrain-type/add",
+        component: () =>
+          import("./pages/setting/BaseConfiguration pages/TerrainTypeAdd.vue"),
+        meta: { title: "Add Terrain Type" },
+      },
+      {
+        path: "base-configuration/terrain-type/edit/:id",
+        component: () =>
+          import("./pages/setting/BaseConfiguration pages/TerrainTypeEdit.vue"),
+        meta: { title: "Edit Terrain Type" },
+      },
+      // Bank
+      {
+        path: "base-configuration/bank/add",
+        component: () =>
+          import("./pages/setting/BaseConfiguration pages/BankAdd.vue"),
+        meta: { title: "Add Bank" },
+      },
+      {
+        path: "base-configuration/bank/edit/:id",
+        component: () =>
+          import("./pages/setting/BaseConfiguration pages/BankEdit.vue"),
+        meta: { title: "Edit Bank" },
+      },
+      // Insurance
+      {
+        path: "base-configuration/insurance/add",
+        component: () =>
+          import("./pages/setting/BaseConfiguration pages/InsuranceAdd.vue"),
+        meta: { title: "Add Insurance" },
+      },
+      {
+        path: "base-configuration/insurance/edit/:id",
+        component: () =>
+          import("./pages/setting/BaseConfiguration pages/InsuranceEdit.vue"),
+        meta: { title: "Edit Insurance" },
+      },
+      // Settings (Carrier)
+      {
+        path: "base-configuration/settings/add",
+        component: () =>
+          import("./pages/setting/BaseConfiguration pages/CarrierSettingAdd.vue"),
+        meta: { title: "Add Carrier Setting" },
+      },
+      {
+        path: "base-configuration/settings/edit/:id",
+        component: () =>
+          import("./pages/setting/BaseConfiguration pages/CarrierSettingEdit.vue"),
+        meta: { title: "Edit Carrier Setting" },
+      },
+
       {
         path: "contract",
         name: "operation_setting_contract",
@@ -795,11 +1198,40 @@ export const operation_routes: RouteRecordRaw[] = [
         meta: { title: "Contract", description: "Manage business contracts." },
       },
       {
+        path: "contract/add",
+        name: "operation_setting_contract_add",
+        component: () => import("./pages/setting/ContractAdd.vue"),
+        meta: {
+          title: "Add Contract",
+          description: "Create a new carrier contract.",
+        },
+      },
+
+      {
         path: "commodity",
         name: "operation_setting_commodity",
         component: () => import("./pages/setting/Commodity.vue"),
         meta: { title: "Commodity", description: "Manage commodities." },
       },
+      {
+        path: "commodity/add",
+        name: "operation_setting_commodity_add",
+        component: () => import("./pages/setting/CommodityAdd.vue"),
+        meta: {
+          title: "Add Commodity",
+          description: "Create a new commodity.",
+        },
+      },
+      {
+        path: "commodity/edit/:id",
+        name: "operation_setting_commodity_edit",
+        component: () => import("./pages/setting/CommodityEdit.vue"),
+        meta: {
+          title: "Edit Commodity",
+          description: "Edit an existing commodity.",
+        },
+      },
+
       {
         path: "packaging",
         name: "operation_setting_packaging",
@@ -807,19 +1239,51 @@ export const operation_routes: RouteRecordRaw[] = [
         meta: { title: "Packaging", description: "Manage packaging types." },
       },
       {
-        path: "route-requests",
-        name: "operation_setting_route_requests",
+        path: "packaging/add",
+        name: "operation_setting_packaging_add",
+        component: () => import("./pages/setting/PackagingAdd.vue"),
+        meta: {
+          title: "Add Packaging",
+          description: "Create a new packaging type.",
+        },
+      },
+      {
+        path: "packaging/edit/:id",
+        name: "operation_setting_packaging_edit",
+        component: () => import("./pages/setting/PackagingEdit.vue"),
+        meta: {
+          title: "Edit Packaging",
+          description: "Edit an existing packaging type.",
+        },
+      },
+
+      {
+        path: "route-request",
+        name: "operation_setting_route_request",
         component: () => import("./pages/setting/RouteRequests.vue"),
         meta: {
           title: "Route Requests",
           description: "Manage route requests.",
         },
       },
+
       {
         path: "region",
         name: "operation_setting_region",
         component: () => import("./pages/setting/Region.vue"),
         meta: { title: "Region", description: "Manage regions." },
+      },
+      {
+        path: "region/add",
+        name: "operation_setting_region_add",
+        component: () => import("./pages/setting/RegionAdd.vue"),
+        meta: { title: "Add Region", description: "Create a new region." },
+      },
+      {
+        path: "region/edit/:id",
+        name: "operation_setting_region_edit",
+        component: () => import("./pages/setting/RegionEdit.vue"),
+        meta: { title: "Edit Region", description: "Edit an existing region." },
       },
       {
         path: "bonus-multipliers",

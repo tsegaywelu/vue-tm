@@ -315,14 +315,45 @@ export const maintenance_navs: Navs[] = [
         show: true,
       },
       {
+        path: "/maintenance/mechanic/add",
+        name: "Add Mechanic",
+        show: false,
+      },
+      {
+        path: "/maintenance/mechanic/edit/$id",
+        name: "Edit Mechanic",
+        show: false,
+      },
+      {
         name: "Inspection",
         path: "/maintenance/inspection",
         show: true,
       },
       {
+        path: "/maintenance/inspection/add",
+        name: "Add Inspection",
+        show: false,
+      },
+      {
+        path: "/maintenance/inspection/edit/$id",
+        name: "Edit Inspection",
+        show: false,
+      },
+      {
         name: "Service Record",
         path: "/maintenance/service-record",
         show: true,
+      },
+
+      {
+        path: "/maintenance/service-record/add",
+        name: "Add Service Record",
+        show: false,
+      },
+      {
+        path: "/maintenance/service-record/edit/$id",
+        name: "Edit Service Record",
+        show: false,
       },
       {
         name: "Service Reminder",
@@ -330,14 +361,45 @@ export const maintenance_navs: Navs[] = [
         show: true,
       },
       {
+        path: "/maintenance/service-reminder/add",
+        name: "Add Service Reminder",
+        show: false,
+      },
+      {
+        path: "/maintenance/service-reminder/edit/$id",
+        name: "Edit Service Reminder",
+        show: false,
+      },
+      {
         name: "Service Task",
         path: "/maintenance/service-task",
         show: true,
       },
       {
+        path: "/maintenance/service-task/add",
+        name: "Add Service Task",
+        show: false,
+      },
+      {
+        path: "/maintenance/service-task/edit/$id",
+        name: "Edit Service Task",
+        show: false,
+      },
+      {
         name: "Service Type",
         path: "/maintenance/service-type",
         show: true,
+      },
+
+      {
+        name: "Add Service Type",
+        path: "/maintenance/service-type/add",
+        show: false,
+      },
+      {
+        path: "/maintenance/service-type/edit/$id",
+        name: "Edit Service Type",
+        show: false,
       },
       {
         name: "Work Order",
@@ -345,9 +407,32 @@ export const maintenance_navs: Navs[] = [
         show: true,
       },
       {
+        name: "Add Work Order",
+        path: "/maintenance/work-order/add",
+        show: false,
+      },
+      {
+        // path: "/maintenance/work-order/edit/:id",
+        path: 'maintenance/work-order/edit/$id',
+        name: "Edit Work Order",
+        show: false,
+      },
+      {
         name: "Workshop",
         path: "/maintenance/workshop",
         show: true,
+        children: [
+          {
+            path: "add",
+            name: "Add Workshop",
+            show: false,
+          },
+          {
+            path: "edit/$id",
+            name: "Edit Workshop",
+            show: false,
+          },
+        ]
       },
       {
         name: "Issue Report",
@@ -405,6 +490,16 @@ export const finance_navs: Navs[] = [
         show: true,
       },
       {
+        name: "Add Expense Type",
+        path: "/finance/expense-types/add",
+        show: false,
+      },
+      {
+        name: "Edit Expense Type",
+        path: "/finance/expense-types/edit/$id",
+        show: false,
+      },
+      {
         name: "Fuel Transactions",
         path: "/finance/fuel-transactions",
         show: true,
@@ -430,9 +525,29 @@ export const inventory_navs: Navs[] = [
         show: true,
       },
       {
+        name: "Add Category",
+        path: "/inventory/categories/add",
+        show: false,
+      },
+      {
+        name: "Edit Category",
+        path: "/inventory/categories/edit/$id",
+        show: false,
+      },
+      {
         name: "Item Groups",
         path: "/inventory/item-groups",
         show: true,
+      },
+      {
+        name: "Add Item Group",
+        path: "/inventory/item-groups/add",
+        show: false,
+      },
+      {
+        name: "Edit Item Group",
+        path: "/inventory/item-groups/edit/$id",
+        show: false,
       },
       {
         name: "Vendor",
@@ -440,9 +555,29 @@ export const inventory_navs: Navs[] = [
         show: true,
       },
       {
+        name: "Add Vendor",
+        path: "/inventory/vendor/add",
+        show: false,
+      },
+      {
+        name: "Edit Vendor",
+        path: "/inventory/vendor/edit/$id",
+        show: false,
+      },
+      {
         name: "Items",
         path: "/inventory/items",
         show: true,
+      },
+      {
+        name: "Add Inventory Item",
+        path: "/inventory/items/add",
+        show: false,
+      },
+      {
+        name: "Edit Inventory Item",
+        path: "/inventory/items/edit/$id",
+        show: false,
       },
       {
         name: "Store Requisition",
@@ -450,9 +585,29 @@ export const inventory_navs: Navs[] = [
         show: true,
       },
       {
+        name: "Add Store Requisition",
+        path: "/inventory/store-requisition/add",
+        show: false,
+      },
+      {
+        name: "Edit Store Requisition",
+        path: "/inventory/store-requisition/edit/$id",
+        show: false,
+      },
+      {
         name: "Purchase Requisition",
         path: "/inventory/purchase-requisition",
         show: true,
+      },
+      {
+        name: "Add Purchase Requisition",
+        path: "/inventory/purchase-requisition/add",
+        show: false,
+      },
+      {
+        name: "Edit Purchase Requisition",
+        path: "/inventory/purchase-requisition/edit/$id",
+        show: false,
       },
       {
         name: "Purchase Order",
@@ -460,9 +615,29 @@ export const inventory_navs: Navs[] = [
         show: true,
       },
       {
+        name: "Add Purchase Order",
+        path: "/inventory/purchase-order/add",
+        show: false,
+      },
+      {
+        name: "Edit Purchase Order",
+        path: "/inventory/purchase-order/edit/$id",
+        show: false,
+      },
+      {
         name: "Issue / Receive",
         path: "/inventory/good-transfer",
         show: true,
+      },
+      {
+        name: "Add Transfer Voucher",
+        path: "/inventory/good-transfer/add",
+        show: false,
+      },
+      {
+        name: "Edit Transfer Voucher",
+        path: "/inventory/good-transfer/edit/$id",
+        show: false,
       },
     ],
   },
@@ -478,6 +653,26 @@ export const setting_navs: Navs[] = [
         name: "User and Role",
         path: "/setting/user-and-role",
         show: true,
+      },
+      {
+        name: "Add User",
+        path: "/setting/user-and-role/user/add",
+        show: false,
+      },
+      {
+        name: "Edit User",
+        path: "/setting/user-and-role/user/edit/$id",
+        show: false,
+      },
+      {
+        name: "Add Role",
+        path: "/setting/user-and-role/role/add",
+        show: false,
+      },
+      {
+        name: "Edit Role",
+        path: "/setting/user-and-role/role/edit/$id",
+        show: false,
       },
       {
         name: "Base Configuration",
@@ -501,7 +696,7 @@ export const setting_navs: Navs[] = [
       },
       {
         name: "Route Requests",
-        path: "/setting/route-requests",
+        path: "/setting/route-request",
         show: true,
       },
       {

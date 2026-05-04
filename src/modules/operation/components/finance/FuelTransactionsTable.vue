@@ -41,7 +41,7 @@
     <template #cell-typeStatus="{ row }">
       <div class="flex flex-col gap-1">
         <Status
-          :type="row.type === 'RETURN' ? 'error' : row.type === 'PAYMENT' ? 'success' : 'info'"
+          :type="row.type === 'RETURN' ? 'cancelled' : row.type === 'PAYMENT' ? 'active' : 'completed'"
           :label="row.type"
           class="w-fit"
         />
@@ -146,13 +146,13 @@ const getStatusType = (status: string) => {
   switch (status) {
     case 'PAID':
     case 'APPROVED':
-      return 'success';
+      return 'active';
     case 'PENDING':
-      return 'warning';
+      return 'pending';
     case 'AUTHORIZED':
-      return 'info';
+      return 'completed';
     default:
-      return 'error';
+      return 'cancelled';
   }
 };
 

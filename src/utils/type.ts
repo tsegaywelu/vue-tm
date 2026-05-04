@@ -717,3 +717,34 @@ export type ShipmentTemplate = {
   destinationCity: City;
   truckTypeRef: Trucktype;
 };
+
+
+
+type Vehicle = {
+  _id: string;
+  plateNumber: string;
+  status: "available" | "unavailable" | "in_service" | string;
+};
+
+type Inspector = {
+  _id: string;
+  name: string;
+  phone: string;
+};
+
+export type inspection = {
+  _id: string;
+  vehicle: Vehicle;
+  inspectionDate: string; // ISO date string
+  odometerReading: number;
+  inspector: Inspector;
+  inspectionReason: "ROUTINE" | string;
+  status: "PENDING" | "COMPLETED" | "FAILED" | string;
+  remarks: string;
+  issuesFound: any[]; // you can refine this if you know the structure
+  nextInspectionDate: string; // ISO date string
+  carrier: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+};

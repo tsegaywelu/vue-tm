@@ -75,7 +75,8 @@ export const AdvanceCategory = {
   Other: "OTHER",
   Fuel: "FUEL",
 } as const;
-export type AdvanceCategory = (typeof AdvanceCategory)[keyof typeof AdvanceCategory];
+export type AdvanceCategory =
+  (typeof AdvanceCategory)[keyof typeof AdvanceCategory];
 
 export interface ShipmentTransaction {
   _id: string;
@@ -348,6 +349,7 @@ export interface Tyre {
 
 export interface Mechanic {
   _id: string;
+  data?: any;
   firstName: string;
   middleName?: string;
   lastName?: string;
@@ -358,6 +360,7 @@ export interface Mechanic {
   certification?: string;
   experience?: string;
   workshop?: {
+    _id?: string;
     name: string;
   };
 }
@@ -370,13 +373,17 @@ export interface Inspection {
   inspectionDate?: string;
   inspectionReason?: string;
   inspector?: {
+    _id?: string;
     name: string;
   };
   odometerReading?: number;
   remarks?: string;
   issuesFound?: {
+    description: string;
+    severity: string;
     issueType: string;
   }[];
+  nextInspectionDate?: string;
 }
 
 export interface ServiceRecord {
@@ -386,12 +393,14 @@ export interface ServiceRecord {
   };
   maintenanceDate?: string;
   mechanics?: {
+    _id?: string;
     name?: string;
     firstName?: string;
     middleName?: string;
     lastName?: string;
   }[];
   workshop?: {
+    _id?: string;
     name: string;
   };
   mileageAtService?: number;
@@ -791,3 +800,54 @@ export interface Advance {
   routeName?: string;
 }
 
+export interface RouteRequest {
+  _id: string;
+  routeName: string;
+  origin: string;
+  destination: string;
+  waypoint: any[];
+  carriers: {
+    _id: string;
+    name: string;
+  }[];
+  createdAt: string;
+}
+export interface Region {
+  _id: string;
+  name: string;
+  notificationEnabled?: boolean;
+  enforceOdometerRouteTolerance?: boolean;
+  odometerRouteToleranceKilometer?: number;
+  createdAt: string;
+}
+
+export interface BonusMultiplier {
+  _id: string;
+  metric: "totalTrips" | "distanceCovered" | "fuelUsage" | string;
+  minValue: number;
+  maxValue: number | null;
+  multiplier: number;
+  description?: string;
+  createdAt: string;
+}
+
+export interface BonusRoute {
+  _id: string;
+  route: {
+    _id: string;
+    routeName: string;
+    origin?: { name: string };
+    destination?: { name: string };
+  };
+  amount: number;
+  description?: string;
+  createdAt: string;
+}
+
+export interface Announcement {
+  _id: string;
+  title: string;
+  message: string;
+  targetAudience: "ALL" | "DRIVER" | "MECHANIC" | string;
+  createdAt: string;
+}
