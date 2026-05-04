@@ -1,34 +1,51 @@
 <template>
   <div
+    :title="computedLabel"
     :class="[
-      'flex w-full items-center gap-1.5 border text-sm px-2 h-9 rounded-full transition-all duration-200',
+      'flex max-w-36 w-36 items-center gap-1.5 border text-sm px-2 h-9 rounded-full transition-all duration-200 select-none shrink-0 overflow-hidden',
       statusStyles.class,
     ]"
   >
     <div
-      class="rounded-full size-2.5 border"
+      class="rounded-full size-2.5 border shrink-0"
       :style="{
         borderColor: statusStyles.dotColor,
       }"
     ></div>
-    <span class="truncate flex items-center justify-center">
-      <slot>{{ label }}</slot>
+    <span class="truncate min-w-0 w-36 flex-1 text-center">
+      <slot>{{ computedLabel }}</slot>
     </span>
   </div>
 </template>
 
 <script setup lang="ts">
-import type { ShipmentStatus, TransactionStatus } from "@/modules/operation/operation.types";
+import type {
+  ShipmentStatus,
+  TransactionStatus,
+} from "@/modules/operation/operation.types";
 import { computed } from "vue";
 
 interface Props {
   variant?: ShipmentStatus | TransactionStatus | string;
-  type?: "wrapped" | "extended" | "pending" | "warning" | "accepted" | "active" | "completed" | "cancelled" | "terminated";
+  type?:
+    | "wrapped"
+    | "extended"
+    | "pending"
+    | "warning"
+    | "accepted"
+    | "active"
+    | "completed"
+    | "cancelled"
+    | "terminated";
   label?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   type: "extended",
+});
+
+const computedLabel = computed(() => {
+  return props.label || props.variant || "";
 });
 
 const statusStyles = computed(() => {

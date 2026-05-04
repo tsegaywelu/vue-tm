@@ -89,9 +89,9 @@
         <!-- Hidden inputs based on form values using Subscribe -->
         <component
           :is="form.Subscribe"
-          :selector="(state: any) => [state.values.group]"
+          :selector="(state: any) => [state.values.group, state.values.loginAccess]"
         >
-          <template #default="[group]">
+          <template #default="[group, loginAccess]">
             <!-- Driver Specifics -->
             <div v-if="group === 'DRIVER'" class="border border-grey-100 p-4 rounded-xl bg-grey-25 mt-2 flex flex-col gap-4">
               <h4 class="font-bold text-grey-900 text-sm">Driver Specific Information</h4>
@@ -142,6 +142,56 @@
                 </div>
               </div>
             </div>
+
+            <!-- Login Access -->
+            <div class="border border-grey-100 p-4 rounded-xl bg-grey-25 mt-2 flex flex-col gap-4">
+              <div class="flex items-center gap-2">
+                <component :is="form.Field" name="loginAccess">
+                  <template #default="{ field }">
+                    <input
+                      type="checkbox"
+                      :id="field.name"
+                      :name="field.name"
+                      :checked="field.state.value"
+                      @change="(e: any) => field.handleChange(e.target.checked)"
+                      class="h-4 w-4 rounded border-grey-300 text-primary focus:ring-primary select-none cursor-pointer"
+                    />
+                  </template>
+                </component>
+                <label for="loginAccess" class="font-bold text-grey-700 text-sm select-none cursor-pointer">
+                  Enable User Login
+                </label>
+              </div>
+
+              <div v-if="loginAccess" class="grid grid-cols-2 gap-4">
+                <div>
+                  <Input
+                    name="username"
+                    label="Username"
+                    :validation="{ required }"
+                    placeholder="e.g. johndoe"
+                  />
+                </div>
+                <div>
+                  <Input
+                    name="password"
+                    label="Password"
+                    type="password"
+                    :validation="{ required }"
+                    placeholder="Min 6 characters"
+                  />
+                </div>
+                <div v-if="group === 'OTHER'" class="col-span-2">
+                  <SelectInput
+                    name="role"
+                    label="Role"
+                    :options="roleOptions"
+                    :validation="{ required }"
+                    :attributes="{ placeholder: 'Select role' }"
+                  />
+                </div>
+              </div>
+            </div>
           </template>
         </component>
       </div>
@@ -171,7 +221,8 @@ import { closeModal } from "@customizer/modal-x";
 import Button from "@/components/common/Button.vue";
 import SubmitButton from "@/components/form/SubmitButton.vue";
 import { add_contact, update_contact } from "../../api/operation.api";
-import { useMutation } from "@tanstack/vue-query";
+import { fetch_roles } from "../../api/settings.api";
+import { useMutation, useQuery } from "@tanstack/vue-query";
 
 const props = defineProps<{ data?: { contact?: any } }>();
 
@@ -206,6 +257,18 @@ const handleLogoChange = (event: Event) => {
   }
 };
 
+const { data: rolesResponse } = useQuery({
+  queryKey: ["roles"],
+  queryFn: () => fetch_roles({ limit: 100 }),
+});
+
+const roleOptions = computed(() => {
+  const rawRoles = rolesResponse.value?.data?.result || rolesResponse.value?.data || [];
+  return Array.isArray(rawRoles)
+    ? rawRoles.map((r: any) => ({ label: r.name, value: r._id }))
+    : [];
+});
+
 const initialFormValues = computed(() => {
   if (contact.value) {
     return {
@@ -221,6 +284,10 @@ const initialFormValues = computed(() => {
       driverType: contact.value.driver?.driverType || "",
       certification: contact.value.mechanic?.certification || "",
       experience: contact.value.mechanic?.experience || "",
+      loginAccess: contact.value.loginAccess || false,
+      username: contact.value.username || "",
+      password: "",
+      role: contact.value.role || "",
     };
   }
   return {
@@ -236,6 +303,10 @@ const initialFormValues = computed(() => {
     driverType: "",
     certification: "",
     experience: "",
+    loginAccess: false,
+    username: "",
+    password: "",
+    role: "",
   };
 });
 
@@ -269,6 +340,7 @@ const handleSubmit = async (values: any) => {
     jobTitle: values.jobTitle,
     employeeNumber: values.employeeNumber,
     dateOfBirth: values.dateOfBirth || null,
+    loginAccess: values.loginAccess || false,
   };
 
   if (values.group === "DRIVER") {
@@ -284,6 +356,16 @@ const handleSubmit = async (values: any) => {
       certification: values.certification,
       experience: values.experience ? Number(values.experience) : null,
     };
+  }
+
+  if (values.loginAccess) {
+    payload.username = values.username;
+    if (values.password) {
+      payload.password = values.password;
+    }
+    if (values.group === "OTHER" && values.role) {
+      payload.role = values.role;
+    }
   }
 
   // To support profile picture upload, we pass as FormData if a picture is selected
