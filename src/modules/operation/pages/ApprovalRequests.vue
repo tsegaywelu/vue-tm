@@ -1,18 +1,12 @@
 <template>
-  <ApprovalFilters
-    @change="handleFilterChange"
-    calendar-type="english"
-    output-calendar-type="english"
-  />
-  <ApprovalTable :filters="activeFilters" @action="handleApprovalAction" />
+  <ApprovalTable @action="handleApprovalAction" />
 </template>
 
 <script setup lang="ts">
 import { reactive } from "vue";
 import { useQueryClient, useMutation } from "@tanstack/vue-query";
-import ApprovalFilters from "../components/ApprovalFilters.vue";
 import ApprovalTable from "../components/ApprovalTable.vue";
-import { useTablePagination } from "@/composables/usePagination";
+import { useToastStore } from "@/store/toastStore";
 import {
   update_advance_status,
   update_transaction_status,
@@ -26,91 +20,52 @@ import type {
 } from "../operation.types";
 
 const queryClient = useQueryClient();
-
-// Sync with global pagination store for the approval-requests table
-const { setPage } = useTablePagination("approval-requests");
+const toast = useToastStore();
 
 const activeFilters = reactive<ApprovalFilterParams>({
   page: 1,
   limit: 10,
 });
 
-const handleFilterChange = (newFilters: ApprovalFilterParams) => {
-  Object.assign(activeFilters, newFilters);
-  // Ensure we head back to the first page when filters change
-  setPage(1);
-};
-
 // Mutations for handling approval actions
 const approvalMutation = useMutation({
   mutationFn: async ({
     row,
     action,
+    amount,
   }: {
     row: ApprovalRequest;
     action: ApprovalAction;
+    amount?: number;
   }) => {
-    switch (row.payableType) {
-      case "advancePayment":
-        return await update_advance_status(
-          row.advancePaymentId || row._id,
-          action,
-        );
-      case "transactions":
-        return await update_transaction_status(row._id, action);
-      case "prePayments":
-        return await update_prepayment_status(row._id, action);
-      case "vehicleLeaseAgreement":
-        return await update_lease_status(row._id, action);
-      default:
-        throw new Error(`Unknown payable type: ${row.payableType}`);
-    }
+    return await update_transaction_status(row._id, action);
   },
-  onSuccess: (response) => {
+  onSuccess: (response, variables) => {
     if (response.success) {
       // Invalidate the approval requests query to trigger a refetch
-      // This is the Raaz way of handling state updates after mutations
       queryClient.invalidateQueries({ queryKey: ["approval-requests"] });
-      queryClient.invalidateQueries({ queryKey: ["/allApprovalRequests"] });
-      // Typically we would trigger a toast notification here
-      console.log("Action processed successfully");
+
+      toast.success(`Successfully ${variables.action}ed the request.`);
     } else {
-      alert(`Error: ${response.error || "Failed to update status"}`);
+      toast.error(response.error || "Failed to update status");
     }
   },
   onError: (error: any) => {
-    console.error("Approval action failed:", error);
-    alert("An unexpected error occurred. Please try again.");
+    toast.error(
+      error.message || "An unexpected error occurred. Please try again.",
+    );
   },
 });
 
 const handleApprovalAction = ({
   row,
   action,
+  amount,
 }: {
   row: ApprovalRequest;
   action: ApprovalAction;
+  amount?: number;
 }) => {
-  const confirmMessage = `Are you sure you want to ${action} this ${row.payableType}?`;
-  if (!window.confirm(confirmMessage)) return;
-
-  approvalMutation.mutate({ row, action });
+  approvalMutation.mutate({ row, action, amount });
 };
 </script>
-
-<style scoped>
-.animate-fade-in {
-  animation: fadeIn 0.5s ease-out;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-</style>

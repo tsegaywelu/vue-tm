@@ -45,6 +45,60 @@ export const PayableType = {
 } as const;
 export type PayableType = (typeof PayableType)[keyof typeof PayableType];
 
+export const TransactionStatus = {
+  Paid: "PAID",
+  Pending: "PENDING",
+  Failed: "FAILED",
+  Authorized: "AUTHORIZED",
+  Approved: "APPROVED",
+  Success: "SUCCESS",
+  Rejected: "REJECTED",
+  Cancelled: "CANCELLED",
+} as const;
+export type TransactionStatus =
+  (typeof TransactionStatus)[keyof typeof TransactionStatus];
+export const TransactionType = {
+  Initial: "INITIAL",
+} as const;
+export type TransactionType =
+  (typeof TransactionType)[keyof typeof TransactionType];
+
+export const AdvanceType = {
+  FuelOnly: "FUEL_ONLY",
+  All: "ALL",
+} as const;
+export type AdvanceType = (typeof AdvanceType)[keyof typeof AdvanceType];
+
+export const AdvanceCategory = {
+  DaysDriven: "DAYS_DRIVEN",
+  Weight: "WEIGHT",
+  Other: "OTHER",
+  Fuel: "FUEL",
+} as const;
+export type AdvanceCategory = (typeof AdvanceCategory)[keyof typeof AdvanceCategory];
+
+export interface ShipmentTransaction {
+  _id: string;
+  advancePayment: string;
+  type: TransactionType;
+  advanceType: AdvanceType | string;
+  category: AdvanceCategory | string;
+  subCategory?: string | null;
+  amount: number;
+  region?: any;
+  shipment: string;
+  createdBy: string;
+  attachments: string[];
+  status: TransactionStatus;
+  carrier: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+  paidAt?: string;
+  paidBy?: string;
+  liters?: number;
+}
+
 export const TripType = {
   RoundTrip: "round_trip",
   SingleTrip: "single_trip",
@@ -289,9 +343,7 @@ export interface Tyre {
   tyrePosition?: string;
   price?: number;
   status?: string;
-  data?: any
-
-
+  data?: any;
 }
 
 export interface Mechanic {
@@ -569,24 +621,70 @@ export interface Driver {
 export interface Vehicle {
   _id: string;
   plateNumber: string;
-  transporter: string;
+  sideNumber?: number;
+  lastServiceDate?: string;
+  chassisNumber?: string;
   ownership: VehicleOwnership;
-  vehicleUseType: string | null;
-  trailerPlate: string;
-  vehicleType: string;
-  driver: string;
+  trailerPlate?: string;
+  trailerChassisNumber?: string;
+  trailerPurchaseDate?: string;
+  vehicleType?: {
+    _id?: string;
+    name: string;
+  };
+  vehicleModel?: {
+    _id?: string;
+    name: string;
+  };
+  maker?: {
+    _id?: string;
+    name: string;
+  };
+  mileage?: number;
+  mileageSinceService?: number;
+  driver?: {
+    _id: string;
+    firstName: string;
+    middleName?: string;
+    lastName?: string;
+  };
   status: string;
   isOperational: boolean;
-  pastInsurances: any[];
-  driverHistory: any[];
-  vehicleDocuments: any[];
-  carrier: string;
-  vehicleTypeName: string;
-  transporterName: string;
-  driverName: string;
-  createdAt: string;
-  updatedAt: string;
-  __v: number;
+  remark?: string;
+  fuelRateLoaded?: number;
+  fuelRateUnloaded?: number;
+  averageFuelUsage?: number;
+  engineNumber?: string;
+  driverHistory?: Array<{
+    driver: string;
+    assignedDate: string;
+    leaveDate?: string | null;
+  }>;
+  insuranceInformation?: {
+    insuredDate: string;
+    insuredAmount: number;
+    prePaymentAmount: number;
+    lifespan: number;
+    insurer: {
+      _id: string;
+      name: string;
+    };
+  };
+  roadTaxExpireDate?: string;
+  purchaseDate?: string;
+  vehicleDocuments?: string[];
+  region?: {
+    _id: string;
+    name: string;
+  };
+  transporter?: {
+    _id: string | null;
+    name: string | null;
+  };
+  carrier?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  __v?: number;
 }
 
 export interface Insurance {
@@ -643,3 +741,53 @@ export interface StatusSourceReport {
     bySource: StatusSource[];
   }[];
 }
+
+export interface FuelAdvance {
+  paymentType: string;
+  refueledAmount: number;
+  fuelPrice: number;
+  fuelStation: string;
+  amount: number;
+  remark?: string;
+}
+
+export interface PerDiemExpense {
+  category: string;
+  amount: number;
+  daysDriven?: number | null;
+  weight?: number | null;
+  remark?: string;
+}
+
+export interface OtherExpense {
+  expenseType: {
+    _id: string;
+    name: string;
+    typicalPrice?: number;
+  };
+  amount: number;
+  remark?: string;
+}
+
+export interface Advance {
+  _id: string;
+  advanceNumber: string;
+  type: string;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+  shipment?: Shipment;
+  driver?: Driver;
+  fuelAdvances?: FuelAdvance[];
+  perDiemExpenses?: PerDiemExpense[];
+  otherExpenses?: OtherExpense[];
+  transactions?: ShipmentTransaction[];
+  authorizedBy?: { _id: string; username: string };
+  approvedBy?: { _id: string; username: string };
+  paidBy?: { _id: string; username: string };
+  subtotal?: number;
+  vehiclePlateNumber?: string;
+  shipmentCode?: string;
+  routeName?: string;
+}
+

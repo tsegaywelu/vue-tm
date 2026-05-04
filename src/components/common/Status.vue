@@ -18,11 +18,11 @@
 </template>
 
 <script setup lang="ts">
-import type { ShipmentStatus } from "@/modules/operation/operation.types";
+import type { ShipmentStatus, TransactionStatus } from "@/modules/operation/operation.types";
 import { computed } from "vue";
 
 interface Props {
-  variant?: ShipmentStatus;
+  variant?: ShipmentStatus | TransactionStatus | string;
   type?: "wrapped" | "extended" | "pending" | "warning" | "accepted" | "active" | "completed" | "cancelled" | "terminated";
   label?: string;
 }
@@ -40,6 +40,30 @@ const statusStyles = computed(() => {
     warning: {
       class: `${baseClass} border-[#FFE2BC] bg-[#FFF8EF] text-[#FA991A]`,
       dotColor: "#FA991A",
+    },
+    paid: {
+      class: `${baseClass} border-[#9EE4A6] bg-[#F2FFF4] text-[#02B516]`,
+      dotColor: "#02B516",
+    },
+    approved: {
+      class: `${baseClass} border-[#9EE4A6] bg-[#F2FFF4] text-[#02B516]`,
+      dotColor: "#02B516",
+    },
+    success: {
+      class: `${baseClass} border-[#9EE4A6] bg-[#F2FFF4] text-[#02B516]`,
+      dotColor: "#02B516",
+    },
+    authorized: {
+      class: `${baseClass} border-[#BBD7FF] bg-[#EFF6FF] text-[#2681FF]`,
+      dotColor: "#2681FF",
+    },
+    failed: {
+      class: `${baseClass} border-[#FFBBBB] bg-[#FFF8F8] text-[#FF7B7B]`,
+      dotColor: "#FF7B7B",
+    },
+    rejected: {
+      class: `${baseClass} border-[#FFBBBB] bg-[#FFF8F8] text-[#FF7B7B]`,
+      dotColor: "#FF7B7B",
     },
     pending: {
       class: `${baseClass} border-[#FFE2BC] bg-[#FFF8EF] text-[#FA991A]`,

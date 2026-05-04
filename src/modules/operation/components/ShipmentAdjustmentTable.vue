@@ -3,6 +3,7 @@
     id="shipment-adjustment-list"
     :columns="columns"
     :rows="response"
+    @row_click="(row) => $router.push(`/operation/shipments/${row.shipment?._id}`)"
   >
     <template #cell-shipmentCode="{ row }">
       <span class="font-bold">{{ row.shipment?.shipmentCode }}</span>

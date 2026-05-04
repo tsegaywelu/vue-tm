@@ -17,46 +17,58 @@ import Button from "@/components/Button.vue";
 import { icons } from "@/utils/icons";
 import { raaz_icons } from "@/utils/raaz_icons";
 import { openModal } from "@customizer/modal-x";
-const all_icons = { ...icons, ...raaz_icons };
+import { approve_order, cancel_order } from "../api/orders.api";
+import { useToastStore } from "@/store/toastStore";
 
+const all_icons = { ...icons, ...raaz_icons };
 const router = useRouter();
+const toast = useToastStore();
 
 const navigateToAddOrder = () => {
-  router.push("/order/addOrder");
+  router.push("/operation/orders/add");
 };
 
 const handleOrderAction = ({ row, action }: { row: any; action: string }) => {
-  if (action === "ship") {
-    // Open a confirmation or form modal for shipping
+  if (action === "approve") {
     openModal(
       "ConfirmationModal",
       {
-        title: "Ship Order",
-        message: `Are you sure you want to ship order ${row.orderCode}?`,
-        confirmText: "Ship",
+        title: "Approve Order",
+        message: `Are you sure you want to approve order ${row.orderCode}?`,
+        confirmText: "Approve",
         type: "primary",
       },
-      (confirmed) => {
+      async (confirmed) => {
         if (confirmed) {
-          console.log("Shipping order:", row.orderCode);
+          const res = await approve_order(row._id);
+          if (res.success) {
+            toast.success("Order approved successfully");
+          }
         }
       },
     );
-  } else if (action === "reject") {
+  } else if (action === "cancel") {
     openModal(
       "ConfirmationModal",
       {
-        title: "Reject Order",
-        message: `Are you sure you want to reject order ${row.orderCode}?`,
-        confirmText: "Reject",
+        title: "Cancel Order",
+        message: `Are you sure you want to cancel order ${row.orderCode}?`,
+        confirmText: "Cancel",
         type: "danger",
       },
-      (confirmed) => {
+      async (confirmed) => {
         if (confirmed) {
-          console.log("Rejecting order:", row.orderCode);
+          const res = await cancel_order(row._id);
+          if (res.success) {
+            toast.success("Order cancelled successfully");
+          }
         }
       },
     );
+  } else if (action === "ship") {
+    router.push(`/operation/shipments/add-from-order/${row._id}`);
+  } else if (action === "edit") {
+    router.push(`/operation/orders/edit/${row._id}`);
   }
 };
 </script>

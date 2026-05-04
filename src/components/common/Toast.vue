@@ -1,7 +1,7 @@
 <template>
   <Teleport to="body">
     <div
-      class="fixed top-5 right-5 z-10000 flex flex-col gap-3 pointer-events-none"
+      class="fixed bottom-5 left-5 z-10000 flex flex-col gap-3 pointer-events-none"
     >
       <TransitionGroup name="toast">
         <div
@@ -12,81 +12,88 @@
           @mouseenter="pauseToast(toast.id)"
           @mouseleave="resumeToast(toast.id)"
         >
-          <!-- Content row -->
-          <div class="flex items-center gap-3 px-4 py-3">
-            <div class="shrink-0 relative size-10 grid place-items-center">
-              <!-- Circular Progress SVG -->
-              <svg
-                class="absolute inset-0 size-10 -rotate-90 transform"
-                viewBox="0 0 40 40"
-              >
-                <!-- Background circle -->
-                <circle
-                  cx="20"
-                  cy="20"
-                  r="18"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2.5"
-                  class="text-gray-100"
-                />
-                <!-- Progress circle -->
-                <circle
-                  cx="20"
-                  cy="20"
-                  r="18"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2.5"
-                  stroke-linecap="round"
-                  :class="[textClass(toast.type)]"
-                  :style="{
-                    strokeDasharray: '113.1',
-                    strokeDashoffset: calculateOffset(toast),
-                    transition: toast.paused
-                      ? 'none'
-                      : 'stroke-dashoffset 0.1s linear',
-                  }"
-                />
-              </svg>
+          <!-- If toast has custom component, render it -->
+          <template v-if="toast.component">
+            <component :is="toast.component" v-bind="toast.componentProps" :toast-id="toast.id" />
+          </template>
 
-              <!-- Bell Icon -->
-              <div class="relative z-10 size-10 grid place-items-center">
-                <span
-                  v-if="toast.type === 'success'"
-                  v-html="icons.successBell"
-                  class="*:size-10"
-                ></span>
-                <span
-                  v-else-if="toast.type === 'error'"
-                  v-html="icons.rejectedBell"
-                  class="*:size-10"
-                ></span>
-                <span
-                  v-else-if="toast.type === 'warning'"
-                  v-html="icons.infoBell"
-                  class="*:size-10"
-                ></span>
-                <span v-else v-html="icons.infoBell" class="*:size-10"></span>
+          <template v-else>
+            <!-- Content row -->
+            <div class="flex items-center gap-3 px-4 py-3">
+              <div class="shrink-0 relative size-10 grid place-items-center">
+                <!-- Circular Progress SVG -->
+                <svg
+                  class="absolute inset-0 size-10 -rotate-90 transform"
+                  viewBox="0 0 40 40"
+                >
+                  <!-- Background circle -->
+                  <circle
+                    cx="20"
+                    cy="20"
+                    r="18"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                    class="text-gray-100"
+                  />
+                  <!-- Progress circle -->
+                  <circle
+                    cx="20"
+                    cy="20"
+                    r="18"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                    stroke-linecap="round"
+                    :class="[textClass(toast.type)]"
+                    :style="{
+                      strokeDasharray: '113.1',
+                      strokeDashoffset: calculateOffset(toast),
+                      transition: toast.paused
+                        ? 'none'
+                        : 'stroke-dashoffset 0.1s linear',
+                    }"
+                  />
+                </svg>
+
+                <!-- Bell Icon -->
+                <div class="relative z-10 size-10 grid place-items-center">
+                  <span
+                    v-if="toast.type === 'success'"
+                    v-html="icons.successBell"
+                    class="*:size-10"
+                  ></span>
+                  <span
+                    v-else-if="toast.type === 'error'"
+                    v-html="icons.rejectedBell"
+                    class="*:size-10"
+                  ></span>
+                  <span
+                    v-else-if="toast.type === 'warning'"
+                    v-html="icons.infoBell"
+                    class="*:size-10"
+                  ></span>
+                  <span v-else v-html="icons.infoBell" class="*:size-10"></span>
+                </div>
               </div>
-            </div>
 
-            <div class="grow">
-              <p class="text-sm font-semibold text-gray-900 leading-tight">
-                {{ toast.type.charAt(0).toUpperCase() + toast.type.slice(1) }}
-              </p>
-              <p class="text-xs text-gray-500 mt-1">
-                {{ toast.message }}
-              </p>
-            </div>
+              <div class="grow">
+                <p class="text-sm font-semibold text-gray-900 leading-tight">
+                  {{ toast.type.charAt(0).toUpperCase() + toast.type.slice(1) }}
+                </p>
+                <p class="text-xs text-gray-500 mt-1">
+                  {{ toast.message }}
+                </p>
+              </div>
 
-            <button
-              @click="removeToast(toast.id)"
-              class="shrink-0 text-gray-400 hover:text-gray-600 transition-colors"
-            >
-              <i class="mdi mdi-close text-lg"></i>
-            </button>
-          </div>
+              <button
+                @click="removeToast(toast.id)"
+                class="shrink-0 text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <i class="mdi mdi-close text-lg"></i>
+              </button>
+            </div>
+          </template>
         </div>
       </TransitionGroup>
     </div>
@@ -113,7 +120,7 @@ function tick() {
   // Iterate in reverse so splice doesn't shift indices
   for (let i = toasts.value.length - 1; i >= 0; i--) {
     const t = toasts.value[i];
-    if (t.paused) continue;
+    if (t.paused || t.duration === Infinity) continue;
 
     const elapsed = currentTime.value - t.startedAt;
     const left = t.remaining - elapsed;

@@ -6,15 +6,13 @@
     :on_change="on_change"
   >
     <template #default="{ field }">
-      <InputLayout
+      <BaseInput
         :name="name"
         :show_validation_status="show_validation_status"
         :parent_class_name="parent_class_name"
         :size="size"
         :label="label"
-        :error="
-          field.state.meta.errors.length ? field.state.meta.errors : undefined
-        "
+        :error="field.state.meta.errors.length ? field.state.meta.errors[0] : undefined"
         :validations="validation"
         :left_component="left_component"
         :right_component="right_component"
@@ -22,28 +20,23 @@
         :right_component_class_name="right_component_class_name"
         :description="description"
         :error_type="error_type"
+        :input_class="input_class"
+        :type="type"
+        :step="step"
+        :placeholder="placeholder"
+        :disabled="disabled"
+        :modelValue="field.state.value ?? ''"
+        @update:modelValue="handleInput($event, field)"
+        @blur="field.handleBlur"
+        :attributes="attributes"
       >
         <template #left_component v-if="$slots.left_component">
           <slot name="left_component" />
         </template>
-
-        <input
-          autocomplete="off"
-          class="focus:shadow-none bg-transparent flex-1 w-full"
-          :class="input_class"
-          :id="field.name"
-          :name="field.name"
-          :data-name="name"
-          :value="field.state.value ?? ''"
-          @input="handleInput($event, field)"
-          @blur="field.handleBlur"
-          v-bind="attributes"
-        />
-
         <template #right_component v-if="$slots.right_component">
           <slot name="right_component" />
         </template>
-      </InputLayout>
+      </BaseInput>
     </template>
   </InputParent>
 </template>
@@ -51,8 +44,8 @@
 <script setup lang="ts">
 import { type InputHTMLAttributes } from "vue";
 import InputParent from "./InputParent.vue";
-import InputLayout from "./InputLayout.vue";
 import type { InputLayoutProps } from "./InputLayout.vue";
+import BaseInput from "@/components/common/Input.vue";
 
 export interface InputProps extends InputLayoutProps {
   name: string;
@@ -63,6 +56,10 @@ export interface InputProps extends InputLayoutProps {
   capitalize?: boolean;
   text_length?: number;
   input_class?: string;
+  type?: string;
+  step?: string | number;
+  placeholder?: string;
+  disabled?: boolean;
 }
 
 const props = withDefaults(defineProps<InputProps>(), {
@@ -85,13 +82,11 @@ const props = withDefaults(defineProps<InputProps>(), {
   input_class: "",
 });
 
-function handleInput(ev: Event, field: any) {
-  const target = ev.target as HTMLInputElement;
-  let val = target.value;
+function handleInput(val: any, field: any) {
+  if (typeof val !== 'string') val = String(val);
   if (val.length < props.text_length) return;
   if (props.capitalize && val) {
     val = val.trim().charAt(0).toUpperCase() + val.slice(1);
-    target.value = val;
   }
   field.handleChange(val);
 }

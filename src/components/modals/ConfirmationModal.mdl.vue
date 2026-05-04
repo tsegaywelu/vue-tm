@@ -92,6 +92,9 @@ export type Props = {
   action?: string;
   subject?: string;
   showAmountInput?: boolean;
+  confirmLabel?: string;
+  cancelLabel?: string;
+  onConfirm?: () => void;
   type?: "primary" | "danger";
 };
 

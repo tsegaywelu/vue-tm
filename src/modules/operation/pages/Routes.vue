@@ -21,6 +21,6 @@ const all_icons = { ...icons, ...raaz_icons };
 const router = useRouter();
 
 const navigateToAddRoute = () => {
-  router.push("/routes/addRoute");
+  router.push("/operation/routes/add");
 };
 </script>

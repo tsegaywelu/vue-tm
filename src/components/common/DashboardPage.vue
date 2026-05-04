@@ -19,8 +19,8 @@
     <!-- Global Tabs -->
     <template v-if="tabs && tabs.length > 0">
       <Teleport
-        :to="route.meta.tabsTeleportTo"
-        v-if="route.meta.tabsTeleportTo"
+        :to="route.meta?.tabsTeleportTo"
+        v-if="route.meta?.tabsTeleportTo"
         defer
       >
         <div

@@ -43,16 +43,52 @@ export const core_operations_navs: Navs[] = [
         name: "Orders",
         path: "/operation/orders",
         show: true,
+        children: [
+          {
+            path: "/operation/shipments/add-from-order/$id",
+            name: "Create Shipment from Order",
+            show: false,
+          },
+          {
+            path: "/operation/orders/add",
+            name: "Create Order",
+            show: false,
+          },
+        ],
       },
       {
         name: "Routes",
         path: "/operation/routes",
         show: true,
+        children: [
+          {
+            path: "/operation/routes/add",
+            name: "Create Route",
+            show: false,
+          },
+          {
+            path: "/operation/routes/edit/$id",
+            name: "Edit Route",
+            show: false,
+          },
+          {
+            path: "/operation/routes/$id",
+            name: "Route Details",
+            show: false,
+          },
+        ],
       },
       {
         name: "Advances",
         path: "/operation/advances",
         show: true,
+        children: [
+          {
+            path: "/operation/advance-details/$id",
+            name: "Advance Details",
+            show: false,
+          },
+        ],
       },
       {
         name: "Approval Request",
@@ -73,39 +109,163 @@ export const core_operations_navs: Navs[] = [
   },
 ];
 
-export const stakeholders_navs: Navs[] = [
-  {
-    name: "Customers",
-    icon: "customers",
-    path: "/customers",
-    show: true,
-  },
-  {
-    name: "Contacts",
-    icon: "contacts",
-    path: "/contacts",
-    show: true,
-  },
-];
-
 export const fleet_navs: Navs[] = [
   {
     name: "Vehicles",
     icon: "shipment",
-    path: "/vehicles",
     show: true,
+    path: "/vehicles",
+    children: [
+      {
+        path: "/vehicles/add",
+        name: "Add Vehicle",
+        show: false,
+      },
+      {
+        path: "/vehicles/edit/$id",
+        name: "Edit Vehicle",
+        show: false,
+      },
+      {
+        path: "/vehicles/leased",
+        name: "Leased Vehicles",
+        show: true,
+      },
+      {
+        path: "/vehicles/types",
+        name: "Vehicle Types",
+        show: true,
+      },
+      {
+        path: "/vehicles/goals",
+        name: "Vehicle Type Goals",
+        show: true,
+      },
+      {
+        path: "/vehicles/groups",
+        name: "Vehicle Groups",
+        show: true,
+      },
+      {
+        path: "/vehicles/standards",
+        name: "Vehicle Standards",
+        show: true,
+      },
+    ],
   },
   {
     name: "Drivers",
     icon: "driver",
     path: "/drivers",
     show: true,
+    children: [
+      {
+        path: "/drivers/add",
+        name: "Add Driver",
+        show: false,
+      },
+      {
+        path: "/drivers/edit/$id",
+        name: "Edit Driver",
+        show: false,
+      },
+      {
+        path: "drivers/$id",
+        name: "Driver Details",
+        show: false,
+      },
+      {
+        name: "Infractions",
+        path: "/infractions",
+        show: true,
+        children: [
+          {
+            path: "/infractions/$id",
+            name: "Infraction Details",
+            show: false,
+          },
+          {
+            path: "/infractions/add",
+            name: "Add Infraction",
+            show: false,
+          },
+          {
+            path: "/infractions/edit/$id",
+            name: "Edit Infraction",
+            show: false,
+          },
+        ],
+      },
+      {
+        name: "Infraction Types",
+        path: "/infractions?tab=types",
+        show: true,
+      },
+    ],
   },
   {
     name: "Transporters",
     icon: "trasporter",
     path: "/transporters",
     show: true,
+    children: [
+      {
+        path: "/transporters/$id",
+        name: "Transporter Details",
+        show: false,
+      },
+    ],
+  },
+];
+
+export const stakeholders_navs: Navs[] = [
+  {
+    name: "Customers",
+    icon: "customers",
+    path: "/customers",
+    show: true,
+    children: [
+      {
+        path: "/customers/$id",
+        name: "Customer Details",
+        show: false,
+      },
+      {
+        path: "/agents",
+        name: "Agents",
+        show: true,
+        children: [
+          {
+            path: "/agents/add",
+            name: "Add Agent",
+            show: false,
+          },
+          {
+            path: "/agents/edit/$id",
+            name: "Edit Agent",
+            show: false,
+          },
+        ],
+      },
+      {
+        path: "/facilities",
+        name: "Facilities",
+        show: true,
+      },
+    ],
+  },
+  {
+    name: "Contacts",
+    icon: "contacts",
+    path: "/contacts",
+    show: true,
+    children: [
+      {
+        path: "/contacts/$id",
+        name: "Contact Details",
+        show: false,
+      },
+    ],
   },
 ];
 
@@ -125,7 +285,7 @@ export const maintenance_navs: Navs[] = [
       {
         path: "vehicle-tyres/$id",
         name: "Tyre Detail",
-        show: false
+        show: false,
       },
       {
         path: "/vehicle-tyres/add",

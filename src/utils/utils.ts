@@ -131,6 +131,13 @@ export const ShipmentStatus = [
 
 export const genId = getId();
 
+export const getStaticUrl = (filePath?: string) => {
+  if (!filePath) return "";
+  const normalizedPath = filePath.replace(/\\/g, "/");
+  const basePath = import.meta.env.v_STATIC_PATH || getStaticAssetspath("core");
+  return `${basePath.replace(/\/$/, "")}/${encodeURI(normalizedPath).replace(/^\//, "")}`;
+};
+
 export enum PaymentTerm {
   "On Delivery" = "ON_DELIVERY",
   "7 Days" = "DAYS_7",

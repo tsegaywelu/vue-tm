@@ -337,6 +337,7 @@ export enum SavedShipmentSource {
 
 export type Shipment = {
   id: string;
+  _id: string;
   shipmentNumber: string;
   shipperId: string;
   carrierId: string;

@@ -8,9 +8,7 @@
       <Button
         :type="type"
         :form="formId"
-        :variant="
-          formContext.is_dirty.value && canSubmit ? variant : 'inactive'
-        "
+        :variant="formContext.is_dirty.value ? variant : 'inactive'"
         :size="size"
         :class_name="class_name"
       >

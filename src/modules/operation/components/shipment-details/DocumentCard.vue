@@ -3,7 +3,7 @@
     class="relative flex flex-col gap-3 p-4 bg-[#f6f7f9] rounded-xl border border-gray-100 overflow-hidden min-h-[120px]"
   >
     <span
-      class="font-bold text-gray-900 text-sm wrap-break-words pr-24"
+      class="font-bold truncate text-gray-900 text-sm wrap-break-words pr-24"
       :title="title"
       >{{ title }}</span
     >

@@ -498,6 +498,7 @@ const formatType = (type: string) => {
 };
 
 const handleOrderSelect = async (order: Order, form: any) => {
+  console.log(order);
   const order_data = await fetch_order_by_id(order._id);
   const order_record = order_data.data as any as Order | undefined;
 
@@ -515,10 +516,11 @@ const handleOrderSelect = async (order: Order, form: any) => {
       "commodity",
       order_record.commodity?.map((c: any) => c._id) || [],
     );
-    internalLabels.value.commodity = order_record.commodity?.reduce((acc: any, c: any) => {
-      acc[c._id] = c.name;
-      return acc;
-    }, {}) || {};
+    internalLabels.value.commodity =
+      order_record.commodity?.reduce((acc: any, c: any) => {
+        acc[c._id] = c.name;
+        return acc;
+      }, {}) || {};
   }
   form.setFieldValue("waypoint", "");
   filteredPricingType.value = null;

@@ -5,7 +5,34 @@
     :id="tableId"
     :columns="columns"
     :rows="response"
+    :clickable_rows="true"
+    :search_placeholder="dynamicSearchPlaceholder"
+    @row_click="handleRowClick"
   >
+    <template #search-prefix>
+      <div
+        class="h-full flex items-center border-r border-gray-200 pr-2 mr-2 w-48"
+      >
+        <Select
+          class="[&_.input-focus]:shadow-none! [&_.input-focus]:border-none [&_.input-focus]:min-h-full min-w-48"
+          v-model="selectedStatus"
+          :options="AdvanceStatusOptions"
+          label_key="label"
+          value_key="value"
+          :clearable="false"
+        />
+      </div>
+    </template>
+
+    <template #after-search>
+      <div
+        class="items-center gap-4 inline-flex border-l border-grey-100 overflow-x-auto px-3"
+      >
+        <i v-html="icons.filter" />
+        <AdvanceFilters @change="handleFilterChange" />
+      </div>
+    </template>
+
     <template #cell-advanceNumber="{ value }">
       <span class="font-bold">{{ value }}</span>
     </template>
@@ -18,23 +45,29 @@
       <span v-else class="text-gray-400 italic text-sm">-</span>
     </template>
 
+    <template #cell-transporter="{ row }">
+      <span class="text-base">
+        {{ row.shipment?.transporter?.name || row.transporter?.name || "-" }}
+      </span>
+    </template>
+
     <template #cell-plateNumber="{ row }">
       <span class="text-base">
-        {{ row.shipment?.vehicle?.plateNumber || "-" }}
+        {{
+          row.shipment?.vehicle?.plateNumber || row.vehicle?.plateNumber || "-"
+        }}
       </span>
     </template>
 
     <template #cell-status="{ value }">
-      <span
-        :class="{
-          'text-red-500': ['CANCELLED', 'REJECTED'].includes(value),
-          'text-blue-600': ['PAID', 'AUTHORIZED', 'APPROVED'].includes(value),
-          'text-yellow-500': value === 'PENDING',
-        }"
-        class="text-xs font-semibold uppercase"
-      >
-        {{ value }}
-      </span>
+      <Status :variant="value" type="wrapped">
+        {{
+          value
+            ?.toLowerCase()
+            .replace(/_/g, " ")
+            .replace(/\b\w/g, (c) => c.toUpperCase())
+        }}
+      </Status>
     </template>
 
     <template #cell-createdAt="{ value }">
@@ -43,13 +76,13 @@
 
     <template #cell-shipment="{ row }">
       <span class="text-base">
-        {{ row.shipment?.shipmentCode || "-" }}
+        {{ row.shipment?.shipmentCode || row.shipmentCode || "-" }}
       </span>
     </template>
 
     <template #cell-route="{ row }">
       <span class="text-base">
-        {{ row.shipment?.route?.routeName || "-" }}
+        {{ row.shipment?.route?.routeName || row.route?.name || "-" }}
       </span>
     </template>
 
@@ -104,37 +137,47 @@
       <span class="text-base font-semibold">
         {{
           currencyFormatter(
-            (Array.isArray(row.fuelAdvances)
-              ? row.fuelAdvances.reduce(
-                  (acc: number, item: any) => acc + (item.amount || 0),
-                  0,
-                )
-              : 0) +
-              (Array.isArray(row.perDiemExpenses)
-                ? row.perDiemExpenses.reduce(
+            row.amount ||
+              (Array.isArray(row.fuelAdvances)
+                ? row.fuelAdvances.reduce(
                     (acc: number, item: any) => acc + (item.amount || 0),
                     0,
                   )
                 : 0) +
-              (Array.isArray(row.otherExpenses)
-                ? row.otherExpenses.reduce(
-                    (acc: number, item: any) => acc + (item.amount || 0),
-                    0,
-                  )
-                : 0),
+                (Array.isArray(row.perDiemExpenses)
+                  ? row.perDiemExpenses.reduce(
+                      (acc: number, item: any) => acc + (item.amount || 0),
+                      0,
+                    )
+                  : 0) +
+                (Array.isArray(row.otherExpenses)
+                  ? row.otherExpenses.reduce(
+                      (acc: number, item: any) => acc + (item.amount || 0),
+                      0,
+                    )
+                  : 0),
           )
         }}
       </span>
+    </template>
+
+    <template #cell-paidBy="{ value }">
+      <span class="text-base">{{ value?.username || "-" }}</span>
     </template>
   </Table>
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, ref, watch } from "vue";
+import { useRouter } from "vue-router";
 import Table from "@/components/common/Table.vue";
+import Select from "@/components/common/Select.vue";
 import type { TableColumn } from "@/components/common/Table.vue";
 import { usePagination } from "@/composables/usePagination";
 import { currencyFormatter } from "@/utils/utils";
+import AdvanceFilters from "./AdvanceFilters.vue";
+import Status from "@/components/common/Status.vue";
+import { icons } from "@/utils/icons";
 
 const props = withDefaults(
   defineProps<{
@@ -144,6 +187,8 @@ const props = withDefaults(
     paginationId?: string;
     /** Extra params merged into the request */
     extraParams?: Record<string, any>;
+    /** Table columns */
+    columns: TableColumn[];
   }>(),
   {
     url: "/advance-payment",
@@ -152,30 +197,51 @@ const props = withDefaults(
   },
 );
 
+const router = useRouter();
 const tableId = computed(() => props.paginationId);
 
-const columns: TableColumn[] = [
-  { key: "advanceNumber", label: "Advance Number", field: "advanceNumber" },
-  { key: "driver", label: "Driver", field: "driver" },
-  {
-    key: "plateNumber",
-    label: "Plate Number",
-    field: "shipment.vehicle.plateNumber",
-  },
-  { key: "createdAt", label: "Date", field: "createdAt" },
-  { key: "shipment", label: "Shipment", field: "shipment.shipmentCode" },
-  { key: "route", label: "Route", field: "shipment.route.routeName" },
-  { key: "fuelAdvance", label: "Fuel Advance", field: "fuelAdvances" },
-  { key: "perDiemAdvance", label: "Perdiem Advance", field: "perDiemExpenses" },
-  { key: "otherAdvance", label: "Other Advance", field: "otherExpenses" },
-  { key: "total", label: "Total", field: "total" },
-  { key: "status", label: "Status", field: "status" },
+const AdvanceStatusOptions = [
+  { label: "Status: All", value: "" },
+  { label: "Pending", value: "PENDING" },
+  { label: "Authorized", value: "AUTHORIZED" },
+  { label: "Approved", value: "APPROVED" },
+  { label: "Paid", value: "PAID" },
+  { label: "Success", value: "SUCCESS" },
+  { label: "Rejected", value: "REJECTED" },
+  { label: "Cancelled", value: "CANCELLED" },
+  { label: "Failed", value: "FAILED" },
 ];
+
+const selectedStatus = ref("");
+const activeFilters = ref<any>({
+  searchField: "advanceNumber",
+});
+
+const dynamicSearchPlaceholder = computed(() => {
+  return "Search Advances...";
+});
+
+watch(selectedStatus, (newStatus) => {
+  activeFilters.value = { ...activeFilters.value, status: newStatus || undefined };
+});
+
+const handleFilterChange = (newFilters: any) => {
+  activeFilters.value = {
+    ...activeFilters.value,
+    ...newFilters,
+  };
+};
+
+const handleRowClick = (row: any) => {
+  if (row._id) {
+    router.push(`/operation/advance-details/${row._id}`);
+  }
+};
 
 const { response, refetch } = usePagination({
   id: props.paginationId,
   url: props.url,
-  params: computed(() => ({ ...props.extraParams })),
+  params: computed(() => ({ ...props.extraParams, ...activeFilters.value })),
 });
 
 defineExpose({ refetch });

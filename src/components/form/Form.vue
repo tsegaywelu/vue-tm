@@ -10,7 +10,7 @@
 </template>
 
 <script setup lang="ts">
-import { useForm } from "@tanstack/vue-form";
+import { useForm, type FormApi } from "@tanstack/vue-form";
 import {
   provide,
   watch,
@@ -28,7 +28,6 @@ export interface FormProps {
   class_name?: string;
   values?: Record<string, any>;
   enable_unsaved_guard?: boolean;
-  /** Optional pre-initialized form instance */
   instance?: any;
   onSubmit?: (value: any, resetCb: () => void) => Promise<void> | void;
 }
@@ -37,7 +36,6 @@ const props = withDefaults(defineProps<FormProps>(), {
   class_name: "",
   values: () => ({}),
   enable_unsaved_guard: true,
-  instance: null,
 });
 
 const emit = defineEmits<{
@@ -66,14 +64,34 @@ function hashForCompare(val: any): string {
 }
 
 // Use provided instance or create local one
+/** Recursively strip `fakeId` keys from submitted values */
+function stripFakeIds(val: any): any {
+  if (Array.isArray(val)) return val.filter(Boolean).map(stripFakeIds);
+  if (
+    val &&
+    typeof val === "object" &&
+    !(val instanceof File) &&
+    !(val instanceof Date)
+  ) {
+    const cleaned: Record<string, any> = {};
+    for (const key of Object.keys(val)) {
+      if (key === "fakeId") continue;
+      cleaned[key] = stripFakeIds(val[key]);
+    }
+    return cleaned;
+  }
+  return val;
+}
+
 const localForm = !props.instance
   ? (useForm({
       defaultValues: props.values,
       onSubmit: async ({ value }) => {
+        const cleanValue = stripFakeIds(value);
         if (props.onSubmit) {
-          await props.onSubmit(value, () => form.value.reset());
+          await props.onSubmit(cleanValue, () => form.value.reset());
         } else {
-          emit("submit", value, () => form.value.reset());
+          emit("submit", cleanValue, () => form.value.reset());
         }
       },
     }) as any)
@@ -181,7 +199,7 @@ async function handleSubmit() {
 
   const fieldMeta = form.value.state.fieldMeta;
   const errorFields = Object.keys(fieldMeta).filter(
-    (name) => fieldMeta[name].errors.length > 0,
+    (name) => fieldMeta[name] && fieldMeta[name].errors.length > 0,
   );
 
   const errorField = errorFields[0];
@@ -222,6 +240,12 @@ async function handleSubmit() {
   }
 
   await form.value.handleSubmit();
+}
+
+export interface FormContext {
+  id: string;
+  form: FormApi<any, any, any, any, any, any, any, any, any, any, any, any>;
+  is_dirty: import("vue").ComputedRef<boolean>;
 }
 
 provide("formContext", {

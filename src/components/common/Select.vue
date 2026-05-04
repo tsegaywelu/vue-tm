@@ -1,17 +1,29 @@
 <template>
-  <div class="relative w-full">
+  <InputLayout
+    :name="name"
+    :show_validation_status="show_validation_status"
+    :parent_class_name="parent_class_name"
+    :size="size"
+    :label="label"
+    :error="error"
+    :validations="validations"
+    :left_component="left_component"
+    :description="computedDescription"
+    :error_type="error_type"
+  >
     <div
       ref="containerRef"
-      class="focus:shadow-none focus:outline-0 active:shadow-none! outline-0 relative cursor-pointer custom-input flex-1 min-w-0 flex items-center w-full px-3 py-2 border border-gray-300 rounded-md bg-white"
+      class="focus:shadow-none focus:outline-0 active:shadow-none! outline-0 relative cursor-pointer custom-input flex-1 min-w-0 flex items-center h-full w-full"
       :class="{
-        'pointer-events-none cursor-not-allowed bg-gray-50': disabled,
+        'pointer-events-none cursor-not-allowed': attributes?.disabled,
       }"
-      :tabindex="disabled ? -1 : searchable ? -1 : 0"
+      :tabindex="attributes?.disabled ? -1 : searchable ? -1 : 0"
+      :data-name="name"
       @click="toggleDropdown"
       @keydown="handleKeydown($event)"
     >
       <div
-        class="flex justify-between items-center gap-1 flex-1 min-w-0 w-full overflow-hidden"
+        class="flex justify-between items-center gap-1 flex-1 min-w-0 w-full h-full overflow-hidden"
       >
         <div class="flex items-center gap-1 flex-1 min-w-0 overflow-hidden">
           <div
@@ -21,7 +33,8 @@
             <span
               v-for="val in modelValue"
               :key="val"
-              class="inline-flex items-center gap-0.5 bg-gray-100 text-gray-700 rounded-full px-2 py-0.5 whitespace-nowrap shrink-0 text-sm"
+              class="inline-flex items-center gap-0.5 bg-gray-100 text-gray-700 rounded-full px-2 py-0.5 whitespace-nowrap shrink-0"
+              :class="dropdownTextClass"
             >
               {{ getLabelForValue(val) }}
               <button
@@ -39,13 +52,13 @@
             <input
               ref="searchInput"
               type="text"
-              class="min-w-0 w-0 flex-1 focus:outline-none outline-none focus:shadow-none px-0 bg-transparent text-sm text-gray-900"
+              class="min-w-0 w-0 flex-1 focus:outline-none outline-none focus:shadow-none px-0 bg-transparent"
               v-model="searchResult"
-              :disabled="disabled"
+              :disabled="attributes?.disabled"
               :placeholder="
                 multiple && isValidSelection(modelValue)
                   ? ''
-                  : placeholder || 'Select'
+                  : attributes.placeholder || 'Select'
               "
               @input="handleInputSearch"
               @keydown="handleKeydown($event)"
@@ -54,31 +67,31 @@
           <template v-else>
             <span
               v-if="!multiple && isValidSelection(modelValue)"
-              class="truncate text-sm text-gray-900"
+              class="truncate"
             >
               {{ getDisplayLabel(modelValue) }}
             </span>
             <span
               v-else-if="!isValidSelection(modelValue)"
-              class="pointer-events-none text-gray-400 text-sm"
+              class="pointer-events-none text-gray-400"
             >
-              {{ placeholder || "Select" }}
+              {{ attributes.placeholder || "Select" }}
             </span>
           </template>
         </div>
 
-        <div class="w-auto h-5 flex shrink-0 text-gray-500 items-center">
-          <i v-if="pending" class="*:size-5" v-html="icons.spinner"></i>
+        <div v-if="!hide_icon" class="w-auto h-5 flex shrink-0 text-gray-500">
+          <i v-if="isPending" class="*:size-5" v-html="icons.spinner"></i>
           <template v-else>
             <button
               tabindex="-1"
-              v-if="isValidSelection(modelValue) && clearable"
+              v-if="isValidSelection(modelValue)"
               @click.stop.prevent="clearSelection()"
-              class="text-xs whitespace-nowrap text-dark flex items-center justify-center"
+              class="text-xs whitespace-nowrap text-dark"
             >
-              <i class="*:size-4" v-html="icons.close"></i>
+              <i class="*:size-5" v-html="icons.close"></i>
             </button>
-            <i v-else class="*:size-4" v-html="icons.downIcon"></i>
+            <i v-else class="*:size-5" v-html="icons.downIcon"></i>
           </template>
         </div>
       </div>
@@ -87,12 +100,14 @@
         <div
           v-if="open"
           ref="dropdownRef"
-          class="fixed z-9999 bg-white border border-gray-100 shadow-lg max-h-64 overflow-y-auto flex flex-col gap-1 py-2 px-2 rounded-xl"
+          class="fixed z-9999 bg-white border border-gray-100 shadow-lg max-h-64 overflow-y-auto flex flex-col gap-1 py-2 px-2"
+          :class="dropdownRoundedClass"
           :style="dropdownStyle"
         >
           <div
             v-if="finalOptions.length === 0"
-            class="text-gray-400 p-2 text-sm"
+            class="text-gray-400 p-2"
+            :class="dropdownTextClass"
           >
             No options found
           </div>
@@ -124,7 +139,7 @@
               :item="option.item"
               :selected="isSelected(option, modelValue)"
             >
-              <span class="font-medium text-sm text-gray-700">{{
+              <span class="font-medium" :class="dropdownTextClass">{{
                 getOptionLabel(option)
               }}</span>
             </slot>
@@ -141,14 +156,14 @@
               <i
                 v-if="isSelected(option, modelValue)"
                 v-html="icons.check"
-                class="*:size-4 text-primary"
+                class="*:size-4"
               ></i>
             </div>
           </div>
         </div>
       </Teleport>
     </div>
-  </div>
+  </InputLayout>
 </template>
 
 <script setup lang="ts">
@@ -159,44 +174,76 @@ import {
   onMounted,
   onBeforeUnmount,
   nextTick,
+  type SelectHTMLAttributes,
 } from "vue";
+
+import InputLayout from "@/components/form/InputLayout.vue";
+import type { InputLayoutProps } from "@/components/form/InputLayout.vue";
+import { usePagination } from "@/composables/usePagination";
+import ApiService from "@/api/ApiService";
 import { icons } from "@/utils/icons";
 import { getValueByPath } from "@/utils/utils";
 
-export interface SelectProps {
+export interface SelectProps extends Omit<InputLayoutProps, "error"> {
   modelValue?: any;
+  error?: string | any[];
+  name?: string;
+  validations?: Record<string, any>;
+  attributes?: SelectHTMLAttributes;
+  capitalize?: boolean;
+
   options?: any[];
+  pending?: boolean;
   searchable?: boolean;
   multiple?: boolean;
-  disabled?: boolean;
-  clearable?: boolean;
-  pending?: boolean;
-  placeholder?: string;
+  url?: string;
+  base_url?: string;
+  params?:
+    | Record<string, any>
+    | ((data: {
+        value: any;
+        search: string;
+        form: any;
+      }) => Record<string, any>);
   label_key?: string | ((item: any) => string);
   value_key?: string | ((item: any) => any);
   display_label_fn?: (item: any) => string;
+  hide_icon?: boolean;
+  display_value?: string;
+  initial_labels?: Record<string, string>;
 }
 
 const props = withDefaults(defineProps<SelectProps>(), {
   modelValue: undefined,
+  error: undefined,
+  name: "",
+  validations: () => ({}),
+  attributes: () => ({}),
+  capitalize: false,
   options: () => [],
+  pending: false,
   searchable: false,
   multiple: false,
-  disabled: false,
-  clearable: true,
-  pending: false,
-  placeholder: "Select",
+  url: "",
+  base_url: undefined,
+  params: () => ({}),
   label_key: "label",
   value_key: "value",
   display_label_fn: undefined,
+  hide_icon: false,
+
+  show_validation_status: false,
+  parent_class_name: "",
+  size: "sm",
+  label: "",
+  left_component: null as any,
+  description: "",
+  error_type: "text",
+  display_value: "",
+  initial_labels: () => ({}),
 });
 
-const emit = defineEmits([
-  "update:modelValue",
-  "search",
-  "input-change",
-  "select",
-]);
+const emit = defineEmits(["search", "input-change", "select", "update:modelValue", "blur"]);
 
 const open = ref(false);
 const searchResult = ref("");
@@ -207,9 +254,21 @@ const dropdownStyle = ref({});
 const highlightedIndex = ref(-1);
 const optionRefs = ref<Record<number, HTMLElement>>({});
 
-// Sync searchResult when modelValue is set externally
+const isRemote = computed(() => !!props.url);
+
+const customApi = props.base_url ? new ApiService(props.base_url) : undefined;
+
+
+const currentSelectedValue = computed(() => props.modelValue);
+onMounted(() => {
+  if (props.display_value && props.searchable) {
+    searchResult.value = props.display_value;
+  }
+});
+
+// Sync searchResult when value is set programmatically (e.g. from a modal)
 watch(
-  () => props.modelValue,
+  () => currentSelectedValue.value,
   (newVal) => {
     if (!props.searchable) return;
     if (!props.multiple && newVal) {
@@ -218,16 +277,75 @@ watch(
       );
       if (opt) {
         searchResult.value = opt.displayLabel || getOptionLabel(opt);
+      } else if (props.initial_labels?.[newVal]) {
+        searchResult.value = props.initial_labels[newVal];
       }
     } else if (!newVal) {
       searchResult.value = "";
     }
   },
+);
+
+const syncedSearch = ref("");
+
+const computedParams = computed(() => {
+  if (typeof props.params === "function") {
+    return props.params({
+      value: currentSelectedValue.value,
+      search: syncedSearch.value,
+      form: undefined,
+    });
+  }
+  return props.params;
+});
+
+const {
+  response: remoteData,
+  state: remoteState,
+  setSearch: setRemoteSearch,
+  debouncedSearch,
+  isLoading: remoteLoading,
+  isFetching: remoteFetching,
+} = usePagination({
+  queryKey: [props.url || props.name, props.size, props.base_url || ""],
+  url: props.url,
+  autofetch: isRemote.value,
+  params: computedParams,
+  ...(customApi ? { api: customApi } : {}),
+});
+
+watch(
+  () => debouncedSearch?.value,
+  (val) => {
+    syncedSearch.value = val || "";
+  },
   { immediate: true },
+);
+const isPending = computed(() =>
+  isRemote.value ? remoteLoading.value || remoteFetching.value : props.pending,
+);
+
+const dropdownTextClass = computed(() => {
+  const map: Record<string, string> = {
+    xs: "text-xs",
+    sm: "text-sm",
+    md: "text-sm",
+    lg: "text-base",
+  };
+  return map[props.size] || "text-sm";
+});
+
+const dropdownRoundedClass = computed(() =>
+  props.size === "xs" ? "rounded-lg" : "rounded-xl",
 );
 
 const finalOptions = computed(() => {
-  let list = props.options || [];
+  let list = isRemote.value
+    ? [
+        ...(Array.isArray(remoteData.value) ? remoteData.value : []),
+        ...(props.options || []),
+      ]
+    : props.options;
 
   const seen = new Set();
   list = list.filter((item: any) => {
@@ -259,22 +377,12 @@ const finalOptions = computed(() => {
     };
   });
 
-  if (props.searchable && searchResult.value) {
+  if (props.searchable && searchResult.value && !isRemote.value) {
     const lowerSearch = searchResult.value.toLowerCase();
-    // Only filter if the search string is NOT exactly matching the currently selected option's label
-    const selectedOpt = mapped.find(
-      (o) => getOptionValue(o) == props.modelValue,
-    );
-    const selectedLabel = selectedOpt
-      ? selectedOpt.displayLabel || selectedOpt.label
-      : "";
-
-    if (searchResult.value !== selectedLabel) {
-      mapped = mapped.filter((opt: any) => {
-        const lbl = opt.displayLabel || opt.label;
-        return String(lbl).toLowerCase().includes(lowerSearch);
-      });
-    }
+    mapped = mapped.filter((opt: any) => {
+      const lbl = opt.displayLabel || opt.label;
+      return String(lbl).toLowerCase().includes(lowerSearch);
+    });
   }
 
   return mapped;
@@ -297,12 +405,15 @@ function getDisplayLabel(value: any) {
   if (props.multiple) return `${(value as any[]).length} selected`;
   const opt = finalOptions.value.find((o: any) => getOptionValue(o) == value);
   if (opt) return opt.displayLabel || getOptionLabel(opt);
+  if (props.initial_labels?.[value]) return props.initial_labels[value];
+  if (props.display_value) return props.display_value;
   return value;
 }
 
 function getLabelForValue(val: any) {
   const opt = finalOptions.value.find((o: any) => getOptionValue(o) == val);
   if (opt) return opt.displayLabel || getOptionLabel(opt);
+  if (props.initial_labels?.[val]) return props.initial_labels[val];
   return val;
 }
 
@@ -313,21 +424,32 @@ function removeOne(val: any) {
   emit("update:modelValue", current);
 }
 
+const computedDescription = computed(() => {
+  return props.description;
+});
+
 let searchTimeout: any;
 function handleInputSearch(ev: Event) {
   const target = ev.target as HTMLInputElement;
-  const val = target.value;
-  searchResult.value = val;
+  let val = target.value;
+  if (props.capitalize && val) {
+    val = val.trim().charAt(0).toUpperCase() + val.slice(1);
+    searchResult.value = val;
+  }
   emit("input-change", val);
 
-  clearTimeout(searchTimeout);
-  searchTimeout = setTimeout(() => {
-    emit("search", val);
-  }, 300);
+  if (isRemote.value) {
+    setRemoteSearch(val);
+  } else {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+      emit("search", val);
+    }, 500);
+  }
 }
 
 function toggleDropdown() {
-  if (props.disabled) return;
+  if (props.attributes?.disabled) return;
   open.value = !open.value;
   if (open.value) {
     highlightedIndex.value = -1;
@@ -387,7 +509,9 @@ onBeforeUnmount(() => {
 function selectOption(option: any) {
   const value = getOptionValue(option);
   if (props.multiple) {
-    let current = Array.isArray(props.modelValue) ? [...props.modelValue] : [];
+    let current = Array.isArray(props.modelValue)
+      ? [...props.modelValue]
+      : [];
     if (current.includes(value)) current = current.filter((v) => v !== value);
     else current.push(value);
     emit("update:modelValue", current);

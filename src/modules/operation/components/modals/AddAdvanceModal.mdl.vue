@@ -3,7 +3,7 @@
     title="Add Advance Payment"
     :subtitle="`Shipment: ${data.shipment?.shipmentCode}`"
     form-id="advancePaymentForm"
-    @submit="handleFinalSubmit"
+    :submit-handler="handleFinalSubmit"
     modal-style="auto"
     :values="stepFields"
     :key="currentIndex"
@@ -322,6 +322,8 @@ import * as api from "../../api/operation.api";
 import type { Shipment } from "../../operation.types";
 
 // [MODAL-X] AUTO-GENERATED INSTANCE
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
 // [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
 // [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
 // [MODAL-X] Managed Props: This block is auto-generated for strict type safety.

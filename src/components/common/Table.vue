@@ -11,7 +11,7 @@
       <div class="flex items-center gap-4 flex-1 w-full max-w-full">
         <div
           v-if="!hide_search"
-          class="w-full min-w-[400px] input-focus rounded-[36px] flex items-center gap-2.5 border pl-2 pr-4 border-gray-100 overflow-hidden"
+          class="w-full max-w-1/2 input-focus rounded-[36px] flex items-center gap-2.5 border pl-2 pr-4 border-gray-100 overflow-hidden"
         >
           <slot name="search-prefix"></slot>
           <div
@@ -29,7 +29,7 @@
         <slot name="after-search" />
       </div>
 
-      <div class="flex items-center gap-3 w-full justify-end">
+      <!-- <div class="flex items-center gap-3 w-full justify-end">
         <div
           v-if="!hide_actions"
           class="flex-1 flex gap-3 items-center justify-end"
@@ -49,7 +49,7 @@
         <div>
           <slot name="extra-actions" />
         </div>
-      </div>
+      </div> -->
     </div>
 
     <slot name="tabs" />

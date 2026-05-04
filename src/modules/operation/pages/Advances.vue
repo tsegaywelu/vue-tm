@@ -5,11 +5,13 @@
       v-if="activeTab === 'driverAdvances'"
       url="/advance-payment"
       pagination-id="driver-advance-list"
+      :columns="driverColumns"
     />
     <AdvanceTable
       v-if="activeTab === 'transporterAdvances'"
       url="/pre-payment"
       pagination-id="transporter-advance-list"
+      :columns="transporterColumns"
     />
   </div>
 </template>
@@ -18,6 +20,7 @@
 import { computed } from "vue";
 import { useRoute } from "vue-router";
 import AdvanceTable from "../components/AdvanceTable.vue";
+import type { TableColumn } from "@/components/common/Table.vue";
 
 const route = useRoute();
 
@@ -25,4 +28,42 @@ const tabs = computed(() => route.meta.tabs as any[]);
 const activeTab = computed(
   () => (route.query.tab as string) || (tabs.value?.[0]?.value as string),
 );
+
+const driverColumns: TableColumn[] = [
+  { key: "advanceNumber", label: "Advance Number", field: "advanceNumber" },
+  { key: "driver", label: "Driver", field: "driver" },
+  {
+    key: "plateNumber",
+    label: "Plate Number",
+    field: "shipment.vehicle.plateNumber",
+  },
+  { key: "createdAt", label: "Date", field: "createdAt" },
+  { key: "shipment", label: "Shipment", field: "shipment.shipmentCode" },
+  { key: "route", label: "Route", field: "shipment.route.routeName" },
+  { key: "fuelAdvance", label: "Fuel Advance", field: "fuelAdvances" },
+  { key: "perDiemAdvance", label: "Perdiem Advance", field: "perDiemExpenses" },
+  { key: "otherAdvance", label: "Other Advance", field: "otherExpenses" },
+  { key: "total", label: "Total", field: "total" },
+  { key: "status", label: "Status", field: "status" },
+];
+
+const transporterColumns: TableColumn[] = [
+  { key: "advanceNumber", label: "Advance Number", field: "advanceNumber" },
+  {
+    key: "transporter",
+    label: "Transporter",
+    field: "shipment.transporter.name",
+  },
+  {
+    key: "plateNumber",
+    label: "Vehicle",
+    field: "shipment.vehicle.plateNumber",
+  },
+  { key: "createdAt", label: "Date", field: "createdAt" },
+  { key: "shipment", label: "Shipment", field: "shipment.shipmentCode" },
+  { key: "route", label: "Route", field: "shipment.route.routeName" },
+  { key: "paidBy", label: "Paid By", field: "paidBy" },
+  { key: "total", label: "Amount", field: "amount" },
+  { key: "status", label: "Status", field: "status" },
+];
 </script>

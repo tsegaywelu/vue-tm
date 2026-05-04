@@ -16,10 +16,23 @@
     :columns="columns"
     :rows="response"
   >
+    <template #after-search>
+      <div
+        class="items-center gap-4 inline-flex border-l border-grey-100 overflow-x-auto px-3"
+      >
+        <i v-html="icons.filter" />
+        <ShipmentFilters
+          @change="handleFilterChange"
+          calendar-type="english"
+          output-calendar-type="english"
+        />
+      </div>
+    </template>
+
     <template #cell-order="{ row }">
       <div class="flex flex-col">
         <div class="flex items-center gap-1">
-          <span class="font-semibold text-gray-900">
+          <span class="font-semibold text-base text-gray-900">
             {{ row?.route?.routeName || "N/A" }}
           </span>
           <div
@@ -38,7 +51,7 @@
             {{ row.priority?.charAt(0) }}
           </div>
         </div>
-        <span class="text-gray-400 font-medium">
+        <span class="text-gray-400 text-base font-medium">
           {{ row.agent?.name || "N/A" }}
         </span>
       </div>
@@ -86,26 +99,43 @@
     <template #cell-actions="{ row }">
       <Dropdown>
         <template #default="{ close }">
-          <!-- <button
-            v-if="row.status === 'pending' || row.status === 'approved'"
-            class="w-full text-left px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-50 text-primary transition-colors"
-            @click="
-              handleShip(row);
-              close();
-            "
-          >
-            Ship
-          </button>
-          <button
+          <DropDownItem
             v-if="row.status === 'pending'"
-            class="w-full text-left px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-50 text-red-500 transition-colors"
-            @click="
-              handleReject(row);
+            :icon="icons.check"
+            label="Approve"
+            @click.stop="
+              emitAction(row, 'approve');
               close();
             "
-          >
-            Reject
-          </button> -->
+          />
+          <DropDownItem
+            v-if="row.status === 'pending'"
+            :icon="icons.editIcon"
+            label="Edit"
+            @click.stop="
+              emitAction(row, 'edit');
+              close();
+            "
+          />
+          <DropDownItem
+            v-if="row.status === 'pending' || row.status === 'approved'"
+            :icon="icons.truck"
+            label="Ship"
+            @click.stop="
+              emitAction(row, 'ship');
+              close();
+            "
+          />
+          <DropDownItem
+            v-if="row.status === 'pending'"
+            :icon="icons.close"
+            label="Cancel"
+            variant="danger"
+            @click.stop="
+              emitAction(row, 'cancel');
+              close();
+            "
+          />
           <span
             v-if="row.status === 'shipped' || row.status === 'cancelled'"
             class="block px-3 py-2 text-sm font-medium text-gray-400 italic"
@@ -119,11 +149,16 @@
 </template>
 
 <script setup lang="ts">
+import { ref, computed } from "vue";
 import Table from "@/components/common/Table.vue";
 import type { TableColumn } from "@/components/common/Table.vue";
 import Status from "@/components/common/Status.vue";
 import Dropdown from "@/components/common/Dropdown.vue";
+import DropDownItem from "@/components/common/DropDownItem.vue";
+import ShipmentFilters from "./ShipmentFilters.vue";
+import { icons } from "@/utils/icons";
 import { usePagination } from "@/composables/usePagination";
+import type { ShipmentFilterParams } from "../operation.types";
 
 const emit = defineEmits(["action"]);
 
@@ -136,17 +171,20 @@ const columns: TableColumn[] = [
   { key: "actions", label: "Actions", field: "", cellAlign: "right" },
 ];
 
+const activeFilters = ref<ShipmentFilterParams>({});
+
 const { response, refetch } = usePagination({
   id: "order-list",
   url: "/order/shipper",
+  params: computed(() => activeFilters.value),
 });
 
-const handleShip = (row: any) => {
-  emit("action", { row, action: "ship" });
+const emitAction = (row: any, action: string) => {
+  emit("action", { row, action });
 };
 
-const handleReject = (row: any) => {
-  emit("action", { row, action: "reject" });
+const handleFilterChange = (newFilters: ShipmentFilterParams) => {
+  activeFilters.value = { ...newFilters };
 };
 
 defineExpose({ refetch });

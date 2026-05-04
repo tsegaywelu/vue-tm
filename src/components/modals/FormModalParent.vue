@@ -55,7 +55,7 @@
         ref="formRef"
         :id="formId"
         :enable_unsaved_guard="false"
-        @submit="onFormSubmit"
+        :on-submit="formSubmitHandler"
         v-bind="formProps"
         class="flex-1 flex flex-col overflow-hidden"
         #default="{ form }"
@@ -79,7 +79,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, type PropType } from "vue";
 import ModalWrapper from "./ModalWrapper.vue";
 import Form from "@/components/form/Form.vue";
 import { icons } from "@/utils/icons";
@@ -101,15 +101,25 @@ const props = defineProps({
   /** HTML ID for the form */
   formId: { type: String, default: "" },
   values: { type: Object, default: null },
+  /** Async submit handler — pass as prop (not event) so TanStack can track isSubmitting */
+  submitHandler: { type: Function as PropType<(value: any, resetCb: () => void) => void | Promise<void>>, default: null },
 });
 
 const emit = defineEmits(["close", "submit"]);
 
 const formRef = ref<InstanceType<typeof Form> | null>(null);
 
-function onFormSubmit(values: any, resetCb: () => void) {
-  emit("submit", values, resetCb);
-}
+/**
+ * Wraps the submit handler so TanStack can always await it (keeping isSubmitting true).
+ * If submitHandler prop is provided, use it directly.
+ * Otherwise, fall back to emitting the "submit" event (fire-and-forget — isSubmitting won't track).
+ */
+const formSubmitHandler = computed(() => {
+  if (props.submitHandler) return props.submitHandler;
+  return (values: any, resetCb: () => void) => {
+    emit("submit", values, resetCb);
+  };
+});
 
 const formProps = computed(() => {
   if (!props.form) return {};

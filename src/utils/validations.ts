@@ -387,3 +387,62 @@ export const validateAll = (
 
   return undefined;
 };
+
+/**
+ * Validate each item in an array against a field-level rules schema.
+ *
+ * Usage:
+ * ```ts
+ * const errors = reactive<Record<string, string>>({});
+ * validateArrayItems(values, errors, {
+ *   item:      { required },
+ *   uom:       { required },
+ *   unitPrice: { required, price },
+ *   quantity:  { required, number },
+ * });
+ * ```
+ *
+ * Each key in `rules` maps to a field name on the item objects.
+ * The validators are the same `(value) => [boolean, string]` functions
+ * used everywhere else in this file.
+ *
+ * Error keys use a stable identifier from each item (default: `fakeId`)
+ * instead of the array index, so adding/removing items doesn't corrupt
+ * existing error entries. Keys look like `"item_abc123"`, `"unitPrice_def456"`.
+ *
+ * Returns the first error message found, or `undefined` if all valid.
+ */
+export const validateArrayItems = (
+  values: any[],
+  errors: Record<string, string>,
+  rules: Record<string, Record<string, Function>>,
+  idKey: string = "fakeId",
+): string | undefined => {
+  // Clear previous errors
+  for (const key of Object.keys(errors)) {
+    delete errors[key];
+  }
+
+  if (!Array.isArray(values) || values.length === 0) {
+    return "At least one item is required";
+  }
+
+  let firstError: string | undefined;
+
+  for (let i = 0; i < values.length; i++) {
+    const row = values[i];
+    const id = row[idKey] ?? i;
+    console.log("idKey", idKey, row, row[idKey]);
+
+    for (const [field, validators] of Object.entries(rules)) {
+      const value = row[field];
+      const error = validateAll(validators, value, undefined);
+      if (error) {
+        errors[`${field}_${id}`] = error;
+        if (!firstError) firstError = error;
+      }
+    }
+  }
+
+  return firstError;
+};

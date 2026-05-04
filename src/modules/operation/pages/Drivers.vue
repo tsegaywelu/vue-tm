@@ -1,10 +1,232 @@
 <template>
-  <div class="p-6 h-full">
-    <h1 class="text-2xl font-bold text-gray-800 mb-4">Drivers</h1>
-    <p class="text-gray-600">Placeholder for the Drivers feature.</p>
+  <Teleport to="#page-actions" defer>
+    <Button size="md" variant="primary" @click="addDriver"> New Driver </Button>
+  </Teleport>
+
+  <div class="flex flex-col gap-4">
+    <!-- Drivers Table -->
+    <Table
+      id="drivers-list"
+      :columns="columns"
+      :rows="response"
+      :loading="isLoading"
+      search_placeholder="Search drivers..."
+      @row_click="navigateToDetails"
+      :head_alignment="{
+        driverInfo: 'left',
+        employmentInfo: 'left',
+        licenseTin: 'left',
+        employmentDates: 'left',
+        driverStatus: 'center',
+      }"
+      :row_alignment="{
+        driverInfo: 'left',
+        employmentInfo: 'left',
+        licenseTin: 'left',
+        employmentDates: 'left',
+        driverStatus: 'center',
+      }"
+    >
+      <template #cell-driverInfo="{ row }">
+        <div class="flex items-center space-x-3">
+          <img
+            :src="getProfilePictureURL(row.profilePicture)"
+            alt="Driver photo"
+            class="h-10 w-10 rounded-full object-cover border border-grey-200"
+          />
+          <div class="flex flex-col">
+            <span class="font-bold text-grey-900">
+              {{ row.firstName }} {{ row.middleName }} {{ row.lastName }}
+            </span>
+            <span class="text-xs text-grey-500">
+              {{ row.phoneNumber || "N/A" }}
+            </span>
+          </div>
+        </div>
+      </template>
+
+      <template #cell-employmentInfo="{ row }">
+        <div class="flex flex-col">
+          <span class="font-bold text-grey-900">
+            {{ row.isEmployed ? "Employee" : "Sub Contract" }}
+          </span>
+          <span class="text-xs text-grey-500">
+            {{ row.employeeNumber || "N/A" }}
+          </span>
+        </div>
+      </template>
+
+      <template #cell-licenseTin="{ row }">
+        <div class="flex flex-col">
+          <span class="font-bold text-grey-900">
+            {{ row.driverLicenceNumber || "N/A" }}
+          </span>
+          <span class="text-xs text-grey-500">
+            {{ row.tin || "N/A" }}
+          </span>
+        </div>
+      </template>
+
+      <template #cell-employmentDates="{ row }">
+        <div class="flex flex-col">
+          <span class="font-bold text-grey-900">
+            {{
+              row.employmentStartDate
+                ? row.employmentStartDate.split("T")[0]
+                : "N/A"
+            }}
+          </span>
+          <span class="text-xs text-grey-500">
+            {{
+              row.employmentEndDate ? row.employmentEndDate.split("T")[0] : "-"
+            }}
+          </span>
+        </div>
+      </template>
+
+      <template #cell-driverStatus="{ row }">
+        <div @click.stop="openEditStatusModal(row)">
+          <Status
+            :variant="getStatusVariant(row.driverStatus)"
+            :label="formatCategoryType(row.driverStatus)"
+            type="wrapped"
+            class="cursor-pointer transition-colors hover:opacity-80"
+          />
+        </div>
+      </template>
+
+      <template #cell-actions="{ row }">
+        <div @click.stop class="flex justify-center">
+          <Dropdown>
+            <template #default="{ close }">
+              <DropDownItem
+                label="View Details"
+                @click="
+                  close();
+                  navigateToDetails(row);
+                "
+              />
+              <DropDownItem
+                label="Edit Driver Status"
+                @click="
+                  close();
+                  openEditStatusModal(row);
+                "
+              />
+              <DropDownItem
+                label="Edit Driver"
+                @click="
+                  close();
+                  $router.push(`/operation/drivers/edit/${row._id}`);
+                "
+              />
+            </template>
+          </Dropdown>
+        </div>
+      </template>
+    </Table>
   </div>
 </template>
 
 <script setup lang="ts">
-// Logic will be implemented here
+import { ref, computed } from "vue";
+import { useRouter } from "vue-router";
+import { usePagination } from "@/composables/usePagination";
+import Dropdown from "@/components/common/Dropdown.vue";
+import DropDownItem from "@/components/common/DropDownItem.vue";
+import Table from "@/components/common/Table.vue";
+import Select from "@/components/common/Select.vue";
+import type { TableColumn } from "@/components/common/Table.vue";
+import Status from "@/components/common/Status.vue";
+import Button from "@/components/common/Button.vue";
+import { openModal } from "@customizer/modal-x";
+
+const router = useRouter();
+
+const selectedSearchField = ref("name");
+
+const searchFieldOptions = [
+  { label: "Name", value: "name" },
+  { label: "Phone Number", value: "phoneNumber" },
+  { label: "TIN", value: "tin" },
+];
+
+const paginationParams = computed(() => {
+  const p: Record<string, any> = {};
+  if (selectedSearchField.value) {
+    p.searchField = selectedSearchField.value;
+  }
+  return p;
+});
+
+const { response, refetch, isLoading } = usePagination({
+  id: "drivers-list",
+  url: "/driver",
+});
+
+const columns: TableColumn<any>[] = [
+  { key: "driverInfo", label: "Driver Info", field: "firstName" },
+  { key: "employmentInfo", label: "Employment Info", field: "isEmployed" },
+  { key: "licenseTin", label: "License & TIN", field: "driverLicenceNumber" },
+  {
+    key: "employmentDates",
+    label: "Employment Dates",
+    field: "employmentStartDate",
+  },
+  { key: "driverStatus", label: "Driver Status", field: "driverStatus" },
+  { key: "actions", label: "Actions", field: "" },
+];
+
+const addDriver = async () => {
+  router.push("/drivers/add");
+};
+
+const openEditStatusModal = async (driver: any) => {
+  const res = await openModal("EditDriverStatusModal", { driver });
+  if (res) {
+    refetch();
+  }
+};
+
+const navigateToDetails = (row: any) => {
+  router.push(`/drivers/${row._id}`);
+};
+
+const formatCategoryType = (type: string | undefined) => {
+  if (!type) return "N/A";
+  const formatted = type
+    .replace(/_/g, " ")
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+  return formatted;
+};
+
+const getStatusVariant = (status: string | undefined) => {
+  switch (status) {
+    case "ready_to_dispatch":
+      return "active";
+    case "dispatched":
+      return "info";
+    case "vehicle_not_assigned":
+      return "wrapped";
+    case "unavailable":
+      return "info";
+    case "suspended":
+      return "cancelled";
+    case "terminated":
+    case "fired":
+      return "cancelled";
+    default:
+      return "info";
+  }
+};
+
+const API_URL = import.meta.env.VITE_API_URL;
+const getProfilePictureURL = (path: string) => {
+  if (path) {
+    return `${API_URL}/${path.replace(/\\/g, "/")}`;
+  }
+  return "";
+};
 </script>

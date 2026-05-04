@@ -60,7 +60,7 @@
       </div>
     </div>
     <div id="shipment-details-tabs" class="w-full mt-2"></div>
-    <div class="flex-1 min-h-0 overflow-y-auto">
+    <div v-if="shipment" class="flex-1 min-h-0 overflow-y-auto">
       <component
         :is="activeTabComponent"
         :shipment="shipment"
@@ -83,6 +83,8 @@ import { dateFormatter } from "@/utils/utils";
 // Import Tabs Content
 import ShipmentOverviewTab from "../components/shipment-details/ShipmentOverviewTab.vue";
 import ShipmentUploadsTab from "../components/shipment-details/ShipmentUploadsTab.vue";
+import ShipmentPreTripInspectionsTab from "../components/shipment-details/ShipmentPreTripInspectionsTab.vue";
+import ShipmentSettlementsTab from "../components/shipment-details/ShipmentSettlementsTab.vue";
 import ShipmentPlaceholderTab from "../components/shipment-details/ShipmentPlaceholderTab.vue";
 import { h } from "vue";
 
@@ -97,7 +99,6 @@ const activeTab = computed(
 const { data: shipmentResponse, refetch } = useQuery({
   queryKey: ["shipment", shipmentId],
   queryFn: () => fetch_shipment_details(shipmentId),
-  staleTime: Infinity,
 });
 
 const shipment = computed(
@@ -116,9 +117,9 @@ const activeTabComponent = computed(() => {
     case "uploads":
       return ShipmentUploadsTab;
     case "pre-trip-inspections":
-      return () => h(ShipmentPlaceholderTab, { title: "Pre-Trip Inspections" });
+      return ShipmentPreTripInspectionsTab;
     case "settlements":
-      return () => h(ShipmentPlaceholderTab, { title: "Settlements" });
+      return ShipmentSettlementsTab;
     case "emptyReturn":
       return () => h(ShipmentPlaceholderTab, { title: "Empty Return" });
     default:

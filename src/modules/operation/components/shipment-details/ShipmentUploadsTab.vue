@@ -134,7 +134,7 @@
 import { computed } from "vue";
 import InfoWrapper from "./InfoWrapper.vue";
 import DocumentCard from "./DocumentCard.vue";
-import { getStaticAssetspath } from "@/utils/utils";
+import { getStaticUrl } from "@/utils/utils";
 import {
   upload_aiv,
   upload_civ,
@@ -152,11 +152,4 @@ const canReject = computed(() => {
   // fetch the document uploaded by to know if the logged in user can reject it
   return true;
 });
-
-const getStaticUrl = (filePath?: string) => {
-  if (!filePath) return "";
-  const normalizedPath = filePath.replace(/\\/g, "/");
-  const basePath = import.meta.env.v_STATIC_PATH || getStaticAssetspath("core");
-  return `${basePath.replace(/\/$/, "")}/${encodeURI(normalizedPath).replace(/^\//, "")}`;
-};
 </script>

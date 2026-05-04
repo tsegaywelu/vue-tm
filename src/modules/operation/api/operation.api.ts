@@ -4,6 +4,8 @@ import type {
   ApprovalFilterParams,
   ApprovalAction,
   ApprovalSubject,
+  Advance,
+  Vehicle,
 } from "../operation.types";
 
 const advance_api = getApi("/advance-payment");
@@ -17,12 +19,44 @@ const vehicle_api = getApi("/vehicle");
 const driver_api = getApi("/driver");
 const expense_type_api = getApi("/expense-type");
 const inventory_api = getApi("/inventory-items");
-const shipment_damage_api = getApi("/shipment-damage");
+const shipment_damage_api = getApi("/shipment-damages");
 const agent_api = getApi("/agent");
+const road_type_api = getApi("/road-type");
+const terrain_type_api = getApi("/terrain-type");
+const transporter_api = getApi("/transporter");
+const region_api = getApi("/region");
+const vehicle_type_api = getApi("/vehicle-type");
+const vehicle_group_api = getApi("/group");
+const vehicle_model_api = getApi("/vehicle-model");
+const maker_api = getApi("/maker");
+const type_api = getApi("/type");
+const insurance_provider_api = getApi("/insurance-provider");
+const insurance_api = getApi("/insurance");
+const tyre_api = getApi("/tyre");
+const approval_api = getApi("/approval-process");
+const shipper_api = getApi("/shipper");
+
+export function fetch_customer_by_id(id: string) {
+  return shipper_api.addAuthenticationHeader().get(`/${id}`);
+}
 
 // ─── Agents ───────────────────────────────────────────────────
 export function fetch_agents(params?: Record<string, any>) {
   return agent_api.addAuthenticationHeader().get("", { params });
+}
+
+export function fetch_agent_by_id(id: string) {
+  return getApi("/agent").addAuthenticationHeader().get(`/${id}/carrier`);
+}
+
+export function add_agent(data: any) {
+  return getApi("/agent").addAuthenticationHeader().post("/carrier", data);
+}
+
+export function update_agent(id: string, data: any) {
+  return getApi("/agent")
+    .addAuthenticationHeader()
+    .patch(`/${id}/carrier`, data);
 }
 
 // ─── Shipment Damage ──────────────────────────────────────────
@@ -37,8 +71,24 @@ export function fetch_approval_requests(params: ApprovalFilterParams) {
     .get<ApprovalRequest[]>("/allApprovalRequests", { params });
 }
 
-export function update_advance_status(id: string, status: ApprovalAction) {
-  return advance_api.addAuthenticationHeader().post(`/ ${id}/${status}`, {});
+export function update_advance_status(
+  id: string,
+  status: ApprovalAction,
+  data: any = {},
+) {
+  return advance_api.addAuthenticationHeader().post(`/${id}/${status}`, data);
+}
+
+export function settle_advance(id: string) {
+  return advance_api.addAuthenticationHeader().post(`/${id}/settle`, {});
+}
+
+export function add_transaction_to_advance(
+  id: string,
+  status: string,
+  data: any,
+) {
+  return advance_api.addAuthenticationHeader().post(`/${id}/${status}`, data);
 }
 
 export function update_transaction_status(
@@ -103,6 +153,10 @@ export function create_fuel_advance(data: any) {
   return advance_api.addAuthenticationHeader().post("/fuel-only", data);
 }
 
+export function fetch_advance_details(id: string) {
+  return advance_api.addAuthenticationHeader().get<Advance>(`/${id}`);
+}
+
 export function create_advance(data: any) {
   return advance_api.addAuthenticationHeader().post("", data);
 }
@@ -130,7 +184,183 @@ export function fetch_vehicle_track_route(vehicleId: string) {
     });
 }
 
+export function update_vehicle_status(id: string, data: any) {
+  return vehicle_api
+    .addAuthenticationHeader()
+    .patch(`/vehicleStatus/${id}`, data);
+}
+
+export function fetch_vehicle_by_id(id: string) {
+  return vehicle_api.addAuthenticationHeader().get<Vehicle>(`/${id}`);
+}
+
+export function add_vehicle(data: any) {
+  return vehicle_api.addAuthenticationHeader().post("", data);
+}
+
+export function update_vehicle(id: string, data: any) {
+  return vehicle_api.addAuthenticationHeader().patch(`/${id}`, data);
+}
+
+export function fetch_vehicle_types_paginated(params?: Record<string, any>) {
+  return vehicle_type_api.addAuthenticationHeader().get("", { params });
+}
+
+export function add_vehicle_type(data: any) {
+  return vehicle_type_api.addAuthenticationHeader().post("", data);
+}
+
+export function update_vehicle_type(id: string, data: any) {
+  return vehicle_type_api.addAuthenticationHeader().patch(`/${id}`, data);
+}
+
+export function fetch_vehicle_groups_paginated(params?: Record<string, any>) {
+  return vehicle_group_api.addAuthenticationHeader().get("", { params });
+}
+
+export function add_vehicle_group(data: any) {
+  return vehicle_group_api.addAuthenticationHeader().post("", data);
+}
+
+export function update_vehicle_group(id: string, data: any) {
+  return vehicle_group_api.addAuthenticationHeader().patch(`/${id}`, data);
+}
+
+export function fetch_vehicle_models_paginated(params?: Record<string, any>) {
+  return vehicle_model_api.addAuthenticationHeader().get("", { params });
+}
+
+export function fetch_makers_paginated(params?: Record<string, any>) {
+  return maker_api.addAuthenticationHeader().get("", { params });
+}
+
+export function fetch_types_paginated(params?: Record<string, any>) {
+  return type_api.addAuthenticationHeader().get("", { params });
+}
+
+export function fetch_insurance_providers(params?: Record<string, any>) {
+  return insurance_provider_api.addAuthenticationHeader().get("", { params });
+}
+
+export function fetch_makers(params?: Record<string, any>) {
+  return maker_api.addAuthenticationHeader().get("", { params });
+}
+
+export function fetch_vehicle_insurances(vehicleId: string) {
+  return insurance_api
+    .addAuthenticationHeader()
+    .get("", { params: { vehicle: vehicleId } });
+}
+
+export function fetch_vehicle_fuel_usage(params: Record<string, any>) {
+  return advance_api
+    .addAuthenticationHeader()
+    .get("/fuel-usage-per-vehicle", { params });
+}
+
+export function fetch_vehicle_tyres(vehicleId: string) {
+  return tyre_api.addAuthenticationHeader().get(`/vehicle/${vehicleId}`);
+}
+
+export function fetch_regions_paginated(params?: Record<string, any>) {
+  return region_api.addAuthenticationHeader().get("", { params });
+}
+
+export function fetch_transporters_paginated(params?: Record<string, any>) {
+  return transporter_api.addAuthenticationHeader().get("", { params });
+}
+
+export function fetch_transporter_by_id(id: string) {
+  return transporter_api.addAuthenticationHeader().get(`/${id}`);
+}
+
+export function add_transporter(data: any) {
+  return transporter_api.addAuthenticationHeader().post("", data);
+}
+
+export function update_transporter(id: string, data: any) {
+  return transporter_api.addAuthenticationHeader().patch(`/${id}`, data);
+}
+
+export function delete_transporter(id: string) {
+  return transporter_api.addAuthenticationHeader().delete(`/${id}`);
+}
+
 // ─── Drivers ──────────────────────────────────────────────────
 export function fetch_drivers(params?: Record<string, any>) {
   return driver_api.addAuthenticationHeader().get("", { params });
+}
+export function fetch_driver_by_id(id: string) {
+  return driver_api.addAuthenticationHeader().get(`/${id}`);
+}
+export function add_driver(data: any) {
+  return driver_api.addAuthenticationHeader().post("", data);
+}
+export function update_driver(id: string, data: any) {
+  return driver_api.addAuthenticationHeader().patch(`/${id}`, data);
+}
+export function update_driver_status(id: string, data: any) {
+  return driver_api
+    .addAuthenticationHeader()
+    .patch(`/driverStatus/${id}`, data);
+}
+export function upload_driver_documents(
+  id: string,
+  data: FormData,
+  config?: any,
+) {
+  return driver_api
+    .addAuthenticationHeader()
+    .post(`/${id}/uploadDriverDocuments`, data, config);
+}
+// ─── Road & Terrain Types ────────────────────────────────────
+export function fetch_road_types() {
+  return road_type_api.addAuthenticationHeader().get("");
+}
+
+export function fetch_terrain_types() {
+  return terrain_type_api.addAuthenticationHeader().get("");
+}
+
+// ─── Facilities ───────────────────────────────────────────────
+export function add_facility(data: any) {
+  return getApi("/facility").addAuthenticationHeader().post("/carrier", data);
+}
+
+export function update_facility(id: string, data: any) {
+  return getApi("/facility")
+    .addAuthenticationHeader()
+    .patch(`/${id}/carrier`, data);
+}
+
+export function delete_facility(id: string) {
+  return getApi("/facility").addAuthenticationHeader().delete(`/${id}`);
+}
+
+// ─── Contacts ───────────────────────────────────────────────
+export function add_contact(data: any) {
+  return getApi("/contact").addAuthenticationHeader().post("", data);
+}
+
+export function update_contact(id: string, data: any) {
+  return getApi("/contact").addAuthenticationHeader().patch(`/${id}`, data);
+}
+
+export function delete_contact(id: string) {
+  return getApi("/contact").addAuthenticationHeader().delete(`/${id}`);
+}
+
+export function fetch_contact_by_id(id: string) {
+  return getApi("/contact").addAuthenticationHeader().get(`/${id}`);
+}
+
+export function fetch_shipment_status_count() {
+  return shipment_api.addAuthenticationHeader().get("/statusCount");
+}
+
+export function fetch_all_shipments_unpaginated(
+  params?: Record<string, any>,
+  config?: any,
+) {
+  return shipment_api.addAuthenticationHeader().get("", config);
 }

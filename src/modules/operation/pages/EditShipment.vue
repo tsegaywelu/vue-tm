@@ -73,7 +73,7 @@ import { fetch_shipment_details, update_shipment } from "../api/shipment.api";
 import { useToastStore } from "@/store/toastStore";
 import SubmitButton from "@/components/form/SubmitButton.vue";
 import Button from "@/components/common/Button.vue";
-import { useMutation, useQuery } from "@tanstack/vue-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/vue-query";
 import {
   ProductType,
   VehicleOwnership,
@@ -88,6 +88,7 @@ import { openModal } from "@customizer/modal-x";
 const router = useRouter();
 const route = useRoute();
 const toast = useToastStore();
+const queryClient = useQueryClient();
 const shipmentId = route.params.id as string;
 
 const statusOptions = Object.entries(ShipmentStatus).map(([key, value]) => ({
@@ -95,16 +96,30 @@ const statusOptions = Object.entries(ShipmentStatus).map(([key, value]) => ({
   value,
 }));
 
+const isProcessingDamage = ref(false);
 async function handleDamageToggle(val: any, form: any) {
-  if (val) {
+  // If toggling OFF or already processing, do nothing.
+  // The form state is already updated by the UI toggle itself.
+  if (!val || isProcessingDamage.value) return;
+
+  isProcessingDamage.value = true;
+  try {
     const success = await openModal("DamageReportModal", {
       shipmentId,
+      shipperId: shipment.value?.shipper?._id || "",
+      carrierId: shipment.value?.carrier?._id || "",
     });
+
     if (!success) {
       form.setFieldValue("isDamaged", false);
     } else {
-      form.setFieldValue("isDamaged", true);
+      // It's already true in the UI toggle, but we ensure form state is synced
+      if (form.getFieldValue("isDamaged") !== true) {
+        form.setFieldValue("isDamaged", true);
+      }
     }
+  } finally {
+    isProcessingDamage.value = false;
   }
 }
 
@@ -143,23 +158,23 @@ const initialValues = computed(() => {
     remark: data.remark || "",
     totalPrice: data.totalPrice?.toFixed(2) || "",
     // These are used for display in ShipmentForm and will be updated via handleOrderSelect or handleVehicleSelect
-    driver: data.driver._id,
+    driver: data.driver?._id,
     isDamaged: data.isDamaged,
     CKRF: data.CKRF,
     CKRFCode: data.CKRFCode || "",
     status: data.status,
-    pricingType: data.pricingType._id,
+    pricingType: data.pricingType?._id,
     ...(data.productType !== ProductType["Site Transfer"]
       ? {
           agent: data.agent?._id ?? null,
         }
       : {}),
     transporter:
-      data.vehicle.ownership == VehicleOwnership.Owned
+      data.vehicle?.ownership == VehicleOwnership.Owned
         ? data.transporter?._id
         : null,
     transporterPrice:
-      data.vehicle.ownership == VehicleOwnership.Owned
+      data.vehicle?.ownership == VehicleOwnership.Owned
         ? data.transporterPrice
         : null,
   };
@@ -192,7 +207,8 @@ const handleUpdateShipment = async (values: any) => {
   const res = await updateMutation.mutateAsync(values);
   if (res.success) {
     toast.success("Shipment updated successfully");
-    router.push(`/operation/shipments`);
+    queryClient.invalidateQueries({ queryKey: ["shipment", shipmentId] });
+    router.push(`/operation/shipments/${shipmentId}`);
   } else {
     toast.error(res.error || "Failed to update shipment");
   }

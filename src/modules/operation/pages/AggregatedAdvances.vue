@@ -2,9 +2,25 @@
   <AdvanceTable
     url="/advance-payment/settledAdvance"
     pagination-id="aggregated-advance-list"
+    :columns="columns"
   />
 </template>
 
 <script setup lang="ts">
 import AdvanceTable from "../components/AdvanceTable.vue";
+import type { TableColumn } from "@/components/common/Table.vue";
+
+const columns: TableColumn[] = [
+  { key: "advanceNumber", label: "Ref. Number", field: "advanceNumber" },
+  { key: "createdAt", label: "Date", field: "createdAt" },
+  { key: "shipment", label: "Shipment", field: "shipmentCode" },
+  { key: "route", label: "Route", field: "route" },
+  { key: "driver", label: "Driver", field: "driver" },
+  { key: "plateNumber", label: "Vehicle", field: "plateNumber" },
+  { key: "fuelAdvance", label: "Fuel", field: "fuelAdvances" },
+  { key: "perDiemAdvance", label: "Perdiem", field: "perDiemExpenses" },
+  { key: "otherAdvance", label: "Other", field: "otherExpenses" },
+  { key: "total", label: "Total", field: "amount" },
+  { key: "status", label: "Status", field: "status" },
+];
 </script>

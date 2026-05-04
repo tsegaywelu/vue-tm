@@ -71,8 +71,10 @@ onUnmounted(() => {
       <div
         class="grid grid-cols-1 gap-3 grid-rows-[auto_auto_1fr] overflow-auto"
       >
-        <Breadcrumb :navs="allNavs" />
-
+        <div>
+          <Breadcrumb :navs="allNavs" />
+          <div id="extra-page-data"></div>
+        </div>
         <main class="w-full">
           <RouterView v-slot="{ Component, route }">
             <template v-if="isMounted">
