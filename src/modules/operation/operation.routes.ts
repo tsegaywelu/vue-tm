@@ -799,18 +799,18 @@ export const operation_routes: RouteRecordRaw[] = [
         component: () => import("./pages/setting/Region.vue"),
         meta: { title: "Region", description: "Manage regions." },
       },
-      // {
-      //   path: "region/add",
-      //   name: "operation_setting_region_add",
-      //   component: () => import("./pages/setting/RegionAdd.vue"),
-      //   meta: { title: "Add Region", description: "Create a new region." },
-      // },
-      // {
-      //   path: "region/edit/:id",
-      //   name: "operation_setting_region_edit",
-      //   component: () => import("./pages/setting/RegionEdit.vue"),
-      //   meta: { title: "Edit Region", description: "Edit an existing region." },
-      // },
+      {
+        path: "region/add",
+        name: "operation_setting_region_add",
+        component: () => import("./pages/setting/RegionAdd.vue"),
+        meta: { title: "Add Region", description: "Create a new region." },
+      },
+      {
+        path: "region/edit/:id",
+        name: "operation_setting_region_edit",
+        component: () => import("./pages/setting/RegionEdit.vue"),
+        meta: { title: "Edit Region", description: "Edit an existing region." },
+      },
       {
         path: "bonus-multipliers",
         name: "operation_setting_bonus_multipliers",

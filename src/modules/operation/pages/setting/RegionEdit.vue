@@ -1,53 +1,69 @@
 <template>
-  <div class="max-w-4xl mx-auto p-6">
-    <h1 class="text-2xl font-semibold mb-6">Edit Region</h1>
-    <div v-if="isLoading" class="flex justify-center p-12">
-      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-    </div>
-    <RegionForm
-      v-else-if="region"
-      :initial-data="region"
-      :loading="mutation.isPending.value"
-      is-edit
-      @submit="onSubmit"
-    />
+  <div v-if="isLoading" class="flex justify-center py-10">
+    <div
+      class="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"
+    ></div>
   </div>
+  <RegionForm
+    v-else-if="initialValues"
+    form-id="edit-region-form"
+    :initial-values="initialValues"
+    :on-submit="handleUpdate"
+  >
+    <template #submit-btn>
+      <Button size="md" variant="outline" @click="router.back()">Cancel</Button>
+      <SubmitButton> Save Changes </SubmitButton>
+    </template>
+  </RegionForm>
 </template>
 
 <script setup lang="ts">
-import { useRoute, useRouter } from 'vue-router'
-import { useQuery, useMutation } from '@tanstack/vue-query'
-import RegionForm from '../../components/settings/Region/RegionForm.vue'
-import { fetch_region_details, update_region } from '../../api/region.api'
-import { useToastStore } from '@/store/toastStore'
+import { computed } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { useQuery, useMutation } from "@tanstack/vue-query";
+import RegionForm from "../../components/settings/Region/RegionForm.vue";
+import { fetch_region_details, update_region } from "../../api/region.api";
+import { useToastStore } from "@/store/toastStore";
+import SubmitButton from "@/components/form/SubmitButton.vue";
+import Button from "@/components/Button.vue";
 
-const route = useRoute()
-const router = useRouter()
-const toast = useToastStore()
-const id = route.params.id as string
+const route = useRoute();
+const router = useRouter();
+const toast = useToastStore();
+const id = route.params.id as string;
 
-const { data: region, isLoading } = useQuery({
-  queryKey: ['region', id],
-  queryFn: () => fetch_region_details(id).then(res => res.data),
+const { data: response, isLoading } = useQuery({
+  queryKey: ["region", id],
+  queryFn: () => fetch_region_details(id),
   enabled: !!id,
-})
+});
+
+const initialValues = computed(() => {
+  if (!response.value?.data) return null;
+  const data = response.value.data.result || response.value.data;
+  return {
+    name: data.name || "",
+    odometerRouteToleranceKilometer: data.odometerRouteToleranceKilometer ?? 200,
+    notificationEnabled: data.notificationEnabled || false,
+    enforceOdometerRouteTolerance: data.enforceOdometerRouteTolerance || false,
+  };
+});
 
 const mutation = useMutation({
-  mutationFn: (data: any) => update_region(id, data),
-  onSuccess: (res) => {
-    if (res.success) {
-      toast.success('Region updated successfully')
-      router.push('/setting/region')
-    } else {
-      toast.error(res.error || 'Failed to update region')
-    }
-  },
-  onError: (error: any) => {
-    toast.error(error.message || 'An unexpected error occurred')
-  },
-})
+  mutationFn: (values: any) => update_region(id, values),
+});
 
-const onSubmit = (data: any) => {
-  mutation.mutate(data)
-}
+const handleUpdate = async (values: any) => {
+  try {
+    const res = await mutation.mutateAsync(values);
+    if (res.success) {
+      toast.success("Region updated successfully");
+      router.push("/setting/region");
+    } else {
+      toast.error(res.error || "Failed to update region");
+    }
+  } catch (error: any) {
+    toast.error(error.message || "An unexpected error occurred");
+  }
+};
 </script>
