@@ -555,10 +555,34 @@ export const operation_routes: RouteRecordRaw[] = [
         meta: { title: "Item Groups", description: "Manage inventory item groups." },
       },
       {
+        path: "item-groups/add",
+        name: "operation_inventory_item_groups_add",
+        component: () => import("./pages/Inventory/ItemGroupAdd.vue"),
+        meta: { title: "Add Item Group", description: "Add a new inventory item group." },
+      },
+      {
+        path: "item-groups/edit/:id",
+        name: "operation_inventory_item_groups_edit",
+        component: () => import("./pages/Inventory/ItemGroupEdit.vue"),
+        meta: { title: "Edit Item Group", description: "Edit an existing inventory item group." },
+      },
+      {
         path: "vendor",
         name: "operation_inventory_vendor",
         component: () => import("./pages/Inventory/Vendor.vue"),
         meta: { title: "Vendor", description: "Manage inventory vendors." },
+      },
+      {
+        path: "vendor/add",
+        name: "operation_inventory_vendor_add",
+        component: () => import("./pages/Inventory/VendorAdd.vue"),
+        meta: { title: "Add Vendor", description: "Add a new inventory vendor." },
+      },
+      {
+        path: "vendor/edit/:id",
+        name: "operation_inventory_vendor_edit",
+        component: () => import("./pages/Inventory/VendorEdit.vue"),
+        meta: { title: "Edit Vendor", description: "Edit an existing inventory vendor." },
       },
       {
         path: "items",
@@ -567,10 +591,34 @@ export const operation_routes: RouteRecordRaw[] = [
         meta: { title: "Items", description: "Manage inventory items." },
       },
       {
+        path: "items/add",
+        name: "operation_inventory_items_add",
+        component: () => import("./pages/Inventory/ItemAdd.vue"),
+        meta: { title: "Add Inventory Item", description: "Add a new inventory item." },
+      },
+      {
+        path: "items/edit/:id",
+        name: "operation_inventory_items_edit",
+        component: () => import("./pages/Inventory/ItemEdit.vue"),
+        meta: { title: "Edit Inventory Item", description: "Edit an existing inventory item." },
+      },
+      {
         path: "store-requisition",
         name: "operation_inventory_store_requisition",
         component: () => import("./pages/Inventory/StoreRequisition.vue"),
         meta: { title: "Store Requisition", description: "Manage store requisition vouchers." },
+      },
+      {
+        path: "store-requisition/add",
+        name: "operation_inventory_store_requisition_add",
+        component: () => import("./pages/Inventory/StoreRequisitionAdd.vue"),
+        meta: { title: "Add Requisition", description: "Create a new store requisition." },
+      },
+      {
+        path: "store-requisition/edit/:id",
+        name: "operation_inventory_store_requisition_edit",
+        component: () => import("./pages/Inventory/StoreRequisitionEdit.vue"),
+        meta: { title: "Edit Requisition", description: "Edit an existing store requisition." },
       },
       {
         path: "purchase-requisition",
@@ -579,16 +627,52 @@ export const operation_routes: RouteRecordRaw[] = [
         meta: { title: "Purchase Requisition", description: "Manage purchase requisition requests." },
       },
       {
+        path: "purchase-requisition/add",
+        name: "operation_inventory_purchase_requisition_add",
+        component: () => import("./pages/Inventory/PurchaseRequisitionAdd.vue"),
+        meta: { title: "Add Purchase Requisition", description: "Create a new purchase requisition." },
+      },
+      {
+        path: "purchase-requisition/edit/:id",
+        name: "operation_inventory_purchase_requisition_edit",
+        component: () => import("./pages/Inventory/PurchaseRequisitionEdit.vue"),
+        meta: { title: "Edit Purchase Requisition", description: "Edit an existing purchase requisition." },
+      },
+      {
         path: "purchase-order",
         name: "operation_inventory_purchase_order",
         component: () => import("./pages/Inventory/PurchaseOrder.vue"),
-        meta: { title: "Purchase Order", description: "Manage inventory purchase orders." },
+        meta: { title: "Purchase Order", description: "Manage purchase orders." },
+      },
+      {
+        path: "purchase-order/add",
+        name: "operation_inventory_purchase_order_add",
+        component: () => import("./pages/Inventory/PurchaseOrderAdd.vue"),
+        meta: { title: "Add Purchase Order", description: "Create a new purchase order." },
+      },
+      {
+        path: "purchase-order/edit/:id",
+        name: "operation_inventory_purchase_order_edit",
+        component: () => import("./pages/Inventory/PurchaseOrderEdit.vue"),
+        meta: { title: "Edit Purchase Order", description: "Edit an existing purchase order." },
       },
       {
         path: "good-transfer",
         name: "operation_inventory_good_transfer",
         component: () => import("./pages/Inventory/GoodTransfer.vue"),
         meta: { title: "Issue / Receive", description: "Track good transfers, issues and receipts." },
+      },
+      {
+        path: "good-transfer/add",
+        name: "operation_inventory_good_transfer_add",
+        component: () => import("./pages/Inventory/GoodTransferAdd.vue"),
+        meta: { title: "Add Transfer Voucher", description: "Create a new good transfer voucher." },
+      },
+      {
+        path: "good-transfer/edit/:id",
+        name: "operation_inventory_good_transfer_edit",
+        component: () => import("./pages/Inventory/GoodTransferEdit.vue"),
+        meta: { title: "Edit Transfer Voucher", description: "Edit an existing good transfer voucher." },
       },
     ],
   },
@@ -605,11 +689,52 @@ export const operation_routes: RouteRecordRaw[] = [
         meta: { title: "User and Role", description: "Manage users, roles and permissions." },
       },
       {
+        path: "user-and-role/user/add",
+        name: "operation_setting_user_add",
+        component: () => import("./pages/setting/UserAdd.vue"),
+        meta: { title: "Register User", description: "Create a new user account." },
+      },
+      {
+        path: "user-and-role/user/edit/:id",
+        name: "operation_setting_user_edit",
+        component: () => import("./pages/setting/UserEdit.vue"),
+        meta: { title: "Edit User", description: "Edit an existing user account." },
+      },
+      {
+        path: "user-and-role/role/add",
+        name: "operation_setting_role_add",
+        component: () => import("./pages/setting/RoleAdd.vue"),
+        meta: { title: "Add Role", description: "Create a new role with permissions." },
+      },
+      {
+        path: "user-and-role/role/edit/:id",
+        name: "operation_setting_role_edit",
+        component: () => import("./pages/setting/RoleEdit.vue"),
+        meta: { title: "Edit Role", description: "Edit an existing role and its permissions." },
+      },
+      {
         path: "base-configuration",
         name: "operation_setting_base_configuration",
         component: () => import("./pages/setting/BaseConfiguration.vue"),
         meta: { title: "Base Configuration", description: "Configure core system settings." },
       },
+      // Road Type
+      { path: "base-configuration/road-type/add", component: () => import("./pages/setting/BaseConfiguration pages/RoadTypeAdd.vue"), meta: { title: "Add Road Type" } },
+      { path: "base-configuration/road-type/edit/:id", component: () => import("./pages/setting/BaseConfiguration pages/RoadTypeEdit.vue"), meta: { title: "Edit Road Type" } },
+      // Terrain Type
+      { path: "base-configuration/terrain-type/add", component: () => import("./pages/setting/BaseConfiguration pages/TerrainTypeAdd.vue"), meta: { title: "Add Terrain Type" } },
+      { path: "base-configuration/terrain-type/edit/:id", component: () => import("./pages/setting/BaseConfiguration pages/TerrainTypeEdit.vue"), meta: { title: "Edit Terrain Type" } },
+      // Bank
+      { path: "base-configuration/bank/add", component: () => import("./pages/setting/BaseConfiguration pages/BankAdd.vue"), meta: { title: "Add Bank" } },
+      { path: "base-configuration/bank/edit/:id", component: () => import("./pages/setting/BaseConfiguration pages/BankEdit.vue"), meta: { title: "Edit Bank" } },
+      // Insurance
+      { path: "base-configuration/insurance/add", component: () => import("./pages/setting/BaseConfiguration pages/InsuranceAdd.vue"), meta: { title: "Add Insurance" } },
+      { path: "base-configuration/insurance/edit/:id", component: () => import("./pages/setting/BaseConfiguration pages/InsuranceEdit.vue"), meta: { title: "Edit Insurance" } },
+      // Settings (Carrier)
+      { path: "base-configuration/settings/add", component: () => import("./pages/setting/BaseConfiguration pages/CarrierSettingAdd.vue"), meta: { title: "Add Carrier Setting" } },
+      { path: "base-configuration/settings/edit/:id", component: () => import("./pages/setting/BaseConfiguration pages/CarrierSettingEdit.vue"), meta: { title: "Edit Carrier Setting" } },
+
+
       {
         path: "contract",
         name: "operation_setting_contract",
@@ -617,11 +742,31 @@ export const operation_routes: RouteRecordRaw[] = [
         meta: { title: "Contract", description: "Manage business contracts." },
       },
       {
+        path: "contract/add",
+        name: "operation_setting_contract_add",
+        component: () => import("./pages/setting/ContractAdd.vue"),
+        meta: { title: "Add Contract", description: "Create a new carrier contract." },
+      },
+
+      {
         path: "commodity",
         name: "operation_setting_commodity",
         component: () => import("./pages/setting/Commodity.vue"),
         meta: { title: "Commodity", description: "Manage commodities." },
       },
+      {
+        path: "commodity/add",
+        name: "operation_setting_commodity_add",
+        component: () => import("./pages/setting/CommodityAdd.vue"),
+        meta: { title: "Add Commodity", description: "Create a new commodity." },
+      },
+      {
+        path: "commodity/edit/:id",
+        name: "operation_setting_commodity_edit",
+        component: () => import("./pages/setting/CommodityEdit.vue"),
+        meta: { title: "Edit Commodity", description: "Edit an existing commodity." },
+      },
+
       {
         path: "packaging",
         name: "operation_setting_packaging",
@@ -629,17 +774,43 @@ export const operation_routes: RouteRecordRaw[] = [
         meta: { title: "Packaging", description: "Manage packaging types." },
       },
       {
-        path: "route-requests",
-        name: "operation_setting_route_requests",
+        path: "packaging/add",
+        name: "operation_setting_packaging_add",
+        component: () => import("./pages/setting/PackagingAdd.vue"),
+        meta: { title: "Add Packaging", description: "Create a new packaging type." },
+      },
+      {
+        path: "packaging/edit/:id",
+        name: "operation_setting_packaging_edit",
+        component: () => import("./pages/setting/PackagingEdit.vue"),
+        meta: { title: "Edit Packaging", description: "Edit an existing packaging type." },
+      },
+
+      {
+        path: "route-request",
+        name: "operation_setting_route_request",
         component: () => import("./pages/setting/RouteRequests.vue"),
         meta: { title: "Route Requests", description: "Manage route requests." },
       },
+
       {
         path: "region",
         name: "operation_setting_region",
         component: () => import("./pages/setting/Region.vue"),
         meta: { title: "Region", description: "Manage regions." },
       },
+      // {
+      //   path: "region/add",
+      //   name: "operation_setting_region_add",
+      //   component: () => import("./pages/setting/RegionAdd.vue"),
+      //   meta: { title: "Add Region", description: "Create a new region." },
+      // },
+      // {
+      //   path: "region/edit/:id",
+      //   name: "operation_setting_region_edit",
+      //   component: () => import("./pages/setting/RegionEdit.vue"),
+      //   meta: { title: "Edit Region", description: "Edit an existing region." },
+      // },
       {
         path: "bonus-multipliers",
         name: "operation_setting_bonus_multipliers",

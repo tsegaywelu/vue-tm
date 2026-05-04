@@ -375,9 +375,29 @@ export const inventory_navs: Navs[] = [
         show: true,
       },
       {
+        name: "Add Item Group",
+        path: "/inventory/item-groups/add",
+        show: false,
+      },
+      {
+        name: "Edit Item Group",
+        path: "/inventory/item-groups/edit/$id",
+        show: false,
+      },
+      {
         name: "Vendor",
         path: "/inventory/vendor",
         show: true,
+      },
+      {
+        name: "Add Vendor",
+        path: "/inventory/vendor/add",
+        show: false,
+      },
+      {
+        name: "Edit Vendor",
+        path: "/inventory/vendor/edit/$id",
+        show: false,
       },
       {
         name: "Items",
@@ -385,9 +405,29 @@ export const inventory_navs: Navs[] = [
         show: true,
       },
       {
+        name: "Add Inventory Item",
+        path: "/inventory/items/add",
+        show: false,
+      },
+      {
+        name: "Edit Inventory Item",
+        path: "/inventory/items/edit/$id",
+        show: false,
+      },
+      {
         name: "Store Requisition",
         path: "/inventory/store-requisition",
         show: true,
+      },
+      {
+        name: "Add Store Requisition",
+        path: "/inventory/store-requisition/add",
+        show: false,
+      },
+      {
+        name: "Edit Store Requisition",
+        path: "/inventory/store-requisition/edit/$id",
+        show: false,
       },
       {
         name: "Purchase Requisition",
@@ -395,14 +435,44 @@ export const inventory_navs: Navs[] = [
         show: true,
       },
       {
+        name: "Add Purchase Requisition",
+        path: "/inventory/purchase-requisition/add",
+        show: false,
+      },
+      {
+        name: "Edit Purchase Requisition",
+        path: "/inventory/purchase-requisition/edit/$id",
+        show: false,
+      },
+      {
         name: "Purchase Order",
         path: "/inventory/purchase-order",
         show: true,
       },
       {
+        name: "Add Purchase Order",
+        path: "/inventory/purchase-order/add",
+        show: false,
+      },
+      {
+        name: "Edit Purchase Order",
+        path: "/inventory/purchase-order/edit/$id",
+        show: false,
+      },
+      {
         name: "Issue / Receive",
         path: "/inventory/good-transfer",
         show: true,
+      },
+      {
+        name: "Add Transfer Voucher",
+        path: "/inventory/good-transfer/add",
+        show: false,
+      },
+      {
+        name: "Edit Transfer Voucher",
+        path: "/inventory/good-transfer/edit/$id",
+        show: false,
       },
     ],
   },
@@ -418,6 +488,26 @@ export const setting_navs: Navs[] = [
         name: "User and Role",
         path: "/setting/user-and-role",
         show: true,
+      },
+      {
+        name: "Add User",
+        path: "/setting/user-and-role/user/add",
+        show: false,
+      },
+      {
+        name: "Edit User",
+        path: "/setting/user-and-role/user/edit/$id",
+        show: false,
+      },
+      {
+        name: "Add Role",
+        path: "/setting/user-and-role/role/add",
+        show: false,
+      },
+      {
+        name: "Edit Role",
+        path: "/setting/user-and-role/role/edit/$id",
+        show: false,
       },
       {
         name: "Base Configuration",
@@ -441,7 +531,7 @@ export const setting_navs: Navs[] = [
       },
       {
         name: "Route Requests",
-        path: "/setting/route-requests",
+        path: "/setting/route-request",
         show: true,
       },
       {

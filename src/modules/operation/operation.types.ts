@@ -603,3 +603,23 @@ export interface StatusSourceReport {
     bySource: StatusSource[];
   }[];
 }
+export interface RouteRequest {
+  _id: string;
+  routeName: string;
+  origin: string;
+  destination: string;
+  waypoint: any[];
+  carriers: {
+    _id: string;
+    name: string;
+  }[];
+  createdAt: string;
+}
+export interface Region {
+  _id: string;
+  name: string;
+  notificationEnabled?: boolean;
+  enforceOdometerRouteTolerance?: boolean;
+  odometerRouteToleranceKilometer?: number;
+  createdAt: string;
+}
