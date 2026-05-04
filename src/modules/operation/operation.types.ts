@@ -103,6 +103,12 @@ export interface ApprovalRequest {
   attachment?: string;
 }
 
+export type PricingTypeObject = {
+  _id: string;
+  type: PricingType;
+  amount: number;
+};
+
 export interface ApprovalFilterParams {
   select?: string;
   vehiclePlateNumber?: string;
@@ -132,13 +138,31 @@ export interface Shipment {
   order: Order;
   orderCode: string;
   route: {
+    _id: string;
     routeName: string;
     origin: string;
     destination: string;
+    carrier: string;
+    waypoints: string[];
+    updatedAt: string;
+    originGPS: {
+      latitude: number;
+      longitude: number;
+    };
+    shipmentCount: number;
   };
   waypoint: {
+    _id: string;
     name: string;
+    distance: number;
+    perDiemDays: number;
     TAT: number;
+    AFU: number;
+    roadTypes: string[];
+    terrainTypes: string[];
+    isActive: boolean;
+    isDefault: boolean;
+    updatedAt: string;
   };
   freightOrder: string;
   shipper: {
@@ -146,9 +170,12 @@ export interface Shipment {
     name: string;
   };
   vehicleType: {
+    _id: string;
     name: VehicleTypeName;
   };
   vehicle: {
+    _id: string;
+    driver: Driver;
     plateNumber: string;
     ownership: VehicleOwnership;
     trailerPlate: string;
@@ -160,12 +187,17 @@ export interface Shipment {
     name: string;
   }[];
   dispatchDate: string;
-  pricingType: {
-    type: PricingType;
-    amount: number;
-  };
+  pricingType: PricingTypeObject;
   packaging: {
+    _id: string;
     name: string;
+  };
+  transporter: {
+    _id: string;
+    name: string;
+    tradeName: string;
+    phoneNumber: string;
+    bankAccount: [];
   };
   driver: {
     _id?: string;
@@ -189,12 +221,24 @@ export interface Shipment {
   deadHole: number;
   CKRF: boolean;
   isDamaged: boolean;
+  CKRFCode: string;
   waypointDistance: number;
   areDocumentsUploaded: boolean;
   carrier: {
+    apiVersion: string;
+    uiVersion: string;
+    _id: string;
     name: string;
+    tradeName: string;
+    email: string;
+    phone: string;
+    address: string;
+    tin: string;
+    createdAt: string;
+    updatedAt: string;
   };
   agent: {
+    _id: string;
     name: string;
   };
   civ: string;
@@ -202,6 +246,11 @@ export interface Shipment {
   createdByUser: {
     username: string;
   };
+  CIVuploadedBy?: string;
+  AIVuploadedBy?: string;
+  ARVuploadedBy?: string;
+  CRVuploadedBy?: string;
+  closingDocUploadedBy?: string;
 }
 
 export interface ShipmentFilterParams {

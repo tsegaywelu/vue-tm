@@ -45,8 +45,58 @@ export function create_shipment(data: any) {
   return shipment_api.addAuthenticationHeader().post("", data);
 }
 
+export function update_shipment(id: string, data: any) {
+  return shipment_api.addAuthenticationHeader().patch(`/${id}`, data);
+}
+
 export function fetch_status_source_report(id: string) {
   return shipment_api
     .addAuthenticationHeader()
     .get<StatusSourceReport>(`/${id}/status-change-source-report`);
+}
+
+export function remove_document(id: string, data?: any) {
+  return shipment_api
+    .addAuthenticationHeader()
+    .patch(`/${id}/remove-document`, data);
+}
+
+export function reject_document(id: string, data?: any) {
+  return shipment_api
+    .addAuthenticationHeader()
+    .patch(`/${id}/reject-document`, data);
+}
+
+export function upload_aiv(id: string, data: FormData, config?: any) {
+  return shipment_api
+    .addAuthenticationHeader()
+    .patch(`/${id}/uploadFileAIV`, data, config);
+}
+
+export function upload_civ(id: string, data: FormData, config?: any) {
+  return shipment_api
+    .addAuthenticationHeader()
+    .patch(`/${id}/uploadFileCIV`, data, config);
+}
+
+export function upload_arv(id: string, data: FormData, config?: any) {
+  return shipment_api
+    .addAuthenticationHeader()
+    .patch(`/${id}/uploadFileARV`, data, config);
+}
+
+export function upload_crv(id: string, data: FormData, config?: any) {
+  return shipment_api
+    .addAuthenticationHeader()
+    .patch(`/${id}/uploadFileCRV`, data, config);
+}
+
+export function upload_closing_documents(
+  id: string,
+  data: FormData,
+  config?: any,
+) {
+  return shipment_api
+    .addAuthenticationHeader()
+    .patch(`/${id}/uploadClosingDocuments`, data, config);
 }

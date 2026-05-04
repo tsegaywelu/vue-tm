@@ -16,6 +16,7 @@
             label_key="orderCode"
             value_key="orderCode"
             url="/order"
+            :display_value="internalLabels.orderCode"
             :validation="{
               required,
             }"
@@ -104,6 +105,7 @@
             multiple
             hide_icon
             :options="autoFilledOptions.commodity"
+            :initial_labels="internalLabels.commodity"
             :attributes="{
               disabled: true,
               placeholder: 'Auto filled values based on selected order',
@@ -127,6 +129,7 @@
               required,
             }"
           />
+          <slot name="order-selection-extra" :form="form"></slot>
         </div>
       </Colapsable>
 
@@ -143,6 +146,7 @@
               placeholder: 'Select waypoint',
             }"
             :options="waypointOptions"
+            :display_value="internalLabels.waypoint"
             @select="(opt) => handleWaypointChange(opt.value, form)"
             :validation="{
               required,
@@ -237,6 +241,7 @@
               value_key="_id"
               url="/vehicle"
               :options="selectedVehicle ? [selectedVehicle] : []"
+              :display_value="internalLabels.vehicle"
               :validation="{
                 required,
               }"
@@ -252,10 +257,12 @@
             </SelectInput>
           </div>
 
-          <Input
-            input_style="[&_input]:bg-grey-25"
+          <SelectInput
+            parent_class_name="[&_.input-focus]:bg-grey-25!"
             name="driver"
             label="Driver"
+            hide_icon
+            :display_value="internalLabels.driver"
             :attributes="{
               disabled: true,
               placeholder: 'Auto filled based on selected vehicle',
@@ -265,11 +272,13 @@
             }"
           />
 
-          <Input
-            input_style="[&_input]:bg-grey-25"
+          <SelectInput
+            parent_class_name="[&_.input-focus]:bg-grey-25!"
             v-if="selectedVehicleOwnership !== VehicleOwnership.Owned"
             name="transporter"
             label="Transporter"
+            hide_icon
+            :display_value="internalLabels.transporter"
             :attributes="{
               disabled: true,
               placeholder: 'Auto filled based on selected vehicle',
@@ -377,6 +386,7 @@
               placeholder: 'Enter remarks or any additional notes...',
             }"
           />
+          <slot name="operational-details-extra" :form="form"></slot>
         </div>
       </Colapsable>
 
@@ -389,7 +399,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
 import Form from "@/components/form/Form.vue";
 import Input from "@/components/form/Input.vue";
 import SelectInput from "@/components/form/SelectInput.vue";
@@ -406,12 +416,29 @@ import type { Order } from "../operation.types";
 import { PricingType, VehicleOwnership } from "../operation.types";
 import { fetch_order_by_id } from "../api/orders.api";
 import { openModal } from "@customizer/modal-x";
+import ApiService from "@/api/ApiService";
 
-const props = defineProps<{
-  formId: string;
-  initialValues: Record<string, any>;
-  onSubmit: (values: any) => Promise<void> | void;
-}>();
+const props = withDefaults(
+  defineProps<{
+    formId: string;
+    initialValues: Record<string, any>;
+    labels?: Record<string, any>;
+    onSubmit: (values: any) => Promise<void> | void;
+  }>(),
+  {
+    labels: () => ({}),
+  },
+);
+
+const internalLabels = ref({ ...props.labels });
+
+watch(
+  () => props.labels,
+  (newLabels) => {
+    internalLabels.value = { ...newLabels };
+  },
+  { deep: true },
+);
 
 const emit = defineEmits<{
   (e: "cancel"): void;
@@ -488,6 +515,10 @@ const handleOrderSelect = async (order: Order, form: any) => {
       "commodity",
       order_record.commodity?.map((c: any) => c._id) || [],
     );
+    internalLabels.value.commodity = order_record.commodity?.reduce((acc: any, c: any) => {
+      acc[c._id] = c.name;
+      return acc;
+    }, {}) || {};
   }
   form.setFieldValue("waypoint", "");
   filteredPricingType.value = null;
@@ -580,6 +611,7 @@ const handleVehicleSelect = (vehicle: any, form: any) => {
   }
 
   form.setFieldValue("driver", driverName);
+  internalLabels.value.driver = driverName;
 
   let transporterName = "";
   if (vehicle.transporter && typeof vehicle.transporter === "object") {
@@ -590,6 +622,7 @@ const handleVehicleSelect = (vehicle: any, form: any) => {
   }
 
   form.setFieldValue("transporter", transporterName);
+  internalLabels.value.transporter = transporterName;
 };
 
 const calculateTotalPrice = (values: any) => {
@@ -611,6 +644,29 @@ const calculateTotalPrice = (values: any) => {
 
   return 0;
 };
+
+onMounted(async () => {
+  if (props.initialValues.order) {
+    const order_data = await fetch_order_by_id(props.initialValues.order);
+    const order_record = order_data.data as any as Order | undefined;
+    selectedOrder.value = order_record ?? null;
+
+    if (order_record && props.initialValues.waypoint) {
+      // Small delay to ensure refs are updated before triggering logic
+      handleWaypointChange(props.initialValues.waypoint, null);
+    }
+  }
+
+  if (props.initialValues.vehicle) {
+    new ApiService()
+      .get(`/vehicle/${props.initialValues.vehicle}`)
+      .then((res: any) => {
+        if (res.success) {
+          selectedVehicle.value = res.data;
+        }
+      });
+  }
+});
 
 const handleSubmit = async (values: any) => {
   const payload = {

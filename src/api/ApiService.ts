@@ -129,7 +129,7 @@ export default class ApiService {
   // Matching Raaz explicit authentication pattern
   addAuthenticationHeader() {
     const authStore = useAuthStore();
-    const token = authStore.token || localStorage.getItem("access_token");
+    const token = authStore.token || localStorage.getItem("token");
     if (token) {
       this.api.defaults.headers.common.Authorization = `Bearer ${token}`;
     }

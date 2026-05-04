@@ -50,6 +50,15 @@ export const operation_routes: RouteRecordRaw[] = [
         },
       },
       {
+        path: "shipments/edit/:id",
+        name: "operation_shipments_edit",
+        component: () => import("./pages/EditShipment.vue"),
+        meta: {
+          title: "Edit Shipment",
+          description: "Update existing shipment details.",
+        },
+      },
+      {
         path: "shipments/:id",
         name: "operation_shipment_details",
         component: () => import("./pages/ShipmentDetails.vue"),

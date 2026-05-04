@@ -223,6 +223,8 @@ export interface SelectInputProps extends InputProps {
   value_key?: string | ((item: any) => any);
   display_label_fn?: (item: any) => string;
   hide_icon?: boolean;
+  display_value?: string;
+  initial_labels?: Record<string, string>;
 }
 
 const props = withDefaults(defineProps<SelectInputProps>(), {
@@ -250,6 +252,8 @@ const props = withDefaults(defineProps<SelectInputProps>(), {
   left_component: null as any,
   description: "",
   error_type: "text",
+  display_value: "",
+  initial_labels: () => ({}),
 });
 
 const emit = defineEmits(["search", "input-change", "select"]);
@@ -281,6 +285,9 @@ onMounted(() => {
       currentSelectedValue.value = form.getFieldValue(props.name);
     });
   }
+  if (props.display_value && props.searchable) {
+    searchResult.value = props.display_value;
+  }
 });
 
 onBeforeUnmount(() => {
@@ -300,6 +307,8 @@ watch(
       );
       if (opt) {
         searchResult.value = opt.displayLabel || getOptionLabel(opt);
+      } else if (props.initial_labels?.[newVal]) {
+        searchResult.value = props.initial_labels[newVal];
       }
     } else if (!newVal) {
       searchResult.value = "";
@@ -426,12 +435,15 @@ function getDisplayLabel(value: any) {
   if (props.multiple) return `${(value as any[]).length} selected`;
   const opt = finalOptions.value.find((o: any) => getOptionValue(o) == value);
   if (opt) return opt.displayLabel || getOptionLabel(opt);
+  if (props.initial_labels?.[value]) return props.initial_labels[value];
+  if (props.display_value) return props.display_value;
   return value;
 }
 
 function getLabelForValue(val: any) {
   const opt = finalOptions.value.find((o: any) => getOptionValue(o) == val);
   if (opt) return opt.displayLabel || getOptionLabel(opt);
+  if (props.initial_labels?.[val]) return props.initial_labels[val];
   return val;
 }
 
