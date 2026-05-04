@@ -24,7 +24,7 @@ import SubmitButton from "@/components/form/SubmitButton.vue";
 
 const router = useRouter();
 const toast = useToastStore();
-const api = getApi("/bankInsurance");
+const api = getApi("/insurance-provider");
 
 const mutation = useMutation({
   mutationFn: (values: any) => api.addAuthenticationHeader().post("", values),
