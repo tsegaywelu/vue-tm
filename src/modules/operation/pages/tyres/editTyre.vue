@@ -6,6 +6,7 @@
     v-else-if="tyre"
     form-id="edit-tyre-form"
     :initial-values="initialValues"
+    :initial-labels="initialLabels"
     :on-submit="handleUpdateTyre"
   >
     <template #submit-btn="{ form }">
@@ -49,6 +50,13 @@ const initialValues = computed(() => {
     installationDate: tyre.value.installationDate
       ? new Date(tyre.value.installationDate).toISOString().split("T")[0]
       : "",
+  };
+});
+
+const initialLabels = computed(() => {
+  if (!tyre.value?.vehicle) return {};
+  return {
+    [tyre.value.vehicle._id]: tyre.value.vehicle.plateNumber,
   };
 });
 

@@ -27,6 +27,7 @@
             label_key="plateNumber"
             value_key="_id"
             url="/vehicle"
+            :initial_labels="initialLabels"
             :validation="{
               required,
             }"
@@ -173,6 +174,7 @@ import { required } from "@/utils/validations";
 const props = defineProps<{
   formId: string;
   initialValues: Record<string, any>;
+  initialLabels?: Record<string, any>;
   onSubmit: (values: any) => Promise<void> | void;
 }>();
 

@@ -656,25 +656,23 @@ export const operation_routes: RouteRecordRaw[] = [
         name: "operation_maintenance_workshop",
         component: () => import("./pages/maintenance/Workshop.vue"),
         meta: { title: "Workshop", description: "Manage workshops." },
-        children: [
-          {
-            path: "add",
-            name: "operation_maintenance_workshop_add",
-            component: () => import("./pages/maintenance/WorkshopAdd.vue"),
-            meta: { title: "Add Workshop", description: "Add a new workshop." },
-          },
-          {
-            path: "edit/:id",
-            name: "operation_maintenance_workshop_edit",
-            component: () => import("./pages/maintenance/WorkshopEdit.vue"),
-            meta: {
-              title: "Edit Workshop",
-              description: "Edit an existing workshop.",
-            },
-          },
-        ],
-      },
 
+      },
+      {
+        path: "workshop/add",
+        name: "operation_maintenance_workshop_add",
+        component: () => import("./pages/maintenance/WorkshopAdd.vue"),
+        meta: { title: "Add Workshop", description: "Add a new workshop." },
+      },
+      {
+        path: "workshop/edit/:id",
+        name: "operation_maintenance_workshop_edit",
+        component: () => import("./pages/maintenance/WorkshopEdit.vue"),
+        meta: {
+          title: "Edit Workshop",
+          description: "Edit an existing workshop.",
+        },
+      },
       {
         path: "issue-report",
         name: "operation_maintenance_issue_report",
