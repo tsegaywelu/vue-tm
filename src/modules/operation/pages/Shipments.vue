@@ -62,9 +62,9 @@
     @click="isDropdownOpen = false"
   />
 
-  <!-- Shipment Statistics Cards Component -->
+  <!-- Shipment Statistics Cards -->
   <Teleport to="#extra-page-data" defer>
-    <ShipmentStatsCards />
+    <StatsCards :stats="shipmentStats" :loading="isLoadingStats" />
   </Teleport>
 
   <!-- Shipment Data Table -->
@@ -72,22 +72,45 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
+import { useQuery } from "@tanstack/vue-query";
 import ShipmentTable from "../components/ShipmentTable.vue";
-import ShipmentStatsCards from "../components/ShipmentStatsCards.vue";
+import StatsCards from "@/components/common/StatsCards.vue";
 import Button from "@/components/Button.vue";
 import { type Shipment } from "../operation.types";
 import { icons } from "@/utils/icons";
 import { raaz_icons } from "@/utils/raaz_icons";
 import { useToastStore } from "@/store/toastStore";
 import ShipmentDownloadToast from "../components/ShipmentDownloadToast.vue";
+import { fetch_shipment_status_count } from "../api/operation.api";
 
 const all_icons = { ...icons, ...raaz_icons };
 const router = useRouter();
 const toast = useToastStore();
 
 const isDropdownOpen = ref(false);
+
+const { data: statsResponse, isLoading: isLoadingStats } = useQuery({
+  queryKey: ["shipmentStatusCount"],
+  queryFn: () => fetch_shipment_status_count(),
+});
+
+const shipmentStats = computed(() => {
+  const data = statsResponse.value?.data || {};
+  return [
+    { label: "InProgress", value: data.InProgress, class: "text-primary" },
+    { label: "Completed", value: data.completed },
+    { label: "In Bound", value: data.IN_BOUND },
+    { label: "Out Bound", value: data.OUT_BOUND },
+    { label: "Site Transfer", value: data.SITE_TRANSFER },
+    { label: "Owned", value: data.owned },
+    { label: "Rental", value: data.rental },
+    { label: "Leased", value: data.leased },
+    { label: "Power & Trailer", value: data["power & trailer"] || data["power & trailor"] },
+    { label: "MDV", value: data.mdv },
+  ];
+});
 
 const handleShipmentAction = ({
   row,

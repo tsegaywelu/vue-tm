@@ -43,7 +43,7 @@ interface UsePaginationOptions {
   sortBy?: string;
   sortDirection?: "asc" | "desc";
   autofetch?: boolean;
-  params?: Record<string, any> | Ref<any>;
+  params?: Record<string, any> | Ref<any> | ((state: TableState) => any);
   resetOn?: (Ref<any> | (() => any))[];
   queryKey?: string[];
   api?: ApiService;
@@ -152,19 +152,30 @@ export function usePagination<T = any>({
     { deep: true },
   );
 
-  const resolved_params = computed(() =>
-    isRef(params) ? params.value : params,
-  );
+  const resolved_params = computed(() => {
+    if (typeof params === "function") {
+      const stateProxy = {
+        ...state.value,
+        search: debounced_search.value,
+      };
+      return params(stateProxy);
+    }
+    return isRef(params) ? params.value : params;
+  });
 
   // Automatically reset to page 1 when query params change
+  let prevParamsStr = JSON.stringify(resolved_params.value);
   watch(
     resolved_params,
-    () => {
-      if (state.value.page !== 1) setPage(1);
+    (newVal) => {
+      const currentStr = JSON.stringify(newVal);
+      if (currentStr !== prevParamsStr) {
+        prevParamsStr = currentStr;
+        if (state.value.page !== 1) setPage(1);
+      }
     },
     { deep: true },
   );
-
 
   const queryKey = computed(() => [
     id, // Ensure the query ID is part of the key for easy invalidation
@@ -186,11 +197,14 @@ export function usePagination<T = any>({
       const p = resolved_params.value;
 
       const request_params: Record<string, any> = {
-        ...(paginate ? {
-          page: state.value.page,
-          limit: state.value.limit,
-        } : {}),
-        [isRef(searchKey) ? searchKey.value : searchKey]: debounced_search.value || undefined,
+        ...(paginate
+          ? {
+              page: state.value.page,
+              limit: state.value.limit,
+            }
+          : {}),
+        [isRef(searchKey) ? searchKey.value : searchKey]:
+          debounced_search.value || undefined,
         sortBy: state.value.sorting?.[0]?.id,
         sortOrder: state.value.sorting?.length
           ? state.value.sorting[0].desc
@@ -236,7 +250,8 @@ export function usePagination<T = any>({
             ? res_data.items
             : res_data?.results && Array.isArray(res_data.results)
               ? res_data.results
-              : res_data?.vehicleExpenses && Array.isArray(res_data.vehicleExpenses)
+              : res_data?.vehicleExpenses &&
+                  Array.isArray(res_data.vehicleExpenses)
                 ? res_data.vehicleExpenses
                 : res_data?.docs && Array.isArray(res_data.docs)
                   ? res_data.docs
@@ -292,13 +307,13 @@ export function usePagination<T = any>({
           ? d.results
           : d?.vehicleExpenses && Array.isArray(d.vehicleExpenses)
             ? d.vehicleExpenses
-              : d?.docs && Array.isArray(d.docs)
-                ? d.docs
-                : d?.documents && Array.isArray(d.documents)
-                  ? d.documents
-                  : d?.shipments && Array.isArray(d.shipments)
-                    ? d.shipments
-                    : [];
+            : d?.docs && Array.isArray(d.docs)
+              ? d.docs
+              : d?.documents && Array.isArray(d.documents)
+                ? d.documents
+                : d?.shipments && Array.isArray(d.shipments)
+                  ? d.shipments
+                  : [];
   });
 
   const server_error = computed(() => {

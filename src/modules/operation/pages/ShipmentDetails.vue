@@ -85,7 +85,7 @@ import ShipmentOverviewTab from "../components/shipment-details/ShipmentOverview
 import ShipmentUploadsTab from "../components/shipment-details/ShipmentUploadsTab.vue";
 import ShipmentPreTripInspectionsTab from "../components/shipment-details/ShipmentPreTripInspectionsTab.vue";
 import ShipmentSettlementsTab from "../components/shipment-details/ShipmentSettlementsTab.vue";
-import ShipmentPlaceholderTab from "../components/shipment-details/ShipmentPlaceholderTab.vue";
+import ShipmentEmptyReturnTab from "../components/shipment-details/ShipmentEmptyReturnTab.vue";
 import { h } from "vue";
 
 const route = useRoute();
@@ -121,7 +121,7 @@ const activeTabComponent = computed(() => {
     case "settlements":
       return ShipmentSettlementsTab;
     case "emptyReturn":
-      return () => h(ShipmentPlaceholderTab, { title: "Empty Return" });
+      return ShipmentEmptyReturnTab;
     default:
       return ShipmentOverviewTab;
   }

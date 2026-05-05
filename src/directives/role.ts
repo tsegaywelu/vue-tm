@@ -13,7 +13,7 @@ export const roleDirective: Directive = {
 
     const userRole = authStore.current_user.user.role.type;
 
-    if (userRole !== "ADMIN" && userRole !== requiredRole) {
+    if (userRole !== requiredRole) {
       el.parentNode?.removeChild(el);
     }
   },

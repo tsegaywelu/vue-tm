@@ -21,11 +21,7 @@
         class="items-center gap-4 inline-flex border-l border-grey-100 overflow-x-auto px-3"
       >
         <i v-html="icons.filter" />
-        <ShipmentFilters
-          @change="handleFilterChange"
-          calendar-type="english"
-          output-calendar-type="english"
-        />
+        <OrderFilters @change="handleFilterChange" />
       </div>
     </template>
 
@@ -100,25 +96,7 @@
       <Dropdown>
         <template #default="{ close }">
           <DropDownItem
-            v-if="row.status === 'pending'"
-            :icon="icons.check"
-            label="Approve"
-            @click.stop="
-              emitAction(row, 'approve');
-              close();
-            "
-          />
-          <DropDownItem
-            v-if="row.status === 'pending'"
-            :icon="icons.editIcon"
-            label="Edit"
-            @click.stop="
-              emitAction(row, 'edit');
-              close();
-            "
-          />
-          <DropDownItem
-            v-if="row.status === 'pending' || row.status === 'approved'"
+            v-if="row.status === 'approved'"
             :icon="icons.truck"
             label="Ship"
             @click.stop="
@@ -127,21 +105,13 @@
             "
           />
           <DropDownItem
-            v-if="row.status === 'pending'"
-            :icon="icons.close"
-            label="Cancel"
-            variant="danger"
+            :icon="icons.editIcon"
+            label="Edit"
             @click.stop="
-              emitAction(row, 'cancel');
+              emitAction(row, 'edit');
               close();
             "
           />
-          <span
-            v-if="row.status === 'shipped' || row.status === 'cancelled'"
-            class="block px-3 py-2 text-sm font-medium text-gray-400 italic"
-          >
-            No actions available
-          </span>
         </template>
       </Dropdown>
     </template>
@@ -155,7 +125,7 @@ import type { TableColumn } from "@/components/common/Table.vue";
 import Status from "@/components/common/Status.vue";
 import Dropdown from "@/components/common/Dropdown.vue";
 import DropDownItem from "@/components/common/DropDownItem.vue";
-import ShipmentFilters from "./ShipmentFilters.vue";
+import OrderFilters from "./OrderFilters.vue";
 import { icons } from "@/utils/icons";
 import { usePagination } from "@/composables/usePagination";
 import type { ShipmentFilterParams } from "../operation.types";
@@ -175,8 +145,14 @@ const activeFilters = ref<ShipmentFilterParams>({});
 
 const { response, refetch } = usePagination({
   id: "order-list",
-  url: "/order/shipper",
-  params: computed(() => activeFilters.value),
+  url: "/order",
+  params: (state: any) => {
+    return {
+      orderCode: state.search || "",
+      ...activeFilters.value,
+      q: undefined,
+    };
+  },
 });
 
 const emitAction = (row: any, action: string) => {

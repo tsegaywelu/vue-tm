@@ -1,6 +1,6 @@
 <template>
   <Form
-    id="shipment-filter"
+    id="order-filter"
     @change="
       (values) => {
         emit('change', {
@@ -18,14 +18,11 @@
   >
     <OriginInput name="routeOrigin" multiple size="xs" />
     <DestinationInput name="routeDestination" multiple size="xs" />
-    <ShipmentStatusInput name="status" size="xs" />
+    <OrderStatusInput name="status" size="xs" />
+    <ShipperInput name="shipper" size="xs" />
     <ProductTypeInput name="productType" size="xs" />
     <TripTypeInput name="tripType" size="xs" />
-    <VehicleOwnershipInput name="vehicleOwnership" size="xs" />
-    <DamageInput name="damage" size="xs" />
-    <DocumentedUploadsInput name="documentedUploads" size="xs" />
-    <ShipperInput name="shipper" size="xs" />
-    <AgentInput name="agent" size="xs" />
+    <PriorityInput name="priority" size="xs" />
   </Form>
 </template>
 
@@ -33,19 +30,12 @@
 import Form from "@/components/form/Form.vue";
 import OriginInput from "@/components/common/inputs/OriginInput.vue";
 import DestinationInput from "@/components/common/inputs/DestinationInput.vue";
-import ShipmentStatusInput from "@/components/common/inputs/ShipmentStatusInput.vue";
-import ProductTypeInput from "@/components/common/inputs/ProductTypeInput.vue";
-import TripTypeInput from "@/components/common/inputs/TripTypeInput.vue";
-import VehicleOwnershipInput from "@/components/common/inputs/VehicleOwnershipInput.vue";
-import DamageInput from "@/components/common/inputs/DamageInput.vue";
-import DocumentedUploadsInput from "@/components/common/inputs/DocumentedUploadsInput.vue";
+import OrderStatusInput from "@/components/common/inputs/OrderStatusInput.vue";
 import ShipperInput from "@/components/common/inputs/ShipperInput.vue";
 import AgentInput from "@/components/common/inputs/AgentInput.vue";
-
-const props = defineProps<{
-  calendarType?: "english" | "ethiopian";
-  outputCalendarType?: "english" | "ethiopian";
-}>();
+import ProductTypeInput from "@/components/common/inputs/ProductTypeInput.vue";
+import TripTypeInput from "@/components/common/inputs/TripTypeInput.vue";
+import PriorityInput from "@/components/common/inputs/PriorityInput.vue";
 
 const emit = defineEmits(["change"]);
 </script>

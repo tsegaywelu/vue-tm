@@ -42,9 +42,12 @@
         <template #title-extra>
           <span
             class="px-2.5 py-1 text-xs font-semibold rounded-full capitalize border"
-            :class="statusStyles[infraction?.status as string] || 'bg-grey-100 text-grey-700'"
+            :class="
+              statusStyles[infraction?.status as string] ||
+              'bg-grey-100 text-grey-700'
+            "
           >
-            {{ infraction?.status || 'Pending' }}
+            {{ infraction?.status || "Pending" }}
           </span>
         </template>
 
@@ -55,7 +58,11 @@
           />
           <ShipmentDataLabel
             label="Driver Name"
-            :value="infraction.driverData?.name || infraction.driverData?.firstName || '-'"
+            :value="
+              infraction.driverData?.name ||
+              infraction.driverData?.firstName ||
+              '-'
+            "
           />
           <ShipmentDataLabel
             label="Shipment Code"
@@ -63,7 +70,11 @@
           />
           <ShipmentDataLabel
             label="Total Fine"
-            :value="currencyFormatter(infraction.totalFine || infraction.totalAmount || 0)"
+            :value="
+              currencyFormatter(
+                infraction.totalFine || infraction.totalAmount || 0,
+              )
+            "
             is-bold
           />
         </div>
@@ -73,10 +84,7 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
         <InfoWrapper title="Context Information">
           <div class="grid grid-cols-2 gap-6">
-            <ShipmentDataLabel
-              label="Location"
-              :value="infraction.location"
-            />
+            <ShipmentDataLabel label="Location" :value="infraction.location" />
             <ShipmentDataLabel
               label="Notes"
               :value="infraction.notes || 'No remarks provided'"
@@ -87,8 +95,12 @@
 
       <!-- Infraction Items Details -->
       <div v-if="infraction.items?.length" class="mt-4">
-        <h3 class="text-lg font-bold text-gray-900 mb-4">Offense & Penalty Breakdown</h3>
-        <div class="overflow-hidden border border-grey-100 rounded-2xl bg-white">
+        <h3 class="text-lg font-bold text-gray-900 mb-4">
+          Offense & Penalty Breakdown
+        </h3>
+        <div
+          class="overflow-hidden border border-grey-100 rounded-2xl bg-white"
+        >
           <table class="min-w-full divide-y divide-grey-100 text-sm">
             <thead class="bg-grey-50 text-grey-700 font-semibold text-left">
               <tr>
@@ -99,9 +111,13 @@
             </thead>
             <tbody class="divide-y divide-grey-100 text-grey-600">
               <tr v-for="(item, index) in infraction.items" :key="index">
-                <td class="px-6 py-4 font-medium text-grey-900">{{ item.title || item.reason || 'Offense Penalty' }}</td>
-                <td class="px-6 py-4">{{ item.description || '-' }}</td>
-                <td class="px-6 py-4 text-right font-bold text-grey-900">{{ currencyFormatter(item.fine || item.penaltyAmount || 0) }}</td>
+                <td class="px-6 py-4 font-medium text-grey-900">
+                  {{ item.title || item.reason || "Offense Penalty" }}
+                </td>
+                <td class="px-6 py-4">{{ item.description || "-" }}</td>
+                <td class="px-6 py-4 text-right font-bold text-grey-900">
+                  {{ currencyFormatter(item.fine || item.penaltyAmount || 0) }}
+                </td>
               </tr>
             </tbody>
           </table>
@@ -115,7 +131,10 @@
 import { computed } from "vue";
 import { useRoute } from "vue-router";
 import { useQuery, useMutation } from "@tanstack/vue-query";
-import { fetch_infraction_by_id, update_infraction_status } from "../api/infraction.api";
+import {
+  fetch_infraction_by_id,
+  update_infraction_status,
+} from "../api/infraction.api";
 import InfoWrapper from "../components/shipment-details/InfoWrapper.vue";
 import ShipmentDataLabel from "../components/shipment-details/ShipmentDataLabel.vue";
 import Button from "@/components/common/Button.vue";
@@ -158,8 +177,8 @@ const statusMutation = useMutation({
   },
 });
 
-const handleApprove = () => {
-  openModal("ConfirmationModal", {
+const handleApprove = async () => {
+  const res = await openModal("ConfirmationModal", {
     title: "Approve Infraction",
     message: "Are you sure you want to approve this infraction offense report?",
     confirmLabel: "Approve",

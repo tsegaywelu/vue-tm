@@ -168,12 +168,17 @@ const columns: TableColumn<Shipment>[] = [
   { key: "status", label: "Status", field: "status" },
   { key: "actions", label: "Actions", field: "", cellAlign: "right" },
 ];
+const selectedSearchField = ref("shipmentCode");
 
 const activeFilters = ref<ShipmentFilterParams>({});
 const { response, refetch } = usePagination<Shipment>({
   id: "shipment-list",
   url: "/shipment",
-  params: computed(() => ({ ...props.filters, ...activeFilters.value })),
+  params: (state) => ({
+    [selectedSearchField.value]: state.search || "",
+    ...props.filters,
+    ...activeFilters.value,
+  }),
 });
 
 const searchFieldOptions = [
@@ -186,8 +191,6 @@ const searchFieldOptions = [
   { label: "Shipper Receive Voucher", value: "shipperReceiveVoucher" },
   { label: "Transporter Name", value: "transporterName" },
 ];
-
-const selectedSearchField = ref("shipmentCode");
 
 watch(selectedSearchField, (newField) => {
   activeFilters.value = { ...activeFilters.value, searchField: newField };

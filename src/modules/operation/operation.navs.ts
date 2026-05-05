@@ -54,6 +54,11 @@ export const core_operations_navs: Navs[] = [
             name: "Create Order",
             show: false,
           },
+          {
+            path: "/operation/orders/edit/$id",
+            name: "Edit Order",
+            show: false,
+          },
         ],
       },
       {
@@ -413,7 +418,7 @@ export const maintenance_navs: Navs[] = [
       },
       {
         // path: "/maintenance/work-order/edit/:id",
-        path: 'maintenance/work-order/edit/$id',
+        path: "maintenance/work-order/edit/$id",
         name: "Edit Work Order",
         show: false,
       },
@@ -432,7 +437,7 @@ export const maintenance_navs: Navs[] = [
             name: "Edit Workshop",
             show: false,
           },
-        ]
+        ],
       },
       {
         name: "Issue Report",

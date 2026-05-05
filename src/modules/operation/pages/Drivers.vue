@@ -29,10 +29,17 @@
     >
       <template #cell-driverInfo="{ row }">
         <div class="flex items-center space-x-3">
+          <div
+            v-if="!row.profilePicture"
+            class="h-10 w-10 bg-grey-150 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 font-bold text-sm shrink-0"
+          >
+            {{ row.firstName?.charAt(0)?.toUpperCase() }}
+          </div>
           <img
+            v-else
             :src="getProfilePictureURL(row.profilePicture)"
             alt="Driver photo"
-            class="h-10 w-10 rounded-full object-cover border border-grey-200"
+            class="h-10 w-10 rounded-full object-cover border border-grey-200 shrink-0"
           />
           <div class="flex flex-col">
             <span class="font-bold text-grey-900">
@@ -117,7 +124,7 @@
                 label="Edit Driver"
                 @click="
                   close();
-                  $router.push(`/operation/drivers/edit/${row._id}`);
+                  $router.push(`/drivers/edit/${row._id}`);
                 "
               />
             </template>
@@ -228,5 +235,11 @@ const getProfilePictureURL = (path: string) => {
     return `${API_URL}/${path.replace(/\\/g, "/")}`;
   }
   return "";
+};
+
+const getDriverInitials = (row: any) => {
+  const first = row.firstName?.charAt(0) || "";
+  const last = row.lastName?.charAt(0) || row.middleName?.charAt(0) || "";
+  return (first + last).toUpperCase() || "D";
 };
 </script>
