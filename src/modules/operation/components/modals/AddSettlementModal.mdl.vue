@@ -13,9 +13,9 @@
             name="type"
             label="Type"
             :options="[
-              { label: 'Return', value: 'return' },
-              { label: 'Additional', value: 'additional' },
-              { label: 'Expense', value: 'expense' },
+              { label: 'Return', value: 'RETURN' },
+              { label: 'Additional', value: 'ADDITIONAL' },
+              { label: 'Expense', value: 'EXPENSE' },
             ]"
             :validation="{ required }"
           />
@@ -63,11 +63,10 @@
           </template>
         </component>
 
-        <Input
+        <TextareaInput
           name="notes"
           label="Notes"
-          type="textarea"
-          :attributes="{ rows: 3 }"
+          :attributes="{ placeholder: 'Enter Notes', rows: 3 }"
         />
 
         <div class="flex flex-col gap-2">
@@ -80,6 +79,20 @@
         </div>
       </div>
     </template>
+
+    <template #bottom="{ form }">
+      <div class="flex justify-end gap-3">
+        <Button variant="outline" size="md" @click="closeModal" type="button">
+          Cancel
+        </Button>
+        <SubmitButton
+          form-id="addSettlementForm"
+          :loading="form.state.isSubmitting"
+        >
+          Add Transaction
+        </SubmitButton>
+      </div>
+    </template>
   </FormModalParent>
 </template>
 
@@ -88,10 +101,13 @@ import { ref } from "vue";
 import FormModalParent from "@/components/modals/FormModalParent.vue";
 import Input from "@/components/form/Input.vue";
 import SelectInput from "@/components/form/SelectInput.vue";
+import Button from "@/components/common/Button.vue";
+import SubmitButton from "@/components/form/SubmitButton.vue";
 import { required } from "@/utils/validations";
 import { add_transaction_to_advance } from "../../api/operation.api";
 import { useToastStore } from "@/store/toastStore";
 import { closeModal } from "@customizer/modal-x";
+import TextareaInput from "@/components/form/TextareaInput.vue";
 
 const props = defineProps<{
   data: { id: string; onSuccess: () => void };
@@ -114,13 +130,17 @@ const handleSubmit = async (values: any) => {
   if (values.liters) formData.append("liters", values.liters);
   if (values.subCategory) formData.append("subCategory", values.subCategory);
   if (values.notes) formData.append("notes", values.notes);
-  
+
   if (selectedFile.value) {
     formData.append("attachment", selectedFile.value);
   }
 
   try {
-    const res = await add_transaction_to_advance(props.data.id, values.type, formData);
+    const res = await add_transaction_to_advance(
+      props.data.id,
+      values.type,
+      formData,
+    );
     if (res.status === 200 || res.status === 201) {
       toast.success("Transaction added successfully");
       props.data.onSuccess();

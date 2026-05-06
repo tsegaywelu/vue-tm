@@ -50,7 +50,12 @@ onUnmounted(() => {
         : 'xl:grid-cols-[5.5rem_minmax(0,1fr)]'
     "
   >
-    <Sidebar :is_open="is_open" @toggle="toggle_nav" @close="close_nav">
+    <Sidebar
+      class="print-hide"
+      :is_open="is_open"
+      @toggle="toggle_nav"
+      @close="close_nav"
+    >
       <template #nav>
         <slot name="navigation"></slot>
       </template>
@@ -59,7 +64,7 @@ onUnmounted(() => {
     <div
       class="grid grid-cols-1 grid-rows-[auto_1fr] overflow-hidden p-2 xl:p-4 gap-1 xl:gap-4 h-full max-h-full box-border"
     >
-      <TopNavBar @toggle_nav="toggle_nav">
+      <TopNavBar class="print-hide" @toggle_nav="toggle_nav">
         <template #title>
           <slot name="header-title"></slot>
         </template>

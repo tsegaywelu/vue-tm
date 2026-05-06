@@ -8,6 +8,15 @@
   >
     <template #center="{ form }">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <SelectInput
+          v-if="!props.data?.shipmentId"
+          name="shipment"
+          label="Select Shipment"
+          url="/shipment"
+          label_key="shipmentCode"
+          value_key="_id"
+          :validation="{ required }"
+        />
         <DateInput
           name="damageDate"
           label="Damage Date"
@@ -35,15 +44,19 @@
         />
       </div>
 
-      <DamageInput name="items" :shipper-id="props.data.shipperId" />
+      <DamageInput name="items" :shipper-id="selectedShipperId || props.data?.shipperId" />
+      
       <!-- Totals Section -->
       <component
         :is="form.Subscribe"
         :selector="
-          (state: any) => [state.values.items, state.values.vatInclusive]
+          (state: any) => [state.values.items, state.values.vatInclusive, state.values.shipment]
         "
       >
-        <template #default="[items, vatInclusive]">
+        <template #default="[items, vatInclusive, selectedShipment]">
+          <!-- Hidden tracking of selected shipment to fetch shipper dynamically if needed -->
+          <span class="hidden">{{ updateSelectedShipment(selectedShipment) }}</span>
+
           <div class="mt-8 flex flex-col items-end gap-2">
             <div class="text-sm font-medium text-gray-500">
               Subtotal:
@@ -82,8 +95,9 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from "vue";
 import { closeModal } from "@customizer/modal-x";
-import { useMutation } from "@tanstack/vue-query";
+import { useMutation, useQueryClient } from "@tanstack/vue-query";
 import FormModalParent from "@/components/modals/FormModalParent.vue";
 import Input from "@/components/form/Input.vue";
 import SelectInput from "@/components/form/SelectInput.vue";
@@ -95,27 +109,31 @@ import { lessThanToday, required } from "@/utils/validations";
 import { currencyFormatter } from "@/utils/utils";
 import { add_shipment_damage } from "../../api/operation.api";
 import { useToastStore } from "@/store/toastStore";
-import { icons } from "@/utils/icons";
+import { getApi } from "@/utils/getApi";
 import DamageInput from "../inputs/DamageInput.vue";
 
 export type Props = {
-  shipmentId: string;
-  carrierId: string;
-  shipperId: string;
+  shipmentId?: string;
+  carrierId?: string;
+  shipperId?: string;
+  onSuccess?: () => void;
 };
 
 export type ReturnType = boolean;
 
-const props = defineProps<{ data: Props; close: (res: any) => void }>();
+const props = defineProps<{ data?: Props; close: (res: any) => void }>();
 
 const toast = useToastStore();
+const queryClient = useQueryClient();
+
+const selectedShipperId = ref<string | undefined>(props.data?.shipperId);
 
 const mutation = useMutation({
   mutationFn: (payload: any) => add_shipment_damage(payload),
 });
 
 const formValues = {
-  shipment: props.data.shipmentId,
+  shipment: props.data?.shipmentId || "",
   damageDate: new Date().toISOString().split("T")[0],
   location: "",
   paymentToBeReceivedFrom: "DRIVER",
@@ -133,6 +151,22 @@ function getSubtotal(items: any[]) {
     ) || 0
   );
 }
+
+// Function to fetch shipper ID if a shipment is selected and we don't already have it
+const updateSelectedShipment = (shipmentId: string) => {
+  if (shipmentId && !props.data?.shipperId && shipmentId !== formValues.shipment) {
+    // If we have a shipment selected but no shipper, we might need to fetch the shipment details
+    // to get the shipper ID so DamageInput can fetch the right commodities.
+    // In a real scenario, we might want a hook here. For simplicity, we trigger a fetch if it changes.
+    getApi("/shipment").addAuthenticationHeader().get(`/${shipmentId}`).then(res => {
+      if (res.data?.shipper?._id) {
+        selectedShipperId.value = res.data.shipper._id;
+      }
+    }).catch(console.error);
+    formValues.shipment = shipmentId;
+  }
+  return "";
+};
 
 async function handleSubmit(values: any) {
   const subtotal = getSubtotal(values.items);
@@ -157,6 +191,9 @@ async function handleSubmit(values: any) {
   const res = await mutation.mutateAsync(payload);
   if (res.success) {
     toast.success("Damage report submitted successfully");
+    if (props.data?.onSuccess) {
+      props.data.onSuccess();
+    }
     props.close(true);
   } else {
     toast.error(res.error || "Failed to submit damage report");

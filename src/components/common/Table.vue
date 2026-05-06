@@ -315,7 +315,7 @@ import PaginationNumbers from "./PaginationNumbers.vue";
 import ResponsiveRow from "./ResponsiveRow.vue";
 import type { TablePaginationContext } from "@/composables/usePagination";
 
-interface GenericProps<T> {
+export interface TableProps<T> {
   columns: TableColumn<T>[];
   rows: T[];
   row_key?: keyof T | (string & {}) | ((row: T) => any);
@@ -364,7 +364,7 @@ interface GenericProps<T> {
   action_cell?: string;
 }
 
-const props = withDefaults(defineProps<GenericProps<T>>(), {
+const props = withDefaults(defineProps<TableProps<T>>(), {
   columns: () => [],
   rows: () => [],
   row_key: "_id" as any,

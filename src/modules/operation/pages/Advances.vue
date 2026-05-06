@@ -1,17 +1,40 @@
 <template>
   <div class="flex flex-col gap-4">
+    <Teleport to="#page-actions" defer>
+      <div class="flex items-center gap-3">
+        <Button
+          v-if="activeTab === 'driverAdvances'"
+          size="md"
+          variant="outline"
+          @click="$router.push('/operation/advance-summary')"
+        >
+          View Advance Summary
+        </Button>
+        <Button
+          v-else-if="activeTab === 'transporterAdvances'"
+          size="md"
+          variant="outline"
+          @click="$router.push('/operation/prepayment-summary')"
+        >
+          View Pre-Payment Summary
+        </Button>
+      </div>
+    </Teleport>
+
     <!-- Tab Content -->
     <AdvanceTable
       v-if="activeTab === 'driverAdvances'"
       url="/advance-payment"
       pagination-id="driver-advance-list"
       :columns="driverColumns"
+      :checkable="false"
     />
     <AdvanceTable
       v-if="activeTab === 'transporterAdvances'"
       url="/pre-payment"
       pagination-id="transporter-advance-list"
       :columns="transporterColumns"
+      :checkable="false"
     />
   </div>
 </template>
@@ -20,6 +43,7 @@
 import { computed } from "vue";
 import { useRoute } from "vue-router";
 import AdvanceTable from "../components/AdvanceTable.vue";
+import Button from "@/components/common/Button.vue";
 import type { TableColumn } from "@/components/common/Table.vue";
 
 const route = useRoute();

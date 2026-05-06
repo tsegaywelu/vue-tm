@@ -1,13 +1,16 @@
 <template>
   <div class="relative inline-block text-left" ref="containerRef" @click.stop>
     <!-- Trigger -->
-    <button
-      type="button"
-      class="rounded-lg cursor-pointer border grid place-items-center size-8 border-gray-200 hover:bg-gray-50 transition-colors"
-      @click.stop="toggle"
-    >
-      <i class="*:size-full size-4.5" v-html="icons.v_elipssis"></i>
-    </button>
+    <div @click.stop="toggle">
+      <slot name="trigger">
+        <button
+          type="button"
+          class="rounded-lg cursor-pointer border grid place-items-center size-8 border-gray-200 hover:bg-gray-50 transition-colors"
+        >
+          <i class="*:size-full size-4.5" v-html="icons.v_elipssis"></i>
+        </button>
+      </slot>
+    </div>
 
     <!-- Content (portal to body) -->
     <Teleport to="body">
@@ -22,9 +25,14 @@
         <div
           v-if="isOpen"
           ref="contentRef"
-          class="fixed z-[9999] rounded-xl border border-gray-100 bg-white shadow-2xl ring-1 ring-black/5 min-w-48 p-1"
+          :class="
+            twMerge(
+              'fixed z-9999 rounded-xl border border-gray-100 bg-white shadow-2xl ring-1 ring-black/5 min-w-48 p-1',
+              contentParent,
+            )
+          "
           :style="floatingStyle"
-          @click.stop
+          @click.stop="close"
         >
           <slot :close="close" />
         </div>
@@ -33,23 +41,27 @@
 
     <!-- Backdrop (invisible, closes dropdown) -->
     <Teleport to="body">
-      <div
-        v-if="isOpen"
-        class="fixed inset-0 z-[9998]"
-        @click.stop="close"
-      />
+      <div v-if="isOpen" class="fixed inset-0 z-[9998]" @click.stop="close" />
     </Teleport>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, nextTick, onBeforeUnmount } from "vue";
+import { twMerge } from "tailwind-merge";
 import { icons } from "@/utils/icons";
 
 const isOpen = ref(false);
 const containerRef = ref<HTMLElement>();
 const contentRef = ref<HTMLElement>();
 const floatingStyle = ref<Record<string, string>>({});
+
+const props = defineProps({
+  contentParent: {
+    type: String,
+    default: "",
+  },
+});
 
 const updatePosition = async () => {
   await nextTick();

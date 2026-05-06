@@ -33,14 +33,35 @@ export const useAuthStore = defineStore("auth", () => {
 
   // Permission helper
   const has_permission = (subject: string, actions: string[]) => {
-    if (!current_user.value?.user?.role) return false;
+    const user = current_user.value?.user;
+    if (!user) return false;
 
-    return current_user.value.user.role.permissions.some(
+    const permissions = user.permissions || user.role?.permissions || [];
+
+    return permissions.some(
       (p: any) =>
         p.subject === subject &&
-        (p.action.includes("manage") ||
-          actions.some((a) => p.action.includes(a))),
+        actions.some((a) => p.action.includes(a)),
     );
+  };
+
+  const fetch_user = async () => {
+    if (!token.value) return;
+    is_loading.value = true;
+    try {
+      const { fetch_current_user } = await import("@/modules/auth/api/auth.api");
+      const res = await fetch_current_user();
+      if (res.success) {
+        current_user.value = res.data;
+      } else {
+        // If fetching user fails (e.g. token expired), logout
+        logout();
+      }
+    } catch (error) {
+      logout();
+    } finally {
+      is_loading.value = false;
+    }
   };
 
   return {
@@ -53,5 +74,6 @@ export const useAuthStore = defineStore("auth", () => {
     set_user,
     logout,
     has_permission,
+    fetch_user,
   };
 });
