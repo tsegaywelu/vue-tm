@@ -56,7 +56,7 @@ import DropDownItem from "@/components/common/DropDownItem.vue";
 import { usePagination } from "@/composables/usePagination";
 import { icons } from "@/utils/icons";
 import type { TableColumn } from "@/components/common/Table.vue";
-import type { BonusRoute } from "../../operation.types";
+import type { BonusRoute } from "@/modules/operation/operation.types"; 
 
 const emit = defineEmits(["action"]);
 

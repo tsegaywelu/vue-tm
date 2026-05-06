@@ -9,6 +9,9 @@
           <Input
             name="title"
             label="Title"
+            :attributes="{
+              placeholder: 'Title'
+            }"
             :validation="{ required }"
           />
 
@@ -19,17 +22,17 @@
               { value: 'ALL', label: 'All Users' },
               { value: 'DRIVER', label: 'Drivers' },
               { value: 'MECHANIC', label: 'Mechanics' },
-              { value: 'ADMIN', label: 'Admins' }
+              
             ]"
             :validation="{ required }"
           />
 
           <div class="md:col-span-2">
-            <Input
+            <TextareaInput
               name="message"
               label="Message"
               :attributes="{
-                as: 'textarea',
+               
                 rows: '4',
                 placeholder: 'Write your message here...'
               }"
@@ -52,6 +55,7 @@ import Input from "@/components/form/Input.vue";
 import SelectInput from "@/components/form/SelectInput.vue";
 import Colapsable from "@/components/common/Colapsable.vue";
 import { required } from "@/utils/validations";
+import TextareaInput from "@/components/form/TextareaInput.vue";
 
 defineProps<{
   formId: string;

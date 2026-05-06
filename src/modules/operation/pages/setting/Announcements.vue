@@ -32,6 +32,8 @@ import { icons } from "@/utils/icons";
 import { useToastStore } from "@/store/toastStore";
 import { delete_announcement } from "../../api/announcement.api";
 
+import { openModal } from "@customizer/modal-x";
+
 const router = useRouter();
 const toast = useToastStore();
 const tableRef = ref();
@@ -40,7 +42,14 @@ const handleAction = async ({ row, action }: any) => {
   if (action === "edit") {
     router.push(`/setting/announcements/edit/${row._id}`);
   } else if (action === "delete") {
-    if (confirm(`Are you sure you want to delete announcement "${row.title}"?`)) {
+    const confirmed = await openModal("ConfirmationModal", {
+      title: "Delete Announcement",
+      message: `Are you sure you want to delete announcement "${row.title}"?`,
+      confirmText: "Delete",
+      action: "delete",
+    });
+
+    if (confirmed) {
       try {
         const res = await delete_announcement(row._id);
         if (res.success) {

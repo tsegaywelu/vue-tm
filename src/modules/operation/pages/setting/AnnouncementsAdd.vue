@@ -24,10 +24,11 @@ import { create_announcement } from "../../api/announcement.api";
 import { useToastStore } from "@/store/toastStore";
 import SubmitButton from "@/components/form/SubmitButton.vue";
 import Button from "@/components/Button.vue";
-import { useMutation } from "@tanstack/vue-query";
+import { useMutation, useQueryClient } from "@tanstack/vue-query";
 
 const router = useRouter();
 const toast = useToastStore();
+const queryClient = useQueryClient();
 
 const mutation = useMutation({
   mutationFn: (values: any) => create_announcement(values),
@@ -38,6 +39,8 @@ const handleAdd = async (values: any) => {
     const res = await mutation.mutateAsync(values);
     if (res.success) {
       toast.success("Announcement created successfully");
+      //lets invalidate here for announcements table
+      queryClient.invalidateQueries({ queryKey: ["announcement-list"] });
       router.push("/setting/announcements");
     } else {
       toast.error(res.error || "Failed to create announcement");

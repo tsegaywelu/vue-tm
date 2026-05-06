@@ -36,14 +36,7 @@
       <div class="flex items-center justify-end gap-2">
         <Dropdown>
           <template #default="{ close }">
-            <DropDownItem
-              :icon="icons.edit"
-              label="Edit"
-              @click.stop="
-                handleAction(row, 'edit');
-                close();
-              "
-            />
+            
             <DropDownItem
               :icon="icons.delete"
               label="Delete"
@@ -67,14 +60,14 @@ import DropDownItem from "@/components/common/DropDownItem.vue";
 import { usePagination } from "@/composables/usePagination";
 import { icons } from "@/utils/icons";
 import type { TableColumn } from "@/components/common/Table.vue";
-import type { Announcement } from "../../operation.types";
+import type { Announcement } from "@/modules/operation/operation.types"; 
 
 const emit = defineEmits(["action"]);
 
 const { response, refetch } = usePagination<Announcement>({
   id: "announcement-list",
   url: "/announcements",
-  searchKey: "title[regex]",
+  searchKey: "title[regexAny]",
 });
 
 const columns: TableColumn<Announcement>[] = [

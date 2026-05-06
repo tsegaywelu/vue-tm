@@ -24,10 +24,11 @@ import { create_bonus_route } from "../../api/bonus.api";
 import { useToastStore } from "@/store/toastStore";
 import SubmitButton from "@/components/form/SubmitButton.vue";
 import Button from "@/components/Button.vue";
-import { useMutation } from "@tanstack/vue-query";
+import { useMutation, useQueryClient } from "@tanstack/vue-query";
 
 const router = useRouter();
 const toast = useToastStore();
+const queryClient = useQueryClient();
 
 const mutation = useMutation({
   mutationFn: (values: any) => create_bonus_route(values),
@@ -43,6 +44,9 @@ const handleAdd = async (values: any) => {
     const res = await mutation.mutateAsync(payload);
     if (res.success) {
       toast.success("Bonus route added successfully");
+      // invalidate query
+      queryClient.invalidateQueries({ queryKey: ["bonus-route-list"] });
+      
       router.push("/setting/bonus-routes");
     } else {
       toast.error(res.error || "Failed to add bonus route");
