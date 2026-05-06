@@ -8,21 +8,16 @@
     </Button>
   </Teleport>
 
-  <!-- Stat Cards -->
-  <div class="mb-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-    <div class="p-6 bg-white rounded-[20px] shadow-sm border border-gray-100 flex flex-col items-center gap-2">
-      <div class="flex items-center gap-2 text-gray-500 text-sm font-medium">
-        <i class="mdi mdi-currency-usd text-2xl text-primary" />
-        Total Damage Amount
-      </div>
-      <div class="text-gray-900 text-2xl font-bold">
-        {{ currencyFormatter(fullResponse?.totalAmount || 0) }}
-      </div>
-      <div class="text-xs text-gray-400">
-        {{ fullResponse?.totalResults || 0 }} total records
-      </div>
-    </div>
-  </div>
+  <Teleport to="#extra-page-data">
+    <StatsCards
+      :stats="[
+        {
+          label: 'Total Damage Amount',
+          value: currencyFormatter(fullResponse?.totalAmount || 0),
+        },
+      ]"
+    />
+  </Teleport>
 
   <Table
     :columns="columns"
@@ -35,7 +30,9 @@
     <template #table-actions>
       <div class="flex items-center gap-4 flex-1">
         <div class="relative w-64">
-          <i class="mdi mdi-magnify absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xl"></i>
+          <i
+            class="mdi mdi-magnify absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xl"
+          ></i>
           <input
             v-model="searchQuery"
             type="text"
@@ -56,57 +53,85 @@
 
     <template #cell-shipment="{ row }">
       <div class="flex flex-col">
-        <span class="font-bold text-gray-900">{{ row.shipment?.shipmentCode || "N/A" }}</span>
-        <span class="text-xs text-gray-500">{{ row.shipment?.routeName || "N/A" }}</span>
+        <span class="font-bold text-gray-900">{{
+          row.shipment?.shipmentCode || "N/A"
+        }}</span>
+        <span class="text-xs text-gray-500">{{
+          row.shipment?.routeName || "N/A"
+        }}</span>
       </div>
     </template>
 
     <template #cell-damageInfo="{ row }">
       <div class="flex flex-col">
-        <span class="text-sm text-gray-900">{{ dateFormatter(row.damageDate) }}</span>
-        <span class="text-xs text-gray-500">By {{ row.preparedBy?.username || "N/A" }}</span>
-        <span class="text-[10px] uppercase font-bold text-red-500 mt-1" v-if="row.severity">{{ row.severity }}</span>
+        <span class="text-sm text-gray-900">{{
+          dateFormatter(row.damageDate)
+        }}</span>
+        <span class="text-xs text-gray-500"
+          >By {{ row.preparedBy?.username || "N/A" }}</span
+        >
+        <span
+          class="text-[10px] uppercase font-bold text-red-500 mt-1"
+          v-if="row.severity"
+          >{{ row.severity }}</span
+        >
       </div>
     </template>
 
     <template #cell-status="{ row }">
       <div class="flex flex-col gap-1">
-        <div v-if="activeTab === 'list' || activeTab === 'payable'" class="flex items-center justify-between text-[10px] min-w-[120px]">
+        <div
+          v-if="activeTab === 'list' || activeTab === 'payable'"
+          class="flex items-center justify-between text-[10px] min-w-[120px]"
+        >
           <span class="uppercase text-gray-400">Payable:</span>
-          <Status :variant="row.payableStatus" type="wrapped" :label="row.payableStatus" />
+          <Status
+            :variant="row.payableStatus"
+            type="wrapped"
+            :label="row.payableStatus"
+          />
         </div>
-        <div v-if="activeTab === 'list' || activeTab === 'receivable'" class="flex items-center justify-between text-[10px] min-w-[120px]">
+        <div
+          v-if="activeTab === 'list' || activeTab === 'receivable'"
+          class="flex items-center justify-between text-[10px] min-w-[120px]"
+        >
           <span class="uppercase text-gray-400">Receivable:</span>
-          <Status :variant="row.receivableStatus" type="wrapped" :label="row.receivableStatus" />
+          <Status
+            :variant="row.receivableStatus"
+            type="wrapped"
+            :label="row.receivableStatus"
+          />
         </div>
       </div>
     </template>
 
     <template #cell-amount="{ row }">
-      <span class="font-black">{{ currencyFormatter(row.actualRepairCost || 0) }}</span>
+      <span class="font-black">{{
+        currencyFormatter(row.actualRepairCost || 0)
+      }}</span>
     </template>
 
     <template #cell-actions="{ row }">
       <Dropdown>
         <DropDownItem @click="handleRowClick(row)">View Details</DropDownItem>
-        
+
         <!-- Payable Actions -->
         <template v-if="activeTab === 'payable' || activeTab === 'list'">
-          <DropDownItem 
+          <DropDownItem
             v-if="row.payableStatus === 'AUTHORIZED'"
             @click="handleStatusUpdate(row._id, 'pay-payable')"
             variant="default"
           >
             Pay
           </DropDownItem>
-          <DropDownItem 
+          <DropDownItem
             v-if="row.payableStatus === 'PENDING'"
             @click="handleStatusUpdate(row._id, 'authorize-payable')"
             variant="default"
           >
             Authorize
           </DropDownItem>
-          <DropDownItem 
+          <DropDownItem
             v-if="row.payableStatus === 'PENDING'"
             @click="handleStatusUpdate(row._id, 'cancel-payable')"
             variant="danger"
@@ -117,21 +142,21 @@
 
         <!-- Receivable Actions -->
         <template v-if="activeTab === 'receivable'">
-          <DropDownItem 
+          <DropDownItem
             v-if="row.receivableStatus === 'AUTHORIZED'"
             @click="handleStatusUpdate(row._id, 'receive-receivable')"
             variant="default"
           >
             Collect
           </DropDownItem>
-          <DropDownItem 
+          <DropDownItem
             v-if="row.receivableStatus === 'PENDING'"
             @click="handleStatusUpdate(row._id, 'authorize-receivable')"
             variant="default"
           >
             Authorize
           </DropDownItem>
-          <DropDownItem 
+          <DropDownItem
             v-if="row.receivableStatus === 'PENDING'"
             @click="handleStatusUpdate(row._id, 'cancel-receivable')"
             variant="danger"
@@ -141,16 +166,17 @@
         </template>
 
         <div class="h-px bg-gray-100 my-1"></div>
-        <DropDownItem @click="deleteItem(row._id)" variant="danger">Delete</DropDownItem>
+        <DropDownItem @click="deleteItem(row._id)" variant="danger"
+          >Delete</DropDownItem
+        >
       </Dropdown>
     </template>
 
-    <!-- Pagination -->
-    <template #bottom>
+    <!-- <template #bottom>
       <div class="flex items-center justify-between mt-6">
         <TablePerPageSelect v-model="paginationParams.limit" />
       </div>
-    </template>
+    </template> -->
   </Table>
 </template>
 
@@ -165,11 +191,14 @@ import type { TableColumn } from "@/components/common/Table.vue";
 import Status from "@/components/common/Status.vue";
 import Dropdown from "@/components/common/Dropdown.vue";
 import DropDownItem from "@/components/common/DropDownItem.vue";
-import TablePerPageSelect from "@/components/common/TablePerPageSelect.vue";
 import { openModal } from "@customizer/modal-x";
 import { useToastStore } from "@/store/toastStore";
 import { currencyFormatter, dateFormatter } from "@/utils/utils";
-import { update_vehicle_damage_status, delete_vehicle_damage } from "../api/operation.api";
+import {
+  update_vehicle_damage_status,
+  delete_vehicle_damage,
+} from "../api/operation.api";
+import StatsCards from "@/components/common/StatsCards.vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -185,20 +214,26 @@ const queryParams = computed(() => {
     name: searchQuery.value || undefined,
     limit: paginationParams.value.limit,
   };
-  
-  if (activeTab.value === 'payable') {
-    p.payableStatus = ["PENDING", "AUTHORIZED"];
-  } else if (activeTab.value === 'receivable') {
-    p.receivableStatus = ["PENDING", "AUTHORIZED"];
+
+  if (activeTab.value === "payable") {
+    p.payableStatus = JSON.stringify(["PENDING", "AUTHORIZED"]);
+  } else if (activeTab.value === "receivable") {
+    p.receivableStatus = JSON.stringify(["PENDING", "AUTHORIZED"]);
   }
-  
+
   return p;
 });
 
-const { response: tableData, fullResponse, refetch } = usePagination({
+const {
+  response: tableData,
+  fullResponse,
+  refetch,
+} = usePagination({
   url: "/vehicle-damages",
-  params: queryParams,
-  queryKey: ["vehicle-damages", activeTab],
+  params: (state) => ({
+    ...queryParams.value,
+  }),
+  queryKey: ["vehicle-damages", activeTab.value],
 });
 
 const columns: TableColumn[] = [
@@ -223,7 +258,7 @@ const handleRowClick = (row: any) => {
 };
 
 const statusMutation = useMutation({
-  mutationFn: ({ id, status }: { id: string; status: string }) => 
+  mutationFn: ({ id, status }: { id: string; status: string }) =>
     update_vehicle_damage_status(id, status),
   onSuccess: (res: any) => {
     if (res.success) {
@@ -235,7 +270,7 @@ const statusMutation = useMutation({
   },
   onError: () => {
     toast.error("Failed to update status");
-  }
+  },
 });
 
 const deleteMutation = useMutation({
@@ -250,7 +285,7 @@ const deleteMutation = useMutation({
   },
   onError: () => {
     toast.error("Failed to delete damage record");
-  }
+  },
 });
 
 const handleStatusUpdate = async (id: string, status: string) => {
@@ -259,7 +294,7 @@ const handleStatusUpdate = async (id: string, status: string) => {
     message: `Are you sure you want to perform this action?`,
     confirmText: "Yes, proceed",
   });
-  
+
   if (isConfirmed) {
     statusMutation.mutate({ id, status });
   }
@@ -268,11 +303,12 @@ const handleStatusUpdate = async (id: string, status: string) => {
 const deleteItem = async (id: string) => {
   const isConfirmed = await openModal("ConfirmationModal", {
     title: "Delete Vehicle Damage",
-    message: "Are you sure you want to delete this record? This action cannot be undone.",
+    message:
+      "Are you sure you want to delete this record? This action cannot be undone.",
     confirmText: "Delete",
-    action: "delete"
+    action: "delete",
   });
-  
+
   if (isConfirmed) {
     deleteMutation.mutate(id);
   }

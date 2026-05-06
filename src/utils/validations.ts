@@ -417,6 +417,7 @@ export const validateArrayItems = (
   errors: Record<string, string>,
   rules: Record<string, Record<string, Function>>,
   idKey: string = "fakeId",
+  optional: boolean = false,
 ): string | undefined => {
   // Clear previous errors
   for (const key of Object.keys(errors)) {
@@ -424,7 +425,7 @@ export const validateArrayItems = (
   }
 
   if (!Array.isArray(values) || values.length === 0) {
-    return "At least one item is required";
+    return optional ? undefined : "At least one item is required";
   }
 
   let firstError: string | undefined;
@@ -432,7 +433,6 @@ export const validateArrayItems = (
   for (let i = 0; i < values.length; i++) {
     const row = values[i];
     const id = row[idKey] ?? i;
-    console.log("idKey", idKey, row, row[idKey]);
 
     for (const [field, validators] of Object.entries(rules)) {
       const value = row[field];

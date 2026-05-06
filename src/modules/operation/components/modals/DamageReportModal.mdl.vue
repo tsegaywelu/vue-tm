@@ -46,41 +46,58 @@
 
       <DamageInput name="items" :shipper-id="selectedShipperId || props.data?.shipperId" />
       
+      <div class="mt-8 border-t border-gray-100 pt-6">
+        <h3 class="text-lg font-bold text-gray-900 mb-4">Vehicle Parts & Prices (Optional)</h3>
+        <VehiclePartsInput name="vehiclePartsAndPrices" />
+      </div>
+
       <!-- Totals Section -->
       <component
         :is="form.Subscribe"
         :selector="
-          (state: any) => [state.values.items, state.values.vatInclusive, state.values.shipment]
+          (state: any) => [state.values.items, state.values.vehiclePartsAndPrices, state.values.vatInclusive, state.values.shipment]
         "
       >
-        <template #default="[items, vatInclusive, selectedShipment]">
+        <template #default="[items, vehicleParts, vatInclusive, selectedShipment]">
           <!-- Hidden tracking of selected shipment to fetch shipper dynamically if needed -->
           <span class="hidden">{{ updateSelectedShipment(selectedShipment) }}</span>
 
-          <div class="mt-8 flex flex-col items-end gap-2">
-            <div class="text-sm font-medium text-gray-500">
-              Subtotal:
-              {{ currencyFormatter(getSubtotal(items)) }}
+          <div class="mt-8 flex flex-col items-end gap-2 bg-gray-50 p-6 rounded-2xl">
+            <div class="flex flex-col items-end gap-1 mb-2">
+              <div class="text-xs text-gray-500 uppercase font-bold tracking-wider">Items Subtotal</div>
+              <div class="text-lg font-bold text-gray-900">{{ currencyFormatter(getSubtotal(items)) }}</div>
             </div>
+            
+            <div class="flex flex-col items-end gap-1 mb-2">
+              <div class="text-xs text-gray-500 uppercase font-bold tracking-wider">Vehicle Parts Total</div>
+              <div class="text-lg font-bold text-gray-900">{{ currencyFormatter(getVehiclePartsTotal(vehicleParts)) }}</div>
+            </div>
+
             <ToggleInput name="vatInclusive" label="VAT Inclusive (15%)" />
-            <div v-if="vatInclusive" class="text-sm font-medium text-gray-500">
+            
+            <div v-if="vatInclusive" class="text-sm font-medium text-gray-500 mt-2">
               VAT (15%):
-              {{ currencyFormatter(getSubtotal(items) * 0.15) }}
+              {{ currencyFormatter((getSubtotal(items) + getVehiclePartsTotal(vehicleParts)) * 0.15) }}
             </div>
-            <div class="text-2xl font-black text-primary mt-2">
-              Total:
-              {{
-                currencyFormatter(
-                  vatInclusive ? getSubtotal(items) * 1.15 : getSubtotal(items),
-                )
-              }}
+
+            <div class="mt-4 pt-4 border-t border-gray-200 w-full flex flex-col items-end">
+              <div class="text-[10px] text-primary uppercase font-black tracking-[0.2em] mb-1">Total Amount</div>
+              <div class="text-3xl font-black text-primary">
+                {{
+                  currencyFormatter(
+                    vatInclusive 
+                      ? (getSubtotal(items) + getVehiclePartsTotal(vehicleParts)) * 1.15 
+                      : (getSubtotal(items) + getVehiclePartsTotal(vehicleParts))
+                  )
+                }}
+              </div>
             </div>
           </div>
         </template>
       </component>
 
       <div class="mt-6">
-        <TextareaInput name="remark" label="General Remark" />
+        <TextareaInput name="remark" label="General Remark" :attributes="{ placeholder: 'Enter any additional remarks...' }" />
       </div>
     </template>
 
@@ -111,6 +128,7 @@ import { add_shipment_damage } from "../../api/operation.api";
 import { useToastStore } from "@/store/toastStore";
 import { getApi } from "@/utils/getApi";
 import DamageInput from "../inputs/DamageInput.vue";
+import VehiclePartsInput from "../inputs/VehiclePartsInput.vue";
 
 export type Props = {
   shipmentId?: string;
@@ -138,9 +156,14 @@ const formValues = {
   location: "",
   paymentToBeReceivedFrom: "DRIVER",
   items: [],
+  vehiclePartsAndPrices: [],
   vatInclusive: false,
   remark: "",
 };
+
+function getVehiclePartsTotal(parts: any[]) {
+  return parts?.reduce((sum: number, p: any) => sum + (Number(p.price) || 0), 0) || 0;
+}
 
 function getSubtotal(items: any[]) {
   return (
@@ -169,7 +192,9 @@ const updateSelectedShipment = (shipmentId: string) => {
 };
 
 async function handleSubmit(values: any) {
-  const subtotal = getSubtotal(values.items);
+  const itemsSubtotal = getSubtotal(values.items);
+  const partsSubtotal = getVehiclePartsTotal(values.vehiclePartsAndPrices);
+  const subtotal = itemsSubtotal + partsSubtotal;
   const total = values.vatInclusive ? subtotal * 1.15 : subtotal;
 
   const payload = {
@@ -185,6 +210,11 @@ async function handleSubmit(values: any) {
       unitPrice: Number(i.unitPrice || 0),
       quantity: Number(i.quantity || 0),
       totalPrice: Number(i.unitPrice || 0) * Number(i.quantity || 0),
+    })),
+    vehiclePartsAndPrices: (values.vehiclePartsAndPrices || []).filter((p: any) => p.vehiclePart).map((p: any) => ({
+      vehiclePart: p.vehiclePart,
+      price: Number(p.price || 0),
+      isRepair: !!p.isRepair,
     })),
   };
 

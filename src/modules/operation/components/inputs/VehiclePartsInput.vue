@@ -51,7 +51,7 @@ onMounted(() => {
       };
     });
   } else {
-    parts.value = [newEmptyPart()];
+    parts.value = [];
   }
 });
 
@@ -64,7 +64,7 @@ watch(
 );
 
 function add() {
-  const err = validateArrayItems(parts.value, errors, partRules);
+  const err = validateArrayItems(parts.value, errors, partRules, "fakeId", true);
   if (err) return;
   parts.value.push(newEmptyPart());
 }
@@ -80,7 +80,7 @@ function remove(id: string) {
   <InputParent
     :validation="{
       allValuesExist(values: VehiclePart[]) {
-        const err = validateArrayItems(values, errors, partRules);
+        const err = validateArrayItems(values, errors, partRules, 'fakeId', true);
         return err ? [false, err] : [true, ''];
       },
     }"
@@ -90,28 +90,30 @@ function remove(id: string) {
       <div
         v-for="(part, i) in parts"
         :key="part.fakeId"
-        class="flex flex-col md:flex-row items-center gap-4 bg-gray-50/50 p-4 rounded-xl border border-gray-100"
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 bg-gray-50/50 p-6 rounded-2xl border border-gray-100 relative"
       >
-        <div class="flex-1 w-full">
+        <div class="lg:col-span-2">
           <Input
             label="Vehicle Part"
             v-model="part.vehiclePart"
-            :error="errors['vehiclePart_' + i]"
-            @update:model-value="errors['vehiclePart_' + i] = ''"
+            :error="errors['vehiclePart_' + part.fakeId]"
+            @update:model-value="errors['vehiclePart_' + part.fakeId] = ''"
+            :attributes="{ placeholder: 'e.g. Front Bumper, Engine Oil' }"
           />
         </div>
         
-        <div class="flex-1 w-full">
+        <div class="lg:col-span-2">
           <Input
             label="Price"
             type="number"
             v-model="part.price"
-            :error="errors['price_' + i]"
-            @update:model-value="errors['price_' + i] = ''"
+            :error="errors['price_' + part.fakeId]"
+            @update:model-value="errors['price_' + part.fakeId] = ''"
+            :attributes="{ placeholder: 'Enter price' }"
           />
         </div>
 
-        <div class="flex items-center gap-2 mt-4 md:mt-0">
+        <div class="flex items-center gap-2 mt-4 lg:mt-6">
           <input
             type="checkbox"
             :id="'isRepair_' + part.fakeId"
@@ -123,27 +125,23 @@ function remove(id: string) {
           </label>
         </div>
 
-        <div class="flex items-center gap-2 mt-4 md:mt-0">
-          <button
-            type="button"
-            v-if="i == parts.length - 1"
-            @click="add"
-            class="h-11 px-4 flex items-center justify-center bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
-          >
-            <i class="mdi mdi-plus text-xl"></i>
-            <span class="ml-1 text-sm font-bold">Add</span>
-          </button>
-          
-          <button
-            type="button"
-            v-if="parts.length > 1"
-            @click="remove(part.fakeId)"
-            class="h-11 w-11 flex items-center justify-center bg-red-50 text-red-500 rounded-lg hover:bg-red-100 transition-colors border border-red-100"
-          >
-            <i class="mdi mdi-delete text-xl"></i>
-          </button>
-        </div>
+        <button
+          type="button"
+          class="absolute size-6 top-2 right-2 flex items-center justify-center text-red-500 hover:text-red-700 hover:bg-red-50 rounded-full transition-colors"
+          @click="remove(part.fakeId)"
+        >
+          <i class="mdi mdi-close"></i>
+        </button>
       </div>
     </div>
+
+    <button
+      type="button"
+      class="mt-4 flex items-center gap-2 text-primary font-bold uppercase tracking-wider text-xs hover:opacity-80 transition-opacity"
+      @click="add()"
+    >
+      <i class="mdi mdi-plus-circle-outline text-lg"></i>
+      Add Part
+    </button>
   </InputParent>
 </template>
