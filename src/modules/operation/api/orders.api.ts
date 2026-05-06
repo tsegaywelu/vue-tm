@@ -23,8 +23,10 @@ export function cancel_order(id: string, data?: any) {
   return api.addAuthenticationHeader().patch(`/cancel/${id}`, data || {});
 }
 
-export function fetch_contract_route_details(carrierId: string, routeId: string) {
-  return getApi("/contract").addAuthenticationHeader().get(`/contract-route-details-shipper/${carrierId}/${routeId}`);
+export function fetch_contract_route_details(shipperId: string, routeId: string) {
+  return getApi("/contract")
+    .addAuthenticationHeader()
+    .get(`/contract-route-details-carrier/${shipperId}/${routeId}`);
 }
 
 export function fetch_order_status_count() {

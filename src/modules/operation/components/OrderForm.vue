@@ -60,7 +60,7 @@
             :attributes="{
               placeholder: 'Select product type',
             }"
-            :options="productTypeOptions"
+            :options="filteredProductTypeOptions"
             :validation="{
               required,
             }"
@@ -81,7 +81,9 @@
                 }"
                 label_key="name"
                 value_key="_id"
-                url="/agent/shipper/carrier"
+                :options="routeAgents"
+                :pending="isRouteDetailsLoading"
+                :display_value="internalLabels.agent"
                 :validation="{
                   required,
                 }"
@@ -251,7 +253,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted } from "vue";
+import { ref, watch, onMounted, computed } from "vue";
 import Form from "@/components/form/Form.vue";
 import Input from "@/components/form/Input.vue";
 import SelectInput from "@/components/form/SelectInput.vue";
@@ -325,7 +327,16 @@ const handleShipperSelect = (shipper: any, form: any) => {
 
 const routeCommodities = ref<any[]>([]);
 const routePackagings = ref<any[]>([]);
+const routeAgents = ref<any[]>([]);
+const contractProductTypes = ref<string[]>([]);
 const isRouteDetailsLoading = ref(false);
+
+const filteredProductTypeOptions = computed(() => {
+  if (contractProductTypes.value.length === 0) return productTypeOptions;
+  return productTypeOptions.filter((opt) =>
+    contractProductTypes.value.includes(opt.value),
+  );
+});
 
 const handleRouteSelect = async (route: any, form: any) => {
   console.log(route);
@@ -334,10 +345,15 @@ const handleRouteSelect = async (route: any, form: any) => {
   if (route && form.state.values.shipper) {
     isRouteDetailsLoading.value = true;
     try {
-      const res = await fetch_contract_route_details(route.carrier, route._id);
+      const res = await fetch_contract_route_details(
+        form.state.values.shipper,
+        route._id,
+      );
       if (res.success) {
         routeCommodities.value = res.data?.commodities || [];
         routePackagings.value = res.data?.packagings || [];
+        routeAgents.value = res.data?.agents || [];
+        contractProductTypes.value = res.data?.productType || [];
 
         // Auto-select if there's exactly 1 option
         if (routeCommodities.value.length === 1) {
@@ -360,6 +376,20 @@ const handleRouteSelect = async (route: any, form: any) => {
           form.setFieldValue("packaging", "");
           internalLabels.value.packaging = "";
         }
+
+        // Auto-select product type if only one is available
+        if (contractProductTypes.value.length === 1) {
+          form.setFieldValue("productType", contractProductTypes.value[0]);
+        }
+
+        // Auto-select agent if only one is available
+        if (routeAgents.value.length === 1) {
+          form.setFieldValue("agent", (routeAgents.value[0] as any)._id);
+          internalLabels.value.agent = (routeAgents.value[0] as any).name;
+        } else {
+          form.setFieldValue("agent", "");
+          internalLabels.value.agent = "";
+        }
       }
     } finally {
       isRouteDetailsLoading.value = false;
@@ -371,7 +401,6 @@ onMounted(async () => {
   if (props.initialValues.route && props.initialValues.shipper) {
     isRouteDetailsLoading.value = true;
     try {
-      // In edit mode, initialValues.shipper might be just the ID string if pre-mapped in EditOrder.vue
       const shipperId =
         typeof props.initialValues.shipper === "object"
           ? props.initialValues.shipper._id
@@ -385,6 +414,8 @@ onMounted(async () => {
       if (res.success) {
         routeCommodities.value = res.data?.commodities || [];
         routePackagings.value = res.data?.packagings || [];
+        routeAgents.value = res.data?.agents || [];
+        contractProductTypes.value = res.data?.productType || [];
       }
     } finally {
       isRouteDetailsLoading.value = false;

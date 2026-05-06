@@ -173,77 +173,7 @@
       </div>
 
       <div class="mt-6 border-t border-gray-100 pt-6">
-        <div class="flex flex-col gap-2">
-          <label class="text-sm font-medium text-gray-700"
-            >Damage Documents</label
-          >
-          <div
-            @drop.prevent="handleDrop"
-            @dragover.prevent="isDragging = true"
-            @dragleave.prevent="isDragging = false"
-            @click="triggerFileInput"
-            class="flex flex-col items-center justify-center p-6 border-2 border-dashed border-gray-200 rounded-xl bg-gray-50/50 hover:bg-gray-50 transition-colors cursor-pointer group"
-            :class="{ 'border-primary bg-primary/5': isDragging }"
-          >
-            <input
-              type="file"
-              class="hidden"
-              ref="fileInput"
-              multiple
-              @change="handleFileChange"
-            />
-
-            <div
-              v-if="files.length === 0"
-              class="flex flex-col items-center gap-2"
-            >
-              <div
-                class="size-10 rounded-full bg-white flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform"
-              >
-                <i
-                  class="mdi mdi-cloud-upload-outline text-xl text-gray-400 group-hover:text-primary"
-                ></i>
-              </div>
-              <p class="text-xs text-gray-500">
-                <span class="font-bold text-primary">Click to upload</span> or
-                drag and drop
-              </p>
-            </div>
-
-            <div v-else class="w-full space-y-2" @click.stop>
-              <div
-                v-for="(file, index) in files"
-                :key="index"
-                class="flex items-center justify-between bg-white p-3 rounded-lg border border-gray-100 shadow-sm"
-              >
-                <div class="flex items-center gap-3 overflow-hidden">
-                  <div
-                    class="size-8 rounded bg-gray-50 flex items-center justify-center shrink-0"
-                  >
-                    <i class="mdi mdi-file-document-outline text-gray-400"></i>
-                  </div>
-                  <span class="text-sm font-medium text-gray-700 truncate">{{
-                    file.name
-                  }}</span>
-                </div>
-                <button
-                  @click.prevent="removeFile(index)"
-                  class="size-8 flex items-center justify-center rounded-full hover:bg-red-50 text-gray-400 hover:text-red-500 transition-colors"
-                >
-                  <i class="mdi mdi-close"></i>
-                </button>
-              </div>
-
-              <button
-                @click="triggerFileInput"
-                type="button"
-                class="mt-2 text-xs font-bold text-primary hover:underline"
-              >
-                + Add more files
-              </button>
-            </div>
-          </div>
-        </div>
+        <FileInput name="documents" label="Damage Documents" multiple />
       </div>
     </template>
 
@@ -265,6 +195,7 @@ import Input from "@/components/form/Input.vue";
 import SelectInput from "@/components/form/SelectInput.vue";
 import DateInput from "@/components/form/DateInput.vue";
 import TextareaInput from "@/components/form/TextareaInput.vue";
+import FileInput from "@/components/form/FileInput.vue";
 import SubmitButton from "@/components/form/SubmitButton.vue";
 import { lessThanToday, required } from "@/utils/validations";
 import { currencyFormatter } from "@/utils/utils";
@@ -278,32 +209,6 @@ export type Props = {
 };
 
 const props = defineProps<{ data?: Props; close: (res: any) => void }>();
-
-const files = ref<File[]>([]);
-const isDragging = ref(false);
-const fileInput = ref<HTMLInputElement | null>(null);
-
-const triggerFileInput = () => {
-  fileInput.value?.click();
-};
-
-const handleFileChange = (event: Event) => {
-  const target = event.target as HTMLInputElement;
-  if (target.files?.length) {
-    files.value.push(...Array.from(target.files));
-  }
-};
-
-const handleDrop = (event: DragEvent) => {
-  isDragging.value = false;
-  if (event.dataTransfer?.files?.length) {
-    files.value.push(...Array.from(event.dataTransfer.files));
-  }
-};
-
-const removeFile = (index: number) => {
-  files.value.splice(index, 1);
-};
 
 const toast = useToastStore();
 const queryClient = useQueryClient();
@@ -382,8 +287,8 @@ async function handleSubmit(values: any) {
   }
 
   // Files
-  if (files.value.length > 0) {
-    files.value.forEach((file: File) => {
+  if (values.documents && values.documents.length > 0) {
+    values.documents.forEach((file: File) => {
       formData.append("documents", file);
     });
   }
