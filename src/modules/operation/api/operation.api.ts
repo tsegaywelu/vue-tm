@@ -15,7 +15,7 @@ const lease_api = getApi("/vehicle-lease-agreement");
 const order_api = getApi("/order");
 const route_api = getApi("/route");
 const shipment_api = getApi("/shipment");
-const vehicle_api = getApi("/vehicle");
+export const vehicle_api = getApi("/vehicle");
 const driver_api = getApi("/driver");
 const expense_type_api = getApi("/expense-type");
 const inventory_api = getApi("/inventory-items");
@@ -60,8 +60,55 @@ export function update_agent(id: string, data: any) {
 }
 
 // ─── Shipment Damage ──────────────────────────────────────────
+export function fetch_shipment_damages(params?: any) {
+  return shipment_damage_api.addAuthenticationHeader().get("", { params });
+}
+
+export function fetch_shipment_damage_by_id(id: string) {
+  return shipment_damage_api.addAuthenticationHeader().get(`/${id}`);
+}
+
 export function add_shipment_damage(data: any) {
   return shipment_damage_api.addAuthenticationHeader().post("", data);
+}
+
+export function update_shipment_damage(id: string, data: any) {
+  return shipment_damage_api.addAuthenticationHeader().patch(`/${id}`, data);
+}
+
+export function update_shipment_damage_status(id: string, status: string, data: any = {}) {
+  return shipment_damage_api.addAuthenticationHeader().patch(`/${id}/${status}`, data);
+}
+
+export function delete_shipment_damage(id: string) {
+  return shipment_damage_api.addAuthenticationHeader().delete(`/${id}`);
+}
+
+// ─── Vehicle Damage ───────────────────────────────────────────
+const vehicle_damage_api = getApi("/vehicle-damages");
+
+export function fetch_vehicle_damages(params?: any) {
+  return vehicle_damage_api.addAuthenticationHeader().get("", { params });
+}
+
+export function fetch_vehicle_damage_by_id(id: string) {
+  return vehicle_damage_api.addAuthenticationHeader().get(`/${id}`);
+}
+
+export function add_vehicle_damage(data: any) {
+  return vehicle_damage_api.addAuthenticationHeader().post("", data);
+}
+
+export function update_vehicle_damage(id: string, data: any) {
+  return vehicle_damage_api.addAuthenticationHeader().patch(`/${id}`, data);
+}
+
+export function update_vehicle_damage_status(id: string, status: string, data: any = {}) {
+  return vehicle_damage_api.addAuthenticationHeader().patch(`/${id}/${status}`, data);
+}
+
+export function delete_vehicle_damage(id: string) {
+  return vehicle_damage_api.addAuthenticationHeader().delete(`/${id}`);
 }
 
 // ─── Approval Requests ────────────────────────────────────────
@@ -138,7 +185,10 @@ export function fetch_shipment_adjustments(params: Record<string, any>) {
     .get("/shipmentAdjustments", { params });
 }
 
-// ─── Advances / Settlements ──────────────────────────────────
+export function fetch_prepayments(params: Record<string, any>) {
+  return prepayment_api.addAuthenticationHeader().get("", { params });
+}
+
 export function fetch_advances(params: Record<string, any>) {
   return advance_api.addAuthenticationHeader().get("", { params });
 }
@@ -204,6 +254,78 @@ export function update_vehicle(id: string, data: any) {
 
 export function fetch_vehicle_types_paginated(params?: Record<string, any>) {
   return vehicle_type_api.addAuthenticationHeader().get("", { params });
+}
+
+const cleanParams = (params: Record<string, any>) => {
+  return Object.fromEntries(
+    Object.entries(params).filter(
+      ([_, v]) => v !== "" && v !== null && v !== undefined,
+    ),
+  );
+};
+
+export function fetch_vehicle_metrics(params: Record<string, any>) {
+  return vehicle_api
+    .addAuthenticationHeader()
+    .get("/metrics", { params: cleanParams(params) });
+}
+
+export function fetch_vehicle_financial_kpis(params: Record<string, any>) {
+  return vehicle_api
+    .addAuthenticationHeader()
+    .get("/financial-kpi", { params: cleanParams(params) });
+}
+
+export function fetch_vehicle_productivity_vehicles(
+  params: Record<string, any>,
+) {
+  return vehicle_api
+    .addAuthenticationHeader()
+    .get("/productivity-kpi", { params: cleanParams(params) });
+}
+
+export function fetch_vehicle_goal_achievement(params: Record<string, any>) {
+  return vehicle_api
+    .addAuthenticationHeader()
+    .get("/goal-achievement", { params: cleanParams(params) });
+}
+export function fetch_vehicle_shipment_financial_kpis(
+  id: string,
+  params: Record<string, any>,
+) {
+  return vehicle_api
+    .addAuthenticationHeader()
+    .get(`/${id}/shipment-financial-kpi`, { params });
+}
+
+export function fetch_vehicle_productivity_kpis(
+  id: string,
+  params: Record<string, any>,
+) {
+  return vehicle_api
+    .addAuthenticationHeader()
+    .get(`/${id}/productivity-kpi`, { params });
+}
+
+export function fetch_vehicle_type_monthly_goals(params: Record<string, any>) {
+  return vehicle_api
+    .addAuthenticationHeader()
+    .get("/goals/vehicle-type", { params });
+}
+
+export function upsert_vehicle_monthly_goal(vehicleId: string, data: any) {
+  return vehicle_api
+    .addAuthenticationHeader()
+    .patch(`/goals/vehicle/${vehicleId}`, data);
+}
+
+export function upsert_vehicle_type_monthly_goal(
+  vehicleTypeId: string,
+  data: any,
+) {
+  return vehicle_api
+    .addAuthenticationHeader()
+    .patch(`/goals/vehicle-type/${vehicleTypeId}`, data);
 }
 
 export function add_vehicle_type(data: any) {
@@ -363,4 +485,22 @@ export function fetch_all_shipments_unpaginated(
   config?: any,
 ) {
   return shipment_api.addAuthenticationHeader().get("", config);
+}
+
+export function add_insurance(data: any) {
+  const config = data instanceof FormData 
+    ? { headers: { 'Content-Type': 'multipart/form-data' } }
+    : {};
+  return insurance_api.addAuthenticationHeader().post("", data, config);
+}
+
+export function update_insurance(id: string, data: any) {
+  const config = data instanceof FormData 
+    ? { headers: { 'Content-Type': 'multipart/form-data' } }
+    : {};
+  return insurance_api.addAuthenticationHeader().put(`/${id}`, data, config);
+}
+
+export function fetch_insurance_by_id(id: string) {
+  return insurance_api.addAuthenticationHeader().get(`/${id}`);
 }

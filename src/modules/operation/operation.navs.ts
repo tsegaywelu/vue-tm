@@ -59,6 +59,11 @@ export const core_operations_navs: Navs[] = [
             name: "Edit Order",
             show: false,
           },
+          {
+            path: "/operation/orders/$id",
+            name: "Order Details",
+            show: false,
+          },
         ],
       },
       {
@@ -91,6 +96,16 @@ export const core_operations_navs: Navs[] = [
           {
             path: "/operation/advance-details/$id",
             name: "Advance Details",
+            show: false,
+          },
+          {
+            path: "/operation/advance-summary",
+            name: "Advance Summary",
+            show: false,
+          },
+          {
+            path: "/operation/prepayment-summary",
+            name: "Pre-Payment Summary",
             show: false,
           },
         ],
@@ -134,6 +149,11 @@ export const fleet_navs: Navs[] = [
       {
         path: "/vehicles/leased",
         name: "Leased Vehicles",
+        show: true,
+      },
+      {
+        path: "/vehicles/metrics",
+        name: "Vehicle Metrics",
         show: true,
       },
       {
@@ -280,6 +300,33 @@ export const maintenance_navs: Navs[] = [
     icon: "insurance",
     path: "/insurances",
     show: true,
+    children: [
+      {
+        path: "/shipment-damages",
+        name: "Shipment Damages",
+        show: true,
+      },
+      {
+        path: "/vehicle-damages",
+        name: "Vehicle Damages",
+        show: true,
+      },
+      {
+        path: "/insurances/$id",
+        name: "Insurance Details",
+        show: false,
+      },
+      {
+        path: "/insurances/add",
+        name: "Add Insurance",
+        show: false,
+      },
+      {
+        path: "/insurances/edit/$id",
+        name: "Edit Insurance",
+        show: false,
+      },
+    ],
   },
   {
     name: "Tyres",

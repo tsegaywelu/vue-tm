@@ -419,3 +419,48 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+@layer utilities {
+  .print-hide {
+    @media print {
+      display: none !important;
+    }
+  }
+}
+
+@media print {
+  aside,
+  nav,
+  header,
+  .print-hide,
+  #page-actions,
+  #extra-page-data,
+  .breadcrumb-container,
+  button,
+  .sidebar-container,
+  .top-navbar-container {
+    display: none !important;
+  }
+
+  body,
+  html,
+  #app {
+    background: white !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  main {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+  }
+
+  .grid {
+    display: block !important;
+  }
+
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}

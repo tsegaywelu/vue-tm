@@ -15,6 +15,7 @@
     id="order-list"
     :columns="columns"
     :rows="response"
+    @row_click="(row) => router.push(`/operation/orders/${row._id}`)"
   >
     <template #after-search>
       <div
@@ -96,6 +97,14 @@
       <Dropdown>
         <template #default="{ close }">
           <DropDownItem
+            :icon="icons.eye"
+            label="Details"
+            @click.stop="
+              router.push(`/operation/orders/${row._id}`);
+              close();
+            "
+          />
+          <DropDownItem
             v-if="row.status === 'approved'"
             :icon="icons.truck"
             label="Ship"
@@ -120,6 +129,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from "vue";
+import { useRouter } from "vue-router";
 import Table from "@/components/common/Table.vue";
 import type { TableColumn } from "@/components/common/Table.vue";
 import Status from "@/components/common/Status.vue";
@@ -130,6 +140,7 @@ import { icons } from "@/utils/icons";
 import { usePagination } from "@/composables/usePagination";
 import type { ShipmentFilterParams } from "../operation.types";
 
+const router = useRouter();
 const emit = defineEmits(["action"]);
 
 const columns: TableColumn[] = [

@@ -2,48 +2,41 @@
   <Teleport to="#page-actions" defer>
     <div class="flex items-center gap-2">
       <!-- Download Dropdown -->
-      <div class="relative inline-block text-left">
-        <Button
-          variant="secondary"
-          size="md"
-          @click="isDropdownOpen = !isDropdownOpen"
-        >
-          <i class="mdi mdi-download mr-1"></i> Download
-        </Button>
-        <div
-          v-if="isDropdownOpen"
-          class="absolute right-0 mt-2 p-1 bg-white border border-grey-100 rounded-xl shadow-2xl z-[9999] w-48 flex flex-col gap-1"
-        >
-          <button
-            class="flex items-center gap-2 w-full p-2 text-sm text-grey-700 hover:bg-grey-50 rounded-lg text-left"
+      <Dropdown>
+        <template #trigger>
+          <Button variant="secondary" size="md">
+            <i v-html="icons.longArrow"></i> Download
+          </Button>
+        </template>
+        <template #default="{ close }">
+          <DropDownItem
+            label="Raw Material"
             @click="handleDownload('Raw Material')"
           >
-            <i class="mdi mdi-file-excel-outline text-lg text-green-600"></i>
-            <span>Raw Material</span>
-          </button>
-          <button
-            class="flex items-center gap-2 w-full p-2 text-sm text-grey-700 hover:bg-grey-50 rounded-lg text-left"
+            <template #icon>
+              <i class="mdi mdi-file-excel-outline text-lg text-green-600"></i>
+            </template>
+          </DropDownItem>
+          <DropDownItem
+            label="Full Product"
             @click="handleDownload('Full Product')"
           >
-            <i class="mdi mdi-file-excel-outline text-lg text-green-600"></i>
-            <span>Full Product</span>
-          </button>
-          <button
-            class="flex items-center gap-2 w-full p-2 text-sm text-grey-700 hover:bg-grey-50 rounded-lg text-left"
-            @click="handleDownload('All')"
-          >
-            <i class="mdi mdi-file-excel-outline text-lg text-green-600"></i>
-            <span>All</span>
-          </button>
-          <button
-            class="flex items-center gap-2 w-full p-2 text-sm text-grey-700 hover:bg-grey-50 rounded-lg text-left"
-            @click="handleDownload('Report')"
-          >
-            <i class="mdi mdi-file-excel-outline text-lg text-green-600"></i>
-            <span>Report</span>
-          </button>
-        </div>
-      </div>
+            <template #icon>
+              <i class="mdi mdi-file-excel-outline text-lg text-green-600"></i>
+            </template>
+          </DropDownItem>
+          <DropDownItem label="All" @click="handleDownload('All')">
+            <template #icon>
+              <i class="mdi mdi-file-excel-outline text-lg text-green-600"></i>
+            </template>
+          </DropDownItem>
+          <DropDownItem label="Report" @click="handleDownload('Report')">
+            <template #icon>
+              <i class="mdi mdi-file-excel-outline text-lg text-green-600"></i>
+            </template>
+          </DropDownItem>
+        </template>
+      </Dropdown>
 
       <!-- Add Shipment Button -->
       <Button @click="router.push('/operation/shipments/add')">
@@ -84,6 +77,8 @@ import { raaz_icons } from "@/utils/raaz_icons";
 import { useToastStore } from "@/store/toastStore";
 import ShipmentDownloadToast from "../components/ShipmentDownloadToast.vue";
 import { fetch_shipment_status_count } from "../api/operation.api";
+import Dropdown from "@/components/common/Dropdown.vue";
+import DropDownItem from "@/components/common/DropDownItem.vue";
 
 const all_icons = { ...icons, ...raaz_icons };
 const router = useRouter();
@@ -107,7 +102,10 @@ const shipmentStats = computed(() => {
     { label: "Owned", value: data.owned },
     { label: "Rental", value: data.rental },
     { label: "Leased", value: data.leased },
-    { label: "Power & Trailer", value: data["power & trailer"] || data["power & trailor"] },
+    {
+      label: "Power & Trailer",
+      value: data["power & trailer"] || data["power & trailor"],
+    },
     { label: "MDV", value: data.mdv },
   ];
 });

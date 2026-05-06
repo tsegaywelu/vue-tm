@@ -75,5 +75,5 @@ const { response, refetch } = usePagination({
   url: "/route",
 });
 
-defineExpose({ refetch });
+defineExpose({ refetch, response });
 </script>

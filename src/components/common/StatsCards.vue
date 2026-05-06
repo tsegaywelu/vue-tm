@@ -13,11 +13,14 @@
     <div
       v-for="stat in stats"
       :key="stat.label"
-      class="flex items-center gap-1.5 bg-white border border-grey-100 px-4 py-2 rounded-full shadow-[0_2px_8px_rgba(0,0,0,0.02)] transition-all hover:bg-grey-25 cursor-pointer"
+      class="stat-card flex items-center gap-1.5 px-4 py-2 rounded-full border border-grey-100 transition-all cursor-pointer"
       @click="$emit('click', stat)"
     >
       <span class="text-grey-600 font-medium">{{ stat.label }}</span>
-      <slot :name="`value-${stat.label.toLowerCase().replace(/\s+/g, '-')}`" :stat="stat">
+      <slot
+        :name="`value-${stat.label.toLowerCase().replace(/\s+/g, '-')}`"
+        :stat="stat"
+      >
         <span :class="['font-extrabold', stat.class || 'text-grey-800']">
           {{ stat.value || 0 }}
         </span>
@@ -43,8 +46,41 @@ defineEmits<{
   (e: "click", stat: StatItem): void;
 }>();
 </script>
+<style>
+.stat-card {
+  background: linear-gradient(135deg, #ffffff 0%, #f8faff 100%);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+  position: relative;
+  overflow: hidden;
+}
 
-<style scoped>
+.stat-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    45deg,
+    transparent 0%,
+    rgba(var(--primary-rgb, 59, 130, 246), 0.03) 100%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-1px);
+  background: linear-gradient(135deg, #ffffff 0%, #f0f4ff 100%);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border-color: rgba(var(--primary-rgb, 59, 130, 246), 0.2);
+}
+
+.stat-card:hover::before {
+  opacity: 1;
+}
+
 .animate-fade-in {
   animation: fadeIn 0.5s ease-out;
 }

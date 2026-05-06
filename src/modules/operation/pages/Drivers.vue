@@ -169,6 +169,12 @@ const paginationParams = computed(() => {
 const { response, refetch, isLoading } = usePagination({
   id: "drivers-list",
   url: "/driver",
+  params: (state) => ({
+    name: {
+      regexAny: state.search,
+    },
+    q: undefined,
+  }),
 });
 
 const columns: TableColumn<any>[] = [

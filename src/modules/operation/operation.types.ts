@@ -851,3 +851,19 @@ export interface Announcement {
   targetAudience: "ALL" | "DRIVER" | "MECHANIC" | string;
   createdAt: string;
 }
+export interface PrePayment {
+  _id: string;
+  advanceNumber: string;
+  createdAt: string;
+  status: string;
+  shipment?: {
+    _id: string;
+    shipmentCode: string;
+    route?: {
+      _id: string;
+      routeName: string;
+    };
+  };
+  totalTransporterPrice: number;
+  amount: number;
+}

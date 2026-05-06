@@ -6,7 +6,10 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test:unit": "vitest",
+    "test:e2e": "playwright test",
+    "test:ui": "vitest --ui"
   },
   "dependencies": {
     "@customizer/modal-x": "^0.2.91",
@@ -16,6 +19,7 @@
     "@tanstack/vue-table": "^8.21.3",
     "axios": "^1.15.0",
     "pinia": "^3.0.4",
+    "tailwind-merge": "^3.5.0",
     "tailwindcss": "^4.2.2",
     "vue": "^3.5.32",
     "vue-router": "^4.6.4",
@@ -24,12 +28,17 @@
   },
   "devDependencies": {
     "@faker-js/faker": "^10.4.0",
+    "@playwright/test": "^1.59.1",
     "@types/google.maps": "^3.64.0",
     "@types/node": "^24.12.2",
     "@vitejs/plugin-vue": "^6.0.5",
+    "@vitest/ui": "^4.1.5",
+    "@vue/test-utils": "^2.4.10",
     "@vue/tsconfig": "^0.9.1",
+    "jsdom": "^29.1.1",
     "typescript": "~6.0.2",
     "vite": "^8.0.4",
+    "vitest": "^4.1.5",
     "vue-tsc": "^3.2.6"
   }
 }

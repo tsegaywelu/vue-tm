@@ -141,6 +141,22 @@ export const operation_routes: RouteRecordRaw[] = [
         },
       },
       {
+        path: "orders/:id",
+        name: "operation_order_details",
+        component: () => import("./pages/OrderDetails.vue"),
+        meta: {
+          title: "Order Details",
+          description: "Detailed view of the freight order.",
+          tabsTeleportTo: "#order-details-tabs",
+          tabs: [
+            {
+              label: "Overview",
+              value: "overview",
+            },
+          ],
+        },
+      },
+      {
         path: "routes",
         name: "operation_routes",
         component: () => import("./pages/Routes.vue"),
@@ -227,6 +243,24 @@ export const operation_routes: RouteRecordRaw[] = [
           title: "Aggregated Advances",
           description:
             "Review aggregated and consolidated advance payment summaries.",
+        },
+      },
+      {
+        path: "advance-summary",
+        name: "operation_advance_summary",
+        component: () => import("./pages/AdvanceSummary.vue"),
+        meta: {
+          title: "Advance Summary",
+          description: "View and manage consolidated advance payment records.",
+        },
+      },
+      {
+        path: "prepayment-summary",
+        name: "operation_prepayment_summary",
+        component: () => import("./pages/PrePaymentSummary.vue"),
+        meta: {
+          title: "Pre-Payment Summary",
+          description: "View and manage consolidated pre-payment records.",
         },
       },
     ],
@@ -375,6 +409,21 @@ export const operation_routes: RouteRecordRaw[] = [
     },
   },
   {
+    path: "vehicles/metrics",
+    name: "operation_vehicle_metrics",
+    component: () => import("./pages/VehicleMetrics.vue"),
+    meta: {
+      title: "Vehicle Metrics",
+      description: "Global monitoring of vehicle performance and KPIs.",
+      tabs: [
+        { label: "Vehicle Metrics", value: "metrics" },
+        { label: "Financial KPIs", value: "financial" },
+        { label: "Productivity KPIs", value: "productivity" },
+        { label: "Goal Achievement", value: "goal-achievement" },
+      ],
+    },
+  },
+  {
     path: "vehicles/leased",
     name: "operation_leased_vehicles",
     component: () => import("./pages/LeasedVehicles.vue"),
@@ -431,6 +480,73 @@ export const operation_routes: RouteRecordRaw[] = [
     meta: {
       title: "Insurances",
       description: "Track and manage vehicle and cargo insurance policies.",
+    },
+  },
+  {
+    path: "insurance/insuranceDetails/:id",
+    name: "operation_insurance_details",
+    component: () => import("./pages/InsuranceDetails.vue"),
+    meta: {
+      title: "Insurance Details",
+      description: "Detailed view of an insurance record.",
+      tabs: [
+        { label: "Basic Information", value: "basic" },
+        { label: "Uploaded Documents", value: "documents" },
+      ],
+    },
+  },
+  {
+    path: "shipment-damages",
+    name: "operation_shipment_damages",
+    component: () => import("./pages/ShipmentDamages.vue"),
+    meta: {
+      title: "Shipment Damages",
+      description: "Track and manage damages related to shipments.",
+      tabs: [
+        { label: "All List", value: "list" },
+        { label: "Payable", value: "payable" },
+        { label: "Receivable", value: "receivable" },
+      ],
+    },
+  },
+  {
+    path: "shipment-damages/:id",
+    name: "operation_shipment_damage_details",
+    component: () => import("./pages/ShipmentDamageDetails.vue"),
+    meta: {
+      title: "Shipment Damage Details",
+      description: "Detailed view of a shipment damage record.",
+      tabs: [
+        { label: "Basic Details", value: "basic" },
+        { label: "Damaged Items", value: "items" },
+      ],
+    },
+  },
+  {
+    path: "vehicle-damages",
+    name: "operation_vehicle_damages",
+    component: () => import("./pages/VehicleDamages.vue"),
+    meta: {
+      title: "Vehicle Damages",
+      description: "Track and manage damages related to vehicles.",
+      tabs: [
+        { label: "All List", value: "list" },
+        { label: "Payable", value: "payable" },
+        { label: "Receivable", value: "receivable" },
+      ],
+    },
+  },
+  {
+    path: "vehicle-damages/:id",
+    name: "operation_vehicle_damage_details",
+    component: () => import("./pages/VehicleDamageDetails.vue"),
+    meta: {
+      title: "Vehicle Damage Details",
+      description: "Detailed view of a vehicle damage record.",
+      tabs: [
+        { label: "Basic Details", value: "basic" },
+        { label: "Vehicle Parts", value: "parts" },
+      ],
     },
   },
   {

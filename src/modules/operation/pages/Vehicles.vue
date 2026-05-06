@@ -1,5 +1,12 @@
 <template>
   <Teleport to="#page-actions" defer>
+    <Button
+      variant="outline"
+      size="md"
+      @click="() => $router.push({ path: '/vehicles/metrics' })"
+    >
+      Vehicle Metrics
+    </Button>
     <Button variant="primary" size="md" @click="handleRegisterVehicle">
       Register Vehicle
     </Button>

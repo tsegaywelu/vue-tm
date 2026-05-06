@@ -300,7 +300,13 @@ const columns: TableColumn<ApprovalRequest>[] = [
 const { response, setPage, refetch } = usePagination<ApprovalRequest>({
   id: "approval-requests",
   url: "/advance-payment/allApprovalRequests",
-  params: activeFilters,
+  params: (state) => {
+    return {
+      ...activeFilters.value,
+      vehiclePlateNumber: state.search || undefined,
+      q: undefined,
+    };
+  },
 });
 
 const formatDate = (val: string) => {

@@ -1,5 +1,5 @@
 <template>
-  <Table
+  <CheckTable
     :row_alignment="{ driver: 'left', route: 'left' }"
     :head_alignment="{ driver: 'left', route: 'left' }"
     :id="tableId"
@@ -7,6 +7,10 @@
     :rows="response"
     :clickable_rows="true"
     :search_placeholder="dynamicSearchPlaceholder"
+    :canBeSelected="checkable"
+    v-model="selectedItems"
+    unique_key="_id"
+    :loading="isLoading"
     @row_click="handleRowClick"
   >
     <template #search-prefix>
@@ -38,7 +42,10 @@
     </template>
 
     <template #cell-driver="{ row }">
-      <span class="text-base" v-if="row.driver">
+      <span class="text-base" v-if="typeof row.driver === 'string'">
+        {{ row.driver }}
+      </span>
+      <span class="text-base" v-else-if="row.driver">
         {{ row.driver?.firstName }} {{ row.driver?.middleName || "" }}
         {{ row.driver?.lastName || "" }}
       </span>
@@ -47,14 +54,22 @@
 
     <template #cell-transporter="{ row }">
       <span class="text-base">
-        {{ row.shipment?.transporter?.name || row.transporter?.name || "-" }}
+        {{
+          row.transporterName ||
+          row.shipment?.transporter?.name ||
+          row.transporter?.name ||
+          "-"
+        }}
       </span>
     </template>
 
     <template #cell-plateNumber="{ row }">
       <span class="text-base">
         {{
-          row.shipment?.vehicle?.plateNumber || row.vehicle?.plateNumber || "-"
+          row.plateNumber ||
+          row.shipment?.vehicle?.plateNumber ||
+          row.vehicle?.plateNumber ||
+          "-"
         }}
       </span>
     </template>
@@ -65,9 +80,13 @@
           value
             ?.toLowerCase()
             .replace(/_/g, " ")
-            .replace(/\b\w/g, (c) => c.toUpperCase())
+            .replace(/\b\w/g, (c: string) => c.toUpperCase())
         }}
       </Status>
+    </template>
+
+    <template #cell-date="{ value }">
+      <span class="text-base">{{ value?.split("T")[0] }}</span>
     </template>
 
     <template #cell-createdAt="{ value }">
@@ -76,13 +95,19 @@
 
     <template #cell-shipment="{ row }">
       <span class="text-base">
-        {{ row.shipment?.shipmentCode || row.shipmentCode || "-" }}
+        {{
+          row.shipmentCode || row.shipment?.shipmentCode || row.shipment || "-"
+        }}
       </span>
     </template>
 
     <template #cell-route="{ row }">
       <span class="text-base">
-        {{ row.shipment?.route?.routeName || row.route?.name || "-" }}
+        {{
+          typeof row.route === "string"
+            ? row.route
+            : row.shipment?.route?.routeName || row.route?.name || "-"
+        }}
       </span>
     </template>
 
@@ -90,14 +115,13 @@
       <span class="text-base">
         {{
           currencyFormatter(
-            Array.isArray(row.fuelAdvances)
-              ? row.fuelAdvances
-                  .reduce(
+            row.FUEL ??
+              (Array.isArray(row.fuelAdvances)
+                ? row.fuelAdvances.reduce(
                     (acc: number, item: any) => acc + (item.amount || 0),
                     0,
                   )
-                  .toFixed(2)
-              : "0.00",
+                : 0),
           )
         }}
       </span>
@@ -107,12 +131,13 @@
       <span class="text-base">
         {{
           currencyFormatter(
-            Array.isArray(row.perDiemExpenses)
-              ? row.perDiemExpenses.reduce(
-                  (acc: number, item: any) => acc + (item.amount || 0),
-                  0,
-                )
-              : 0,
+            row.PERDIEM ??
+              (Array.isArray(row.perDiemExpenses)
+                ? row.perDiemExpenses.reduce(
+                    (acc: number, item: any) => acc + (item.amount || 0),
+                    0,
+                  )
+                : 0),
           )
         }}
       </span>
@@ -122,12 +147,13 @@
       <span class="text-base">
         {{
           currencyFormatter(
-            Array.isArray(row.otherExpenses)
-              ? row.otherExpenses.reduce(
-                  (acc: number, item: any) => acc + (item.amount || 0),
-                  0,
-                )
-              : 0,
+            row.OTHER ??
+              (Array.isArray(row.otherExpenses)
+                ? row.otherExpenses.reduce(
+                    (acc: number, item: any) => acc + (item.amount || 0),
+                    0,
+                  )
+                : 0),
           )
         }}
       </span>
@@ -137,7 +163,8 @@
       <span class="text-base font-semibold">
         {{
           currencyFormatter(
-            row.amount ||
+            row.TOTAL ??
+              row.amount ??
               (Array.isArray(row.fuelAdvances)
                 ? row.fuelAdvances.reduce(
                     (acc: number, item: any) => acc + (item.amount || 0),
@@ -164,13 +191,30 @@
     <template #cell-paidBy="{ value }">
       <span class="text-base">{{ value?.username || "-" }}</span>
     </template>
-  </Table>
+
+    <template #cell-type="{ value }">
+      <span class="text-base">
+        {{
+          value
+            ?.toLowerCase()
+            .replace(/_/g, " ")
+            .replace(/\b\w/g, (c: string) => c.toUpperCase()) || "-"
+        }}
+      </span>
+    </template>
+
+    <template #cell-amount="{ value }">
+      <span class="text-base font-semibold">
+        {{ currencyFormatter(value || 0) }}
+      </span>
+    </template>
+  </CheckTable>
 </template>
 
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
 import { useRouter } from "vue-router";
-import Table from "@/components/common/Table.vue";
+import CheckTable from "@/components/common/CheckTable.vue";
 import Select from "@/components/common/Select.vue";
 import type { TableColumn } from "@/components/common/Table.vue";
 import { usePagination } from "@/composables/usePagination";
@@ -189,40 +233,55 @@ const props = withDefaults(
     extraParams?: Record<string, any>;
     /** Table columns */
     columns: TableColumn[];
+    /** Whether row selection is enabled */
+    checkable?: boolean;
+    /** Selected items (v-model) */
+    modelValue?: any[];
   }>(),
   {
     url: "/advance-payment",
     paginationId: "advance-list",
     extraParams: () => ({}),
+    checkable: false,
+    modelValue: () => [],
   },
 );
+
+const emit = defineEmits<{
+  (e: "update:modelValue", value: any[]): void;
+  (e: "refetch"): void;
+}>();
 
 const router = useRouter();
 const tableId = computed(() => props.paginationId);
 
+const selectedItems = computed({
+  get: () => props.modelValue,
+  set: (val) => emit("update:modelValue", val),
+});
+
 const AdvanceStatusOptions = [
   { label: "Status: All", value: "" },
   { label: "Pending", value: "PENDING" },
-  { label: "Authorized", value: "AUTHORIZED" },
   { label: "Approved", value: "APPROVED" },
-  { label: "Paid", value: "PAID" },
-  { label: "Success", value: "SUCCESS" },
-  { label: "Rejected", value: "REJECTED" },
   { label: "Cancelled", value: "CANCELLED" },
-  { label: "Failed", value: "FAILED" },
+  { label: "Authorized", value: "AUTHORIZED" },
+  { label: "Rejected", value: "REJECTED" },
+  { label: "Paid", value: "PAID" },
 ];
 
 const selectedStatus = ref("");
-const activeFilters = ref<any>({
-  searchField: "advanceNumber",
-});
+const activeFilters = ref<any>({});
 
 const dynamicSearchPlaceholder = computed(() => {
   return "Search Advances...";
 });
 
 watch(selectedStatus, (newStatus) => {
-  activeFilters.value = { ...activeFilters.value, status: newStatus || undefined };
+  activeFilters.value = {
+    ...activeFilters.value,
+    status: newStatus || undefined,
+  };
 });
 
 const handleFilterChange = (newFilters: any) => {
@@ -238,10 +297,15 @@ const handleRowClick = (row: any) => {
   }
 };
 
-const { response, refetch } = usePagination({
+const { response, refetch, isLoading } = usePagination({
   id: props.paginationId,
   url: props.url,
-  params: computed(() => ({ ...props.extraParams, ...activeFilters.value })),
+  params: (state) => ({
+    ...props.extraParams,
+    ...activeFilters.value,
+    vehiclePlateNumber: state.search,
+    q: undefined,
+  }),
 });
 
 defineExpose({ refetch });

@@ -259,7 +259,9 @@ export function usePagination<T = any>({
                     ? res_data.documents
                     : res_data?.shipments && Array.isArray(res_data.shipments)
                       ? res_data.shipments
-                      : [];
+                      : res_data?.vehicles && Array.isArray(res_data.vehicles)
+                        ? res_data.vehicles
+                        : [];
 
         if (items.length > 0 && !state.value.isDirty) {
           setIsDirty(true);
@@ -313,7 +315,9 @@ export function usePagination<T = any>({
                 ? d.documents
                 : d?.shipments && Array.isArray(d.shipments)
                   ? d.shipments
-                  : [];
+                  : d?.vehicles && Array.isArray(d.vehicles)
+                    ? d.vehicles
+                    : [];
   });
 
   const server_error = computed(() => {
