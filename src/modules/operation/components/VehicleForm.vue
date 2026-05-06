@@ -383,169 +383,11 @@
         title="Vehicle Documents"
         description="Upload relevant vehicle documents (Registration, Insurance, etc.)."
       >
-        <div
-          class="p-6 bg-grey-25 rounded-3xl border border-grey-100 border-dashed"
-        >
-          <div class="flex flex-col items-center justify-center gap-4 py-8">
-            <div
-              class="size-16 rounded-full bg-white flex items-center justify-center shadow-sm border border-grey-100"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="32"
-                height="32"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="text-grey-400"
-              >
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                <polyline points="17 8 12 3 7 8" />
-                <line x1="12" x2="12" y1="3" y2="15" />
-              </svg>
-            </div>
-            <div class="text-center">
-              <p class="text-sm font-bold text-grey-900">
-                Click to upload or drag and drop
-              </p>
-              <p class="text-xs text-grey-500 mt-1">
-                PDF, PNG, JPG (Max 10MB per file)
-              </p>
-            </div>
-            <input
-              type="file"
-              ref="fileInputRef"
-              class="hidden"
-              multiple
-              @change="handleFileChange"
-            />
-            <Button
-              variant="outline"
-              size="sm"
-              @click="fileInputRef?.click()"
-              class_name="bg-white"
-            >
-              Select New Files
-            </Button>
-          </div>
-
-          <!-- Existing Documents -->
-          <div
-            v-if="initialValues.vehicleDocuments?.length"
-            class="mb-6 space-y-3"
-          >
-            <p class="text-xs font-bold text-grey-500 uppercase tracking-wider">
-              Existing Documents
-            </p>
-            <div
-              v-for="(doc, index) in initialValues.vehicleDocuments"
-              :key="'existing-' + index"
-              class="flex items-center justify-between p-4 bg-white rounded-2xl border border-grey-100 shadow-sm"
-            >
-              <div class="flex items-center gap-3">
-                <div
-                  class="size-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-400"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  >
-                    <path
-                      d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"
-                    />
-                    <polyline points="14 2 14 8 20 8" />
-                  </svg>
-                </div>
-                <div>
-                  <p class="text-sm font-bold text-grey-900">
-                    {{ doc.split("/").pop() }}
-                  </p>
-                  <p class="text-xs text-grey-500">Uploaded Document</p>
-                </div>
-              </div>
-              <Button
-                variant="outline"
-                size="sm"
-                @click="openModal('FileViewerModal', { fileURL: getStaticUrl(doc) })"
-              >
-                View
-              </Button>
-            </div>
-          </div>
-
-          <!-- Selected Files List (New) -->
-          <div v-if="selectedFiles.length > 0" class="mt-6 space-y-3">
-            <p class="text-xs font-bold text-grey-500 uppercase tracking-wider">
-              New Documents to Upload
-            </p>
-            <div
-              v-for="(file, index) in selectedFiles"
-              :key="index"
-              class="flex items-center justify-between p-4 bg-white rounded-2xl border border-grey-100 shadow-sm"
-            >
-              <div class="flex items-center gap-3">
-                <div
-                  class="size-10 rounded-xl bg-grey-50 flex items-center justify-center text-grey-400"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  >
-                    <path
-                      d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"
-                    />
-                    <polyline points="14 2 14 8 20 8" />
-                  </svg>
-                </div>
-                <div>
-                  <p class="text-sm font-bold text-grey-900">{{ file.name }}</p>
-                  <p class="text-xs text-grey-500">
-                    {{ (file.size / 1024 / 1024).toFixed(2) }} MB
-                  </p>
-                </div>
-              </div>
-              <button
-                @click="removeFile(index)"
-                class="size-8 rounded-lg hover:bg-red-50 text-grey-400 hover:text-red-600 transition-colors flex items-center justify-center"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path d="M3 6h18" />
-                  <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
-                  <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
-                  <line x1="10" x2="10" y1="11" y2="17" />
-                  <line x1="14" x2="14" y1="11" y2="17" />
-                </svg>
-              </button>
-            </div>
-          </div>
-        </div>
+        <FileInput
+          name="vehicleDocuments"
+          label="Vehicle Documents"
+          multiple
+        />
       </Colapsable>
 
       <Colapsable
@@ -573,6 +415,7 @@ import SelectInput from "@/components/form/SelectInput.vue";
 import DateInput from "@/components/form/DateInput.vue";
 import ToggleInput from "@/components/form/ToggleInput.vue";
 import TextareaInput from "@/components/form/TextareaInput.vue";
+import FileInput from "@/components/form/FileInput.vue";
 import Colapsable from "@/components/common/Colapsable.vue";
 import {
   dateLessThanOrEqalToToday,
@@ -590,18 +433,8 @@ const props = defineProps<{
   onSubmit: (values: any) => Promise<void> | void;
 }>();
 
-const fileInputRef = ref<HTMLInputElement | null>(null);
-const selectedFiles = ref<File[]>([]);
-
-const handleFileChange = (event: Event) => {
-  const target = event.target as HTMLInputElement;
-  if (target.files) {
-    selectedFiles.value = [...selectedFiles.value, ...Array.from(target.files)];
-  }
-};
-
-const removeFile = (index: number) => {
-  selectedFiles.value.splice(index, 1);
+const triggerFileInput = () => {
+  // Logic handled by component
 };
 
 const ownershipOptions = [
@@ -737,9 +570,13 @@ const handleSubmit = (values: any) => {
   }
 
   // Files
-  selectedFiles.value.forEach((file) => {
-    formData.append("vehicleDocuments", file);
-  });
+  if (values.vehicleDocuments && values.vehicleDocuments.length > 0) {
+    values.vehicleDocuments.forEach((file: any) => {
+      if (file instanceof File) {
+        formData.append("vehicleDocuments", file);
+      }
+    });
+  }
 
   props.onSubmit(formData);
 };

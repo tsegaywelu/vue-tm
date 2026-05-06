@@ -321,47 +321,11 @@
         title="Document Uploads"
         description="Upload driver files and identity documents."
       >
-        <div class="flex flex-col gap-4">
-          <div class="flex items-center gap-4">
-            <input
-              type="file"
-              ref="fileInputRef"
-              multiple
-              class="hidden"
-              accept=".pdf,.png,.jpg,.jpeg"
-              @change="handleFileChange"
-            />
-            <Button
-              type="button"
-              variant="outline"
-              size="md"
-              @click="fileInputRef?.click()"
-            >
-              Browse Files
-            </Button>
-            <span class="text-sm text-grey-500" v-if="selectedFiles.length">
-              {{ selectedFiles.length }} files selected
-            </span>
-          </div>
-
-          <!-- File Preview list -->
-          <div v-if="selectedFiles.length" class="flex flex-wrap gap-2">
-            <div
-              v-for="(file, index) in selectedFiles"
-              :key="index"
-              class="flex items-center gap-2 bg-grey-100 px-3 py-1.5 rounded-xl border border-grey-200 text-sm"
-            >
-              <span class="text-grey-700 truncate max-w-xs">{{ file.name }}</span>
-              <button
-                type="button"
-                class="text-red-500 hover:text-red-700 font-bold"
-                @click="removeFile(index)"
-              >
-                ×
-              </button>
-            </div>
-          </div>
-        </div>
+        <FileInput
+          name="driverDocuments"
+          label="Driver Documents"
+          multiple
+        />
       </Colapsable>
 
       <div class="pt-10 flex justify-end gap-4">
@@ -382,6 +346,7 @@ import Colapsable from "@/components/common/Colapsable.vue";
 import Button from "@/components/common/Button.vue";
 import BaseInput from "@/components/common/Input.vue";
 import BaseSelect from "@/components/common/Select.vue";
+import FileInput from "@/components/form/FileInput.vue";
 import { dateLessThanOrEqalToToday, required } from "@/utils/validations";
 
 const props = defineProps<{
@@ -390,8 +355,9 @@ const props = defineProps<{
   onSubmit: (values: any) => Promise<void> | void;
 }>();
 
-const fileInputRef = ref<HTMLInputElement | null>(null);
-const selectedFiles = ref<File[]>([]);
+const triggerFileInput = () => {
+  // Logic handled by component
+};
 
 const educationalBackground = ref<any[]>([
   { type: "", institutionName: "", startDate: "", endDate: "" }
@@ -449,15 +415,8 @@ const removeWork = (index: number) => {
   workExperience.value.splice(index, 1);
 };
 
-const handleFileChange = (event: Event) => {
-  const target = event.target as HTMLInputElement;
-  if (target.files) {
-    selectedFiles.value = [...selectedFiles.value, ...Array.from(target.files)];
-  }
-};
-
-const removeFile = (index: number) => {
-  selectedFiles.value.splice(index, 1);
+const triggerFileInput = () => {
+  // Logic handled by component
 };
 
 const handleSubmit = (values: any) => {
@@ -505,7 +464,7 @@ const handleSubmit = (values: any) => {
     delete payload.bankAccount;
   }
 
-  if (selectedFiles.value.length > 0) {
+  if (values.driverDocuments && values.driverDocuments.length > 0) {
     const formData = new FormData();
     Object.keys(payload).forEach((key) => {
       if (payload[key] !== undefined && payload[key] !== null) {
@@ -517,8 +476,10 @@ const handleSubmit = (values: any) => {
       }
     });
 
-    selectedFiles.value.forEach((file) => {
-      formData.append("driverDocuments", file);
+    values.driverDocuments.forEach((file: any) => {
+      if (file instanceof File) {
+        formData.append("driverDocuments", file);
+      }
     });
 
     props.onSubmit(formData);

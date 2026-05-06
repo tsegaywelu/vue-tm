@@ -20,8 +20,8 @@ import { create_order } from "../api/orders.api";
 import { useToastStore } from "@/store/toastStore";
 import SubmitButton from "@/components/form/SubmitButton.vue";
 import Button from "@/components/Button.vue";
-import { useMutation } from "@tanstack/vue-query";
-
+import { useMutation, useQueryClient } from "@tanstack/vue-query";
+const queryClient = useQueryClient();
 const mutation = useMutation({
   mutationFn: (values: any) => create_order(values),
 });
@@ -29,7 +29,6 @@ const router = useRouter();
 const toast = useToastStore();
 
 const initialValues = {
-  carrier: "",
   route: "",
   productType: "",
   agent: "",
@@ -46,12 +45,21 @@ const initialValues = {
 };
 
 const handleCreateOrder = async (values: any) => {
-  const res = await mutation.mutateAsync(values);
-  if (res.success) {
+  const req = Array(values.numberOfVehicles)
+    .fill(0)
+    .map((el) => {
+      return mutation.mutateAsync(values);
+    });
+  const res = await Promise.all(req);
+  if (res.some((el) => el.success)) {
     toast.success("Order created successfully");
+    // invalidate orders query
+    queryClient.invalidateQueries({ queryKey: ["order-list"] });
     router.push("/operation/orders");
   } else {
-    toast.error(res.error || "Failed to create order");
+    toast.error(
+      res.map((el) => el.error).join(", ") || "Failed to create order",
+    );
   }
 };
 </script>

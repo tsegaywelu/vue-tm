@@ -44,10 +44,15 @@
         />
       </div>
 
-      <DamageInput name="items" :shipper-id="selectedShipperId || props.data?.shipperId" />
-      
+      <DamageInput
+        name="items"
+        :shipper-id="selectedShipperId || props.data?.shipperId || ''"
+      />
+
       <div class="mt-8 border-t border-gray-100 pt-6">
-        <h3 class="text-lg font-bold text-gray-900 mb-4">Vehicle Parts & Prices (Optional)</h3>
+        <h3 class="text-lg font-bold text-gray-900 mb-4">
+          Vehicle Parts & Prices (Optional)
+        </h3>
         <VehiclePartsInput name="vehiclePartsAndPrices" />
       </div>
 
@@ -55,39 +60,78 @@
       <component
         :is="form.Subscribe"
         :selector="
-          (state: any) => [state.values.items, state.values.vehiclePartsAndPrices, state.values.vatInclusive, state.values.shipment]
+          (state: any) => [
+            state.values.items,
+            state.values.vehiclePartsAndPrices,
+            state.values.vatInclusive,
+            state.values.shipment,
+          ]
         "
       >
-        <template #default="[items, vehicleParts, vatInclusive, selectedShipment]">
+        <template
+          #default="[items, vehicleParts, vatInclusive, selectedShipment]"
+        >
           <!-- Hidden tracking of selected shipment to fetch shipper dynamically if needed -->
-          <span class="hidden">{{ updateSelectedShipment(selectedShipment) }}</span>
+          <span class="hidden">{{
+            updateSelectedShipment(selectedShipment)
+          }}</span>
 
-          <div class="mt-8 flex flex-col items-end gap-2 bg-gray-50 p-6 rounded-2xl">
+          <div
+            class="mt-8 flex flex-col items-end gap-2 bg-gray-50 p-6 rounded-2xl"
+          >
             <div class="flex flex-col items-end gap-1 mb-2">
-              <div class="text-xs text-gray-500 uppercase font-bold tracking-wider">Items Subtotal</div>
-              <div class="text-lg font-bold text-gray-900">{{ currencyFormatter(getSubtotal(items)) }}</div>
+              <div
+                class="text-xs text-gray-500 uppercase font-bold tracking-wider"
+              >
+                Items Subtotal
+              </div>
+              <div class="text-lg font-bold text-gray-900">
+                {{ currencyFormatter(getSubtotal(items)) }}
+              </div>
             </div>
-            
+
             <div class="flex flex-col items-end gap-1 mb-2">
-              <div class="text-xs text-gray-500 uppercase font-bold tracking-wider">Vehicle Parts Total</div>
-              <div class="text-lg font-bold text-gray-900">{{ currencyFormatter(getVehiclePartsTotal(vehicleParts)) }}</div>
+              <div
+                class="text-xs text-gray-500 uppercase font-bold tracking-wider"
+              >
+                Vehicle Parts Total
+              </div>
+              <div class="text-lg font-bold text-gray-900">
+                {{ currencyFormatter(getVehiclePartsTotal(vehicleParts)) }}
+              </div>
             </div>
 
             <ToggleInput name="vatInclusive" label="VAT Inclusive (15%)" />
-            
-            <div v-if="vatInclusive" class="text-sm font-medium text-gray-500 mt-2">
+
+            <div
+              v-if="vatInclusive"
+              class="text-sm font-medium text-gray-500 mt-2"
+            >
               VAT (15%):
-              {{ currencyFormatter((getSubtotal(items) + getVehiclePartsTotal(vehicleParts)) * 0.15) }}
+              {{
+                currencyFormatter(
+                  (getSubtotal(items) + getVehiclePartsTotal(vehicleParts)) *
+                    0.15,
+                )
+              }}
             </div>
 
-            <div class="mt-4 pt-4 border-t border-gray-200 w-full flex flex-col items-end">
-              <div class="text-[10px] text-primary uppercase font-black tracking-[0.2em] mb-1">Total Amount</div>
+            <div
+              class="mt-4 pt-4 border-t border-gray-200 w-full flex flex-col items-end"
+            >
+              <div
+                class="text-[10px] text-primary uppercase font-black tracking-[0.2em] mb-1"
+              >
+                Total Amount
+              </div>
               <div class="text-3xl font-black text-primary">
                 {{
                   currencyFormatter(
-                    vatInclusive 
-                      ? (getSubtotal(items) + getVehiclePartsTotal(vehicleParts)) * 1.15 
-                      : (getSubtotal(items) + getVehiclePartsTotal(vehicleParts))
+                    vatInclusive
+                      ? (getSubtotal(items) +
+                          getVehiclePartsTotal(vehicleParts)) *
+                          1.15
+                      : getSubtotal(items) + getVehiclePartsTotal(vehicleParts),
                   )
                 }}
               </div>
@@ -97,7 +141,11 @@
       </component>
 
       <div class="mt-6">
-        <TextareaInput name="remark" label="General Remark" :attributes="{ placeholder: 'Enter any additional remarks...' }" />
+        <TextareaInput
+          name="remark"
+          label="General Remark"
+          :attributes="{ placeholder: 'Enter any additional remarks...' }"
+        />
       </div>
     </template>
 
@@ -162,7 +210,9 @@ const formValues = {
 };
 
 function getVehiclePartsTotal(parts: any[]) {
-  return parts?.reduce((sum: number, p: any) => sum + (Number(p.price) || 0), 0) || 0;
+  return (
+    parts?.reduce((sum: number, p: any) => sum + (Number(p.price) || 0), 0) || 0
+  );
 }
 
 function getSubtotal(items: any[]) {
@@ -177,15 +227,20 @@ function getSubtotal(items: any[]) {
 
 // Function to fetch shipper ID if a shipment is selected and we don't already have it
 const updateSelectedShipment = (shipmentId: string) => {
-  if (shipmentId && !props.data?.shipperId && shipmentId !== formValues.shipment) {
-    // If we have a shipment selected but no shipper, we might need to fetch the shipment details
-    // to get the shipper ID so DamageInput can fetch the right commodities.
-    // In a real scenario, we might want a hook here. For simplicity, we trigger a fetch if it changes.
-    getApi("/shipment").addAuthenticationHeader().get(`/${shipmentId}`).then(res => {
-      if (res.data?.shipper?._id) {
-        selectedShipperId.value = res.data.shipper._id;
-      }
-    }).catch(console.error);
+  if (
+    shipmentId &&
+    !props.data?.shipperId &&
+    shipmentId !== formValues.shipment
+  ) {
+    getApi("/shipment")
+      .addAuthenticationHeader()
+      .get(`/${shipmentId}`)
+      .then((res) => {
+        if (res.data?.shipper?._id) {
+          selectedShipperId.value = res.data.shipper._id;
+        }
+      })
+      .catch(console.error);
     formValues.shipment = shipmentId;
   }
   return "";
@@ -211,11 +266,13 @@ async function handleSubmit(values: any) {
       quantity: Number(i.quantity || 0),
       totalPrice: Number(i.unitPrice || 0) * Number(i.quantity || 0),
     })),
-    vehiclePartsAndPrices: (values.vehiclePartsAndPrices || []).filter((p: any) => p.vehiclePart).map((p: any) => ({
-      vehiclePart: p.vehiclePart,
-      price: Number(p.price || 0),
-      isRepair: !!p.isRepair,
-    })),
+    vehiclePartsAndPrices: (values.vehiclePartsAndPrices || [])
+      .filter((p: any) => p.vehiclePart)
+      .map((p: any) => ({
+        vehiclePart: p.vehiclePart,
+        price: Number(p.price || 0),
+        isRepair: !!p.isRepair,
+      })),
   };
 
   const res = await mutation.mutateAsync(payload);

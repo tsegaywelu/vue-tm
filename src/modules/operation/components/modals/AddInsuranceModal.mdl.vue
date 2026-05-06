@@ -74,53 +74,11 @@
 
         <InsuranceCategoryInput name="insuranceCategoryAmount" />
 
-        <div class="flex flex-col gap-2">
-          <label class="text-sm font-medium text-gray-700">Insurance Documents</label>
-          <div
-            @drop.prevent="handleDrop"
-            @dragover.prevent="isDragging = true"
-            @dragleave.prevent="isDragging = false"
-            @click="triggerFileInput"
-            class="flex flex-col items-center justify-center p-6 border-2 border-dashed border-gray-200 rounded-xl bg-gray-50/50 hover:bg-gray-50 transition-colors cursor-pointer group"
-            :class="{ 'border-primary bg-primary/5': isDragging }"
-          >
-            <input
-              type="file"
-              class="hidden"
-              ref="fileInput"
-              multiple
-              @change="handleFileChange"
-            />
-            
-            <div v-if="files.length === 0" class="flex flex-col items-center gap-2">
-              <div class="size-10 rounded-full bg-white flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
-                <i class="mdi mdi-cloud-upload-outline text-xl text-gray-400 group-hover:text-primary"></i>
-              </div>
-              <p class="text-xs text-gray-500">
-                <span class="font-bold text-primary">Click to upload</span> or drag and drop
-              </p>
-            </div>
-
-            <div v-else class="w-full space-y-2">
-              <div
-                v-for="(file, index) in files"
-                :key="index"
-                class="flex items-center justify-between bg-white p-2 px-3 rounded-lg border border-gray-100 shadow-sm"
-              >
-                <div class="flex items-center gap-2 overflow-hidden">
-                  <i class="mdi mdi-file-document-outline text-primary"></i>
-                  <span class="text-xs font-medium text-gray-700 truncate">{{ file.name }}</span>
-                </div>
-                <button
-                  @click.stop="removeFile(index)"
-                  class="p-1 hover:bg-red-50 rounded text-red-500 transition-colors"
-                >
-                  <i class="mdi mdi-close"></i>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <FileInput
+          name="insuranceDocuments"
+          label="Insurance Documents"
+          multiple
+        />
       </div>
     </template>
 
@@ -147,6 +105,7 @@ import Input from "@/components/form/Input.vue";
 import SelectInput from "@/components/form/SelectInput.vue";
 import DateInput from "@/components/form/DateInput.vue";
 import Button from "@/components/common/Button.vue";
+import FileInput from "@/components/form/FileInput.vue";
 import SubmitButton from "@/components/form/SubmitButton.vue";
 import { required, number } from "@/utils/validations";
 import { add_insurance } from "../../api/operation.api";
@@ -159,9 +118,6 @@ const props = defineProps<{
 }>();
 
 const toast = useToastStore();
-const files = ref<File[]>([]);
-const isDragging = ref(false);
-const fileInput = ref<HTMLInputElement | null>(null);
 
 const initialValues = {
   insurer: "",
@@ -173,28 +129,11 @@ const initialValues = {
   withHoldTax: "",
   total: "",
   insuranceCategoryAmount: [],
-};
-
-const handleFileChange = (e: Event) => {
-  const target = e.target as HTMLInputElement;
-  if (target.files) {
-    files.value.push(...Array.from(target.files));
-  }
-};
-
-const handleDrop = (e: DragEvent) => {
-  isDragging.value = false;
-  if (e.dataTransfer?.files) {
-    files.value.push(...Array.from(e.dataTransfer.files));
-  }
+  insuranceDocuments: [],
 };
 
 const triggerFileInput = () => {
-  fileInput.value?.click();
-};
-
-const removeFile = (index: number) => {
-  files.value.splice(index, 1);
+  // Logic handled by component
 };
 
 const handleSubmit = async (values: any) => {
@@ -215,9 +154,11 @@ const handleSubmit = async (values: any) => {
   }));
   formData.append("insuranceCategoryAmount", JSON.stringify(categories));
 
-  if (files.value.length > 0) {
-    files.value.forEach((file) => {
-      formData.append("insuranceDocuments", file);
+  if (values.insuranceDocuments && values.insuranceDocuments.length > 0) {
+    values.insuranceDocuments.forEach((file: any) => {
+      if (file instanceof File) {
+        formData.append("insuranceDocuments", file);
+      }
     });
   }
 

@@ -9,18 +9,12 @@
   >
     <template #center="{ form }">
       <div class="flex flex-col gap-4">
-        <!-- Logo Image Picker -->
-        <div class="flex flex-col gap-2">
-          <label class="text-sm font-bold text-grey-700">Logo</label>
-          <div class="flex items-center gap-4">
-            <div class="size-20 bg-grey-50 rounded-2xl border border-dashed border-grey-200 flex items-center justify-center overflow-hidden">
-              <img v-if="logoPreview" :src="logoPreview" class="w-full h-full object-cover" />
-              <i v-else class="mdi mdi-image-plus text-3xl text-grey-400"></i>
-            </div>
-            <input type="file" ref="fileInput" accept="image/*" class="hidden" @change="handleLogoChange" />
-            <Button size="sm" variant="outline" @click="triggerFileInput">Choose File</Button>
-          </div>
-        </div>
+        <FileInput
+          name="logo"
+          label="Logo"
+          imageOnly
+          accept="image/*"
+        />
 
         <!-- Two columns for personal / company info -->
         <div class="grid grid-cols-2 gap-4">
@@ -78,6 +72,7 @@ import { useToastStore } from "@/store/toastStore";
 import { closeModal } from "@customizer/modal-x";
 import ApiService from "@/api/ApiService";
 import Button from "@/components/common/Button.vue";
+import FileInput from "@/components/form/FileInput.vue";
 import SubmitButton from "@/components/form/SubmitButton.vue";
 
 const props = defineProps<{ data?: any }>();
@@ -96,6 +91,9 @@ const initialFormValues = computed(() => {
       shipperCode: customerData.value.shipperCode || customerData.value.customerCode || "",
       address: customerData.value.address || "",
       tin: customerData.value.tin || "",
+      logo: customerData.value.logo
+        ? `${API_URL}/${customerData.value.logo.replace(/\\/g, "/")}`
+        : null,
     };
   }
   return {
@@ -109,9 +107,6 @@ const initialFormValues = computed(() => {
   };
 });
 
-const fileInput = ref<HTMLInputElement | null>(null);
-const logoFile = ref<File | null>(null);
-const logoPreview = ref<string | null>(null);
 const repPhones = ref<string[]>([]);
 
 const toast = useToastStore();
@@ -119,9 +114,6 @@ const api = new ApiService();
 
 onMounted(() => {
   if (customerData.value) {
-    if (customerData.value.logo) {
-      logoPreview.value = `${API_URL}/${customerData.value.logo.replace(/\\/g, "/")}`;
-    }
     if (customerData.value.phoneNumbers) {
       repPhones.value = customerData.value.phoneNumbers.map((num: string) => num.replace(/^\+251/, ""));
     }
@@ -129,20 +121,7 @@ onMounted(() => {
 });
 
 const triggerFileInput = () => {
-  fileInput.value?.click();
-};
-
-const handleLogoChange = (event: Event) => {
-  const target = event.target as HTMLInputElement;
-  const file = target.files?.[0];
-  if (file) {
-    logoFile.value = file;
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      logoPreview.value = e.target?.result as string;
-    };
-    reader.readAsDataURL(file);
-  }
+  // Logic handled by component
 };
 
 const addRepPhone = () => {
@@ -166,8 +145,8 @@ const handleSubmit = async (values: any) => {
     formData.append("shipperCode", values.shipperCode);
     formData.append("address", values.address);
 
-    if (logoFile.value) {
-      formData.append("logo", logoFile.value);
+    if (values.logo && values.logo instanceof File) {
+      formData.append("logo", values.logo);
     }
 
     repPhones.value.forEach((num, index) => {

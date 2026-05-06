@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import InputParent from "./InputParent.vue";
 import InputLayout from "./InputLayout.vue";
 import { type InputLayoutProps } from "./InputLayout.vue";
+import { icons } from "@/utils/icons";
 
 export interface FileInputProps extends Omit<InputLayoutProps, "error"> {
   name: string;
@@ -10,12 +11,14 @@ export interface FileInputProps extends Omit<InputLayoutProps, "error"> {
   accept?: string;
   validation?: Record<string, any>;
   on_change?: (val: any, form: any) => void;
+  imageOnly?: boolean;
 }
 
 const props = withDefaults(defineProps<FileInputProps>(), {
   multiple: false,
   accept: "*/*",
   validation: () => ({}),
+  imageOnly: false,
 });
 
 const isDragging = ref(false);
@@ -69,7 +72,6 @@ function removeFile(index: number, field: any) {
 function getFileName(file: any) {
   if (file instanceof File) return file.name;
   if (typeof file === "string") {
-    // Extract filename from URL/Path
     try {
       const url = new URL(file, window.location.origin);
       return url.pathname.split("/").pop() || file;
@@ -78,6 +80,12 @@ function getFileName(file: any) {
     }
   }
   return "Unknown File";
+}
+
+function getPreviewUrl(file: any) {
+  if (file instanceof File) return URL.createObjectURL(file);
+  if (typeof file === "string") return file;
+  return null;
 }
 </script>
 
@@ -89,13 +97,73 @@ function getFileName(file: any) {
         :size="size"
         :parent_class_name="parent_class_name"
         :error="
-          field.state.meta.errors.length ? field.state.meta.errors[0] : undefined
+          field.state.meta.errors.length
+            ? field.state.meta.errors[0]
+            : undefined
         "
         :validations="validation"
         :description="description"
         input_style="border-none bg-transparent p-0 h-auto"
       >
+        <!-- Image Only / Avatar Mode -->
+        <div v-if="imageOnly" class="relative group w-fit">
+          <div
+            class="size-24 rounded-2xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center overflow-hidden transition-all bg-gray-50/50 hover:border-primary/50 hover:bg-gray-50"
+            :class="[
+              isDragging ? 'border-primary bg-primary/5' : '',
+              field.state.value ? 'border-solid border-primary/20' : '',
+            ]"
+            @dragover.prevent="isDragging = true"
+            @dragleave.prevent="isDragging = false"
+            @drop.prevent="handleDrop($event, field)"
+            @click="triggerFileInput"
+          >
+            <input
+              type="file"
+              class="hidden"
+              ref="fileInput"
+              accept="image/*"
+              @change="handleFileChange($event, field)"
+            />
+
+            <template v-if="field.state.value">
+              <img
+                :src="
+                  getPreviewUrl(
+                    Array.isArray(field.state.value)
+                      ? field.state.value[0]
+                      : field.state.value,
+                  ) || ''
+                "
+                class="w-full h-full object-cover"
+              />
+              <div
+                class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
+              >
+                <i class="mdi mdi-camera-outline text-white text-xl"></i>
+              </div>
+            </template>
+            <template v-else>
+              <i
+                class="mdi mdi-image-plus-outline text-2xl text-gray-400 group-hover:text-primary transition-colors"
+              ></i>
+              <span class="text-[10px] font-bold text-gray-400 mt-1 uppercase"
+                >Logo</span
+              >
+            </template>
+          </div>
+          <button
+            v-if="field.state.value"
+            @click.stop="field.handleChange(undefined)"
+            class="absolute -top-2 -right-2 size-6 bg-red-500 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-red-600 transition-colors z-10"
+          >
+            <i class="mdi mdi-close text-xs"></i>
+          </button>
+        </div>
+
+        <!-- Default Big Mode -->
         <div
+          v-else
           class="w-full h-full min-h-[140px] rounded-2xl border-2 border-dashed flex flex-col items-center justify-center p-6 transition-all cursor-pointer group relative"
           :class="[
             isDragging
@@ -120,7 +188,8 @@ function getFileName(file: any) {
           <div
             v-if="
               !field.state.value ||
-              (Array.isArray(field.state.value) && field.state.value.length === 0)
+              (Array.isArray(field.state.value) &&
+                field.state.value.length === 0)
             "
             class="flex flex-col items-center gap-2"
           >
@@ -137,7 +206,11 @@ function getFileName(file: any) {
                 drag and drop
               </p>
               <p class="text-xs text-gray-400 mt-1">
-                {{ multiple ? "You can upload multiple files" : "Single file only" }}
+                {{
+                  multiple
+                    ? "You can upload multiple files"
+                    : "Single file only"
+                }}
                 <span v-if="accept !== '*/*'">({{ accept }})</span>
               </p>
             </div>
@@ -156,22 +229,32 @@ function getFileName(file: any) {
                 <div
                   class="size-10 rounded-lg bg-gray-50 flex items-center justify-center shrink-0"
                 >
-                  <i class="mdi mdi-file-document-outline text-xl text-gray-400"></i>
+                  <i
+                    class="mdi mdi-file-document-outline text-xl text-gray-400"
+                  ></i>
                 </div>
                 <div class="flex flex-col overflow-hidden">
                   <span class="text-sm font-bold text-gray-900 truncate">{{
                     getFileName(file)
                   }}</span>
-                  <span v-if="typeof file === 'string'" class="text-[10px] text-primary uppercase font-bold tracking-wider">Existing File</span>
-                  <span v-else class="text-[10px] text-gray-400 uppercase font-bold tracking-wider">New Upload</span>
+                  <span
+                    v-if="typeof file === 'string'"
+                    class="text-[10px] text-primary uppercase font-bold tracking-wider"
+                    >Existing File</span
+                  >
+                  <span
+                    v-else
+                    class="text-[10px] text-gray-400 uppercase font-bold tracking-wider"
+                    >New Upload</span
+                  >
                 </div>
               </div>
               <button
-                @click.prevent="removeFile(index, field)"
+                @click.prevent="removeFile(+index, field)"
                 class="size-8 flex items-center justify-center rounded-full hover:bg-red-50 text-gray-400 hover:text-red-500 transition-colors"
                 title="Remove file"
               >
-                <i class="mdi mdi-close"></i>
+                <i v-html="icons.close"></i>
               </button>
             </div>
 

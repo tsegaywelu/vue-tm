@@ -389,19 +389,28 @@ const getAttachmentsCount = (row: any) => {
 };
 
 const openPhotos = (row: any) => {
-  const attachments = row.attachments || [];
+  const attachments = [...(row.attachments || [])];
   if (row.attachment) attachments.push(row.attachment);
 
-  const fileURL = attachments[0]; // For now just open the first one, or use a gallery modal if available
+  const fileURL = attachments[0];
   if (fileURL) {
-    openModal("FileViewerModal", { fileURL: getStaticUrl(fileURL) });
+    openModal("FileViewerModal", { fileURL: resolveFileUrl(fileURL) });
   }
 };
 
-const resolveFileUrl = (path: string) => {
+const resolveFileUrl = (path: any) => {
   if (!path) return "";
+  if (path instanceof File) return URL.createObjectURL(path);
+  if (typeof path !== "string") return "";
+
   if (path.startsWith("http://") || path.startsWith("https://")) return path;
-  const apiBase = (import.meta.env.VITE_API_URL || "").replace(/\/+$/, "");
+
+  const apiBase = (
+    import.meta.env.v_STATIC_PATH ||
+    import.meta.env.v_API_URL ||
+    ""
+  ).replace(/\/+$/, "");
+
   const normalized = path.replace(/\\/g, "/").replace(/^\/+/, "");
   return `${apiBase}/${normalized}`;
 };
