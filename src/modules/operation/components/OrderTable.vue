@@ -3,12 +3,14 @@
     :row_alignment="{
       order: 'left',
       details: 'left',
+      shipper: 'left',
       carrier: 'left',
       actions: 'center',
     }"
     :head_alignment="{
       order: 'left',
       details: 'left',
+      shipper: 'left',
       carrier: 'left',
       actions: 'center',
     }"
@@ -75,6 +77,12 @@
     <template #cell-created="{ row }">
       <span class="text-base">
         {{ row.createdAt?.split("T")[0] }}
+      </span>
+    </template>
+
+    <template #cell-shipper="{ row }">
+      <span class="font-medium text-gray-900">
+        {{ row.shipper?.name || "N/A" }}
       </span>
     </template>
 
@@ -147,6 +155,7 @@ const columns: TableColumn[] = [
   { key: "order", label: "Order", field: "route" },
   { key: "details", label: "Details", field: "vehicleType" },
   { key: "created", label: "Created", field: "createdAt" },
+  { key: "shipper", label: "Shipper", field: "shipper" },
   { key: "carrier", label: "Carrier", field: "carrier" },
   { key: "status", label: "Status", field: "status" },
   { key: "actions", label: "Actions", field: "", cellAlign: "right" },
@@ -155,6 +164,7 @@ const columns: TableColumn[] = [
 const activeFilters = ref<ShipmentFilterParams>({});
 
 const { response, refetch } = usePagination({
+  queryKey: ["order-list"],
   id: "order-list",
   url: "/order",
   params: (state: any) => {

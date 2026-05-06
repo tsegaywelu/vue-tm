@@ -236,6 +236,14 @@
               :attributes="{
                 placeholder: 'Choose vehicle',
               }"
+              :params="
+                (q: string) => {
+                  return {
+                    vehiclePlateNumber: q.search,
+                    q: undefined,
+                  };
+                }
+              "
               searchable
               label_key="plateNumber"
               value_key="_id"

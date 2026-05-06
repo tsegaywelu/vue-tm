@@ -8,11 +8,11 @@ export function fetch_order_by_id(id: string) {
 }
 
 export function create_order(data: any) {
-  return api.addAuthenticationHeader().post("", data);
+  return api.addAuthenticationHeader().post("/carrier", data);
 }
 
 export function update_order(id: string, data: any) {
-  return api.addAuthenticationHeader().patch(`/${id}`, data);
+  return api.addAuthenticationHeader().patch(`/${id}/carrier`, data);
 }
 
 export function approve_order(id: string) {
@@ -23,7 +23,10 @@ export function cancel_order(id: string, data?: any) {
   return api.addAuthenticationHeader().patch(`/cancel/${id}`, data || {});
 }
 
-export function fetch_contract_route_details(shipperId: string, routeId: string) {
+export function fetch_contract_route_details(
+  shipperId: string,
+  routeId: string,
+) {
   return getApi("/contract")
     .addAuthenticationHeader()
     .get(`/contract-route-details-carrier/${shipperId}/${routeId}`);

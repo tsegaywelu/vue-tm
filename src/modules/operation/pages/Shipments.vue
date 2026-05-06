@@ -1,6 +1,7 @@
 <template>
   <Teleport to="#page-actions" defer>
     <div class="flex items-center gap-2">
+      <p v-permission="'REPORT:view'">test</p>
       <!-- Download Dropdown -->
       <Dropdown>
         <template #trigger>

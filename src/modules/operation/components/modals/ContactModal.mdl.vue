@@ -9,18 +9,12 @@
   >
     <template #center="{ form }">
       <div class="flex flex-col gap-4">
-        <!-- Picture Picker -->
-        <div class="flex flex-col gap-2">
-          <label class="text-sm font-bold text-grey-700">Profile Picture</label>
-          <div class="flex items-center gap-4">
-            <div class="size-20 bg-grey-50 rounded-2xl border border-dashed border-grey-200 flex items-center justify-center overflow-hidden">
-              <img v-if="logoPreview" :src="logoPreview" class="w-full h-full object-cover" />
-              <i v-else class="mdi mdi-image-plus text-3xl text-grey-400"></i>
-            </div>
-            <input type="file" ref="fileInput" accept="image/*" class="hidden" @change="handleLogoChange" />
-            <Button type="button" size="sm" variant="outline" @click="triggerFileInput">Choose File</Button>
-          </div>
-        </div>
+        <FileInput
+          name="profilePicture"
+          label="Profile Picture"
+          imageOnly
+          accept="image/*"
+        />
 
         <!-- Basic Info -->
         <div class="grid grid-cols-2 gap-4">
@@ -79,22 +73,25 @@
         </div>
 
         <div>
-          <Input
-            name="dateOfBirth"
-            label="Date of Birth"
-            type="date"
-          />
+          <Input name="dateOfBirth" label="Date of Birth" type="date" />
         </div>
 
         <!-- Hidden inputs based on form values using Subscribe -->
         <component
           :is="form.Subscribe"
-          :selector="(state: any) => [state.values.group, state.values.loginAccess]"
+          :selector="
+            (state: any) => [state.values.group, state.values.loginAccess]
+          "
         >
           <template #default="[group, loginAccess]">
             <!-- Driver Specifics -->
-            <div v-if="group === 'DRIVER'" class="border border-grey-100 p-4 rounded-xl bg-grey-25 mt-2 flex flex-col gap-4">
-              <h4 class="font-bold text-grey-900 text-sm">Driver Specific Information</h4>
+            <div
+              v-if="group === 'DRIVER'"
+              class="border border-grey-100 p-4 rounded-xl bg-grey-25 mt-2 flex flex-col gap-4"
+            >
+              <h4 class="font-bold text-grey-900 text-sm">
+                Driver Specific Information
+              </h4>
               <div class="grid grid-cols-2 gap-4">
                 <div>
                   <Input
@@ -122,8 +119,13 @@
             </div>
 
             <!-- Mechanic Specifics -->
-            <div v-if="group === 'MECHANIC'" class="border border-grey-100 p-4 rounded-xl bg-grey-25 mt-2 flex flex-col gap-4">
-              <h4 class="font-bold text-grey-900 text-sm">Mechanic Specific Information</h4>
+            <div
+              v-if="group === 'MECHANIC'"
+              class="border border-grey-100 p-4 rounded-xl bg-grey-25 mt-2 flex flex-col gap-4"
+            >
+              <h4 class="font-bold text-grey-900 text-sm">
+                Mechanic Specific Information
+              </h4>
               <div class="grid grid-cols-2 gap-4">
                 <div>
                   <Input
@@ -144,7 +146,9 @@
             </div>
 
             <!-- Login Access -->
-            <div class="border border-grey-100 p-4 rounded-xl bg-grey-25 mt-2 flex flex-col gap-4">
+            <div
+              class="border border-grey-100 p-4 rounded-xl bg-grey-25 mt-2 flex flex-col gap-4"
+            >
               <div class="flex items-center gap-2">
                 <component :is="form.Field" name="loginAccess">
                   <template #default="{ field }">
@@ -158,7 +162,10 @@
                     />
                   </template>
                 </component>
-                <label for="loginAccess" class="font-bold text-grey-700 text-sm select-none cursor-pointer">
+                <label
+                  for="loginAccess"
+                  class="font-bold text-grey-700 text-sm select-none cursor-pointer"
+                >
                   Enable User Login
                 </label>
               </div>
@@ -219,6 +226,7 @@ import { required } from "@/utils/validations";
 import { useToastStore } from "@/store/toastStore";
 import { closeModal } from "@customizer/modal-x";
 import Button from "@/components/common/Button.vue";
+import FileInput from "@/components/form/FileInput.vue";
 import SubmitButton from "@/components/form/SubmitButton.vue";
 import { add_contact, update_contact } from "../../api/operation.api";
 import { fetch_roles } from "../../api/settings.api";
@@ -228,33 +236,10 @@ const props = defineProps<{ data?: { contact?: any } }>();
 
 const contact = computed(() => props.data?.contact);
 
-const fileInput = ref<HTMLInputElement | null>(null);
-const logoFile = ref<File | null>(null);
-const logoPreview = ref<string | null>(null);
-
 const API_URL = import.meta.env.VITE_API_URL;
 
-onMounted(() => {
-  if (contact.value && contact.value.profilePicture) {
-    logoPreview.value = `${API_URL}/${contact.value.profilePicture.replace(/\\/g, "/")}`;
-  }
-});
-
 const triggerFileInput = () => {
-  fileInput.value?.click();
-};
-
-const handleLogoChange = (event: Event) => {
-  const target = event.target as HTMLInputElement;
-  const file = target.files?.[0];
-  if (file) {
-    logoFile.value = file;
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      logoPreview.value = e.target?.result as string;
-    };
-    reader.readAsDataURL(file);
-  }
+  // Logic handled by component
 };
 
 const { data: rolesResponse } = useQuery({
@@ -263,7 +248,8 @@ const { data: rolesResponse } = useQuery({
 });
 
 const roleOptions = computed(() => {
-  const rawRoles = rolesResponse.value?.data?.result || rolesResponse.value?.data || [];
+  const rawRoles =
+    rolesResponse.value?.data?.result || rolesResponse.value?.data || [];
   return Array.isArray(rawRoles)
     ? rawRoles.map((r: any) => ({ label: r.name, value: r._id }))
     : [];
@@ -278,9 +264,14 @@ const initialFormValues = computed(() => {
       group: contact.value.group || "OTHER",
       jobTitle: contact.value.jobTitle || "",
       employeeNumber: contact.value.employeeNumber || "",
-      dateOfBirth: contact.value.dateOfBirth ? contact.value.dateOfBirth.split("T")[0] : "",
+      dateOfBirth: contact.value.dateOfBirth
+        ? contact.value.dateOfBirth.split("T")[0]
+        : "",
       driverLicenceNumber: contact.value.driver?.driverLicenceNumber || "",
-      drivingLicenceExpirationDate: contact.value.driver?.drivingLicenceExpirationDate ? contact.value.driver.drivingLicenceExpirationDate.split("T")[0] : "",
+      drivingLicenceExpirationDate: contact.value.driver
+        ?.drivingLicenceExpirationDate
+        ? contact.value.driver.drivingLicenceExpirationDate.split("T")[0]
+        : "",
       driverType: contact.value.driver?.driverType || "",
       certification: contact.value.mechanic?.certification || "",
       experience: contact.value.mechanic?.experience || "",
@@ -288,6 +279,9 @@ const initialFormValues = computed(() => {
       username: contact.value.username || "",
       password: "",
       role: contact.value.role || "",
+      profilePicture: contact.value.profilePicture
+        ? `${API_URL}/${contact.value.profilePicture.replace(/\\/g, "/")}`
+        : null,
     };
   }
   return {
@@ -328,7 +322,8 @@ const createMutation = useMutation({
 });
 
 const updateMutation = useMutation({
-  mutationFn: ({ id, data }: { id: string; data: any }) => update_contact(id, data),
+  mutationFn: ({ id, data }: { id: string; data: any }) =>
+    update_contact(id, data),
 });
 
 const handleSubmit = async (values: any) => {
@@ -378,8 +373,8 @@ const handleSubmit = async (values: any) => {
     }
   });
 
-  if (logoFile.value) {
-    formData.append("profilePicture", logoFile.value);
+  if (values.profilePicture && values.profilePicture instanceof File) {
+    formData.append("profilePicture", values.profilePicture);
   }
 
   if (contact.value) {

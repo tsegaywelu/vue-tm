@@ -21,6 +21,7 @@
             label_key="shipper.name"
             value_key="shipper._id"
             url="/shipper/contractedShippers"
+            :display_value="internalLabels.shipper"
             :validation="{
               required,
             }"
@@ -46,6 +47,7 @@
                 label_key="routeName"
                 value_key="_id"
                 :url="`/route/shipper/${shipper || ''}`"
+                :display_value="internalLabels.route"
                 :validation="{
                   required,
                 }"
@@ -205,8 +207,14 @@
             :attributes="{
               placeholder: '1',
               type: 'number',
-              min: 1,
-              max: 10,
+            }"
+            :validation="{
+              range(value: any) {
+                const val = Number(value);
+                return val >= 1 && val <= 10
+                  ? [true, '']
+                  : [false, 'Number Must be Between 1 and 10'];
+              },
             }"
           />
 
@@ -397,7 +405,27 @@ const handleRouteSelect = async (route: any, form: any) => {
   }
 };
 
+const initializeRouteDetails = (details: any) => {
+  if (!details) return;
+  routeCommodities.value = details.commodities || [];
+  routePackagings.value = details.packagings || [];
+  routeAgents.value = details.agents || [];
+  contractProductTypes.value = details.productType || [];
+};
+
+watch(
+  () => props.preloadedRouteDetails,
+  (newDetails) => {
+    if (newDetails) initializeRouteDetails(newDetails);
+  },
+  { immediate: true },
+);
+
 onMounted(async () => {
+  if (props.preloadedRouteDetails) {
+    initializeRouteDetails(props.preloadedRouteDetails);
+    return;
+  }
   if (props.initialValues.route && props.initialValues.shipper) {
     isRouteDetailsLoading.value = true;
     try {

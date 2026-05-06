@@ -41,7 +41,10 @@
                 name="amount"
                 label="Amount"
                 type="number"
-                :validation="{ required }"
+                :attributes="{
+                  placeholder: 'Enter Amount',
+                }"
+                :validation="{ price, required }"
               />
               <Input
                 v-if="category === 'FUEL'"
@@ -63,21 +66,22 @@
           </template>
         </component>
 
-        <Input
+        <TextareaInput
           name="notes"
           label="Notes"
           type="textarea"
-          :attributes="{ rows: 3 }"
+          :attributes="{ placeholder: 'Enter Description', rows: 3 }"
         />
 
-        <div class="flex flex-col gap-2">
-          <label class="text-sm font-medium text-gray-700">Attachment</label>
-          <input
-            type="file"
-            @change="handleFileChange"
-            class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 transition-all"
-          />
-        </div>
+        <FileInput name="attachment" label="Attachment" />
+      </div>
+    </template>
+    <template #bottom>
+      <div class="flex justify-end gap-3">
+        <Button variant="outline" size="md" @click="closeModal(false)">
+          Cancel
+        </Button>
+        <SubmitButton form="addSettlementForm"> Add Transaction </SubmitButton>
       </div>
     </template>
   </FormModalParent>
@@ -88,24 +92,20 @@ import { ref } from "vue";
 import FormModalParent from "@/components/modals/FormModalParent.vue";
 import Input from "@/components/form/Input.vue";
 import SelectInput from "@/components/form/SelectInput.vue";
-import { required } from "@/utils/validations";
+import FileInput from "@/components/form/FileInput.vue";
+import Button from "@/components/common/Button.vue";
+import SubmitButton from "@/components/form/SubmitButton.vue";
+import { price, required } from "@/utils/validations";
 import { add_transaction_to_advance } from "../../api/operation.api";
 import { useToastStore } from "@/store/toastStore";
 import { closeModal } from "@customizer/modal-x";
+import TextareaInput from "@/components/form/TextareaInput.vue";
 
 const props = defineProps<{
   data: { id: string; onSuccess: () => void };
 }>();
 
 const toast = useToastStore();
-const selectedFile = ref<File | null>(null);
-
-const handleFileChange = (e: Event) => {
-  const target = e.target as HTMLInputElement;
-  if (target.files && target.files.length > 0) {
-    selectedFile.value = target.files[0];
-  }
-};
 
 const handleSubmit = async (values: any) => {
   const formData = new FormData();
@@ -114,13 +114,17 @@ const handleSubmit = async (values: any) => {
   if (values.liters) formData.append("liters", values.liters);
   if (values.subCategory) formData.append("subCategory", values.subCategory);
   if (values.notes) formData.append("notes", values.notes);
-  
-  if (selectedFile.value) {
-    formData.append("attachment", selectedFile.value);
+
+  if (values.attachment && values.attachment instanceof File) {
+    formData.append("attachment", values.attachment);
   }
 
   try {
-    const res = await add_transaction_to_advance(props.data.id, values.type, formData);
+    const res = await add_transaction_to_advance(
+      props.data.id,
+      values.type,
+      formData,
+    );
     if (res.status === 200 || res.status === 201) {
       toast.success("Transaction added successfully");
       props.data.onSuccess();

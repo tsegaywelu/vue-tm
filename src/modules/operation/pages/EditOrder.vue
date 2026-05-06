@@ -9,6 +9,7 @@
     form-id="edit-order-form"
     :initial-values="initialValues"
     :labels="labels"
+    :preloaded-route-details="routeDetails"
     :on-submit="handleUpdateOrder"
   >
     <template #submit-btn="{ form }">
@@ -28,8 +29,10 @@ import { fetch_order_by_id, update_order } from "../api/orders.api";
 import { useToastStore } from "@/store/toastStore";
 import SubmitButton from "@/components/form/SubmitButton.vue";
 import Button from "@/components/Button.vue";
-import { useMutation, useQuery } from "@tanstack/vue-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/vue-query";
+import { fetch_contract_route_details } from "../api/orders.api";
 
+const queryClient = useQueryClient();
 const router = useRouter();
 const route = useRoute();
 const toast = useToastStore();
@@ -44,11 +47,24 @@ const { data: order, isLoading } = useQuery({
   },
 });
 
+const { data: routeDetails, isLoading: isRouteDetailsLoading } = useQuery({
+  queryKey: ["contract-route-details", orderId],
+  queryFn: async () => {
+    if (!order.value) return null;
+    const shipperId = order.value.shipper?._id;
+    const routeId = order.value.route?._id;
+    if (!shipperId || !routeId) return null;
+    const res = await fetch_contract_route_details(shipperId, routeId);
+    return res.data;
+  },
+  enabled: computed(() => !!order.value),
+});
+
 const initialValues = computed(() => {
   if (!order.value) return null;
   const data = order.value;
   return {
-    carrier: data.carrier?._id || "",
+    shipper: data.shipper?._id || "",
     route: data.route?._id || "",
     productType: data.productType || "",
     agent: data.agent?._id || "",
@@ -59,7 +75,7 @@ const initialValues = computed(() => {
     priority: data.priority || "",
     totalRequest: data.totalRequest || "",
     unitOfMeasurement: data.unitOfMeasurement || "",
-    numberOfVehicles: data.numberOfVehicles || "1",
+    numberOfVehicles: +data.numberOfVehicles,
     allocationNumber: (data as any).allocationNumber || "",
     remark: data.remark || "",
   };
@@ -69,7 +85,7 @@ const labels = computed(() => {
   if (!order.value) return {};
   const data = order.value;
   return {
-    carrier: data.carrier?.name || "",
+    shipper: data.shipper?.name || "",
     route: data.route?.routeName || "",
     agent: data.agent?.name || "",
     packaging: data.packaging?.name || "",
@@ -90,6 +106,8 @@ const handleUpdateOrder = async (values: any) => {
   const res = await updateMutation.mutateAsync(values);
   if (res.success) {
     toast.success("Order updated successfully");
+    queryClient.invalidateQueries({ queryKey: ["order", orderId] });
+    queryClient.invalidateQueries({ queryKey: ["order-list"] });
     router.push("/operation/orders");
   } else {
     toast.error(res.error || "Failed to update order");
