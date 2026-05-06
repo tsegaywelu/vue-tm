@@ -10,7 +10,7 @@
     <template #search-prefix>
       <div class="h-full flex items-center border-r border-gray-200 pr-2 mr-2 w-48">
         <Select
-          class="[&_.custom-input]:border-none [&_.custom-input]:min-h-full min-w-48"
+          class="[&_.input-focus]:shadow-none! [&_.input-focus]:border-none [&_.input-focus]:min-h-full min-w-48"
           v-model="selectedSearchField"
           :options="searchFieldOptions"
           label_key="label"
@@ -135,7 +135,7 @@ const { response, refetch } = usePagination<any>({
     const params: any = { ...activeFilters.value };
     // Map the search query to the dynamic key the backend expects
     if (searchTerm.value) {
-      params[selectedSearchField.value] = searchTerm.value;
+      params[`${selectedSearchField.value}[regexAny]`] = searchTerm.value;
       params.q = undefined; // Prevent sending the default 'q' parameter
     }
     return params;

@@ -335,13 +335,13 @@ export const maintenance_navs: Navs[] = [
     show: true,
     children: [
       {
-        path: "vehicle-tyres/$id",
-        name: "Tyre Detail",
+        path: "/vehicle-tyres/add",
+        name: "Add Tyre",
         show: false,
       },
       {
-        path: "/vehicle-tyres/add",
-        name: "Add Tyre",
+        path: "/vehicle-tyres/$id",
+        name: "Tyre Detail",
         show: false,
       },
       {
@@ -365,122 +365,150 @@ export const maintenance_navs: Navs[] = [
         name: "Mechanic",
         path: "/maintenance/mechanic",
         show: true,
+        children: [
+          {
+            path: "/maintenance/mechanic/add",
+            name: "Add Mechanic",
+            show: false,
+          },
+          {
+            path: "/maintenance/mechanic/edit/$id",
+            name: "Edit Mechanic",
+            show: false,
+          },
+        ]
       },
-      {
-        path: "/maintenance/mechanic/add",
-        name: "Add Mechanic",
-        show: false,
-      },
-      {
-        path: "/maintenance/mechanic/edit/$id",
-        name: "Edit Mechanic",
-        show: false,
-      },
+
       {
         name: "Inspection",
         path: "/maintenance/inspection",
         show: true,
+        children: [
+          {
+            path: "/maintenance/inspection/add",
+            name: "Add Inspection",
+            show: false,
+          },
+          {
+            path: "/maintenance/inspection/edit/$id",
+            name: "Edit Inspection",
+            show: false,
+          },
+        ]
       },
-      {
-        path: "/maintenance/inspection/add",
-        name: "Add Inspection",
-        show: false,
-      },
-      {
-        path: "/maintenance/inspection/edit/$id",
-        name: "Edit Inspection",
-        show: false,
-      },
+
       {
         name: "Service Record",
         path: "/maintenance/service-record",
         show: true,
+        children: [
+          {
+            path: "/maintenance/service-record/add",
+            name: "Add Service Record",
+            show: false,
+          },
+          {
+            path: "/maintenance/service-record/edit/$id",
+            name: "Edit Service Record",
+            show: false,
+          },
+        ]
       },
 
-      {
-        path: "/maintenance/service-record/add",
-        name: "Add Service Record",
-        show: false,
-      },
-      {
-        path: "/maintenance/service-record/edit/$id",
-        name: "Edit Service Record",
-        show: false,
-      },
+
       {
         name: "Service Reminder",
         path: "/maintenance/service-reminder",
         show: true,
+        children: [
+          {
+            path: "/maintenance/service-reminder/add",
+            name: "Add Service Reminder",
+            show: false,
+          },
+          {
+            path: "/maintenance/service-reminder/edit/$id",
+            name: "Edit Service Reminder",
+            show: false,
+          },
+        ]
       },
-      {
-        path: "/maintenance/service-reminder/add",
-        name: "Add Service Reminder",
-        show: false,
-      },
-      {
-        path: "/maintenance/service-reminder/edit/$id",
-        name: "Edit Service Reminder",
-        show: false,
-      },
+
       {
         name: "Service Task",
         path: "/maintenance/service-task",
         show: true,
+        children: [
+          {
+            path: "/maintenance/service-task/add",
+            name: "Add Service Task",
+            show: false,
+          },
+          {
+            path: "/maintenance/service-task/edit/$id",
+            name: "Edit Service Task",
+            show: false,
+          },
+        ]
       },
-      {
-        path: "/maintenance/service-task/add",
-        name: "Add Service Task",
-        show: false,
-      },
-      {
-        path: "/maintenance/service-task/edit/$id",
-        name: "Edit Service Task",
-        show: false,
-      },
+
       {
         name: "Service Type",
         path: "/maintenance/service-type",
         show: true,
+        children: [
+          {
+            name: "Add Service Type",
+            path: "/maintenance/service-type/add",
+            show: false,
+          },
+          {
+            path: "/maintenance/service-type/edit/$id",
+            name: "Edit Service Type",
+            show: false,
+          },
+        ]
+
       },
 
-      {
-        name: "Add Service Type",
-        path: "/maintenance/service-type/add",
-        show: false,
-      },
-      {
-        path: "/maintenance/service-type/edit/$id",
-        name: "Edit Service Type",
-        show: false,
-      },
+
       {
         name: "Work Order",
         path: "/maintenance/work-order",
         show: true,
+        children: [
+          {
+            name: "Add Work Order",
+            path: "/maintenance/work-order/add",
+            show: false,
+          },
+          {
+            // path: "/maintenance/work-order/edit/:id",
+            path: 'maintenance/work-order/edit/$id',
+            name: "Edit Work Order",
+            show: false,
+          },
+          {
+            path: "/maintenance/work-order/$id",
+            name: "Work Order Details",
+            show: false,
+          },
+        ]
       },
-      {
-        name: "Add Work Order",
-        path: "/maintenance/work-order/add",
-        show: false,
-      },
-      {
-        // path: "/maintenance/work-order/edit/:id",
-        path: "maintenance/work-order/edit/$id",
-        name: "Edit Work Order",
-        show: false,
-      },
+
+
       {
         name: "Workshop",
         path: "/maintenance/workshop",
         show: true,
         children: [
           {
-            path: "add",
+            path: "/maintenance/workshop/add",
             name: "Add Workshop",
             show: false,
           },
           {
-            path: "edit/$id",
+            path: "/maintenance/workshop/edit/$id",
             name: "Edit Workshop",
             show: false,
           },
@@ -495,6 +523,13 @@ export const maintenance_navs: Navs[] = [
         name: "Tyre Handoffs",
         path: "/maintenance/tyre-handoffs",
         show: true,
+        children: [
+          {
+            path: "/maintenance/tyre-handoffs/$id",
+            name: "Tyre Handoff Details",
+            show: false,
+          },
+        ],
       },
     ],
   },
@@ -520,11 +555,25 @@ export const finance_navs: Navs[] = [
         name: "Invoice Report",
         path: "/finance/invoice-report",
         show: true,
+        children: [
+          {
+            path: "/finance/invoice-report/$id",
+            name: "Invoice Report Details",
+            show: false,
+          },
+        ],
       },
       {
         name: "Payment Collection",
         path: "/finance/payment-collection",
         show: true,
+        children: [
+          {
+            path: "/finance/payment-collection/$id",
+            name: "Payment Collection Details",
+            show: false,
+          },
+        ],
       },
       {
         name: "Expense",
@@ -540,17 +589,20 @@ export const finance_navs: Navs[] = [
         name: "Expense Types",
         path: "/finance/expense-types",
         show: true,
+        children: [
+          {
+            name: "Add Expense Type",
+            path: "/finance/expense-types/add",
+            show: false,
+          },
+          {
+            name: "Edit Expense Type",
+            path: "/finance/expense-types/edit/$id",
+            show: false,
+          },
+        ]
       },
-      {
-        name: "Add Expense Type",
-        path: "/finance/expense-types/add",
-        show: false,
-      },
-      {
-        name: "Edit Expense Type",
-        path: "/finance/expense-types/edit/$id",
-        show: false,
-      },
+
       {
         name: "Fuel Transactions",
         path: "/finance/fuel-transactions",
@@ -575,122 +627,166 @@ export const inventory_navs: Navs[] = [
         name: "Categories",
         path: "/inventory/categories",
         show: true,
+        children: [
+          {
+            name: "Add Category",
+            path: "/inventory/categories/add",
+            show: false,
+          },
+          {
+            name: "Edit Category",
+            path: "/inventory/categories/edit/$id",
+            show: false,
+          },
+        ]
       },
-      {
-        name: "Add Category",
-        path: "/inventory/categories/add",
-        show: false,
-      },
-      {
-        name: "Edit Category",
-        path: "/inventory/categories/edit/$id",
-        show: false,
-      },
+
       {
         name: "Item Groups",
         path: "/inventory/item-groups",
         show: true,
+        children: [
+          {
+            name: "Add Item Group",
+            path: "/inventory/item-groups/add",
+            show: false,
+          },
+          {
+            name: "Edit Item Group",
+            path: "/inventory/item-groups/edit/$id",
+            show: false,
+          },
+        ]
       },
-      {
-        name: "Add Item Group",
-        path: "/inventory/item-groups/add",
-        show: false,
-      },
-      {
-        name: "Edit Item Group",
-        path: "/inventory/item-groups/edit/$id",
-        show: false,
-      },
+
       {
         name: "Vendor",
         path: "/inventory/vendor",
         show: true,
+        children: [
+          {
+            name: "Add Vendor",
+            path: "/inventory/vendor/add",
+            show: false,
+          },
+          {
+            name: "Edit Vendor",
+            path: "/inventory/vendor/edit/$id",
+            show: false,
+          },
+        ]
       },
-      {
-        name: "Add Vendor",
-        path: "/inventory/vendor/add",
-        show: false,
-      },
-      {
-        name: "Edit Vendor",
-        path: "/inventory/vendor/edit/$id",
-        show: false,
-      },
+
       {
         name: "Items",
         path: "/inventory/items",
         show: true,
+        children: [
+          {
+            name: "Add Inventory Item",
+            path: "/inventory/items/add",
+            show: false,
+          },
+          {
+            name: "Edit Inventory Item",
+            path: "/inventory/items/edit/$id",
+            show: false,
+          },
+        ]
       },
-      {
-        name: "Add Inventory Item",
-        path: "/inventory/items/add",
-        show: false,
-      },
-      {
-        name: "Edit Inventory Item",
-        path: "/inventory/items/edit/$id",
-        show: false,
-      },
+
       {
         name: "Store Requisition",
         path: "/inventory/store-requisition",
         show: true,
+        children: [
+          {
+            name: "Add Store Requisition",
+            path: "/inventory/store-requisition/add",
+            show: false,
+          },
+          {
+            name: "Edit Store Requisition",
+            path: "/inventory/store-requisition/edit/$id",
+            show: false,
+          },
+          {
+            name: "Store Requisition Details",
+            path: "/inventory/store-requisition/$id",
+            show: false,
+          },
+        ]
       },
-      {
-        name: "Add Store Requisition",
-        path: "/inventory/store-requisition/add",
-        show: false,
-      },
-      {
-        name: "Edit Store Requisition",
-        path: "/inventory/store-requisition/edit/$id",
-        show: false,
-      },
+
       {
         name: "Purchase Requisition",
         path: "/inventory/purchase-requisition",
         show: true,
+        children: [
+          {
+            name: "Add Purchase Requisition",
+            path: "/inventory/purchase-requisition/add",
+            show: false,
+          },
+          {
+            name: "Edit Purchase Requisition",
+            path: "/inventory/purchase-requisition/edit/$id",
+            show: false,
+          },
+          {
+            name: "Purchase Requisition Details",
+            path: "/inventory/purchase-requisition/$id",
+            show: false,
+          },
+        ]
       },
-      {
-        name: "Add Purchase Requisition",
-        path: "/inventory/purchase-requisition/add",
-        show: false,
-      },
-      {
-        name: "Edit Purchase Requisition",
-        path: "/inventory/purchase-requisition/edit/$id",
-        show: false,
-      },
+
       {
         name: "Purchase Order",
         path: "/inventory/purchase-order",
         show: true,
+        children: [
+          {
+            name: "Add Purchase Order",
+            path: "/inventory/purchase-order/add",
+            show: false,
+          },
+          {
+            name: "Edit Purchase Order",
+            path: "/inventory/purchase-order/edit/$id",
+            show: false,
+          },
+          {
+            name: "Purchase Order Details",
+            path: "/inventory/purchase-order/$id",
+            show: false,
+          },
+        ]
       },
-      {
-        name: "Add Purchase Order",
-        path: "/inventory/purchase-order/add",
-        show: false,
-      },
-      {
-        name: "Edit Purchase Order",
-        path: "/inventory/purchase-order/edit/$id",
-        show: false,
-      },
+
       {
         name: "Issue / Receive",
         path: "/inventory/good-transfer",
         show: true,
+        children: [
+          {
+            name: "Add Transfer Voucher",
+            path: "/inventory/good-transfer/add",
+            show: false,
+          },
+          {
+            name: "Edit Transfer Voucher",
+            path: "/inventory/good-transfer/edit/$id",
+            show: false,
+          },
+          {
+            name: "Transfer Voucher Details",
+            path: "/inventory/good-transfer/$id",
+            show: false,
+          },
+        ]
       },
-      {
-        name: "Add Transfer Voucher",
-        path: "/inventory/good-transfer/add",
-        show: false,
-      },
-      {
-        name: "Edit Transfer Voucher",
-        path: "/inventory/good-transfer/edit/$id",
-        show: false,
-      },
+
     ],
   },
 ];
@@ -705,46 +801,103 @@ export const setting_navs: Navs[] = [
         name: "User and Role",
         path: "/setting/user-and-role",
         show: true,
+        children: [
+          {
+            name: "Add User",
+            path: "/setting/user-and-role/user/add",
+            show: false,
+          },
+          {
+            name: "Edit User",
+            path: "/setting/user-and-role/user/edit/$id",
+            show: false,
+          },
+          {
+            name: "Add Role",
+            path: "/setting/user-and-role/role/add",
+            show: false,
+          },
+          {
+            name: "Edit Role",
+            path: "/setting/user-and-role/role/edit/$id",
+            show: false,
+          },
+        ]
       },
-      {
-        name: "Add User",
-        path: "/setting/user-and-role/user/add",
-        show: false,
-      },
-      {
-        name: "Edit User",
-        path: "/setting/user-and-role/user/edit/$id",
-        show: false,
-      },
-      {
-        name: "Add Role",
-        path: "/setting/user-and-role/role/add",
-        show: false,
-      },
-      {
-        name: "Edit Role",
-        path: "/setting/user-and-role/role/edit/$id",
-        show: false,
-      },
+
       {
         name: "Base Configuration",
         path: "/setting/base-configuration",
         show: true,
+        children: [
+          {
+            name: "Add Setting",
+            path: "/setting/base-configuration/settings/add",
+            show: false
+          },
+          {
+            name: "Edit Setting",
+            path: "setting/base-configuration/settings/edit/$id",
+            show: false
+          },
+        ]
+
       },
       {
         name: "Contract",
         path: "/setting/contract",
         show: true,
+        children: [
+          {
+            name: "Add Contract",
+            path: "/setting/contract/add",
+            show: false
+          },
+          {
+            name: "Edit Contract",
+            path: "/setting/contract/edit/$id",
+            show: false
+          },
+          {
+            name: "Contract Details",
+            path: "/setting/contract/view/$id",
+            show: false
+          },
+        ]
       },
       {
         name: "Commodity",
         path: "/setting/commodity",
         show: true,
+        children: [
+          {
+            name: "Add Commodity",
+            path: "/setting/commodity/add",
+            show: false
+          },
+          {
+            name: "Edit Commodity",
+            path: "/setting/commodity/edit/$id",
+            show: false
+          },
+        ]
       },
       {
         name: "Packaging",
         path: "/setting/packaging",
         show: true,
+        children: [
+          {
+            name: "Add Packaging",
+            path: "/setting/packaging/add",
+            show: false
+          },
+          {
+            name: "Edit Packaging",
+            path: "/setting/packaging/edit/$id",
+            show: false
+          },
+        ]
       },
       {
         name: "Route Requests",
@@ -755,21 +908,70 @@ export const setting_navs: Navs[] = [
         name: "Region",
         path: "/setting/region",
         show: true,
+        children: [
+          {
+            name: "Add Region",
+            path: "/setting/region/add",
+            show: false
+          },
+          {
+            name: "Edit Region",
+            path: "/setting/region/edit/$id",
+            show: false
+          },
+        ]
       },
       {
         name: "Bonus Multipliers",
         path: "/setting/bonus-multipliers",
         show: true,
+        children: [
+          {
+            name: "Add Multiplier",
+            path: "/setting/bonus-multipliers/add",
+            show: false
+          },
+          {
+            name: "Edit Multiplier",
+            path: "/setting/bonus-multipliers/edit/$id",
+            show: false
+          },
+        ]
       },
       {
         name: "Bonus Routes",
         path: "/setting/bonus-routes",
         show: true,
+        children: [
+          {
+            name: "Add Bonus Route",
+            path: "/setting/bonus-routes/add",
+            show: false
+          },
+          {
+            name: "Edit Bonus Route",
+            path: "/setting/bonus-routes/edit/$id",
+            show: false
+          },
+        ]
       },
       {
         name: "Announcements",
         path: "/setting/announcements",
         show: true,
+        children: [
+          {
+            name: "Add Announcement",
+            path: "/setting/announcements/add",
+            show: false,
+          },
+          {
+            name: "Edit Announcement",
+            path: "/setting/announcements/edit/:id",
+
+            show: false,
+          },
+        ],
       },
     ],
   },

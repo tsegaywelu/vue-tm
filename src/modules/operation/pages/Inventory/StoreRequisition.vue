@@ -34,7 +34,7 @@ const handleRequisitionAction = async ({ row, action }: any) => {
   if (action === 'edit') {
     router.push(`/inventory/store-requisition/edit/${row._id}`);
   } else if (action === 'view') {
-    router.push(`/inventory/store-requisition/details/${row._id}`);
+    router.push(`/inventory/store-requisition/${row._id}`);
   } else if (action === 'delete') {
     if (confirm(`Are you sure you want to delete requisition "${row.referenceNumber}"?`)) {
       try {

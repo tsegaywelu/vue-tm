@@ -18,9 +18,22 @@
       id="receivable-shipment-list"
       :columns="columns"
       :rows="response"
-      search_placeholder="Search shipments..."
+      v-model:search_value="searchTerm"
+      :search_placeholder="dynamicSearchPlaceholder"
       @row_click="handleAction($event, 'view')"
     >
+      <template #search-prefix>
+        <div class="h-full flex items-center border-r border-gray-200 pr-2 mr-2">
+          <Select
+            class="[&_.input-focus]:shadow-none! [&_.input-focus]:border-none [&_.input-focus]:min-h-full min-w-48"
+            v-model="selectedSearchField"
+            :options="searchFieldOptions"
+            label_key="label"
+            value_key="value"
+            :clearable="false"
+          />
+        </div>
+      </template>
       <template #cell-shipmentCode="{ value }">
         <span class="font-bold text-primary">{{ value || '-' }}</span>
       </template>
@@ -105,6 +118,7 @@ import { icons } from "@/utils/icons";
 import { usePagination } from "@/composables/usePagination";
 import type { TableColumn } from "@/components/common/Table.vue";
 import ReceivableShipmentFilters from "./ReceivableShipmentFilters.vue";
+import Select from "@/components/common/Select.vue";
 import { currencyFormatter, dateFormatter } from "@/utils/utils";
 
 const emit = defineEmits(["action"]);
@@ -114,19 +128,53 @@ const columns: TableColumn<any>[] = [
   { key: "dispatchDate", label: "Dispatch Date", field: "dispatchDate" },
   { key: "route", label: "Route", field: "route" },
   { key: "agent", label: "Agent", field: "agent" },
-  { key: "shipperIssueVoucher", label: "Issue Voucher", field: "shipperIssueVoucher" },
+  {
+    key: "shipperIssueVoucher",
+    label: "Issue Voucher",
+    field: "shipperIssueVoucher",
+  },
   { key: "vehicle", label: "Vehicle", field: "vehicle" },
   { key: "driver", label: "Driver", field: "driver" },
   { key: "totalPrice", label: "Total", field: "totalPrice" },
-  { key: "areDocumentsUploaded", label: "Documents", field: "areDocumentsUploaded" },
+  {
+    key: "areDocumentsUploaded",
+    label: "Documents",
+    field: "areDocumentsUploaded",
+  },
   { key: "actions", label: "Actions", field: "", cellAlign: "right" },
 ];
+
+const searchFieldOptions = [
+  { label: "Issue Voucher", value: "shipperIssueVoucher" },
+  { label: "Shipper Receive Voucher", value: "agentReceiveVoucher" },
+  { label: "Plate Number", value: "vehiclePlateNumber" },
+  { label: "Shipment Code", value: "shipmentCode" },
+  { label: "First Name", value: "driverFirstName" },
+  { label: "Middle Name", value: "driverMiddleName" },
+];
+
+const selectedSearchField = ref("shipmentCode");
+const searchTerm = ref("");
+
+const dynamicSearchPlaceholder = computed(() => {
+  const option = searchFieldOptions.find(
+    (o) => o.value === selectedSearchField.value,
+  );
+  return option ? `Search by ${option.label}...` : "Search...";
+});
 
 const activeFilters = ref({});
 const { response, fullResponse, refetch } = usePagination<any>({
   id: "receivable-shipment-list",
   url: "/shipment/receivableShipment",
-  params: computed(() => activeFilters.value),
+  params: computed(() => {
+    const params: any = { ...activeFilters.value };
+    if (searchTerm.value) {
+      params[`${selectedSearchField.value}[regexAny]`] = searchTerm.value;
+      params.q = undefined;
+    }
+    return params;
+  }),
 });
 
 const summary = computed(() => fullResponse.value?.result?.summary);

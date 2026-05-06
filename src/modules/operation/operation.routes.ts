@@ -768,29 +768,41 @@ export const operation_routes: RouteRecordRaw[] = [
         },
       },
       {
+        path: "work-order/:id",
+        name: "operation_maintenance_work_order_details",
+        component: () => import("./pages/maintenance/WorkOrderDetail.vue"),
+        meta: {
+          title: "Work Order Details",
+          description: "Detailed view of the maintenance work order.",
+          tabsTeleportTo: "#work-order-details-tabs",
+          tabs: [
+            { label: "Overview", value: "overview" },
+            { label: "Tasks", value: "tasks" },
+          ],
+        },
+      },
+      {
         path: "workshop",
         name: "operation_maintenance_workshop",
         component: () => import("./pages/maintenance/Workshop.vue"),
         meta: { title: "Workshop", description: "Manage workshops." },
-        children: [
-          {
-            path: "add",
-            name: "operation_maintenance_workshop_add",
-            component: () => import("./pages/maintenance/WorkshopAdd.vue"),
-            meta: { title: "Add Workshop", description: "Add a new workshop." },
-          },
-          {
-            path: "edit/:id",
-            name: "operation_maintenance_workshop_edit",
-            component: () => import("./pages/maintenance/WorkshopEdit.vue"),
-            meta: {
-              title: "Edit Workshop",
-              description: "Edit an existing workshop.",
-            },
-          },
-        ],
-      },
 
+      },
+      {
+        path: "workshop/add",
+        name: "operation_maintenance_workshop_add",
+        component: () => import("./pages/maintenance/WorkshopAdd.vue"),
+        meta: { title: "Add Workshop", description: "Add a new workshop." },
+      },
+      {
+        path: "workshop/edit/:id",
+        name: "operation_maintenance_workshop_edit",
+        component: () => import("./pages/maintenance/WorkshopEdit.vue"),
+        meta: {
+          title: "Edit Workshop",
+          description: "Edit an existing workshop.",
+        },
+      },
       {
         path: "issue-report",
         name: "operation_maintenance_issue_report",
@@ -802,6 +814,17 @@ export const operation_routes: RouteRecordRaw[] = [
         name: "operation_maintenance_tyre_handoffs",
         component: () => import("./pages/maintenance/TyreHandoffs.vue"),
         meta: { title: "Tyre Handoffs", description: "Manage tyre handoffs." },
+      },
+      {
+        path: "tyre-handoffs/:id",
+        name: "operation_maintenance_tyre_handoffs_details",
+        component: () => import("./pages/maintenance/TyreHandoffsDetail.vue"),
+        meta: {
+          title: "Tyre Handoff Details",
+          description: "Detailed view of the tyre handoff event.",
+          tabsTeleportTo: "#tyre-handoff-details-tabs",
+          tabs: [{ label: "Overview", value: "overview" }],
+        },
       },
     ],
   },
@@ -830,12 +853,34 @@ export const operation_routes: RouteRecordRaw[] = [
         meta: { title: "Invoice Report", description: "View invoice reports." },
       },
       {
+        path: "invoice-report/:id",
+        name: "operation_finance_invoice_report_details",
+        component: () => import("./pages/finance/InvoiceReportDetail.vue"),
+        meta: {
+          title: "Invoice Report Details",
+          description: "Detailed breakdown of the invoice report.",
+          tabsTeleportTo: "#invoice-report-details-tabs",
+          tabs: [{ label: "Overview", value: "overview" }],
+        },
+      },
+      {
         path: "payment-collection",
         name: "operation_finance_payment_collection",
         component: () => import("./pages/finance/PaymentCollection.vue"),
         meta: {
           title: "Payment Collection",
           description: "Manage payment collections.",
+        },
+      },
+      {
+        path: "payment-collection/:id",
+        name: "operation_finance_payment_collection_details",
+        component: () => import("./pages/finance/PaymentCollectionDetail.vue"),
+        meta: {
+          title: "Payment Collection Details",
+          description: "Detailed breakdown of the payment collection.",
+          tabsTeleportTo: "#payment-collection-details-tabs",
+          tabs: [{ label: "Overview", value: "overview" }],
         },
       },
       {
@@ -1080,6 +1125,17 @@ export const operation_routes: RouteRecordRaw[] = [
         },
       },
       {
+        path: "store-requisition/:id",
+        name: "operation_inventory_store_requisition_details",
+        component: () => import("./pages/Inventory/StoreRequisitionDetail.vue"),
+        meta: {
+          title: "Store Requisition Details",
+          description: "Detailed view of the store requisition.",
+          tabsTeleportTo: "#store-requisition-details-tabs",
+          tabs: [{ label: "Overview", value: "overview" }],
+        },
+      },
+      {
         path: "store-requisition/add",
         name: "operation_inventory_store_requisition_add",
         component: () => import("./pages/Inventory/StoreRequisitionAdd.vue"),
@@ -1104,6 +1160,17 @@ export const operation_routes: RouteRecordRaw[] = [
         meta: {
           title: "Purchase Requisition",
           description: "Manage purchase requisition requests.",
+        },
+      },
+      {
+        path: "purchase-requisition/:id",
+        name: "operation_inventory_purchase_requisition_details",
+        component: () => import("./pages/Inventory/PurchaseRequisitionDetail.vue"),
+        meta: {
+          title: "Purchase Requisition Details",
+          description: "Detailed view of the purchase requisition.",
+          tabsTeleportTo: "#purchase-requisition-details-tabs",
+          tabs: [{ label: "Overview", value: "overview" }],
         },
       },
       {
@@ -1135,6 +1202,17 @@ export const operation_routes: RouteRecordRaw[] = [
         },
       },
       {
+        path: "purchase-order/:id",
+        name: "operation_inventory_purchase_order_details",
+        component: () => import("./pages/Inventory/PurchaseOrderDetail.vue"),
+        meta: {
+          title: "Purchase Order Details",
+          description: "Detailed view of the purchase order.",
+          tabsTeleportTo: "#purchase-order-details-tabs",
+          tabs: [{ label: "Overview", value: "overview" }],
+        },
+      },
+      {
         path: "purchase-order/add",
         name: "operation_inventory_purchase_order_add",
         component: () => import("./pages/Inventory/PurchaseOrderAdd.vue"),
@@ -1159,6 +1237,17 @@ export const operation_routes: RouteRecordRaw[] = [
         meta: {
           title: "Issue / Receive",
           description: "Track good transfers, issues and receipts.",
+        },
+      },
+      {
+        path: "good-transfer/:id",
+        name: "operation_inventory_good_transfer_details",
+        component: () => import("./pages/Inventory/GoodTransferDetail.vue"),
+        meta: {
+          title: "Transfer Voucher Details",
+          description: "Detailed view of the good transfer voucher.",
+          tabsTeleportTo: "#good-transfer-details-tabs",
+          tabs: [{ label: "Overview", value: "overview" }],
         },
       },
       {
@@ -1314,6 +1403,17 @@ export const operation_routes: RouteRecordRaw[] = [
         meta: { title: "Contract", description: "Manage business contracts." },
       },
       {
+        path: "contract/view/:id",
+        name: "operation_setting_contract_details",
+        component: () => import("./pages/setting/ContractDetail.vue"),
+        meta: {
+          title: "Contract Details",
+          description: "Detailed view of the contract.",
+          tabsTeleportTo: "#contract-details-tabs",
+          tabs: [{ label: "Overview", value: "overview" }],
+        },
+      },
+      {
         path: "contract/add",
         name: "operation_setting_contract_add",
         component: () => import("./pages/setting/ContractAdd.vue"),
@@ -1411,10 +1511,46 @@ export const operation_routes: RouteRecordRaw[] = [
         },
       },
       {
+        path: "bonus-multipliers/add",
+        name: "operation_setting_bonus_multipliers_add",
+        component: () => import("./pages/setting/BonusMultipliersAdd.vue"),
+        meta: {
+          title: "Add Bonus Multiplier",
+          description: "Create a new bonus multiplier.",
+        },
+      },
+      {
+        path: "bonus-multipliers/edit/:id",
+        name: "operation_setting_bonus_multipliers_edit",
+        component: () => import("./pages/setting/BonusMultipliersEdit.vue"),
+        meta: {
+          title: "Edit Bonus Multiplier",
+          description: "Update an existing bonus multiplier.",
+        },
+      },
+      {
         path: "bonus-routes",
         name: "operation_setting_bonus_routes",
         component: () => import("./pages/setting/BonusRoutes.vue"),
         meta: { title: "Bonus Routes", description: "Manage bonus routes." },
+      },
+      {
+        path: "bonus-routes/add",
+        name: "operation_setting_bonus_routes_add",
+        component: () => import("./pages/setting/BonusRoutesAdd.vue"),
+        meta: {
+          title: "Add Bonus Route",
+          description: "Create a new bonus route.",
+        },
+      },
+      {
+        path: "bonus-routes/edit/:id",
+        name: "operation_setting_bonus_routes_edit",
+        component: () => import("./pages/setting/BonusRoutesEdit.vue"),
+        meta: {
+          title: "Edit Bonus Route",
+          description: "Update an existing bonus route.",
+        },
       },
       {
         path: "announcements",
@@ -1423,6 +1559,24 @@ export const operation_routes: RouteRecordRaw[] = [
         meta: {
           title: "Announcements",
           description: "Manage system announcements.",
+        },
+      },
+      {
+        path: "announcements/add",
+        name: "operation_setting_announcements_add",
+        component: () => import("./pages/setting/AnnouncementsAdd.vue"),
+        meta: {
+          title: "Add Announcement",
+          description: "Create a new announcement.",
+        },
+      },
+      {
+        path: "announcements/edit/:id",
+        name: "operation_setting_announcements_edit",
+        component: () => import("./pages/setting/AnnouncementsEdit.vue"),
+        meta: {
+          title: "Edit Announcement",
+          description: "Update an existing announcement.",
         },
       },
     ],

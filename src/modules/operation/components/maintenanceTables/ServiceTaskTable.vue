@@ -21,9 +21,25 @@
       actions: 'right',
     }"
     id="service-tasks-list"
+    v-model:search_value="searchTerm"
     :columns="columns"
     :rows="response"
+    :search_placeholder="dynamicSearchPlaceholder"
   >
+    <template #search-prefix>
+      <div
+        class="h-full flex items-center border-r border-gray-200 pr-2 mr-2 w-38"
+      >
+        <Select
+          class="[&_.input-focus]:shadow-none! [&_.input-focus]:border-none [&_.input-focus]:min-h-full min-w-48"
+          v-model="selectedSearchField"
+          :options="searchFieldOptions"
+          label_key="label"
+          value_key="value"
+          :clearable="false"
+        />
+      </div>
+    </template>
     <template #cell-name="{ row }">
       <span class="font-medium text-gray-900">{{ row.name }}</span>
     </template>
@@ -85,6 +101,7 @@
 import { computed, ref } from "vue";
 import Table from "@/components/common/Table.vue";
 import Dropdown from "@/components/common/Dropdown.vue";
+import Select from "@/components/common/Select.vue";
 import { usePagination } from "@/composables/usePagination";
 import type { ServiceTask } from "../operation.types";
 import type { TableColumn } from "@/components/common/Table.vue";
@@ -102,11 +119,35 @@ const columns: TableColumn<ServiceTask>[] = [
   { key: "actions", label: "Actions", cellAlign: "right" },
 ];
 
-const activeFilters = ref({});
+const searchFieldOptions = [
+  { label: "First Name", value: "firstName" },
+  { label: "Middle Name", value: "middleName" },
+  { label: "Last Name", value: "lastName" },
+  { label: "Phone Number", value: "phoneNumber" },
+];
+
+const selectedSearchField = ref("firstName");
+const searchTerm = ref("");
+
+const dynamicSearchPlaceholder = computed(() => {
+  const option = searchFieldOptions.find(
+    (o) => o.value === selectedSearchField.value,
+  );
+  return option ? `Search by ${option.label}...` : "Search...";
+});
+
+const activeFilters = ref<any>({});
 const { response, refetch } = usePagination<ServiceTask>({
   id: "service-tasks-list",
   url: "/service-task",
-  params: computed(() => activeFilters.value),
+  params: computed(() => {
+    const params: any = { ...activeFilters.value };
+    if (searchTerm.value) {
+      params[`${selectedSearchField.value}[regex]`] = searchTerm.value;
+      params.q = undefined;
+    }
+    return params;
+  }),
 });
 
 const handleAction = (row: ServiceTask, action: string) => {

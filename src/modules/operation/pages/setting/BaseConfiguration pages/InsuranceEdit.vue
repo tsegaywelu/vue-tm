@@ -31,10 +31,10 @@ const route = useRoute();
 const router = useRouter();
 const toast = useToastStore();
 const id = route.params.id as string;
-const api = getApi("/bankInsurance");
+const api = getApi("/insurance-provider");
 
 const { data: response, isLoading } = useQuery({
-  queryKey: ["bank-insurance", id],
+  queryKey: ["insurance-provider", id],
   queryFn: () => api.addAuthenticationHeader().get(`/${id}`),
   enabled: !!id,
 });

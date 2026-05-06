@@ -16,8 +16,8 @@ const handlePayableAction = ({
   action: string;
 }) => {
   if (action === 'view') {
-    // Navigate to detail page if applicable, e.g.:
-    // router.push(`/operation/finance/payable/${row._id}`);
+    const shipmentId = row.shipmentId || row.shipment?._id || row._id;
+    router.push(`/operation/shipments/${shipmentId}`);
   } else {
     console.log(`Action: ${action} on Payable:`, row);
   }

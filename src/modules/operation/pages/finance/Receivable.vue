@@ -52,8 +52,7 @@ watch(currentTab, (newTab) => {
 
 const handleAction = ({ row, action }: any) => {
   if (action === 'view') {
-    // Implement viewing logic if necessary
-    console.log(`View action for`, row);
+    router.push(`/operation/shipments/${row._id}`);
   } else {
     console.log(`Action: ${action} on Receivable:`, row);
   }

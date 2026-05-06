@@ -34,7 +34,7 @@ const handleTransferAction = async ({ row, action }: any) => {
   if (action === 'edit') {
     router.push(`/inventory/good-transfer/edit/${row._id}`);
   } else if (action === 'view') {
-    router.push(`/inventory/good-transfer/details/${row._id}`);
+    router.push(`/inventory/good-transfer/${row._id}`);
   } else if (action === 'delete') {
     if (confirm(`Are you sure you want to delete transfer voucher "${row.referenceNumber}"?`)) {
       try {
