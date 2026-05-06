@@ -26,12 +26,13 @@ import { fetch_bonus_route_details, update_bonus_route } from "../../api/bonus.a
 import { useToastStore } from "@/store/toastStore";
 import SubmitButton from "@/components/form/SubmitButton.vue";
 import Button from "@/components/Button.vue";
-import { useMutation, useQuery } from "@tanstack/vue-query";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/vue-query";
 
 const router = useRouter();
 const route = useRoute();
 const toast = useToastStore();
 const id = route.params.id as string;
+const queryClient = useQueryClient();
 
 const { data: response, isLoading } = useQuery({
   queryKey: ["bonus-route", id],
@@ -73,6 +74,8 @@ const handleEdit = async (values: any) => {
     const res = await mutation.mutateAsync(payload);
     if (res.success) {
       toast.success("Bonus route updated successfully");
+       // invalidate query
+      queryClient.invalidateQueries({ queryKey: ["bonus-route-list"] });
       router.push("/setting/bonus-routes");
     } else {
       toast.error(res.error || "Failed to update bonus route");
