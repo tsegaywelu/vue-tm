@@ -3,6 +3,7 @@ import { ref } from "vue";
 import InputParent from "./InputParent.vue";
 import InputLayout from "./InputLayout.vue";
 import { type InputLayoutProps } from "./InputLayout.vue";
+import { icons } from "@/utils/icons";
 
 export interface FileInputProps extends Omit<InputLayoutProps, "error"> {
   name: string;
@@ -89,7 +90,9 @@ function getFileName(file: any) {
         :size="size"
         :parent_class_name="parent_class_name"
         :error="
-          field.state.meta.errors.length ? field.state.meta.errors[0] : undefined
+          field.state.meta.errors.length
+            ? field.state.meta.errors[0]
+            : undefined
         "
         :validations="validation"
         :description="description"
@@ -120,7 +123,8 @@ function getFileName(file: any) {
           <div
             v-if="
               !field.state.value ||
-              (Array.isArray(field.state.value) && field.state.value.length === 0)
+              (Array.isArray(field.state.value) &&
+                field.state.value.length === 0)
             "
             class="flex flex-col items-center gap-2"
           >
@@ -137,7 +141,11 @@ function getFileName(file: any) {
                 drag and drop
               </p>
               <p class="text-xs text-gray-400 mt-1">
-                {{ multiple ? "You can upload multiple files" : "Single file only" }}
+                {{
+                  multiple
+                    ? "You can upload multiple files"
+                    : "Single file only"
+                }}
                 <span v-if="accept !== '*/*'">({{ accept }})</span>
               </p>
             </div>
@@ -156,14 +164,24 @@ function getFileName(file: any) {
                 <div
                   class="size-10 rounded-lg bg-gray-50 flex items-center justify-center shrink-0"
                 >
-                  <i class="mdi mdi-file-document-outline text-xl text-gray-400"></i>
+                  <i
+                    class="mdi mdi-file-document-outline text-xl text-gray-400"
+                  ></i>
                 </div>
                 <div class="flex flex-col overflow-hidden">
                   <span class="text-sm font-bold text-gray-900 truncate">{{
                     getFileName(file)
                   }}</span>
-                  <span v-if="typeof file === 'string'" class="text-[10px] text-primary uppercase font-bold tracking-wider">Existing File</span>
-                  <span v-else class="text-[10px] text-gray-400 uppercase font-bold tracking-wider">New Upload</span>
+                  <span
+                    v-if="typeof file === 'string'"
+                    class="text-[10px] text-primary uppercase font-bold tracking-wider"
+                    >Existing File</span
+                  >
+                  <span
+                    v-else
+                    class="text-[10px] text-gray-400 uppercase font-bold tracking-wider"
+                    >New Upload</span
+                  >
                 </div>
               </div>
               <button
@@ -171,7 +189,7 @@ function getFileName(file: any) {
                 class="size-8 flex items-center justify-center rounded-full hover:bg-red-50 text-gray-400 hover:text-red-500 transition-colors"
                 title="Remove file"
               >
-                <i class="mdi mdi-close"></i>
+                <i v-html="icons.close"></i>
               </button>
             </div>
 
