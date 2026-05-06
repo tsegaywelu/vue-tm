@@ -21,7 +21,9 @@ import { create_role } from "../../api/settings.api";
 import { useToastStore } from "@/store/toastStore";
 import Button from "@/components/Button.vue";
 import SubmitButton from "@/components/form/SubmitButton.vue";
+import { useQueryClient } from "@tanstack/vue-query";
 
+const queryClient = useQueryClient();
 const router = useRouter();
 const toast = useToastStore();
 
@@ -41,6 +43,7 @@ const handleCreate = async (values: any) => {
     const res = await mutation.mutateAsync(values);
     if (res.success) {
       toast.success("Role created successfully");
+      queryClient.invalidateQueries({ queryKey: ["roles-list"] });
       router.push("/setting/user-and-role");
     } else {
       toast.error(res.error || "Failed to create role");

@@ -10,6 +10,9 @@
             name="name"
             label="Name"
             :validation="{ required }"
+            :attributes="{
+             placeholder: 'Enter bank name',
+            }"
           />
         </div>
       </Colapsable>

@@ -10,6 +10,9 @@
             name="username"
             label="Username"
             :validation="{ required }"
+            :attributes="{
+              placeholder: 'Enter username...'
+            }"
           />
           
           <template v-if="!isEdit">
@@ -19,6 +22,9 @@
                 label="Password"
                 type="password"
                 :validation="{ required }"
+                :attributes="{
+                  placeholder: 'Enter password...'
+                }"
               />
               <button
                 type="button"
@@ -33,6 +39,9 @@
               label="Confirm Password"
               type="password"
               :validation="{ required }"
+              :attributes="{
+                placeholder: 'Confirm password...'
+              }"
             />
           </template>
 

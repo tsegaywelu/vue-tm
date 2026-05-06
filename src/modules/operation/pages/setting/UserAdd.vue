@@ -21,7 +21,9 @@ import { create_user } from "../../api/settings.api";
 import { useToastStore } from "@/store/toastStore";
 import Button from "@/components/Button.vue";
 import SubmitButton from "@/components/form/SubmitButton.vue";
+import { useQueryClient } from "@tanstack/vue-query";
 
+const queryClient = useQueryClient();
 const router = useRouter();
 const toast = useToastStore();
 
@@ -38,14 +40,16 @@ const initialValues = {
 };
 
 const handleCreate = async (values: any) => {
-  if (values.password !== values.confirmPassword) {
+  const { confirmPassword, ...payload } = values;
+  if (values.password !== confirmPassword) {
     toast.error("Passwords do not match");
     return;
   }
   try {
-    const res = await mutation.mutateAsync(values);
+    const res = await mutation.mutateAsync(payload);
     if (res.success) {
       toast.success("User registered successfully");
+      queryClient.invalidateQueries({ queryKey: ["users-list"] });
       router.push("/setting/user-and-role");
     } else {
       toast.error(res.error || "Failed to register user");

@@ -49,9 +49,7 @@
         </div>
       </div>
 
-      <div id="contract-details-tabs" class="w-full mt-2"></div>
-
-      <div class="flex-1 min-h-0 overflow-y-auto pb-10">
+      <div class="flex-1 min-h-0 overflow-y-auto pb-10 mt-2">
         <component
           :is="activeTabComponent"
           :contract="contract"
@@ -85,7 +83,7 @@ const { data: response, isLoading } = useQuery({
   enabled: !!contractId,
 });
 
-const contract = computed(() => response.value?.data);
+const contract = computed(() => response.value?.data as any);
 
 const activeTabComponent = computed(() => {
   switch (activeTab.value) {

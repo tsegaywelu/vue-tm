@@ -32,7 +32,7 @@
                 close();
               "
             />
-            <DropDownItem
+            <!-- <DropDownItem
               :icon="icons.delete"
               label="Delete"
               class="text-error-600"
@@ -40,7 +40,7 @@
                 handleAction(row, 'delete');
                 close();
               "
-            />
+            /> -->
           </template>
         </Dropdown>
       </div>
@@ -68,7 +68,7 @@ const columns: TableColumn<any>[] = [
   { key: "movementAlertEndHour", label: "End Hour", field: "movementAlertEndHour" },
   { key: "speedAlertThreshold", label: "Speed Threshold", field: "speedAlertThreshold" },
   { key: "createdAt", label: "Created At", field: "createdAt" },
-  { key: "actions", label: "Action", field: "", cellAlign: "right" },
+  { key: "actions", label: "Action", field: "",  },
 ];
 
 const handleAction = (row: any, action: string) => {

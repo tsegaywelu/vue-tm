@@ -10,6 +10,9 @@
             name="name"
             label="Role Name"
             :validation="{ required }"
+            :attributes="{
+              placeholder: 'Enter role name...'
+            }"
           />
           <SelectInput
             name="type"
@@ -21,9 +24,12 @@
             :validation="{ required }"
           />
           <div class="md:col-span-2">
-            <Input
+            <TextareaInput
               name="description"
               label="Description"
+              :attributes="{
+                placeholder: 'Enter description...'
+              }"
             />
           </div>
         </div>
@@ -100,6 +106,7 @@ import Input from "@/components/form/Input.vue";
 import SelectInput from "@/components/form/SelectInput.vue";
 import Colapsable from "@/components/common/Colapsable.vue";
 import { required } from "@/utils/validations";
+import TextareaInput from "@/components/form/TextareaInput.vue";
 
 const props = defineProps<{
   formId: string;

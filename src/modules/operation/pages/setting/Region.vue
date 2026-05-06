@@ -32,6 +32,8 @@ import { icons } from "@/utils/icons";
 import { useToastStore } from "@/store/toastStore";
 import { delete_region } from "../../api/region.api";
 
+import { openModal } from "@customizer/modal-x";
+
 const router = useRouter();
 const toast = useToastStore();
 const tableRef = ref();
@@ -40,7 +42,14 @@ const handleAction = async ({ row, action }: any) => {
   if (action === "edit") {
     router.push(`/setting/region/edit/${row._id}`);
   } else if (action === "delete") {
-    if (confirm(`Are you sure you want to delete region "${row.name}"?`)) {
+    const confirmed = await openModal("ConfirmationModal", {
+      title: "Delete Region",
+      message: `Are you sure you want to delete region "${row.name}"?`,
+      confirmText: "Delete",
+      action: "delete",
+    });
+
+    if (confirmed) {
       try {
         const res = await delete_region(row._id);
         if (res.success) {

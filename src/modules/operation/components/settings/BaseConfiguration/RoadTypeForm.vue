@@ -10,11 +10,19 @@
             name="name"
             label="Name"
             :validation="{ required }"
+             :attributes="{
+              placeholder: 'Enter road type name',
+             
+            }"
           />
           <Input
             name="code"
             label="Code"
             :validation="{ required }"
+             :attributes="{
+              placeholder: 'Enter road type code',
+             
+            }"
           />
         </div>
       </Colapsable>

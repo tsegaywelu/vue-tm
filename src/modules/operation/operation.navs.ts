@@ -840,6 +840,49 @@ export const setting_navs: Navs[] = [
             path: "setting/base-configuration/settings/edit/$id",
             show: false
           },
+          {
+            name: "Add Road Type",
+            path: "setting/base-configuration/road-type/add",
+            show: false
+          },
+          {
+            name: "Edit Road Type",
+            path: 'setting/base-configuration/road-type/edit/$id',
+            show: false
+
+          },
+          {
+            name: "Add Terrain Type",
+            path: "/setting/base-configuration/terrain-type/add",
+            show: false
+          },
+          {
+            name: 'Edit Terrain Type',
+            path: "/setting/base-configuration/terrain-type/edit/$id",
+            show: false
+          },
+          {
+            name: "Add Bank",
+            path: "/setting/base-configuration/bank/add",
+            show: false
+          },
+          {
+            name: "Edit Bank",
+            path: "/setting/base-configuration/bank/edit/$id",
+            show: false
+          },
+          {
+            name: "Add Insurance Provider",
+            path: "setting/base-configuration/insurance/add",
+            show: false
+          },
+          {
+            name: "Edit Insurance Provider",
+            path: "setting/base-configuration/insurance/edit/$id",
+            show: false
+          },
+
+
         ]
 
       },

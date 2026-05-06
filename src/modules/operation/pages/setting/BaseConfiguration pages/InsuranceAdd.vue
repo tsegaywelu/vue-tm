@@ -21,10 +21,12 @@ import { getApi } from "@/utils/getApi";
 import { useToastStore } from "@/store/toastStore";
 import Button from "@/components/Button.vue";
 import SubmitButton from "@/components/form/SubmitButton.vue";
+import { useQueryClient } from "@tanstack/vue-query";
 
 const router = useRouter();
 const toast = useToastStore();
 const api = getApi("/insurance-provider");
+const queryClient = useQueryClient();
 
 const mutation = useMutation({
   mutationFn: (values: any) => api.addAuthenticationHeader().post("", values),
@@ -35,6 +37,8 @@ const handleCreate = async (values: any) => {
     const res = await mutation.mutateAsync(values);
     if (res.success) {
       toast.success("Insurance provider created successfully");
+      //invalidae query
+      queryClient.invalidateQueries({ queryKey: ["insurance-list"] });
       router.push("/setting/base-configuration?tab=insurance");
     } else {
       toast.error(res.error || "Failed to create provider");

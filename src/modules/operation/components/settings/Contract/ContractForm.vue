@@ -18,7 +18,7 @@
         <SelectInput
           name="tempRouteId"
           label="Route"
-          :url="carrierId ? `/route/carrierAllRoutes/${carrierId}` : ''"
+          url="/route"
           label_key="routeName"
           value_key="_id"
           searchable
@@ -32,7 +32,7 @@
           <SelectInput
             name="tempCommodities"
             label="Commodities"
-            url="/commodity"
+            url="/commodity/contracted"
             label_key="name"
             value_key="_id"
             multiple
@@ -44,7 +44,7 @@
           <SelectInput
             name="tempPackagings"
             label="Packagings"
-            url="/packaging"
+            url="/packaging/contracted"
             label_key="name"
             value_key="_id"
             multiple
@@ -56,7 +56,7 @@
           <SelectInput
             name="tempAgents"
             label="Agents"
-            url="/agent"
+            url="/agent/shipper/carrier"
             :label_key="(item: any) => `${item.name} - ${item?.location?.city ?? ''}`"
             value_key="_id"
             multiple
@@ -73,7 +73,6 @@
                 :value="type" 
                 v-model="tempConfig.productTypes" 
                 class="rounded border-gray-300 text-primary focus:ring-primary"
-                :disabled="!carrierId"
               >
               {{ type.replace('_', ' ') }}
             </label>
@@ -125,13 +124,13 @@
                   placeholder="Enter amount"
                 >
               </div>
-              <Button variant="ghost" size="sm" @click="removePricing(index, pIndex)" class="text-error-600 h-10">
+              <Button variant="ghost" size="sm" @click="removePricing(Number(index), Number(pIndex))" class="text-error-600 h-10">
                 Remove
               </Button>
             </div>
           </div>
           
-          <Button variant="primary" size="sm" @click="addPricing(index)" class="bg-blue-600 hover:bg-blue-700 text-white">
+          <Button variant="primary" size="sm" @click="addPricing(Number(index))" class="bg-blue-600 hover:bg-blue-700 text-white">
             + Add Pricing
           </Button>
         </div>
@@ -162,7 +161,7 @@
       </div>
     </div>
 
-    <div class="flex justify-end pt-4">
+    <div class="flex justify-end pt-4 gap-4">
       <slot name="actions" :addedRoutes="addedRoutes" :carrierId="carrierId"></slot>
     </div>
   </div>
@@ -182,7 +181,7 @@ const props = defineProps<{
 const carrierId = computed(() => props.form.state.values.carrier);
 const selectedRouteId = computed(() => props.form.state.values.tempRouteId);
 const selectedRouteData = ref<any>(null);
-const addedRoutes = ref<any[]>([]);
+const addedRoutes = ref<any[]>(props.form.state.values.routes || []);
 
 const productTypeOptions = ["IN_BOUND", "OUT_BOUND", "SITE_TRANSFER"];
 
@@ -198,7 +197,7 @@ watch(selectedRouteId, async (newId) => {
     const res = await routeApi.addAuthenticationHeader().get(`/${newId}`);
     if (res.success) {
       selectedRouteData.value = res.data;
-      tempConfig.waypoints = res.data.waypoints.map((wp: any) => ({
+      tempConfig.waypoints = (res.data as any).waypoints.map((wp: any) => ({
         waypoint: wp._id,
         name: wp.name,
         vehiclePricing: [{ vehicleType: '', pricePerUnit: 0, type: '', productType: '' }]
@@ -249,9 +248,15 @@ const removeRouteFromContract = (index: number) => {
   addedRoutes.value.splice(index, 1);
 };
 
+// Sync addedRoutes with form state
+watch(addedRoutes, (newVal) => {
+  props.form.setFieldValue('routes', newVal);
+}, { deep: true });
+
 // Reset everything if carrier changes
 watch(carrierId, () => {
   addedRoutes.value = [];
   props.form.setFieldValue('tempRouteId', '');
+  props.form.setFieldValue('routes', []);
 });
 </script>

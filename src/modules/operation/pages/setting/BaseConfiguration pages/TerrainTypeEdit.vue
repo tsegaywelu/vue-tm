@@ -24,12 +24,14 @@ import { getApi } from "@/utils/getApi";
 import { useToastStore } from "@/store/toastStore";
 import SubmitButton from "@/components/form/SubmitButton.vue";
 import Button from "@/components/Button.vue";
+import { useQueryClient } from "@tanstack/vue-query";
 
 const route = useRoute();
 const router = useRouter();
 const toast = useToastStore();
+const queryClient = useQueryClient();
 const id = route.params.id as string;
-const api = getApi("/terrainType");
+const api = getApi("/terrain-type");
 
 const { data: response, isLoading } = useQuery({
   queryKey: ["terrain-type", id],
@@ -39,7 +41,7 @@ const { data: response, isLoading } = useQuery({
 
 const initialValues = computed(() => {
   if (!response.value?.data) return null;
-  const data = response.value.data.result || response.value.data;
+  const data = (response.value.data as any).result || response.value.data;
   return {
     name: data.name || "",
     code: data.code || "",
@@ -55,6 +57,7 @@ const handleUpdate = async (values: any) => {
     const res = await mutation.mutateAsync(values);
     if (res.success) {
       toast.success("Terrain type updated successfully");
+      queryClient.invalidateQueries({ queryKey: ["terrain-type-list"] });
       router.push("/setting/base-configuration?tab=terrainType");
     } else {
       toast.error(res.error || "Failed to update terrain type");

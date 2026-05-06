@@ -10,10 +10,16 @@
             name="name"
             label="Name"
             :validation="{ required }"
+            :attributes="{
+              placeholder: 'Name',
+            }"
           />
           <Input
             name="odometerRouteToleranceKilometer"
             label="Odometer route tolerance (km)"
+            :attributes="{
+              placeholder: 'Odometer route tolerance (km)',
+            }"
             type="number"
           />
         </div>

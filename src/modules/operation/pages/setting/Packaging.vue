@@ -32,6 +32,8 @@ import { icons } from "@/utils/icons";
 import { useToastStore } from "@/store/toastStore";
 import { delete_packaging } from "../../api/settings.api";
 
+import { openModal } from "@customizer/modal-x";
+
 const router = useRouter();
 const toast = useToastStore();
 const tableRef = ref();
@@ -40,7 +42,14 @@ const handleAction = async ({ row, action }: any) => {
   if (action === "edit") {
     router.push(`/setting/packaging/edit/${row._id}`);
   } else if (action === "delete") {
-    if (confirm(`Are you sure you want to delete "${row.name}"?`)) {
+    const confirmed = await openModal("ConfirmationModal", {
+      title: "Delete Packaging",
+      message: `Are you sure you want to delete "${row.name}"?`,
+      confirmText: "Delete",
+      action: "delete",
+    });
+
+    if (confirmed) {
       try {
         const res = await delete_packaging(row._id);
         if (res.success) {

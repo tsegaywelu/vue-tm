@@ -19,9 +19,11 @@ import { create_packaging } from "../../api/settings.api";
 import { useToastStore } from "@/store/toastStore";
 import Button from "@/components/Button.vue";
 import SubmitButton from "@/components/form/SubmitButton.vue";
+import { useQueryClient } from "@tanstack/vue-query";
 
 const router = useRouter();
 const toast = useToastStore();
+const queryClient = useQueryClient();
 
 const mutation = useMutation({
   mutationFn: (values: any) => create_packaging(values),
@@ -32,6 +34,8 @@ const handleCreate = async (values: any) => {
     const res = await mutation.mutateAsync(values);
     if (res.success) {
       toast.success("Packaging created successfully");
+      //invalidate packaging-list query
+      queryClient.invalidateQueries({ queryKey: ["packaging-list"] });
       router.push("/setting/packaging");
     } else {
       toast.error(res.error || "Failed to create packaging");

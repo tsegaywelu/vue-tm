@@ -19,10 +19,12 @@ import { getApi } from "@/utils/getApi";
 import { useToastStore } from "@/store/toastStore";
 import Button from "@/components/Button.vue";
 import SubmitButton from "@/components/form/SubmitButton.vue";
+import { useQueryClient } from "@tanstack/vue-query";
 
 const router = useRouter();
 const toast = useToastStore();
-const api = getApi("/roadType");
+const api = getApi("/road-type");
+const queryClient = useQueryClient();
 
 const mutation = useMutation({
   mutationFn: (values: any) => api.addAuthenticationHeader().post("", values),
@@ -33,6 +35,8 @@ const handleCreate = async (values: any) => {
     const res = await mutation.mutateAsync(values);
     if (res.success) {
       toast.success("Road type created successfully");
+      //invalidate query here 
+      queryClient.invalidateQueries({ queryKey: ["road-type-list"] });
       router.push("/setting/base-configuration?tab=roadType");
     } else {
       toast.error(res.error || "Failed to create road type");

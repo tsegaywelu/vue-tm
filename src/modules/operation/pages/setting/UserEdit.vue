@@ -27,7 +27,9 @@ import { fetch_user_details, update_user } from "../../api/settings.api";
 import { useToastStore } from "@/store/toastStore";
 import SubmitButton from "@/components/form/SubmitButton.vue";
 import Button from "@/components/Button.vue";
+import { useQueryClient } from "@tanstack/vue-query";
 
+const queryClient = useQueryClient();
 const route = useRoute();
 const router = useRouter();
 const toast = useToastStore();
@@ -35,13 +37,13 @@ const id = route.params.id as string;
 
 const { data: response, isLoading } = useQuery({
   queryKey: ["user", id],
-  queryFn: () => fetch_user_details(id),
+  queryFn: () => fetch_user_details(id), 
   enabled: !!id,
 });
 
 const initialValues = computed(() => {
   if (!response.value?.data) return null;
-  const data = response.value.data.result || response.value.data;
+  const data = (response.value.data as any).result || response.value.data;
   return {
     username: data.username || "",
     role: data.role?._id || data.role || "",
@@ -54,10 +56,12 @@ const mutation = useMutation({
 });
 
 const handleUpdate = async (values: any) => {
+  const { confirmPassword, ...payload } = values;
   try {
-    const res = await mutation.mutateAsync(values);
+    const res = await mutation.mutateAsync(payload);
     if (res.success) {
       toast.success("User updated successfully");
+      queryClient.invalidateQueries({ queryKey: ["users-list"] });
       router.push("/setting/user-and-role");
     } else {
       toast.error(res.error || "Failed to update user");

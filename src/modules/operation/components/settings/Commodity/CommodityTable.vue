@@ -25,7 +25,7 @@
                 close();
               "
             />
-            <DropDownItem
+            <!-- <DropDownItem
               :icon="icons.delete"
               label="Delete"
               class="text-error-600"
@@ -33,7 +33,7 @@
                 handleAction(row, 'delete');
                 close();
               "
-            />
+            /> -->
           </template>
         </Dropdown>
       </div>
@@ -53,7 +53,7 @@ const emit = defineEmits(["action"]);
 
 const { response, refetch } = usePagination<any>({
   id: "commodity-list",
-  url: "/commodity",
+  url: "/commodity/contracted",
   searchKey: "name[regex]",
 });
 

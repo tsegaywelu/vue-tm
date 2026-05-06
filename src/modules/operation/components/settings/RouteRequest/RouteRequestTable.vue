@@ -25,8 +25,24 @@
       {{ row.carriers?.map((c: any) => c.name).join(", ") || "-" }}
     </template>
 
-    <template #cell-actions="{ row }">
-      <div class="flex items-center justify-end gap-2">
+    <template #cell-status="{ row }">
+      <div v-if="row.routeRegisteredCarriers">
+        <Status variant="active" type="wrapped" >
+         
+            Registered
+         
+        </Status>
+
+      </div>
+      <div v-else>
+        <Status variant="pending" type="wrapped" >
+         
+            Not Registered
+         
+        </Status>
+      </div>
+
+      <!-- <div class="flex items-center justify-end gap-2">
         <Dropdown>
           <template #default="{ close }">
             <DropDownItem
@@ -48,7 +64,7 @@
             />
           </template>
         </Dropdown>
-      </div>
+      </div> -->
     </template>
   </Table>
 </template>
@@ -60,12 +76,13 @@ import DropDownItem from "@/components/common/DropDownItem.vue";
 import { usePagination } from "@/composables/usePagination";
 import { icons } from "@/utils/icons";
 import type { TableColumn } from "@/components/common/Table.vue";
+import Status from "@/components/common/Status.vue";
 
 const emit = defineEmits(["action"]);
 
 const { response, refetch } = usePagination<any>({
   id: "route-request-list",
-  url: "/route-request",
+  url: "/route-request/carrier",
   searchKey: "routeName[regex]",
 });
 
@@ -75,7 +92,7 @@ const columns: TableColumn<any>[] = [
   { key: "destination", label: "Destination", field: "destination" },
   { key: "waypoint", label: "Waypoints", field: "waypoint" },
   { key: "carriers", label: "Carriers", field: "carriers" },
-  { key: "actions", label: "Action", field: "", cellAlign: "right" },
+  { key: "status", label: "Status", field: "status" },
 ];
 
 const handleAction = (row: any, action: string) => {

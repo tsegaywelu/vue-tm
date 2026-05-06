@@ -18,6 +18,9 @@
             name="name"
             label="Name"
             :validation="{ required }"
+            :attributes="{
+              placeholder:'Enter packaging name'
+            }"
           />
         </div>
       </Colapsable>
