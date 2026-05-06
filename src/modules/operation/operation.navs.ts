@@ -54,6 +54,11 @@ export const core_operations_navs: Navs[] = [
             name: "Create Order",
             show: false,
           },
+          {
+            path: "/operation/orders/edit/$id",
+            name: "Edit Order",
+            show: false,
+          },
         ],
       },
       {
@@ -436,8 +441,14 @@ export const maintenance_navs: Navs[] = [
             name: "Edit Work Order",
             show: false,
           },
+          {
+            path: "/maintenance/work-order/$id",
+            name: "Work Order Details",
+            show: false,
+          },
         ]
       },
+
 
       {
         name: "Workshop",
@@ -454,7 +465,7 @@ export const maintenance_navs: Navs[] = [
             name: "Edit Workshop",
             show: false,
           },
-        ]
+        ],
       },
       {
         name: "Issue Report",
@@ -465,6 +476,13 @@ export const maintenance_navs: Navs[] = [
         name: "Tyre Handoffs",
         path: "/maintenance/tyre-handoffs",
         show: true,
+        children: [
+          {
+            path: "/maintenance/tyre-handoffs/$id",
+            name: "Tyre Handoff Details",
+            show: false,
+          },
+        ],
       },
     ],
   },
@@ -490,11 +508,25 @@ export const finance_navs: Navs[] = [
         name: "Invoice Report",
         path: "/finance/invoice-report",
         show: true,
+        children: [
+          {
+            path: "/finance/invoice-report/$id",
+            name: "Invoice Report Details",
+            show: false,
+          },
+        ],
       },
       {
         name: "Payment Collection",
         path: "/finance/payment-collection",
         show: true,
+        children: [
+          {
+            path: "/finance/payment-collection/$id",
+            name: "Payment Collection Details",
+            show: false,
+          },
+        ],
       },
       {
         name: "Expense",
@@ -631,6 +663,11 @@ export const inventory_navs: Navs[] = [
             path: "/inventory/store-requisition/edit/$id",
             show: false,
           },
+          {
+            name: "Store Requisition Details",
+            path: "/inventory/store-requisition/$id",
+            show: false,
+          },
         ]
       },
 
@@ -647,6 +684,11 @@ export const inventory_navs: Navs[] = [
           {
             name: "Edit Purchase Requisition",
             path: "/inventory/purchase-requisition/edit/$id",
+            show: false,
+          },
+          {
+            name: "Purchase Requisition Details",
+            path: "/inventory/purchase-requisition/$id",
             show: false,
           },
         ]
@@ -667,6 +709,11 @@ export const inventory_navs: Navs[] = [
             path: "/inventory/purchase-order/edit/$id",
             show: false,
           },
+          {
+            name: "Purchase Order Details",
+            path: "/inventory/purchase-order/$id",
+            show: false,
+          },
         ]
       },
 
@@ -683,6 +730,11 @@ export const inventory_navs: Navs[] = [
           {
             name: "Edit Transfer Voucher",
             path: "/inventory/good-transfer/edit/$id",
+            show: false,
+          },
+          {
+            name: "Transfer Voucher Details",
+            path: "/inventory/good-transfer/$id",
             show: false,
           },
         ]
@@ -748,16 +800,57 @@ export const setting_navs: Navs[] = [
         name: "Contract",
         path: "/setting/contract",
         show: true,
+        children: [
+          {
+            name: "Add Contract",
+            path: "/setting/contract/add",
+            show: false
+          },
+          {
+            name: "Edit Contract",
+            path: "/setting/contract/edit/$id",
+            show: false
+          },
+          {
+            name: "Contract Details",
+            path: "/setting/contract/view/$id",
+            show: false
+          },
+        ]
       },
       {
         name: "Commodity",
         path: "/setting/commodity",
         show: true,
+        children: [
+          {
+            name: "Add Commodity",
+            path: "/setting/commodity/add",
+            show: false
+          },
+          {
+            name: "Edit Commodity",
+            path: "/setting/commodity/edit/$id",
+            show: false
+          },
+        ]
       },
       {
         name: "Packaging",
         path: "/setting/packaging",
         show: true,
+        children: [
+          {
+            name: "Add Packaging",
+            path: "/setting/packaging/add",
+            show: false
+          },
+          {
+            name: "Edit Packaging",
+            path: "/setting/packaging/edit/$id",
+            show: false
+          },
+        ]
       },
       {
         name: "Route Requests",
@@ -768,21 +861,70 @@ export const setting_navs: Navs[] = [
         name: "Region",
         path: "/setting/region",
         show: true,
+        children: [
+          {
+            name: "Add Region",
+            path: "/setting/region/add",
+            show: false
+          },
+          {
+            name: "Edit Region",
+            path: "/setting/region/edit/$id",
+            show: false
+          },
+        ]
       },
       {
         name: "Bonus Multipliers",
         path: "/setting/bonus-multipliers",
         show: true,
+        children: [
+          {
+            name: "Add Multiplier",
+            path: "/setting/bonus-multipliers/add",
+            show: false
+          },
+          {
+            name: "Edit Multiplier",
+            path: "/setting/bonus-multipliers/edit/$id",
+            show: false
+          },
+        ]
       },
       {
         name: "Bonus Routes",
         path: "/setting/bonus-routes",
         show: true,
+        children: [
+          {
+            name: "Add Bonus Route",
+            path: "/setting/bonus-routes/add",
+            show: false
+          },
+          {
+            name: "Edit Bonus Route",
+            path: "/setting/bonus-routes/edit/$id",
+            show: false
+          },
+        ]
       },
       {
         name: "Announcements",
         path: "/setting/announcements",
         show: true,
+        children: [
+          {
+            name: "Add Announcement",
+            path: "/setting/announcements/add",
+            show: false,
+          },
+          {
+            name: "Edit Announcement",
+            path: "/setting/announcements/edit/:id",
+
+            show: false,
+          },
+        ],
       },
     ],
   },

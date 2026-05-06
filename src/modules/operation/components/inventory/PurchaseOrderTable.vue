@@ -1,10 +1,23 @@
 <template>
   <Table
     id="purchase-orders-list"
+    v-model:search_value="searchTerm"
     :columns="columns"
     :rows="response"
-    search_placeholder="Search by reference number..."
+    :search_placeholder="dynamicSearchPlaceholder"
   >
+    <template #search-prefix>
+      <div class="h-full flex items-center border-r border-gray-200 pr-2 mr-2 w-48">
+        <Select
+          class="[&_.input-focus]:shadow-none! [&_.input-focus]:border-none [&_.input-focus]:min-h-full min-w-48"
+          v-model="selectedSearchField"
+          :options="searchFieldOptions"
+          label_key="label"
+          value_key="value"
+          :clearable="false"
+        />
+      </div>
+    </template>
     <template #cell-status="{ row }">
       {{ row.status }}
     </template>
@@ -81,7 +94,9 @@
 </template>
 
 <script setup lang="ts">
+import { computed, ref } from "vue";
 import Table from "@/components/common/Table.vue";
+import Select from "@/components/common/Select.vue";
 import Dropdown from "@/components/common/Dropdown.vue";
 import DropDownItem from "@/components/common/DropDownItem.vue";
 import Status from "@/components/common/Status.vue";
@@ -91,10 +106,31 @@ import type { TableColumn } from "@/components/common/Table.vue";
 
 const emit = defineEmits(["action"]);
 
+const searchFieldOptions = [
+  { label: "Ref No", value: "referenceNumber" },
+  { label: "Item Name", value: "itemName" },
+  { label: "Remark", value: "remark" },
+];
+
+const selectedSearchField = ref("referenceNumber");
+const searchTerm = ref("");
+
+const dynamicSearchPlaceholder = computed(() => {
+  const option = searchFieldOptions.find((o) => o.value === selectedSearchField.value);
+  return option ? `Search by ${option.label}...` : "Search...";
+});
+
+const activeFilters = ref<any>({});
 const { response, refetch } = usePagination<any>({
   id: "purchase-orders-list",
   url: "/purchase-orders",
-  searchKey: "referenceNumber[regexAny]",
+  params: computed(() => {
+    const params: any = { ...activeFilters.value };
+    if (searchTerm.value) {
+      params[`${selectedSearchField.value}[regexAny]`] = searchTerm.value;
+    }
+    return params;
+  }),
 });
 
 const columns: TableColumn<any>[] = [

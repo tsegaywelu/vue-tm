@@ -34,7 +34,7 @@ const handleOrderAction = async ({ row, action }: any) => {
   if (action === 'edit') {
     router.push(`/inventory/purchase-order/edit/${row._id}`);
   } else if (action === 'view') {
-    router.push(`/inventory/purchase-order/details/${row._id}`);
+    router.push(`/inventory/purchase-order/${row._id}`);
   } else if (action === 'delete') {
     if (confirm(`Are you sure you want to delete purchase order "${row.referenceNumber}"?`)) {
       try {

@@ -26,3 +26,7 @@ export function cancel_order(id: string, data?: any) {
 export function fetch_contract_route_details(carrierId: string, routeId: string) {
   return getApi("/contract").addAuthenticationHeader().get(`/contract-route-details-shipper/${carrierId}/${routeId}`);
 }
+
+export function fetch_order_status_count() {
+  return api.addAuthenticationHeader().get<any>("/statusCount");
+}

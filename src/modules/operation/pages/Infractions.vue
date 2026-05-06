@@ -179,6 +179,9 @@ const switchTab = (tabValue: string) => {
 const { response, refetch } = usePagination({
   id: "infractions-list",
   url: "/infraction",
+  params: (state) => ({
+    q: state.search || "",
+  }),
 });
 
 const columns: TableColumn<any>[] = [
@@ -251,9 +254,16 @@ const formContainer = ref<HTMLElement | null>(null);
 const selectedType = ref<any>(null);
 const typeInitialValues = ref({ name: "", description: "" });
 
-const { response: typesResponse, refetch: refetchTypes, isLoading: typesLoading } = usePagination({
+const {
+  response: typesResponse,
+  refetch: refetchTypes,
+  isLoading: typesLoading,
+} = usePagination({
   id: "infraction-types-list",
   url: "/infraction-type",
+  params: (state) => ({
+    q: state.search || "",
+  }),
 });
 
 const typeColumns: TableColumn<any>[] = [

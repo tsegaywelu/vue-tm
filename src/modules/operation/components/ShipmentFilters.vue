@@ -16,169 +16,31 @@
     "
     class="[&_.input-focus]:bg-grey-25 flex-1 flex max-h-16 h-16 min-h-16 *:w-[220px] *:shrink-0 px-2 gap-2 overflow-auto"
   >
-    <SelectInput
-      searchable
-      :show_validation_status="false"
-      label="Origin"
-      multiple
-      parent_class_name=""
-      size="xs"
-      :params="
-        (values) => {
-          return {
-            sort: 'shipmentCount',
-            q: undefined,
-            ...(values.search
-              ? {
-                  routeName: {
-                    regexAny: values.search,
-                  },
-                }
-              : {}),
-          };
-        }
-      "
-      name="routeOrigin"
-      value_key="destination"
-      label_key="routeName"
-      :url="`/route`"
-      :attributes="{
-        placeholder: 'Please Search and Selct a City',
-      }"
-    />
-    <SelectInput
-      :show_validation_status="false"
-      label="Destination"
-      searchable
-      multiple
-      parent_class_name=""
-      size="xs"
-      :params="
-        (values) => {
-          return {
-            sort: 'shipmentCount',
-            q: undefined,
-            ...(values.search
-              ? {
-                  routeName: {
-                    regexAny: values.search,
-                  },
-                }
-              : {}),
-          };
-        }
-      "
-      name="routeDestination"
-      value_key="destination"
-      label_key="routeName"
-      :url="`/route`"
-      :attributes="{
-        placeholder: 'Please Search and Selct a City',
-      }"
-    />
-    <SelectInput
-      :show_validation_status="false"
-      label="Status"
-      searchable
-      name="status"
-      size="xs"
-      :options="ShipmentStatus"
-      :attributes="{
-        placeholder: 'Please Select a Status',
-      }"
-    />
-    <SelectInput
-      :show_validation_status="false"
-      label="Product Type"
-      name="productType"
-      size="xs"
-      :options="ProductT"
-      :attributes="{
-        placeholder: 'Please Select a Product Type',
-      }"
-    />
-    <SelectInput
-      :show_validation_status="false"
-      label="Trip Type"
-      name="tripType"
-      size="xs"
-      :options="Triptype"
-      :attributes="{
-        placeholder: 'Please Select a Trip Type',
-      }"
-    />
-
-    <SelectInput
-      :show_validation_status="false"
-      label="Vehicle Ownership"
-      name="vehicleOwnership"
-      size="xs"
-      :options="VehicleOwnership"
-      :attributes="{
-        placeholder: 'Select a Vehicle Ownership',
-      }"
-    />
-    <SelectInput
-      :show_validation_status="false"
-      label="Damage"
-      name="damage"
-      size="xs"
-      :options="Damage"
-      :attributes="{
-        placeholder: 'Please Select a Damage',
-      }"
-    />
-
-    <SelectInput
-      :show_validation_status="false"
-      label="Documented Uploads"
-      name="documentedUploads"
-      size="xs"
-      :options="DocumentedUploads"
-      :attributes="{
-        placeholder: 'Select a Documented Uploads',
-      }"
-    />
-    <SelectInput
-      searchable
-      :show_validation_status="false"
-      label="Shipper"
-      size="xs"
-      name="shipper"
-      value_key="shipper._id"
-      label_key="shipper.name"
-      :url="`/shipper/contractedShippers`"
-      :attributes="{
-        placeholder: 'Please Search and Selct a Shipper',
-      }"
-    />
-    <SelectInput
-      searchable
-      :show_validation_status="false"
-      label="Agent"
-      size="xs"
-      name="agent"
-      value_key="_id"
-      label_key="name"
-      :url="`/agent/shipper/carrier`"
-      :attributes="{
-        placeholder: 'Please Search and Selct a Agent',
-      }"
-    />
+    <OriginInput name="routeOrigin" multiple size="xs" />
+    <DestinationInput name="routeDestination" multiple size="xs" />
+    <ShipmentStatusInput name="status" size="xs" />
+    <ProductTypeInput name="productType" size="xs" />
+    <TripTypeInput name="tripType" size="xs" />
+    <VehicleOwnershipInput name="vehicleOwnership" size="xs" />
+    <DamageInput name="damage" size="xs" />
+    <DocumentedUploadsInput name="documentedUploads" size="xs" />
+    <ShipperInput name="shipper" size="xs" />
+    <AgentInput name="agent" size="xs" />
   </Form>
 </template>
 
 <script setup lang="ts">
-import SelectInput from "@/components/form/SelectInput.vue";
 import Form from "@/components/form/Form.vue";
-import {
-  Damage,
-  DocumentedUploads,
-  ShipmentStatus,
-  Triptype,
-  VehicleOwnership,
-  ProductT,
-} from "@/utils/utils";
+import OriginInput from "@/components/common/inputs/OriginInput.vue";
+import DestinationInput from "@/components/common/inputs/DestinationInput.vue";
+import ShipmentStatusInput from "@/components/common/inputs/ShipmentStatusInput.vue";
+import ProductTypeInput from "@/components/common/inputs/ProductTypeInput.vue";
+import TripTypeInput from "@/components/common/inputs/TripTypeInput.vue";
+import VehicleOwnershipInput from "@/components/common/inputs/VehicleOwnershipInput.vue";
+import DamageInput from "@/components/common/inputs/DamageInput.vue";
+import DocumentedUploadsInput from "@/components/common/inputs/DocumentedUploadsInput.vue";
+import ShipperInput from "@/components/common/inputs/ShipperInput.vue";
+import AgentInput from "@/components/common/inputs/AgentInput.vue";
 
 const props = defineProps<{
   calendarType?: "english" | "ethiopian";

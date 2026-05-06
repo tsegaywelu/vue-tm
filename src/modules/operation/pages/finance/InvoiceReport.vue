@@ -3,11 +3,14 @@
 </template>
 
 <script setup lang="ts">
+import { useRouter } from "vue-router";
 import InvoiceReportTable from "../../components/InvoiceReportTable.vue";
+
+const router = useRouter();
 
 const handleInvoiceAction = ({ row, action }: any) => {
   if (action === 'view') {
-    console.log(`View invoice details for:`, row);
+    router.push(`/finance/invoice-report/${row._id}`);
   } else if (action === 'approve') {
     console.log(`Approve invoice:`, row);
   } else if (action === 'cancel') {

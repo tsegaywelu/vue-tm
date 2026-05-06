@@ -3,9 +3,22 @@
     id="payable-list"
     :columns="columns"
     :rows="response"
-    search_placeholder="Search..."
+    v-model:search_value="searchTerm"
+    :search_placeholder="dynamicSearchPlaceholder"
     @row_click="handleAction($event, 'view')"
   >
+    <template #search-prefix>
+      <div class="h-full flex items-center border-r border-gray-200 pr-2 mr-2">
+        <Select
+          class="[&_.input-focus]:shadow-none! [&_.input-focus]:border-none [&_.input-focus]:min-h-full min-w-48"
+          v-model="selectedSearchField"
+          :options="searchFieldOptions"
+          label_key="label"
+          value_key="value"
+          :clearable="false"
+        />
+      </div>
+    </template>
     <template #cell-advanceNumber="{ value }">
       <span class="font-bold">{{ value || '-' }}</span>
     </template>
@@ -90,6 +103,7 @@ import Table from "@/components/common/Table.vue";
 import Dropdown from "@/components/common/Dropdown.vue";
 import DropDownItem from "@/components/common/DropDownItem.vue";
 import Status from "@/components/common/Status.vue";
+import Select from "@/components/common/Select.vue";
 import { icons } from "@/utils/icons";
 import { usePagination } from "@/composables/usePagination";
 import type { TableColumn } from "@/components/common/Table.vue";
@@ -110,11 +124,38 @@ const columns: TableColumn<any>[] = [
   { key: "actions", label: "Actions", field: "", cellAlign: "right" },
 ];
 
-const activeFilters = ref({ select: 'all' });
+const searchFieldOptions = [
+  { label: "Plate Number", value: "vehiclePlateNumber" },
+  { label: "Advance Number", value: "advanceNumber" },
+  { label: "First Name", value: "driverFirstName" },
+  { label: "Middle Name", value: "driverMiddleName" },
+  { label: "Transporter Name", value: "transporterName" },
+  { label: "Supplier Name", value: "supplier" },
+];
+
+const selectedSearchField = ref("vehiclePlateNumber");
+const searchTerm = ref("");
+
+const dynamicSearchPlaceholder = computed(() => {
+  const option = searchFieldOptions.find(
+    (o) => o.value === selectedSearchField.value,
+  );
+  return option ? `Search by ${option.label}...` : "Search...";
+});
+
+const activeFilters = ref({ select: "all" });
+
 const { response, refetch } = usePagination<any>({
   id: "payable-list",
   url: "/advance-payment/allPayables",
-  params: computed(() => activeFilters.value),
+  params: computed(() => {
+    const params: any = { ...activeFilters.value };
+    if (searchTerm.value) {
+      params[`${selectedSearchField.value}[regexAny]`] = searchTerm.value;
+      params.q = undefined;
+    }
+    return params;
+  }),
 });
 
 const handleFilterChange = (newFilters: any) => {

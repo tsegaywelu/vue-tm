@@ -510,14 +510,18 @@ watch(searchValue, (newVal) => {
   local_search.value = newVal;
 });
 
+let searchTimeout: any = null;
 const onSearchInput = (e: Event) => {
   const val = (e.target as HTMLInputElement).value;
   local_search.value = val;
-  if (paginationContext) {
-    paginationContext.setSearch(val);
-  }
-  emit("update:search_value", val);
-  emit("search", val);
+  if (searchTimeout) clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(() => {
+    if (paginationContext) {
+      paginationContext.setSearch(val);
+    }
+    emit("update:search_value", val);
+    emit("search", val);
+  }, 500);
 };
 
 const resolveValue = (

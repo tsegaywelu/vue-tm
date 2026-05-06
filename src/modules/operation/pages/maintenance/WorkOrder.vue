@@ -32,6 +32,8 @@ const handleWorkOrderAction = ({
 }) => {
   if (action === "edit") {
     router.push(`/maintenance/work-order/edit/${row._id}`);
+  } else if (action === "view") {
+    router.push(`/maintenance/work-order/${row._id}`);
   } else if (action === "add") {
     router.push("/maintenance/work-order/add");
   } else if (["approve", "cancel", "complete"].includes(action)) {
