@@ -128,16 +128,28 @@ function getPreviewUrl(file: any) {
 
             <template v-if="field.state.value">
               <img
-                :src="getPreviewUrl(Array.isArray(field.state.value) ? field.state.value[0] : field.state.value)"
+                :src="
+                  getPreviewUrl(
+                    Array.isArray(field.state.value)
+                      ? field.state.value[0]
+                      : field.state.value,
+                  ) || ''
+                "
                 class="w-full h-full object-cover"
               />
-              <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+              <div
+                class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
+              >
                 <i class="mdi mdi-camera-outline text-white text-xl"></i>
               </div>
             </template>
             <template v-else>
-              <i class="mdi mdi-image-plus-outline text-2xl text-gray-400 group-hover:text-primary transition-colors"></i>
-              <span class="text-[10px] font-bold text-gray-400 mt-1 uppercase">Logo</span>
+              <i
+                class="mdi mdi-image-plus-outline text-2xl text-gray-400 group-hover:text-primary transition-colors"
+              ></i>
+              <span class="text-[10px] font-bold text-gray-400 mt-1 uppercase"
+                >Logo</span
+              >
             </template>
           </div>
           <button
@@ -238,7 +250,7 @@ function getPreviewUrl(file: any) {
                 </div>
               </div>
               <button
-                @click.prevent="removeFile(index, field)"
+                @click.prevent="removeFile(+index, field)"
                 class="size-8 flex items-center justify-center rounded-full hover:bg-red-50 text-gray-400 hover:text-red-500 transition-colors"
                 title="Remove file"
               >

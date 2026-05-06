@@ -1,8 +1,6 @@
 <template>
   <Teleport to="#page-actions" defer>
     <div class="flex items-center gap-2">
-      <p v-permission="'REPORT:view'">test</p>
-      <!-- Download Dropdown -->
       <Dropdown>
         <template #trigger>
           <Button variant="secondary" size="md">
@@ -49,19 +47,16 @@
     </div>
   </Teleport>
 
-  <!-- Backdrop for dropdown -->
   <div
     v-if="isDropdownOpen"
-    class="fixed inset-0 z-[9998]"
+    class="fixed inset-0 z-9999"
     @click="isDropdownOpen = false"
   />
 
-  <!-- Shipment Statistics Cards -->
   <Teleport to="#extra-page-data" defer>
     <StatsCards :stats="shipmentStats" :loading="isLoadingStats" />
   </Teleport>
 
-  <!-- Shipment Data Table -->
   <ShipmentTable @action="handleShipmentAction" />
 </template>
 
