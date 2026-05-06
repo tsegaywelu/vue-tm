@@ -329,6 +329,7 @@ import type { Shipment } from "../../operation.types";
 // [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
 // [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
 // [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
 
 export type Props = {
   shipment: Shipment;
