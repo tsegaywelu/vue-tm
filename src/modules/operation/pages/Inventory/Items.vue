@@ -4,7 +4,7 @@
       variant="primary"
       size="md"
       class="flex items-center gap-2"
-      @click="router.push('/inventory/items/add')"
+      @click="handleAddItem"
     >
       <i v-html="icons.plus" />
       Add Inventory Item
@@ -25,14 +25,23 @@ import Button from "@/components/Button.vue";
 import { icons } from "@/utils/icons";
 import { delete_inventory_item } from "../../api/inventory.api";
 import { useToastStore } from "@/store/toastStore";
+import { openModal } from "@customizer/modal-x";
 
-const router = useRouter();
 const toast = useToastStore();
 const tableRef = ref();
 
+const handleAddItem = () => {
+  openModal("InventoryItemModal", {
+    onSuccess: () => tableRef.value?.refetch(),
+  });
+};
+
 const handleItemAction = async ({ row, action }: any) => {
   if (action === 'edit') {
-    router.push(`/inventory/items/edit/${row._id}`);
+    openModal("InventoryItemModal", {
+      item: row,
+      onSuccess: () => tableRef.value?.refetch(),
+    });
   } else if (action === 'delete') {
     if (confirm(`Are you sure you want to delete item "${row.name}"?`)) {
       try {

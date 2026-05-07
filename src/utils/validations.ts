@@ -436,7 +436,7 @@ export const validateArrayItems = (
 
     for (const [field, validators] of Object.entries(rules)) {
       const value = row[field];
-      const error = validateAll(validators, value, undefined);
+      const error = validateAll(validators, value, { allValues: values, index: i });
       if (error) {
         errors[`${field}_${id}`] = error;
         if (!firstError) firstError = error;

@@ -4,7 +4,7 @@
       variant="primary"
       size="md"
       class="flex items-center gap-2"
-      @click="router.push('/inventory/good-transfer/add')"
+      @click="handleCreateTransfer"
     >
       <i v-html="icons.plus" />
       Create Transfer
@@ -21,18 +21,28 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import GoodTransferTable from "../../components/inventory/GoodTransferTable.vue";
-import Button from "@/components/Button.vue";
+import Button from "@/components/common/Button.vue";
 import { icons } from "@/utils/icons";
 import { delete_good_transfer } from "../../api/inventory.api";
 import { useToastStore } from "@/store/toastStore";
+import { openModal } from "@customizer/modal-x";
 
 const router = useRouter();
 const toast = useToastStore();
 const tableRef = ref();
 
+const handleCreateTransfer = () => {
+  openModal("GoodTransferModal", {
+    onSuccess: () => tableRef.value?.refetch(),
+  });
+};
+
 const handleTransferAction = async ({ row, action }: any) => {
   if (action === 'edit') {
-    router.push(`/inventory/good-transfer/edit/${row._id}`);
+    openModal("GoodTransferModal", {
+      transfer: row,
+      onSuccess: () => tableRef.value?.refetch(),
+    });
   } else if (action === 'view') {
     router.push(`/inventory/good-transfer/${row._id}`);
   } else if (action === 'delete') {

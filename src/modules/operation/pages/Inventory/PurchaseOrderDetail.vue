@@ -116,6 +116,7 @@ import ModalWrapper from "@/components/modals/ModalWrapper.vue";
 import { dateFormatter } from "@/utils/utils";
 import { useToastStore } from "@/store/toastStore";
 import { useAuthStore } from "@/store/authStore";
+import { printPurchaseOrder } from "../../utils/printPurchaseOrder";
 
 // Tabs
 import PurchaseOrderOverviewTab from "../../components/inventory/PurchaseOrderOverviewTab.vue";
@@ -186,6 +187,7 @@ const handleVoid = () => {
 };
 
 const handlePrint = () => {
-  window.print();
+  if (!purchaseOrder.value) return;
+  printPurchaseOrder(purchaseOrder.value, auth.user);
 };
 </script>
