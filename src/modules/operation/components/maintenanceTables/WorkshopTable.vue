@@ -86,7 +86,7 @@
       <div class="flex items-center justify-end">
         <Dropdown>
           <template #default="{ close }">
-            <button
+            <button v-permission="'WORKSHOP:read'"
               class="w-full text-left px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors"
               @click="
                 handleAction(row, 'view');
@@ -95,7 +95,7 @@
             >
               Details
             </button>
-            <button
+            <button v-permission="'WORKSHOP:update'"
               class="w-full text-left px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors text-brightBlue-dark"
               @click="
                 handleAction(row, 'edit');

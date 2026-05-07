@@ -65,11 +65,10 @@ const handleSubmit = async (values: any) => {
       ? calculateVAT(values.items, values.vatRate)
       : 0;
 
-    const submitValues = { ...values };
-    delete submitValues.prRef;
-
-    const payload = {
-      ...submitValues,
+    const payload: any = {
+      date: values.date,
+      includeVAT: values.includeVAT,
+      vatRate: values.vatRate,
       items: (values.items || []).map((i: any) => ({
         item: i.item,
         quantity: Number(i.quantity) || 1,
@@ -82,6 +81,9 @@ const handleSubmit = async (values: any) => {
       vat: vatAmount,
       grandTotal: subtotal + vatAmount,
     };
+
+    if (values.pr) payload.pr = values.pr;
+    if (values.to) payload.to = values.to;
 
     let res;
     if (isEdit.value) {

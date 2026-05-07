@@ -1,6 +1,6 @@
 <template>
   <Teleport to="#page-actions" defer>
-    <Button variant="primary" size="md" @click="openAddModal">
+    <Button v-permission="'VEHICLE_LEASE_AGREEMENT:create'" variant="primary" size="md" @click="openAddModal">
       Add Contract
     </Button>
   </Teleport>

@@ -1,6 +1,6 @@
 <template>
   <Teleport to="#page-actions" defer>
-    <Button size="md" variant="primary" @click="openFacilityModal(null)">
+    <Button v-permission="'FACILITY:create'" size="md" variant="primary" @click="openFacilityModal(null)">
       New Facility
     </Button>
   </Teleport>

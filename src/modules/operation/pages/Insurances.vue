@@ -1,6 +1,6 @@
 <template>
   <Teleport defer to="#page-actions">
-    <Button variant="primary" size="md" @click="openAddInsuranceModal">
+    <Button v-permission="'INSURANCE:create'" variant="primary" size="md" @click="openAddInsuranceModal">
       <template #leftIcon>
         <i class="mdi mdi-plus text-lg"></i>
       </template>

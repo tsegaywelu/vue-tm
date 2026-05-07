@@ -129,6 +129,7 @@ function remove(id: string) {
                     value_key="_id"
                     searchable
                     :display_value="item.itemName"
+                    :disabled="true"
                     @select="(opt: any) => (item.itemName = opt.label)"
                   />
                 </div>
@@ -172,13 +173,7 @@ function remove(id: string) {
         </template>
       </component>
 
-      <button
-        type="button"
-        class="mt-4 flex items-center gap-2 text-primary font-bold uppercase tracking-wider text-xs px-2"
-        @click="add()"
-      >
-        Add Item
-      </button>
+
     </div>
   </InputParent>
 </template>

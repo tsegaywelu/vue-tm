@@ -80,14 +80,14 @@
       <div class="flex items-center justify-end">
         <Dropdown>
           <template #default="{ close }">
-            <button
+            <button v-permission="'WORK_ORDER:approve'"
               v-if="row.status === 'PENDING'"
               class="w-full text-left px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors text-brightBlue-dark"
               @click="handleAction(row, 'approve'); close();"
             >
               Approve
             </button>
-            <button
+            <button v-permission="'WORK_ORDER:cancel'"
               v-if="row.status === 'PENDING'"
               class="w-full text-left px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors text-red-600"
               @click="handleAction(row, 'cancel'); close();"
@@ -101,13 +101,13 @@
             >
               Complete
             </button>
-            <button
+            <button v-permission="'WORK_ORDER:read'"
               class="w-full text-left px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors"
               @click="handleAction(row, 'view'); close();"
             >
               Details
             </button>
-            <button
+            <button v-permission="'WORK_ORDER:update'"
               class="w-full text-left px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors text-brightBlue-dark"
               @click="handleAction(row, 'edit'); close();"
             >

@@ -21,6 +21,7 @@
     <!-- Page Actions (Teleported) -->
     <Teleport to="#page-actions" defer>
       <Button
+        v-permission="currentTab === 'user' ? 'USER:create' : 'ROLE:create'"
         variant="primary"
         size="md"
         class="flex items-center gap-2"

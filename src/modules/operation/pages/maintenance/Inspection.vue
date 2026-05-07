@@ -1,6 +1,6 @@
 <template>
   <Teleport to="#page-actions" defer>
-    <Button @click="router.push('/maintenance/inspection/add')">
+    <Button v-permission="'INSPECTION:create'" @click="router.push('/maintenance/inspection/add')">
       <template #leading>
         <div class="size-5" v-html="all_icons.plus"></div>
       </template>

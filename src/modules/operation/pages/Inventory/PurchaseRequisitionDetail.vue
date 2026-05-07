@@ -47,6 +47,7 @@
           <div class="flex gap-2">
             <Button
               v-if="requisition.status === 'PENDING'"
+              v-permission="'PURCHASE_REQUISITION:update'"
               variant="outline"
               size="md"
               @click="$router.push(`/inventory/purchase-requisition/edit/${requisitionId}`)"

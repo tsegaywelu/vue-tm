@@ -53,17 +53,44 @@ const initialValues = computed(() => {
 
 const handleSubmit = async (values: any) => {
   try {
-    const payload = {
-      ...values,
-      items: (values.items || []).map((i: any) => ({
-        item: i.item,
-        quantity: i.inventoryType === 'SERIALIZED' ? (i.serials?.length || 0) : Number(i.quantity),
-        price: Number(i.price) || 0,
-        totalPrice: (i.inventoryType === 'SERIALIZED' ? (i.serials?.length || 0) : Number(i.quantity)) * (Number(i.price) || 0),
-        serials: i.serials || [],
-        remark: i.remark || "",
-      })),
+    const payload: any = {
+      srv: values.srv,
+      type: values.type,
+      issuedToBody: values.issuedToBody,
+      classification: values.classification,
+      creditSalesInvoiceNumber: values.creditSalesInvoiceNumber,
+      cashSalesInvoiceNumber: values.cashSalesInvoiceNumber,
+      items: (values.items || []).map((i: any) => {
+        const baseItem = {
+          item: i.item,
+          price: Number(i.price) || 0,
+          totalPrice: (i.inventoryType === 'SERIALIZED' ? (i.serials?.length || 0) : Number(i.quantity)) * (Number(i.price) || 0),
+          remark: i.remark || "",
+        };
+
+        if (i.inventoryType === 'SERIALIZED') {
+          return {
+            ...baseItem,
+            serials: i.serials || [],
+          };
+        } else {
+          return {
+            ...baseItem,
+            quantity: Number(i.quantity) || 0,
+          };
+        }
+      }),
     };
+
+    if (values.supplier) payload.supplier = values.supplier;
+    
+    if (values.issuedToBody === 'VEHICLE' && values.issuedToVehicle) {
+      payload.issuedToVehicle = values.issuedToVehicle;
+    } else if (values.issuedToBody === 'CONTACT' && values.issuedToContact) {
+      payload.issuedToContact = values.issuedToContact;
+    } else if (values.issuedToBody === 'STORE' && values.issuedToStore) {
+      payload.issuedToStore = values.issuedToStore;
+    }
 
     let res;
     if (isEdit.value) {

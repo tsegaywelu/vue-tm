@@ -73,7 +73,7 @@
                 close();
               "
             />
-            <DropDownItem
+            <DropDownItem v-permission="'TRANSACTION:update'"
               :icon="icons.edit"
               label="Edit"
               @click.stop="
@@ -81,7 +81,7 @@
                 close();
               "
             />
-            <DropDownItem
+            <DropDownItem v-permission="'TRANSACTION:read'"
               :icon="icons.eye"
               label="Details"
               @click.stop="

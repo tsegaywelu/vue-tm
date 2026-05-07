@@ -80,7 +80,12 @@ const handleSubmit = async (values: any) => {
   try {
     // Format items to ensure numeric quantity
     const payload = {
-      ...values,
+      date: values.date,
+      requiredDate: values.requiredDate,
+      department: values.department,
+      classification: values.classification,
+      costCenter: values.costCenter,
+      siv: values.siv,
       items: (values.items || []).map((i: any) => ({
         item: i.item,
         quantity: Number(i.quantity) || 1,

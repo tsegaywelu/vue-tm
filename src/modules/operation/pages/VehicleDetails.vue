@@ -1,6 +1,7 @@
 <template>
   <Teleport defer to="#page-actions">
     <Button
+      v-permission="'VEHICLE:update'"
       variant="primary"
       size="md"
       @click="$router.push(`/vehicles/edit/${vehicleId}`)"

@@ -81,7 +81,11 @@ const initialValues = computed(() => {
 const handleSubmit = async (values: any) => {
   try {
     const payload = {
-      ...values,
+      date: values.date,
+      requestedDate: values.requestedDate,
+      approvedSTRDate: values.approvedSTRDate,
+      srv: values.srv,
+      remark: values.remark,
       items: (values.items || []).map((i: any) => ({
         item: i.item,
         quantity: Number(i.quantity) || 1,

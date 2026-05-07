@@ -21,7 +21,7 @@
       <div class="flex items-center justify-end gap-2">
         <Dropdown>
           <template #default="{ close }">
-            <DropDownItem
+            <DropDownItem v-permission="'CONTRACT:read'"
               :icon="icons.eye"
               label="View Details"
               @click.stop="
@@ -29,7 +29,8 @@
                 close();
               "
             />
-            <DropDownItem
+            <!-- Delete action commented out temporarily -->
+        <!-- <DropDownItem
               v-if="canDelete"
               :icon="icons.delete"
               label="Delete"
@@ -38,7 +39,7 @@
                 handleAction(row, 'delete');
                 close();
               "
-            />
+            /> -->
           </template>
         </Dropdown>
       </div>

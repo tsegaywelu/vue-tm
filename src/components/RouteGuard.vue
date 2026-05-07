@@ -57,6 +57,20 @@ onMounted(async () => {
           name: "login",
           query: { redirect: router.currentRoute.value.fullPath },
         });
+      } else {
+        // Validate permission for the requested route now that user is loaded
+        const currentRoute = router.currentRoute.value;
+        if (currentRoute.meta.permission) {
+          if (
+            !authStore.has_permission(currentRoute.meta.permission as string, [
+              "view",
+              "read",
+              "manage",
+            ])
+          ) {
+            router.push("/unauthorized");
+          }
+        }
       }
     } catch (error) {
       router.push({

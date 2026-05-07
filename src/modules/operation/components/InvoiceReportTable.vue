@@ -38,7 +38,7 @@
       <div class="flex items-center justify-end">
         <Dropdown>
           <template #default="{ close }">
-            <DropDownItem
+            <DropDownItem v-permission="'REPORT:update'"
               :icon="icons.edit"
               label="Edit"
               @click.stop="
@@ -46,7 +46,7 @@
                 close();
               "
             />
-            <DropDownItem
+            <DropDownItem v-permission="'REPORT:approve'"
               :icon="icons.check"
               label="Approve"
               @click.stop="
@@ -54,7 +54,7 @@
                 close();
               "
             />
-            <DropDownItem
+            <DropDownItem v-permission="'REPORT:cancel'"
               :icon="icons.close"
               label="Cancel"
               @click.stop="
@@ -62,7 +62,7 @@
                 close();
               "
             />
-            <DropDownItem
+            <DropDownItem v-permission="'REPORT:read'"
               :icon="icons.eye"
               label="Details"
               @click.stop="

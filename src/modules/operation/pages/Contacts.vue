@@ -1,6 +1,6 @@
 <template>
   <Teleport to="#page-actions" defer>
-    <Button size="md" variant="primary" @click="openContactModal(null)">
+    <Button v-permission="'CONTACT:create'" size="md" variant="primary" @click="openContactModal(null)">
       New Contact
     </Button>
   </Teleport>
@@ -91,6 +91,7 @@
                 "
               />
               <DropDownItem
+                v-permission="'CONTACT:update'"
                 label="Edit Contact"
                 @click="
                   close();
@@ -98,6 +99,7 @@
                 "
               />
               <DropDownItem
+                v-permission="'CONTACT:delete'"
                 label="Delete"
                 @click="
                   close();

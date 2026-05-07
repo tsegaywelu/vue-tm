@@ -29,7 +29,7 @@
         </Button>
         <Dropdown>
           <template #default="{ close }">
-            <DropDownItem
+            <DropDownItem v-permission="'USER:update'"
               :icon="icons.edit"
               label="Edit"
               @click.stop="
@@ -37,7 +37,8 @@
                 close();
               "
             />
-            <DropDownItem
+            <!-- Delete action commented out temporarily -->
+        <!-- <DropDownItem
               :icon="icons.delete"
               label="Delete"
               class="text-error-600"
@@ -45,7 +46,7 @@
                 handleAction(row, 'delete');
                 close();
               "
-            />
+            /> -->
           </template>
         </Dropdown>
       </div>

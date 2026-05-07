@@ -33,15 +33,24 @@ export const useAuthStore = defineStore("auth", () => {
 
   // Permission helper
   const has_permission = (subject: string, actions: string[]) => {
-    const user = current_user.value?.user;
+    const user = current_user.value?.user || current_user.value;
+    console.log(user);
     if (!user) return false;
+
+    // 1. Admin Override
+    if (user.type === "ADMIN") return true;
 
     const permissions = user.permissions || user.role?.permissions || [];
 
+    // 2. Global "ALL" Subject Override
+    if (permissions.some((p: any) => p.subject === "ALL")) return true;
+
+    // 3. Subject-level "manage" action or specific actions
     return permissions.some(
       (p: any) =>
         p.subject === subject &&
-        actions.some((a) => p.action.includes(a)),
+        (p.action.includes("manage") ||
+          actions.some((a) => p.action.includes(a))),
     );
   };
 
@@ -49,7 +58,8 @@ export const useAuthStore = defineStore("auth", () => {
     if (!token.value) return;
     is_loading.value = true;
     try {
-      const { fetch_current_user } = await import("@/modules/auth/api/auth.api");
+      const { fetch_current_user } =
+        await import("@/modules/auth/api/auth.api");
       const res = await fetch_current_user();
       if (res.success) {
         current_user.value = res.data;
@@ -64,6 +74,18 @@ export const useAuthStore = defineStore("auth", () => {
     }
   };
 
+  const get_default_home_route = () => {
+    if (has_permission("REPORT", ["view"])) return "/operation/dashboard";
+    if (has_permission("SHIPMENT", ["view"])) return "/operation/shipments";
+    if (has_permission("ORDER", ["view"])) return "/operation/orders";
+    if (has_permission("ADVANCE_PAYMENT", ["view"])) return "/operation/advances";
+    if (has_permission("TRANSACTION", ["view"])) return "/operation/settlements";
+    if (has_permission("MECHANIC", ["view"]) || has_permission("SERVICE_TASK", ["view"])) return "/operation/maintenance/service-task";
+    if (has_permission("INVENTORY_ITEM", ["view"])) return "/operation/inventory/items";
+    // Ultimate fallback for very restricted users to avoid infinite loop
+    return "/unauthorized";
+  };
+
   return {
     token,
     refresh_token,
@@ -75,5 +97,6 @@ export const useAuthStore = defineStore("auth", () => {
     logout,
     has_permission,
     fetch_user,
+    get_default_home_route,
   };
 });

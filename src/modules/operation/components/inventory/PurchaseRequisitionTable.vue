@@ -10,11 +10,12 @@
       <div class="h-full flex items-center border-r border-gray-200 pr-2 mr-2 w-48">
         <Select
           class="[&_.input-focus]:shadow-none! [&_.input-focus]:border-none [&_.input-focus]:min-h-full min-w-48"
-          v-model="selectedSearchField"
-          :options="searchFieldOptions"
+          v-model="activeFilters.status"
+          :options="statusOptions"
           label_key="label"
           value_key="value"
-          :clearable="false"
+          :clearable="true"
+          placeholder="All Statuses"
         />
       </div>
     </template>
@@ -63,7 +64,7 @@
       <div class="flex items-center justify-end">
         <Dropdown>
           <template #default="{ close }">
-            <DropDownItem
+            <DropDownItem v-permission="'PURCHASE_REQUISITION:read'"
               :icon="icons.eye"
               label="View Details"
               @click.stop="
@@ -71,7 +72,7 @@
                 close();
               "
             />
-            <DropDownItem
+            <DropDownItem v-permission="'PURCHASE_REQUISITION:update'"
               v-if="row.status === 'PENDING'"
               :icon="icons.edit"
               label="Edit"
@@ -80,13 +81,43 @@
                 close();
               "
             />
-            <DropDownItem
+            <DropDownItem v-permission="'PURCHASE_REQUISITION:approve'"
               v-if="row.status === 'PENDING'"
-              :icon="icons.delete"
-              label="Delete"
+              :icon="icons.successBell"
+              label="Approve"
+              class="text-success-600"
+              @click.stop="
+                handleAction(row, 'approve');
+                close();
+              "
+            />
+            <DropDownItem v-permission="'PURCHASE_REQUISITION:reject'"
+              v-if="row.status === 'PENDING'"
+              :icon="icons.rejectedBell"
+              label="Reject"
               class="text-error-600"
               @click.stop="
-                handleAction(row, 'delete');
+                handleAction(row, 'reject');
+                close();
+              "
+            />
+            <DropDownItem v-permission="'PURCHASE_REQUISITION:authorize'"
+              v-if="row.status === 'APPROVED'"
+              :icon="icons.successBell"
+              label="Authorize"
+              class="text-success-600"
+              @click.stop="
+                handleAction(row, 'authorize');
+                close();
+              "
+            />
+            <DropDownItem v-permission="'PURCHASE_REQUISITION:cancel'"
+              v-if="row.status === 'APPROVED'"
+              :icon="icons.rejectedBell"
+              label="Cancel"
+              class="text-error-600"
+              @click.stop="
+                handleAction(row, 'cancel');
                 close();
               "
             />
@@ -110,18 +141,18 @@ import Status from "@/components/common/Status.vue";
 
 const emit = defineEmits(["action"]);
 
-const searchFieldOptions = [
-  { label: "Ref No", value: "referenceNumber" },
-  { label: "Item Name", value: "itemName" },
-  { label: "Remark", value: "remark" },
+const statusOptions = [
+  { label: "Pending", value: "PENDING" },
+  { label: "Approved", value: "APPROVED" },
+  { label: "Authorized", value: "AUTHORIZED" },
+  { label: "Rejected", value: "REJECTED" },
+  { label: "Cancelled", value: "CANCELLED" },
 ];
 
-const selectedSearchField = ref("referenceNumber");
 const searchTerm = ref("");
 
 const dynamicSearchPlaceholder = computed(() => {
-  const option = searchFieldOptions.find((o) => o.value === selectedSearchField.value);
-  return option ? `Search by ${option.label}...` : "Search...";
+  return "Search by Ref No...";
 });
 
 const activeFilters = ref<any>({});
@@ -131,7 +162,7 @@ const { response, refetch } = usePagination<any>({
   params: computed(() => {
     const params: any = { ...activeFilters.value };
     if (searchTerm.value) {
-      params[`${selectedSearchField.value}[regexAny]`] = searchTerm.value;
+      params[`referenceNumber[regexAny]`] = searchTerm.value;
     }
     return params;
   }),

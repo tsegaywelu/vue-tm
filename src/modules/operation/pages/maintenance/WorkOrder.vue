@@ -1,6 +1,6 @@
 <template>
   <Teleport to="#page-actions" defer>
-    <Button @click="router.push('/maintenance/work-order/add')">
+    <Button v-permission="'WORK_ORDER:create'" @click="router.push('/maintenance/work-order/add')">
       <template #leading>
         <div class="size-5" v-html="all_icons.plus"></div>
       </template>

@@ -79,7 +79,7 @@
       <div class="flex items-center justify-end">
         <Dropdown>
           <template #default="{ close }">
-            <DropDownItem
+            <DropDownItem v-permission="'TRANSACTION:read'"
               :icon="icons.eye"
               label="Details"
               @click.stop="
