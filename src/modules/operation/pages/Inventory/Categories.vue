@@ -4,7 +4,7 @@
       variant="primary"
       size="md"
       class="flex items-center gap-2"
-      @click="router.push('/inventory/categories/add')"
+      @click="handleAddCategory"
     >
       <i v-html="icons.plus" />
       Add Inventory Category
@@ -25,14 +25,23 @@ import Button from "@/components/Button.vue";
 import { icons } from "@/utils/icons";
 import { delete_inventory_category } from "../../api/inventory.api";
 import { useToastStore } from "@/store/toastStore";
+import { openModal } from "@customizer/modal-x";
 
-const router = useRouter();
 const toast = useToastStore();
 const tableRef = ref();
 
+const handleAddCategory = () => {
+  openModal("InventoryCategoryModal", {
+    onSuccess: () => tableRef.value?.refetch(),
+  });
+};
+
 const handleCategoryAction = async ({ row, action }: any) => {
   if (action === 'edit') {
-    router.push(`/inventory/categories/edit/${row._id}`);
+    openModal("InventoryCategoryModal", {
+      category: row,
+      onSuccess: () => tableRef.value?.refetch(),
+    });
   } else if (action === 'delete') {
     if (confirm(`Are you sure you want to delete category "${row.name}"?`)) {
       try {

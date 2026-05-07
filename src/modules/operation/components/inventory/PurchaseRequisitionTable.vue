@@ -45,6 +45,10 @@
       {{ new Date(row.requestedDate).toLocaleDateString() }}
     </template>
 
+    <template #cell-srv="{ row }">
+      <span class="font-medium text-gray-900">{{ row.srv?.referenceNumber || '-' }}</span>
+    </template>
+
     <template #cell-preparedBy="{ row }">
       <div class="flex items-center gap-2">
         <!-- <div class="size-7 rounded-full bg-primary/10 flex items-center justify-center text-primary text-[10px] font-bold">
@@ -136,6 +140,7 @@ const { response, refetch } = usePagination<any>({
 const columns: TableColumn<any>[] = [
   { key: "date", label: "Date", field: "date" },
   { key: "referenceNumber", label: "Reference No", field: "referenceNumber" },
+  { key: "srv", label: "SRV No", field: "srv" },
   { key: "status", label: "Status", field: "status" },
   { key: "supplierName", label: "Supplier", field: "supplierName" },
   { key: "items", label: "Items", field: "items" },

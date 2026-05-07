@@ -53,7 +53,12 @@
               </tr>
               <tr v-for="(item, index) in transfer?.items" :key="index" class="hover:bg-gray-50 transition-colors">
                 <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">{{ index + 1 }}</td>
-                <td class="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ item.item?.name || '-' }}</td>
+                <td class="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  <div>{{ item.item?.name || '-' }}</div>
+                  <div v-if="item.serials?.length" class="text-[10px] text-gray-500 font-mono mt-1 opacity-70">
+                    SN: {{ item.serials.join(', ') }}
+                  </div>
+                </td>
                 <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-600">{{ item.item?.uom || 'pcs' }}</td>
                 <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900 font-semibold text-right">{{ transfer.type === 'RECEIVE' ? item.quantity : '-' }}</td>
                 <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900 font-semibold text-right">{{ transfer.type === 'ISSUE' ? item.quantity : '-' }}</td>

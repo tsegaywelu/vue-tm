@@ -4,17 +4,14 @@
       variant="primary"
       size="md"
       class="flex items-center gap-2"
-      @click="router.push('/inventory/purchase-requisition/add')"
+      @click="handleCreateRequisition"
     >
       <i v-html="icons.plus" />
       Create Requisition
     </Button>
   </Teleport>
 
-  <PurchaseRequisitionTable
-    ref="tableRef"
-    @action="handleRequisitionAction"
-  />
+  <PurchaseRequisitionTable ref="tableRef" @action="handleRequisitionAction" />
 </template>
 
 <script setup lang="ts">
@@ -25,18 +22,31 @@ import Button from "@/components/Button.vue";
 import { icons } from "@/utils/icons";
 import { delete_purchase_requisition } from "../../api/inventory.api";
 import { useToastStore } from "@/store/toastStore";
+import { openModal } from "@customizer/modal-x";
 
-const router = useRouter();
 const toast = useToastStore();
 const tableRef = ref();
+const router = useRouter();
+const handleCreateRequisition = () => {
+  openModal("PurchaseRequisitionModal", {
+    onSuccess: () => tableRef.value?.refetch(),
+  });
+};
 
 const handleRequisitionAction = async ({ row, action }: any) => {
-  if (action === 'edit') {
-    router.push(`/inventory/purchase-requisition/edit/${row._id}`);
-  } else if (action === 'view') {
+  if (action === "edit") {
+    openModal("PurchaseRequisitionModal", {
+      requisition: row,
+      onSuccess: () => tableRef.value?.refetch(),
+    });
+  } else if (action === "view") {
     router.push(`/inventory/purchase-requisition/${row._id}`);
-  } else if (action === 'delete') {
-    if (confirm(`Are you sure you want to delete requisition "${row.referenceNumber}"?`)) {
+  } else if (action === "delete") {
+    if (
+      confirm(
+        `Are you sure you want to delete requisition "${row.referenceNumber}"?`,
+      )
+    ) {
       try {
         const res = await delete_purchase_requisition(row._id);
         if (res.success) {

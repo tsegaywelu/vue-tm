@@ -786,7 +786,6 @@ export const operation_routes: RouteRecordRaw[] = [
         name: "operation_maintenance_workshop",
         component: () => import("./pages/maintenance/Workshop.vue"),
         meta: { title: "Workshop", description: "Manage workshops." },
-
       },
       {
         path: "workshop/add",
@@ -1023,24 +1022,6 @@ export const operation_routes: RouteRecordRaw[] = [
         },
       },
       {
-        path: "categories/add",
-        name: "operation_inventory_categories_add",
-        component: () => import("./pages/Inventory/InventoryCategoryAdd.vue"),
-        meta: {
-          title: "Add Category",
-          description: "Add a new inventory category.",
-        },
-      },
-      {
-        path: "categories/edit/:id",
-        name: "operation_inventory_categories_edit",
-        component: () => import("./pages/Inventory/InventoryCategoryEdit.vue"),
-        meta: {
-          title: "Edit Category",
-          description: "Edit an existing inventory category.",
-        },
-      },
-      {
         path: "item-groups",
         name: "operation_inventory_item_groups",
         component: () => import("./pages/Inventory/ItemGroups.vue"),
@@ -1050,70 +1031,16 @@ export const operation_routes: RouteRecordRaw[] = [
         },
       },
       {
-        path: "item-groups/add",
-        name: "operation_inventory_item_groups_add",
-        component: () => import("./pages/Inventory/ItemGroupAdd.vue"),
-        meta: {
-          title: "Add Item Group",
-          description: "Add a new inventory item group.",
-        },
-      },
-      {
-        path: "item-groups/edit/:id",
-        name: "operation_inventory_item_groups_edit",
-        component: () => import("./pages/Inventory/ItemGroupEdit.vue"),
-        meta: {
-          title: "Edit Item Group",
-          description: "Edit an existing inventory item group.",
-        },
-      },
-      {
         path: "vendor",
         name: "operation_inventory_vendor",
         component: () => import("./pages/Inventory/Vendor.vue"),
         meta: { title: "Vendor", description: "Manage inventory vendors." },
       },
       {
-        path: "vendor/add",
-        name: "operation_inventory_vendor_add",
-        component: () => import("./pages/Inventory/VendorAdd.vue"),
-        meta: {
-          title: "Add Vendor",
-          description: "Add a new inventory vendor.",
-        },
-      },
-      {
-        path: "vendor/edit/:id",
-        name: "operation_inventory_vendor_edit",
-        component: () => import("./pages/Inventory/VendorEdit.vue"),
-        meta: {
-          title: "Edit Vendor",
-          description: "Edit an existing inventory vendor.",
-        },
-      },
-      {
         path: "items",
         name: "operation_inventory_items",
         component: () => import("./pages/Inventory/Items.vue"),
         meta: { title: "Items", description: "Manage inventory items." },
-      },
-      {
-        path: "items/add",
-        name: "operation_inventory_items_add",
-        component: () => import("./pages/Inventory/ItemAdd.vue"),
-        meta: {
-          title: "Add Inventory Item",
-          description: "Add a new inventory item.",
-        },
-      },
-      {
-        path: "items/edit/:id",
-        name: "operation_inventory_items_edit",
-        component: () => import("./pages/Inventory/ItemEdit.vue"),
-        meta: {
-          title: "Edit Inventory Item",
-          description: "Edit an existing inventory item.",
-        },
       },
       {
         path: "store-requisition",
@@ -1136,24 +1063,6 @@ export const operation_routes: RouteRecordRaw[] = [
         },
       },
       {
-        path: "store-requisition/add",
-        name: "operation_inventory_store_requisition_add",
-        component: () => import("./pages/Inventory/StoreRequisitionAdd.vue"),
-        meta: {
-          title: "Add Requisition",
-          description: "Create a new store requisition.",
-        },
-      },
-      {
-        path: "store-requisition/edit/:id",
-        name: "operation_inventory_store_requisition_edit",
-        component: () => import("./pages/Inventory/StoreRequisitionEdit.vue"),
-        meta: {
-          title: "Edit Requisition",
-          description: "Edit an existing store requisition.",
-        },
-      },
-      {
         path: "purchase-requisition",
         name: "operation_inventory_purchase_requisition",
         component: () => import("./pages/Inventory/PurchaseRequisition.vue"),
@@ -1165,31 +1074,13 @@ export const operation_routes: RouteRecordRaw[] = [
       {
         path: "purchase-requisition/:id",
         name: "operation_inventory_purchase_requisition_details",
-        component: () => import("./pages/Inventory/PurchaseRequisitionDetail.vue"),
+        component: () =>
+          import("./pages/Inventory/PurchaseRequisitionDetail.vue"),
         meta: {
           title: "Purchase Requisition Details",
           description: "Detailed view of the purchase requisition.",
           tabsTeleportTo: "#purchase-requisition-details-tabs",
           tabs: [{ label: "Overview", value: "overview" }],
-        },
-      },
-      {
-        path: "purchase-requisition/add",
-        name: "operation_inventory_purchase_requisition_add",
-        component: () => import("./pages/Inventory/PurchaseRequisitionAdd.vue"),
-        meta: {
-          title: "Add Purchase Requisition",
-          description: "Create a new purchase requisition.",
-        },
-      },
-      {
-        path: "purchase-requisition/edit/:id",
-        name: "operation_inventory_purchase_requisition_edit",
-        component: () =>
-          import("./pages/Inventory/PurchaseRequisitionEdit.vue"),
-        meta: {
-          title: "Edit Purchase Requisition",
-          description: "Edit an existing purchase requisition.",
         },
       },
       {
@@ -1213,24 +1104,6 @@ export const operation_routes: RouteRecordRaw[] = [
         },
       },
       {
-        path: "purchase-order/add",
-        name: "operation_inventory_purchase_order_add",
-        component: () => import("./pages/Inventory/PurchaseOrderAdd.vue"),
-        meta: {
-          title: "Add Purchase Order",
-          description: "Create a new purchase order.",
-        },
-      },
-      {
-        path: "purchase-order/edit/:id",
-        name: "operation_inventory_purchase_order_edit",
-        component: () => import("./pages/Inventory/PurchaseOrderEdit.vue"),
-        meta: {
-          title: "Edit Purchase Order",
-          description: "Edit an existing purchase order.",
-        },
-      },
-      {
         path: "good-transfer",
         name: "operation_inventory_good_transfer",
         component: () => import("./pages/Inventory/GoodTransfer.vue"),
@@ -1246,26 +1119,7 @@ export const operation_routes: RouteRecordRaw[] = [
         meta: {
           title: "Transfer Voucher Details",
           description: "Detailed view of the good transfer voucher.",
-          tabsTeleportTo: "#good-transfer-details-tabs",
           tabs: [{ label: "Overview", value: "overview" }],
-        },
-      },
-      {
-        path: "good-transfer/add",
-        name: "operation_inventory_good_transfer_add",
-        component: () => import("./pages/Inventory/GoodTransferAdd.vue"),
-        meta: {
-          title: "Add Transfer Voucher",
-          description: "Create a new good transfer voucher.",
-        },
-      },
-      {
-        path: "good-transfer/edit/:id",
-        name: "operation_inventory_good_transfer_edit",
-        component: () => import("./pages/Inventory/GoodTransferEdit.vue"),
-        meta: {
-          title: "Edit Transfer Voucher",
-          description: "Edit an existing good transfer voucher.",
         },
       },
     ],

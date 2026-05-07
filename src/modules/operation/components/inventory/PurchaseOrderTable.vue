@@ -136,7 +136,7 @@ const { response, refetch } = usePagination<any>({
 const columns: TableColumn<any>[] = [
   { key: "date", label: "Date", field: "date" },
   { key: "referenceNumber", label: "Reference Number", field: "referenceNumber" },
-  { key: "status", label: "Action", field: "status" },
+  { key: "status", label: "Status", field: "status" },
   { key: "items", label: "Items", field: "items" },
   { key: "pr", label: "Pr Number", field: "pr" },
   { key: "preparedBy", label: "Prepared By", field: "preparedBy" },

@@ -11,24 +11,32 @@
       >
         <div class="flex flex-col gap-2 flex-1">
           <div class="flex items-center gap-4">
-            <div class="size-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+            <div
+              class="size-12 rounded-full bg-primary/10 flex items-center justify-center text-primary"
+            >
               <i class="mdi mdi-swap-horizontal text-2xl"></i>
             </div>
             <div>
-              <h1 class="font-bold text-2xl leading-tight text-gray-900 uppercase">
-                GRIV #{{ transfer.referenceNumber || '-------' }}
+              <h1
+                class="font-bold text-2xl leading-tight text-gray-900 uppercase"
+              >
+                GRIV #{{ transfer.referenceNumber || "-------" }}
               </h1>
-              <div class="flex flex-col md:flex-row md:items-center gap-1 md:gap-4">
+              <div
+                class="flex flex-col md:flex-row md:items-center gap-1 md:gap-4"
+              >
                 <span class="text-sm text-gray-600">
                   Type:
                   <span class="font-bold text-black text-sm ml-1">
-                    {{ transfer.type === 'RECEIVE' ? 'Receiving' : 'Issue' }}
+                    {{ transfer.type === "RECEIVE" ? "Receiving" : "Issue" }}
                   </span>
                 </span>
                 <span class="text-sm text-gray-600">
                   Date:
                   <span class="font-bold text-black text-sm ml-1">
-                    {{ transfer.createdAt ? dateFormatter(transfer.createdAt) : '-' }}
+                    {{
+                      transfer.createdAt ? dateFormatter(transfer.createdAt) : "-"
+                    }}
                   </span>
                 </span>
               </div>
@@ -36,8 +44,12 @@
           </div>
         </div>
 
-        <div class="flex flex-row items-center justify-between md:justify-end gap-3 md:gap-4">
-          <div class="flex flex-row lg:flex-col items-start md:items-end gap-1 md:gap-2">
+        <div
+          class="flex flex-row items-center justify-between md:justify-end gap-3 md:gap-4"
+        >
+          <div
+            class="flex flex-row lg:flex-col items-start md:items-end gap-1 md:gap-2"
+          >
             <Status :variant="transfer.status" type="wrapped">
               {{ transfer.status?.replace(/_/g, " ") }}
             </Status>
@@ -47,15 +59,11 @@
               v-if="transfer.status === 'PENDING'"
               variant="outline"
               size="md"
-              @click="$router.push(`/inventory/good-transfer/edit/${transferId}`)"
+              @click="handleEdit"
             >
               Edit
             </Button>
-            <Button
-              variant="primary"
-              size="md"
-              @click="handlePrint"
-            >
+            <Button variant="primary" size="md" @click="handlePrint">
               <template #leading>
                 <i class="mdi mdi-printer text-lg"></i>
               </template>
@@ -68,10 +76,7 @@
       <div id="good-transfer-details-tabs" class="w-full mt-2"></div>
 
       <div class="flex-1 min-h-0 overflow-y-auto">
-        <component
-          :is="activeTabComponent"
-          :transfer="transfer"
-        />
+        <component :is="activeTabComponent" :transfer="transfer" />
       </div>
     </template>
   </div>
@@ -83,13 +88,17 @@ import { useRoute } from "vue-router";
 import { useQuery } from "@tanstack/vue-query";
 import { fetch_good_transfer_details } from "../../api/inventory.api";
 import Status from "@/components/common/Status.vue";
-import Button from "@/components/Button.vue";
+import Button from "@/components/common/Button.vue";
 import { dateFormatter } from "@/utils/utils";
+import { openModal } from "@customizer/modal-x";
+import { useAuthStore } from "@/store/authStore";
+import { printGoodTransfer } from "../../utils/printGoodTransfer";
 
 // Tabs
 import GoodTransferOverviewTab from "../../components/inventory/GoodTransferOverviewTab.vue";
 
 const route = useRoute();
+const authStore = useAuthStore();
 const transferId = route.params.id as string;
 
 const tabs = computed(() => (route.meta.tabs || []) as any[]);
@@ -97,7 +106,7 @@ const activeTab = computed(
   () => (route.query.tab as string) || (tabs.value?.[0]?.value as string) || "overview",
 );
 
-const { data: response, isLoading } = useQuery({
+const { data: response, isLoading, refetch } = useQuery({
   queryKey: ["good-transfer", transferId],
   queryFn: () => fetch_good_transfer_details(transferId),
   enabled: !!transferId,
@@ -114,7 +123,14 @@ const activeTabComponent = computed(() => {
   }
 });
 
+const handleEdit = () => {
+  openModal("GoodTransferModal", {
+    transfer: transfer.value,
+    onSuccess: () => refetch(),
+  });
+};
+
 const handlePrint = () => {
-  window.print();
+  printGoodTransfer(transfer.value, authStore.user);
 };
 </script>

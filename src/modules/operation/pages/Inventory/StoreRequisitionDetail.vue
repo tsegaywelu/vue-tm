@@ -4,7 +4,9 @@
       <i class="mdi mdi-loading mdi-spin text-4xl text-primary"></i>
     </div>
 
-    <template v-else-if="requisition">
+    <div id="store-requisition-details-tabs" class="w-full mt-2"></div>
+
+    <template v-if="!isLoading && requisition">
       <!-- Header Section -->
       <div
         class="bg-white flex flex-col md:flex-row md:items-center justify-between px-3 md:px-4 py-4 md:py-3 rounded-[20px] gap-4 shadow-sm border border-gray-100"
@@ -65,8 +67,6 @@
         </div>
       </div>
 
-      <div id="store-requisition-details-tabs" class="w-full mt-2"></div>
-
       <div class="flex-1 min-h-0 overflow-y-auto">
         <component
           :is="activeTabComponent"
@@ -85,11 +85,14 @@ import { fetch_store_requisition_details } from "../../api/inventory.api";
 import Status from "@/components/common/Status.vue";
 import Button from "@/components/Button.vue";
 import { dateFormatter } from "@/utils/utils";
+import { useAuthStore } from "@/store/authStore";
+import { printStoreRequisition } from "../../utils/printStoreRequisition";
 
 // Tabs
 import StoreRequisitionOverviewTab from "../../components/inventory/StoreRequisitionOverviewTab.vue";
 
 const route = useRoute();
+const authStore = useAuthStore();
 const requisitionId = route.params.id as string;
 
 const tabs = computed(() => (route.meta.tabs || []) as any[]);
@@ -115,6 +118,7 @@ const activeTabComponent = computed(() => {
 });
 
 const handlePrint = () => {
-  window.print();
+  if (!requisition.value) return;
+  printStoreRequisition(requisition.value, authStore.user);
 };
 </script>

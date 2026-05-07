@@ -8,6 +8,7 @@
           <div class="flex flex-col gap-4">
             <DataLabel label="Reference No." :value="requisition?.referenceNumber" />
             <DataLabel label="Date" :value="dateFormatter(requisition?.date)" />
+            <DataLabel label="Requested Date" :value="dateFormatter(requisition?.requestedDate)" />
             <DataLabel label="Approved STR Date" :value="dateFormatter(requisition?.approvedSTRDate)" />
           </div>
         </InfoWrapper>
@@ -15,7 +16,7 @@
         <InfoWrapper title="Associated SRV">
           <div class="flex flex-col gap-4">
             <DataLabel label="SRV Reference" :value="requisition?.srv?.referenceNumber || '-'" />
-            <DataLabel label="SRV ID" :value="requisition?.srv?._id || '-'" />
+            <DataLabel label="Supplier Name" :value="requisition?.supplierName || '-'" />
           </div>
         </InfoWrapper>
 

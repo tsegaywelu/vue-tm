@@ -4,7 +4,7 @@
       variant="primary"
       size="md"
       class="flex items-center gap-2"
-      @click="router.push('/inventory/vendor/add')"
+      @click="handleAddVendor"
     >
       <i v-html="icons.plus" />
       Add Vendor
@@ -25,14 +25,23 @@ import Button from "@/components/Button.vue";
 import { icons } from "@/utils/icons";
 import { delete_vendor } from "../../api/inventory.api";
 import { useToastStore } from "@/store/toastStore";
+import { openModal } from "@customizer/modal-x";
 
-const router = useRouter();
 const toast = useToastStore();
 const tableRef = ref();
 
+const handleAddVendor = () => {
+  openModal("InventoryVendorModal", {
+    onSuccess: () => tableRef.value?.refetch(),
+  });
+};
+
 const handleVendorAction = async ({ row, action }: any) => {
   if (action === 'edit') {
-    router.push(`/inventory/vendor/edit/${row._id}`);
+    openModal("InventoryVendorModal", {
+      vendor: row,
+      onSuccess: () => tableRef.value?.refetch(),
+    });
   } else if (action === 'delete') {
     if (confirm(`Are you sure you want to delete vendor "${row.name}"?`)) {
       try {
