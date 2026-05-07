@@ -8,7 +8,7 @@
     @row_click="handleAction($event, 'view')"
   >
     <template #search-prefix>
-      <div class="h-full flex items-center border-r border-gray-200 pr-2 mr-2">
+      <div class="h-full flex items-center border-r border-gray-200 pr-2 mr-2 w-48">
         <Select
           class="[&_.input-focus]:shadow-none! [&_.input-focus]:border-none [&_.input-focus]:min-h-full min-w-48"
           v-model="selectedSearchField"
@@ -32,15 +32,14 @@
       </div>
     </template>
 
-    <template #cell-driver="{ row }">
-      <div class="flex flex-col">
-        <span class="font-semibold text-gray-900">
-          {{ row.plateNumber || '-' }}
-        </span>
-        <span class="text-xs text-gray-400 font-medium" v-if="row.driver">
-          {{ row.driver.firstName }} {{ row.driver.lastName }}
-        </span>
-      </div>
+    <template #cell-paidTo="{ row }">
+      <span class="text-sm text-gray-700 font-medium">
+        {{ getPaidTo(row) }}
+      </span>
+    </template>
+
+    <template #cell-plateNumber="{ value }">
+      <span class="text-sm text-gray-600">{{ value || '-' }}</span>
     </template>
 
     <template #cell-route="{ row }">
@@ -65,14 +64,34 @@
       </Status>
     </template>
     
+    <template #cell-totalFuelAdvances="{ value }">
+      <span class="text-sm text-gray-600">{{ currencyFormatter(value || 0) }}</span>
+    </template>
+
+    <template #cell-totalPerDiemExpenses="{ value }">
+      <span class="text-sm text-gray-600">{{ currencyFormatter(value || 0) }}</span>
+    </template>
+
+    <template #cell-totalOtherExpenses="{ value }">
+      <span class="text-sm text-gray-600">{{ currencyFormatter(value || 0) }}</span>
+    </template>
+
+    <template #cell-transporterPrice="{ value }">
+      <span class="text-sm text-gray-600">{{ currencyFormatter(value || 0) }}</span>
+    </template>
+
+    <template #cell-purchaseCost="{ row }">
+      <span class="text-sm text-gray-600">{{ currencyFormatter(row.payableType === 'purchaseOrder' ? row.total : 0) }}</span>
+    </template>
+
     <template #cell-createdAt="{ value }">
       <span class="text-sm text-gray-600">
         {{ dateFormatter(value) }}
       </span>
     </template>
 
-    <template #extra-actions>
-      <div class="items-center gap-4 inline-flex border-l border-grey-100 overflow-x-auto px-3 ">
+    <template #after-search>
+      <div class="items-center gap-4 inline-flex border-l border-grey-100 overflow-x-auto px-3">
         <i v-html="icons.filter" />
         <PayableFilters @change="handleFilterChange" />
       </div>
@@ -82,6 +101,53 @@
       <div class="flex items-center justify-end">
         <Dropdown>
           <template #default="{ close }">
+            <DropDownItem
+              v-if="canAction(row, 'approve')"
+              :icon="icons.check"
+              label="Approve"
+              @click.stop="
+                handleAction(row, 'approve');
+                close();
+              "
+            />
+            <!-- <DropDownItem
+              v-if="canAction(row, 'reject')"
+              :icon="icons.x"
+              label="Reject"
+              class="text-orange-600"
+              @click.stop="
+                handleAction(row, 'reject');
+                close();
+              "
+            /> -->
+            <DropDownItem
+              v-if="canAction(row, 'pay')"
+              :icon="icons.check"
+              label="Pay"
+              @click.stop="
+                handleAction(row, 'pay');
+                close();
+              "
+            />
+            <DropDownItem
+              v-if="canAction(row, 'authorize')"
+              :icon="icons.check"
+              label="Authorize"
+              @click.stop="
+                handleAction(row, 'authorize');
+                close();
+              "
+            />
+            <DropDownItem
+              v-if="canAction(row, 'cancel')"
+              :icon="icons.x"
+              label="Cancel"
+              class="text-red-600"
+              @click.stop="
+                handleAction(row, 'cancel');
+                close();
+              "
+            />
             <DropDownItem
               :icon="icons.eye"
               label="Details"
@@ -114,14 +180,19 @@ const emit = defineEmits(["action"]);
 
 const columns: TableColumn<any>[] = [
   { key: "advanceNumber", label: "Code", field: "advanceNumber" },
-  { key: "payableType", label: "Type", field: "payableType" },
-  { key: "driver", label: "Driver/Vehicle", field: "driver" },
+  { key: "payableType", label: "Type of Payment", field: "payableType" },
+  { key: "paidTo", label: "Paid To", field: "paidTo" },
+  { key: "createdAt", label: "Date", field: "createdAt" },
+  { key: "shipmentCode", label: "Shipment", field: "shipmentCode" },
   { key: "route", label: "Route", field: "route" },
-  { key: "shipmentCode", label: "Shipment Code", field: "shipmentCode" },
+  { key: "plateNumber", label: "Vehicle", field: "plateNumber" },
+  { key: "totalFuelAdvances", label: "Fuel Advance", field: "totalFuelAdvances" },
+  { key: "totalPerDiemExpenses", label: "Perdiem Advance", field: "totalPerDiemExpenses" },
+  { key: "totalOtherExpenses", label: "Other Advance", field: "totalOtherExpenses" },
+  { key: "transporterPrice", label: "Transporter Price", field: "transporterPrice" },
+  { key: "purchaseCost", label: "Purchase Cost", field: "purchaseCost" },
   { key: "total", label: "Total", field: "total" },
-  { key: "status", label: "Status", field: "status" },
-  { key: "createdAt", label: "Created At", field: "createdAt" },
-  { key: "actions", label: "Actions", field: "", cellAlign: "right" },
+  { key: "actions", label: "Action", field: "", cellAlign: "right" },
 ];
 
 const searchFieldOptions = [
@@ -145,7 +216,7 @@ const dynamicSearchPlaceholder = computed(() => {
 
 const activeFilters = ref({ select: "all" });
 
-const { response, refetch } = usePagination<any>({
+const { response, refetch, fullResponse } = usePagination<any>({
   id: "payable-list",
   url: "/advance-payment/allPayables",
   params: computed(() => {
@@ -160,6 +231,36 @@ const { response, refetch } = usePagination<any>({
 
 const handleFilterChange = (newFilters: any) => {
   activeFilters.value = { ...newFilters };
+};
+
+const canAction = (row: any, action: string) => {
+  const status = row.status || row.payableStatus;
+
+  if (action === "pay") {
+    return status === "AUTHORIZED";
+  }
+
+  if (action === "authorize") {
+    const pendingStatus =
+      row.payableType === "shipments" || row.payableType === "purchaseOrder"
+        ? "PENDING"
+        : "APPROVED";
+    return status === pendingStatus;
+  }
+
+  if (action === "cancel") {
+    return status === "APPROVED" || status === "PENDING";
+  }
+
+  if (action === "approve") {
+    return status === "PENDING";
+  }
+
+  if (action === "reject") {
+    return status === "PENDING" || status === "APPROVED";
+  }
+
+  return false;
 };
 
 const handleAction = (row: any, action: string) => {
@@ -180,5 +281,18 @@ const typeClasses: Record<string, string> = {
   purchaseOrder: "bg-indigo-50 text-indigo-600",
 };
 
-defineExpose({ refetch });
+const getPaidTo = (row: any) => {
+  if (row.payableType === "shipments") {
+    return row.transporter?.tradeName || row.transporter?.name || "-";
+  } else if (row.payableType === "purchaseOrder") {
+    return row.supplier?.name || row.supplier?.tradeName || "-";
+  } else if (row.driver) {
+    return `${row.driver?.firstName || ""} ${row.driver?.lastName || ""}`.trim() || "-";
+  } else if (row.supplier) {
+    return row.supplier?.name || "-";
+  }
+  return "-";
+};
+
+defineExpose({ refetch, fullResponse });
 </script>

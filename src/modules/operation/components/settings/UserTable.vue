@@ -19,14 +19,14 @@
 
     <template #cell-actions="{ row }">
       <div class="flex items-center justify-end gap-2">
-        <Button
+        <!-- <Button
           size="sm"
           variant="outline"
           class="text-error-600 border-error-200 hover:bg-error-50"
           @click.stop="handleAction(row, 'reset')"
         >
           Reset Password
-        </Button>
+        </Button> -->
         <Dropdown>
           <template #default="{ close }">
             <DropDownItem
@@ -37,7 +37,18 @@
                 close();
               "
             />
+
             <DropDownItem
+              :icon="icons.lock"
+              label="Reset Password"
+              class="text-error-600"
+              @click.stop="
+                handleAction(row, 'reset');
+                close();
+              "
+            />
+            
+            <!-- <DropDownItem
               :icon="icons.delete"
               label="Delete"
               class="text-error-600"
@@ -45,7 +56,7 @@
                 handleAction(row, 'delete');
                 close();
               "
-            />
+            /> -->
           </template>
         </Dropdown>
       </div>

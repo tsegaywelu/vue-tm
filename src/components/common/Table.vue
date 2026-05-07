@@ -29,7 +29,7 @@
         <slot name="after-search" />
       </div>
 
-      <!-- <div class="flex items-center gap-3 w-full justify-end">
+      <div class="flex items-center gap-3 w-full justify-end">
         <div
           v-if="!hide_actions"
           class="flex-1 flex gap-3 items-center justify-end"
@@ -49,7 +49,7 @@
         <div>
           <slot name="extra-actions" />
         </div>
-      </div> -->
+      </div>
     </div>
 
     <slot name="tabs" />

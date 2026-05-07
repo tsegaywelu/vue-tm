@@ -40,11 +40,10 @@
       size="xs"
       :options="[
         { label: 'All', value: '' },
-        { label: 'Pending', value: 'PENDING' },
+       
         { label: 'Approved', value: 'APPROVED' },
         { label: 'Authorized', value: 'AUTHORIZED' },
-        { label: 'Paid', value: 'COMPLETED' },
-        { label: 'Cancelled', value: 'CANCELLED' }
+      
       ]"
       :attributes="{ placeholder: 'Select a Status' }"
     />

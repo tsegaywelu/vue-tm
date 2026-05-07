@@ -64,7 +64,7 @@ import DropDownItem from "@/components/common/DropDownItem.vue";
 import { usePagination } from "@/composables/usePagination";
 import { icons } from "@/utils/icons";
 import type { TableColumn } from "@/components/common/Table.vue";
-import type { BonusMultiplier } from "../../operation.types";
+import type { BonusMultiplier } from "@/modules/operation/operation.types"; 
 
 const emit = defineEmits(["action"]);
 
@@ -81,7 +81,7 @@ const columns: TableColumn<BonusMultiplier>[] = [
   { key: "multiplier", label: "Multiplier", field: "multiplier" },
   { key: "description", label: "Description", field: "description" },
   { key: "createdAt", label: "Created At", field: "createdAt" },
-  { key: "actions", label: "Action", field: "", cellAlign: "right" },
+  { key: "actions", label: "Action", field: "" },
 ];
 
 const formatMetric = (metric: string) => {

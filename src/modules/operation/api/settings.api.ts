@@ -30,7 +30,7 @@ export function delete_user(id: string) {
 }
 
 export function reset_user_password(id: string, data: any) {
-  return user_api.addAuthenticationHeader().patch(`/${id}/resetPassword`, data)
+  return user_api2.addAuthenticationHeader().post(`/resetPassword/${id}`, data)
 }
 
 // ─── Role Management ──────────────────────────────────────────

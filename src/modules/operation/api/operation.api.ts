@@ -199,6 +199,10 @@ export function fetch_settled_advances(params: Record<string, any>) {
     .get("/settledAdvance", { params });
 }
 
+export function fetch_advance_status_count() {
+  return advance_api.addAuthenticationHeader().get("/statusCount");
+}
+
 export function create_fuel_advance(data: any) {
   return advance_api.addAuthenticationHeader().post("/fuel-only", data);
 }
