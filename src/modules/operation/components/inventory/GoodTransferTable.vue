@@ -24,8 +24,7 @@
     </template>
 
     <template #cell-status="{ row }">
-      <!-- <Status :value="row.status" /> -->
-      {{ row.status }}
+      <Status :variant="row.status" />
     </template>
 
     <template #cell-items="{ row }">
@@ -48,7 +47,7 @@
     </template>
 
     <template #cell-actions="{ row }">
-      <div class="flex items-center justify-end">
+      <div class="flex items-center justify-center">
         <Dropdown>
           <template #default="{ close }">
             <DropDownItem v-permission="'GOOD_TRANSFER_VOUCHER:read'"
@@ -130,10 +129,10 @@ const columns: TableColumn<any>[] = [
   { key: "date", label: "Date", field: "date" },
   { key: "referenceNumber", label: "Reference No", field: "referenceNumber" },
   { key: "type", label: "Type", field: "type" },
-  { key: "status", label: "Status", field: "status" },
   { key: "items", label: "Items", field: "items" },
   { key: "preparedBy", label: "Prepared By", field: "preparedBy" },
-  { key: "actions", label: "Actions", field: "", cellAlign: "right" },
+  { key: "status", label: "Status", field: "status" },
+  { key: "actions", label: "Actions", field: "", cellAlign: "center" },
 ];
 
 const handleAction = (row: any, action: string) => {

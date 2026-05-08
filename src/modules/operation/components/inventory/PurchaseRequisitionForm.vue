@@ -12,24 +12,12 @@
         :validation="{ required }"
         @select="handleSRVSelect"
       />
-      <Input
+      <DateInput
         name="date"
         label="Date"
-        :attributes="{ type: 'date' }"
+        :attributes="{ placeholder: 'Enter date' }"
         :validation="{ required }"
       />
-      <Input
-        name="requestedDate"
-        label="Requested Date"
-        :attributes="{ type: 'date' }"
-        :validation="{ required }"
-      />
-      <Input
-        name="supplierName"
-        label="Supplier Name"
-        placeholder="Enter supplier name"
-      />
-      
       <component
         v-if="formContext?.form"
         :is="formContext.form.Subscribe"
@@ -54,7 +42,6 @@
       </component>
     </div>
 
-    <!-- Items Section -->
     <div class="space-y-4">
       <component
         v-if="formContext?.form"
@@ -69,15 +56,10 @@
             Select a Store Requisition to see items
           </div>
           <div v-else class="space-y-6">
-            <PurchaseItemsInput name="items" :srv-ref="formContext.form.state.values.srvRef" />
-            
-            <div class="mt-6">
-              <Input
-                name="remark"
-                label="Overall Remark"
-                placeholder="Enter overall remark for this purchase requisition"
-              />
-            </div>
+            <PurchaseItemsInput
+              name="items"
+              :srv-ref="formContext.form.state.values.srvRef"
+            />
           </div>
         </template>
       </component>
@@ -91,6 +73,7 @@ import Input from "@/components/form/Input.vue";
 import SelectInput from "@/components/form/SelectInput.vue";
 import PurchaseItemsInput from "../inputs/PurchaseItemsInput.vue";
 import { required } from "@/utils/validations";
+import DateInput from "@/components/form/DateInput.vue";
 
 const formContext: any = inject("formContext");
 

@@ -64,27 +64,34 @@
     </template>
 
     <template #cell-actions="{ row }">
-      <div class="flex items-center justify-end">
+      <div class="flex items-center justify-center">
         <Dropdown>
           <template #default="{ close }">
-            <button v-permission="'ISSUE_REPORT:read'"
-              class="w-full text-left px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors"
-              @click="
+            <DropDownItem v-permission="'ISSUE_REPORT:read'"
+              :icon="icons.eye"
+              label="View Details"
+              @click.stop="
                 handleAction(row, 'view');
                 close();
               "
-            >
-              Details
-            </button>
-            <button v-permission="'ISSUE_REPORT:update'"
-              class="w-full text-left px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors text-brightBlue-dark"
-              @click="
+            />
+            <DropDownItem v-permission="'ISSUE_REPORT:update'"
+              :icon="icons.edit"
+              label="Change Status"
+              @click.stop="
                 handleAction(row, 'edit-status');
                 close();
               "
-            >
-              Change Status
-            </button>
+            />
+            <DropDownItem v-permission="'ISSUE_REPORT:delete'"
+              :icon="icons.delete"
+              label="Delete"
+              class="text-error-600"
+              @click.stop="
+                handleAction(row, 'delete');
+                close();
+              "
+            />
           </template>
         </Dropdown>
       </div>
@@ -96,7 +103,9 @@
 import { computed, ref } from "vue";
 import Table from "@/components/common/Table.vue";
 import Dropdown from "@/components/common/Dropdown.vue";
+import DropDownItem from "@/components/common/DropDownItem.vue";
 import Status from "@/components/common/Status.vue";
+import { icons } from "@/utils/icons";
 import { usePagination } from "@/composables/usePagination";
 import type { IssueReport } from "../../operation.types";
 import type { TableColumn } from "@/components/common/Table.vue";
@@ -110,7 +119,7 @@ const columns: TableColumn<IssueReport>[] = [
   { key: "status", label: "Status" },
   { key: "location", label: "Location" },
   { key: "createdAt", label: "Created At" },
-  { key: "actions", label: "Actions", cellAlign: "right" },
+  { key: "actions", label: "Actions", cellAlign: "center" },
 ];
 
 const activeFilters = ref({});

@@ -230,30 +230,13 @@
             >
               Add New
             </button>
-            <SelectInput
+            <VehicleInput
               name="vehicle"
               label="Search Vehicles"
-              :attributes="{
-                placeholder: 'Choose vehicle',
-              }"
-              :params="
-                (q: string) => {
-                  return {
-                    vehiclePlateNumber: q.search,
-                    q: undefined,
-                  };
-                }
-              "
-              searchable
-              label_key="plateNumber"
-              value_key="_id"
-              url="/vehicle"
               :options="selectedVehicle ? [selectedVehicle] : []"
               :display_value="internalLabels.vehicle"
-              :validation="{
-                required,
-              }"
-              @select="(opt) => handleVehicleSelect(opt.item, form)"
+              :validation="{ required }"
+              @select="(opt: any) => handleVehicleSelect(opt.item, form)"
             >
               <template #item="{ item }">
                 <span>
@@ -262,7 +245,7 @@
                   }})
                 </span>
               </template>
-            </SelectInput>
+            </VehicleInput>
           </div>
 
           <SelectInput
@@ -414,6 +397,7 @@ import SelectInput from "@/components/form/SelectInput.vue";
 import DateInput from "@/components/form/DateInput.vue";
 import TextareaInput from "@/components/form/TextareaInput.vue";
 import Colapsable from "@/components/common/Colapsable.vue";
+import VehicleInput from "@/components/common/inputs/VehicleInput.vue";
 import { currencyFormatter } from "@/utils/utils";
 import {
   dateGreaterThanOrEqalToToday,

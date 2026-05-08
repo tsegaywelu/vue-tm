@@ -20,10 +20,11 @@ import { create_inspection } from "../../api/inspection.api";
 import { useToastStore } from "@/store/toastStore";
 import SubmitButton from "@/components/form/SubmitButton.vue";
 import Button from "@/components/Button.vue";
-import { useMutation } from "@tanstack/vue-query";
+import { useQueryClient, useMutation } from "@tanstack/vue-query";
 
 const router = useRouter();
 const toast = useToastStore();
+const queryClient = useQueryClient();
 
 const mutation = useMutation({
   mutationFn: (values: any) => create_inspection(values),
@@ -40,6 +41,7 @@ const handleCreateInspection = async (values: any) => {
     const res = await mutation.mutateAsync(values);
     if (res.success) {
       toast.success("Inspection created successfully");
+      queryClient.invalidateQueries({ queryKey: ["inspections-list"] });
       router.push("/maintenance/inspection");
     } else {
       toast.error(res.error || "Failed to create inspection");

@@ -13,16 +13,10 @@
   >
     <template #center="{ form }">
       <div class="flex flex-col gap-4">
-        <SelectInput
-          label="Vehicle"
+        <VehicleInput
           name="vehicle"
-          url="/vehicle"
-          label_key="plateNumber"
-          value_key="_id"
-          searchable
-          :validation="{ required }"
-          :attributes="{ placeholder: 'Select Vehicle' }"
           @select="(opt: any) => (selectedVehicle = opt.item)"
+          :validation="{ required }"
         />
         <div class="grid grid-cols-2 gap-4">
           <DateInput
@@ -101,6 +95,7 @@ import FormModalParent from "@/components/modals/FormModalParent.vue";
 import Input from "@/components/form/Input.vue";
 import SelectInput from "@/components/form/SelectInput.vue";
 import ToggleInput from "@/components/form/ToggleInput.vue";
+import VehicleInput from "@/components/common/inputs/VehicleInput.vue";
 import { required } from "@/utils/validations";
 import { useToastStore } from "@/store/toastStore";
 import { closeModal } from "@customizer/modal-x";

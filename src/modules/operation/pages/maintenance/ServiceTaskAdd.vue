@@ -20,10 +20,11 @@ import { create_service_task } from "../../api/service-task.api";
 import { useToastStore } from "@/store/toastStore";
 import SubmitButton from "@/components/form/SubmitButton.vue";
 import Button from "@/components/Button.vue";
-import { useMutation } from "@tanstack/vue-query";
+import { useMutation, useQueryClient } from "@tanstack/vue-query";
 
 const router = useRouter();
 const toast = useToastStore();
+const queryClient = useQueryClient();
 
 const mutation = useMutation({
   mutationFn: (values: any) => create_service_task(values),
@@ -44,6 +45,7 @@ const handleCreateServiceTask = async (values: any) => {
     const res = await mutation.mutateAsync(values);
     if (res.success) {
       toast.success("Service task created successfully");
+      queryClient.invalidateQueries({ queryKey: ["service-tasks-list"] });
       router.push("/maintenance/service-task");
     } else {
       toast.error(res.error || "Failed to create service task");

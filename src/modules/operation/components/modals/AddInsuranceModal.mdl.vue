@@ -18,12 +18,8 @@
             value_key="_id"
             :validation="{ required }"
           />
-          <SelectInput
+          <VehicleInput
             name="vehicle"
-            label="Vehicle"
-            url="/vehicle"
-            label_key="plateNumber"
-            value_key="_id"
             :validation="{ required }"
           />
         </div>
@@ -104,6 +100,7 @@ import FormModalParent from "@/components/modals/FormModalParent.vue";
 import Input from "@/components/form/Input.vue";
 import SelectInput from "@/components/form/SelectInput.vue";
 import DateInput from "@/components/form/DateInput.vue";
+import VehicleInput from "@/components/common/inputs/VehicleInput.vue";
 import Button from "@/components/common/Button.vue";
 import FileInput from "@/components/form/FileInput.vue";
 import SubmitButton from "@/components/form/SubmitButton.vue";

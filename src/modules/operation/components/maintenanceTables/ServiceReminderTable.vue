@@ -57,27 +57,34 @@
     </template>
 
     <template #cell-actions="{ row }">
-      <div class="flex items-center justify-end">
+      <div class="flex items-center justify-center">
         <Dropdown>
           <template #default="{ close }">
-            <button v-permission="'SERVICE_REMINDER:read'"
-              class="w-full text-left px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors"
-              @click="
+            <DropDownItem v-permission="'SERVICE_REMINDER:read'"
+              :icon="icons.eye"
+              label="View Details"
+              @click.stop="
                 handleAction(row, 'view');
                 close();
               "
-            >
-              Details
-            </button>
-            <button v-permission="'SERVICE_REMINDER:update'"
-              class="w-full text-left px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors text-brightBlue-dark"
-              @click="
+            />
+            <DropDownItem v-permission="'SERVICE_REMINDER:update'"
+              :icon="icons.edit"
+              label="Edit"
+              @click.stop="
                 handleAction(row, 'edit');
                 close();
               "
-            >
-              Edit
-            </button>
+            />
+            <DropDownItem v-permission="'SERVICE_REMINDER:delete'"
+              :icon="icons.delete"
+              label="Delete"
+              class="text-error-600"
+              @click.stop="
+                handleAction(row, 'delete');
+                close();
+              "
+            />
           </template>
         </Dropdown>
       </div>
@@ -89,7 +96,9 @@
 import { computed, ref } from "vue";
 import Table from "@/components/common/Table.vue";
 import Dropdown from "@/components/common/Dropdown.vue";
+import DropDownItem from "@/components/common/DropDownItem.vue";
 import Select from "@/components/common/Select.vue";
+import { icons } from "@/utils/icons";
 import { usePagination } from "@/composables/usePagination";
 import type { ServiceReminder } from "../operation.types";
 import type { TableColumn } from "@/components/common/Table.vue";
@@ -102,7 +111,7 @@ const columns: TableColumn<ServiceReminder>[] = [
   { key: "interval", label: "Mileage / Date Interval" },
   { key: "lastService", label: "Last service mileage / date" },
   { key: "reminder", label: "Reminder Mileage" },
-  { key: "actions", label: "Actions", cellAlign: "right" },
+  { key: "actions", label: "Actions", cellAlign: "center" },
 ];
 
 const searchFieldOptions = [

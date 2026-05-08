@@ -6,6 +6,7 @@
     v-else-if="initialValues"
     form-id="edit-service-reminder-form"
     :initial-values="initialValues"
+    :initial-labels="initialLabels"
     :on-submit="handleUpdateServiceReminder"
   >
     <template #submit-btn>
@@ -25,13 +26,14 @@ import { fetch_service_reminder_by_id, update_service_reminder } from "../../api
 import { useToastStore } from "@/store/toastStore";
 import SubmitButton from "@/components/form/SubmitButton.vue";
 import Button from "@/components/Button.vue";
-import { useMutation, useQuery } from "@tanstack/vue-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/vue-query";
 import type { ServiceReminder } from "../../operation.types";
 import type { AsyncResponse } from "@/api/types";
 
 const router = useRouter();
 const route = useRoute();
 const toast = useToastStore();
+const queryClient = useQueryClient();
 const id = route.params.id as string;
 
 const { data: serviceReminderResponse, isLoading } = useQuery<AsyncResponse<ServiceReminder>>({
@@ -44,15 +46,33 @@ const initialValues = computed(() => {
   const sr = serviceReminderResponse.value?.data;
   if (!sr) return null;
   
+  const vehicleObj = Array.isArray(sr.vehicle) ? sr.vehicle[0] : sr.vehicle;
+  const taskObj = Array.isArray(sr.serviceTask) ? sr.serviceTask[0] : sr.serviceTask;
+  
   return {
     ...sr,
-    vehicle: sr.vehicle?._id || sr.vehicle,
-    serviceTask: sr.serviceTask?._id || sr.serviceTask,
+    vehicle: vehicleObj?._id || vehicleObj,
+    serviceTask: taskObj?._id || taskObj,
     type: sr.interval ? "time" : "kilometer",
     lastServiceDate: sr.lastServiceDate
       ? new Date(sr.lastServiceDate).toISOString().split("T")[0]
       : "",
   };
+});
+
+const initialLabels = computed(() => {
+  const sr = serviceReminderResponse.value?.data;
+  if (!sr) return {};
+
+  const labels: Record<string, string> = {};
+  
+  const vehicleObj = Array.isArray(sr.vehicle) ? sr.vehicle[0] : sr.vehicle;
+  const taskObj = Array.isArray(sr.serviceTask) ? sr.serviceTask[0] : sr.serviceTask;
+
+  if (vehicleObj) labels.vehicle = vehicleObj.plateNumber || "";
+  if (taskObj) labels.serviceTask = taskObj.name || "";
+
+  return labels;
 });
 
 const mutation = useMutation({
@@ -61,9 +81,18 @@ const mutation = useMutation({
 
 const handleUpdateServiceReminder = async (values: any) => {
   try {
-    const res = await mutation.mutateAsync(values);
+    const payload = { ...values };
+    delete payload._id;
+    delete payload.createdAt;
+    delete payload.updatedAt;
+    delete payload.__v;
+    delete payload.status;
+
+    const res = await mutation.mutateAsync(payload);
     if (res.success) {
       toast.success("Service Reminder updated successfully");
+      queryClient.invalidateQueries({ queryKey: ["service-reminders-list"] });
+      queryClient.invalidateQueries({ queryKey: ["service-reminder", id] });
       router.push("/maintenance/service-reminder");
     } else {
       toast.error(res.error || "Failed to update service reminder");

@@ -226,7 +226,7 @@ function handleItemSelect(item: TransferItem, opt: any) {
               :key="item.fakeId"
               class="p-5 bg-gray-50/50 border border-gray-100 rounded-2xl relative group shadow-sm"
             >
-              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <div class="flex flex-col gap-1.5 lg:col-span-1">
                   <label class="text-sm font-medium text-gray-700"
                     >Item Name</label
@@ -248,6 +248,24 @@ function handleItemSelect(item: TransferItem, opt: any) {
                     {{ item.itemName || "Loading..." }}
                   </div>
                 </div>
+
+                <!-- Quantity Logic -->
+                <template v-if="item.hasSerials">
+                  <div class="flex flex-col gap-1.5">
+                    <label class="text-sm font-medium text-gray-700">Quantity</label>
+                    <div class="h-12 px-4 flex items-center bg-gray-50 rounded-xl border border-gray-200 text-gray-500 font-medium">
+                      {{ item.serials.length }}
+                    </div>
+                  </div>
+                </template>
+                <template v-else>
+                  <Input
+                    v-model="item.quantity"
+                    label="Quantity"
+                    type="number"
+                    placeholder="0.00"
+                  />
+                </template>
 
                 <Input
                   v-model="item.price"
@@ -324,15 +342,6 @@ function handleItemSelect(item: TransferItem, opt: any) {
                   </div>
                 </template>
 
-                <!-- Consumable Logic -->
-                <template v-else>
-                  <Input
-                    v-model="item.quantity"
-                    label="Quantity"
-                    type="number"
-                    placeholder="0.00"
-                  />
-                </template>
 
                 <div class="col-span-full flex items-center justify-between">
                   <button

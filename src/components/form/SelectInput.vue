@@ -12,7 +12,11 @@
         :parent_class_name="parent_class_name"
         :size="size"
         :label="label"
-        :error="field.state.meta.errors.length ? field.state.meta.errors[0] : undefined"
+        :error="
+          field.state.meta.errors.length
+            ? field.state.meta.errors[0]
+            : undefined
+        "
         :validations="validation"
         :left_component="left_component"
         :description="description"

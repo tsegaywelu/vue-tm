@@ -20,11 +20,7 @@
       </div>
     </template>
     <template #cell-status="{ row }">
-      <!-- <Badge :variant="getStatusVariant(row.status)">
-        {{ row.status }}
-      </Badge> -->
-      <!-- <Status :value="row.status" /> -->
-      {{ row.status }}
+      <Status :variant="row.status" />
     </template>
 
     <template #cell-items="{ row }">
@@ -61,7 +57,7 @@
     </template>
 
     <template #cell-actions="{ row }">
-      <div class="flex items-center justify-end">
+      <div class="flex items-center justify-center">
         <Dropdown>
           <template #default="{ close }">
             <DropDownItem v-permission="'PURCHASE_REQUISITION:read'"
@@ -172,12 +168,12 @@ const columns: TableColumn<any>[] = [
   { key: "date", label: "Date", field: "date" },
   { key: "referenceNumber", label: "Reference No", field: "referenceNumber" },
   { key: "srv", label: "SRV No", field: "srv" },
-  { key: "status", label: "Status", field: "status" },
   { key: "supplierName", label: "Supplier", field: "supplierName" },
   { key: "items", label: "Items", field: "items" },
   { key: "requestedDate", label: "Requested Date", field: "requestedDate" },
   { key: "preparedBy", label: "Prepared By", field: "preparedBy" },
-  { key: "actions", label: "Actions", field: "", cellAlign: "right" },
+  { key: "status", label: "Status", field: "status" },
+  { key: "actions", label: "Actions", field: "", cellAlign: "center" },
 ];
 
 const getStatusVariant = (status: string) => {

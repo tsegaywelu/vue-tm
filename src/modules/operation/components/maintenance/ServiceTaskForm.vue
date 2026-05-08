@@ -6,7 +6,7 @@
         description="Basic details about the service task."
       >
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <Input
+          <FormInput
             name="name"
             label="Name"
             :attributes="{
@@ -17,7 +17,7 @@
             }"
           />
 
-          <Input
+          <FormInput
             name="code"
             label="Code"
             :attributes="{
@@ -28,7 +28,7 @@
             }"
           />
 
-          <Input
+          <FormInput
             name="estimatedDuration"
             label="Estimated Duration (Days)"
             :attributes="{
@@ -56,7 +56,7 @@
             }"
           />
 
-          <Input
+          <FormInput
             name="estimatedCost"
             label="Estimated Cost"
             :attributes="{
@@ -70,47 +70,10 @@
         </div>
       </Colapsable>
 
-      <Colapsable
-        title="Required Parts"
-        description="List any parts required to complete this task."
-      >
-        <div class="space-y-4">
-          <div
-            v-for="(part, index) in parts"
-            :key="index"
-            class="flex items-end gap-4 bg-gray-50 p-4 rounded-lg relative"
-          >
-            <div class="flex-1">
-              <Input
-                :name="`requiredParts.${index}`"
-                label="Part Name"
-                :attributes="{ placeholder: 'Enter part name' }"
-                :validation="{ required }"
-              />
-            </div>
-            <Button
-              type="button"
-              variant="outline"
-              class="w-fit text-error-600 border-error-200 hover:bg-error-50"
-              @click="removePart(index, form)"
-            >
-              Remove
-            </Button>
-          </div>
-
-          <Button
-            type="button"
-            variant="outline"
-            class="mt-2"
-            @click="addPart(form)"
-          >
-            <template #leading>
-              <div class="size-4" v-html="icons.plus"></div>
-            </template>
-            Add Part
-          </Button>
-        </div>
-      </Colapsable>
+      <RequiredPartsInput
+        name="requiredParts"
+        :initial-value="initialValues.requiredParts"
+      />
 
       <Colapsable
         title="Description"
@@ -135,13 +98,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from "vue";
 import Form from "@/components/form/Form.vue";
-import Input from "@/components/form/Input.vue";
+import FormInput from "@/components/form/Input.vue";
 import SelectInput from "@/components/form/SelectInput.vue";
 import TextareaInput from "@/components/form/TextareaInput.vue";
 import Colapsable from "@/components/common/Colapsable.vue";
-import Button from "@/components/Button.vue";
+import RequiredPartsInput from "./RequiredPartsInput.vue";
 import { required } from "@/utils/validations";
 import { icons } from "@/utils/icons";
 
@@ -151,33 +113,12 @@ const props = defineProps<{
   onSubmit: (values: any) => Promise<void> | void;
 }>();
 
-const parts = ref<string[]>(props.initialValues.requiredParts || [""]);
-
-// Watch for changes in initialValues (especially for edit mode)
-watch(() => props.initialValues.requiredParts, (newVal) => {
-  parts.value = newVal && newVal.length > 0 ? newVal : [""];
-}, { deep: true });
-
-const addPart = (form: any) => {
-  const currentParts = form.getFieldValue("requiredParts") || [];
-  const updatedParts = [...currentParts, ""];
-  parts.value = updatedParts;
-  form.setFieldValue("requiredParts", updatedParts);
-};
-
-const removePart = (index: number, form: any) => {
-  const currentParts = form.getFieldValue("requiredParts") || [];
-  const updatedParts = currentParts.filter((_: any, i: number) => i !== index);
-  parts.value = updatedParts;
-  form.setFieldValue("requiredParts", updatedParts);
-};
-
 const handleSubmit = async (values: any) => {
   const payload = {
     ...values,
     estimatedDuration: values.estimatedDuration ? Number(values.estimatedDuration) : 0,
     estimatedCost: values.estimatedCost ? Number(values.estimatedCost) : 0,
-    requiredParts: values.requiredParts?.filter((p: string) => p.trim() !== "") || [],
+    requiredParts: (values.requiredParts || []).filter((p: string) => p.trim() !== ""),
   };
   await props.onSubmit(payload);
 };

@@ -41,15 +41,21 @@
       </div>
     </template>
     <template #cell-vehicle="{ row }">
-      <span class="font-medium text-gray-900">{{ row.vehicle?.plateNumber || '-' }}</span>
+      <span class="font-medium text-gray-900">{{
+        row.vehicle?.plateNumber || "-"
+      }}</span>
     </template>
 
     <template #cell-date="{ row }">
-      <span class="text-gray-600">{{ row.createdAt ? row.createdAt.split('T')[0] : '-' }}</span>
+      <span class="text-gray-600">{{
+        row.createdAt ? row.createdAt.split("T")[0] : "-"
+      }}</span>
     </template>
 
     <template #cell-statusAction="{ row }">
-      <Status :variant="row.status || 'pending'">{{ row.status || 'PENDING' }}</Status>
+      <Status :variant="row.status || 'pending'">{{
+        row.status || "PENDING"
+      }}</Status>
     </template>
 
     <template #cell-contacts="{ row }">
@@ -57,7 +63,10 @@
         {{
           row.mechanics && row.mechanics.length > 0
             ? row.mechanics
-                .map((m: any) => m.name || `${m.firstName || ""} ${m.lastName || ""}`.trim())
+                .map(
+                  (m: any) =>
+                    m.name || `${m.firstName || ""} ${m.lastName || ""}`.trim(),
+                )
                 .join(", ")
             : "-"
         }}
@@ -65,54 +74,84 @@
     </template>
 
     <template #cell-workType="{ row }">
-      <span class="text-gray-600">{{ row.workType || '-' }}</span>
+      <span class="text-gray-600">{{ row.workType || "-" }}</span>
     </template>
 
     <template #cell-workArea="{ row }">
-      <span class="text-gray-600">{{ row.workArea || '-' }}</span>
+      <span class="text-gray-600">{{ row.workArea || "-" }}</span>
     </template>
 
     <template #cell-partsCost="{ row }">
-      <span class="text-gray-600">{{ row.costBreakdown?.partsCost ?? '-' }}</span>
+      <span class="text-gray-600">{{
+        row.costBreakdown?.partsCost ?? "-"
+      }}</span>
     </template>
 
     <template #cell-actions="{ row }">
-      <div class="flex items-center justify-end">
+      <div class="flex items-center justify-center">
         <Dropdown>
           <template #default="{ close }">
-            <button v-permission="'WORK_ORDER:approve'"
+            <DropDownItem
+              v-permission="'WORK_ORDER:approve'"
               v-if="row.status === 'PENDING'"
-              class="w-full text-left px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors text-brightBlue-dark"
-              @click="handleAction(row, 'approve'); close();"
-            >
-              Approve
-            </button>
-            <button v-permission="'WORK_ORDER:cancel'"
+              :icon="icons.check"
+              label="Approve"
+              class="text-brightBlue-dark"
+              @click.stop="
+                handleAction(row, 'approve');
+                close();
+              "
+            />
+            <DropDownItem
+              v-permission="'WORK_ORDER:cancel'"
               v-if="row.status === 'PENDING'"
-              class="w-full text-left px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors text-red-600"
-              @click="handleAction(row, 'cancel'); close();"
-            >
-              Reject
-            </button>
-            <button
+              :icon="icons.close"
+              label="Reject"
+              class="text-error-600"
+              @click.stop="
+                handleAction(row, 'cancel');
+                close();
+              "
+            />
+            <DropDownItem
+              v-permission="'WORK_ORDER:update'"
               v-if="row.status === 'APPROVED'"
-              class="w-full text-left px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors text-brightBlue-dark"
-              @click="handleAction(row, 'complete'); close();"
-            >
-              Complete
-            </button>
-            <button v-permission="'WORK_ORDER:read'"
-              class="w-full text-left px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors"
-              @click="handleAction(row, 'view'); close();"
-            >
-              Details
-            </button>
-            <button v-permission="'WORK_ORDER:update'"
-              class="w-full text-left px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors text-brightBlue-dark"
-              @click="handleAction(row, 'edit'); close();"
-            >
-              Edit
-            </button>
+              :icon="icons.check"
+              label="Complete"
+              class="text-brightBlue-dark"
+              @click.stop="
+                handleAction(row, 'complete');
+                close();
+              "
+            />
+            <DropDownItem
+              v-permission="'WORK_ORDER:read'"
+              :icon="icons.eye"
+              label="View Details"
+              @click.stop="
+                handleAction(row, 'view');
+                close();
+              "
+            />
+            <DropDownItem
+              v-permission="'WORK_ORDER:update'"
+              :icon="icons.edit"
+              label="Edit"
+              @click.stop="
+                handleAction(row, 'edit');
+                close();
+              "
+            />
+            <DropDownItem
+              v-permission="'WORK_ORDER:delete'"
+              :icon="icons.delete"
+              label="Delete"
+              class="text-error-600"
+              @click.stop="
+                handleAction(row, 'delete');
+                close();
+              "
+            />
           </template>
         </Dropdown>
       </div>
@@ -124,10 +163,12 @@
 import { computed, ref } from "vue";
 import Table from "@/components/common/Table.vue";
 import Dropdown from "@/components/common/Dropdown.vue";
+import DropDownItem from "@/components/common/DropDownItem.vue";
 import Status from "@/components/common/Status.vue";
 import Select from "@/components/common/Select.vue";
+import { icons } from "@/utils/icons";
 import { usePagination } from "@/composables/usePagination";
-import type { WorkOrder } from "../operation.types";
+import type { WorkOrder } from "../../operation.types";
 import type { TableColumn } from "@/components/common/Table.vue";
 
 const emit = defineEmits(["action"]);
@@ -135,12 +176,12 @@ const emit = defineEmits(["action"]);
 const columns: TableColumn<WorkOrder>[] = [
   { key: "vehicle", label: "Vehicle" },
   { key: "date", label: "Date" },
-  { key: "statusAction", label: "Status" },
   { key: "contacts", label: "Contacts" },
   { key: "workType", label: "Work Type" },
   { key: "workArea", label: "Work Area" },
   { key: "partsCost", label: "Parts Cost" },
-  { key: "actions", label: "Actions", cellAlign: "right" },
+  { key: "statusAction", label: "Status" },
+  { key: "actions", label: "Actions", cellAlign: "center" },
 ];
 
 const searchFieldOptions = [

@@ -19,7 +19,7 @@
       </div>
     </template>
     <template #cell-status="{ row }">
-      {{ row.status }}
+      <Status :variant="row.status" />
     </template>
 
     <template #cell-pr="{ row }">
@@ -56,7 +56,7 @@
     </template>
 
     <template #cell-actions="{ row }">
-      <div class="flex items-center justify-end">
+      <div class="flex items-center justify-center">
         <Dropdown>
           <template #default="{ close }">
             <DropDownItem v-permission="'PURCHASE_ORDER:read'"
@@ -137,13 +137,13 @@ const { response, refetch } = usePagination<any>({
 const columns: TableColumn<any>[] = [
   { key: "date", label: "Date", field: "date" },
   { key: "referenceNumber", label: "Reference Number", field: "referenceNumber" },
-  { key: "status", label: "Status", field: "status" },
   { key: "items", label: "Items", field: "items" },
   { key: "pr", label: "Pr Number", field: "pr" },
   { key: "preparedBy", label: "Prepared By", field: "preparedBy" },
   { key: "itemsCount", label: "Items", field: "items" },
   { key: "createdAt", label: "Created At", field: "createdAt" },
-  { key: "actions", label: "Actions", field: "", cellAlign: "right" },
+  { key: "status", label: "Status", field: "status" },
+  { key: "actions", label: "Actions", field: "", cellAlign: "center" },
 ];
 
 const handleAction = (row: any, action: string) => {

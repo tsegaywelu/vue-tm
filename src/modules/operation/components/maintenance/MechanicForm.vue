@@ -53,7 +53,7 @@
             }"
             :validation="{
               required,
-              phone
+              phone,
             }"
           />
 
@@ -110,7 +110,7 @@
             value_key="_id"
             url="/workshop"
             :validation="{
-              required: (val: any) => !isInternal ? !!val : true,
+              required,
             }"
           />
         </div>
@@ -158,7 +158,11 @@ const handleSubmit = async (values: any) => {
 };
 
 // Sync isInternal with initial values if they change
-watch(() => props.initialValues.isInternal, (newVal) => {
-  isInternal.value = newVal !== false;
-}, { immediate: true });
+watch(
+  () => props.initialValues.isInternal,
+  (newVal) => {
+    isInternal.value = newVal !== false;
+  },
+  { immediate: true },
+);
 </script>

@@ -41,55 +41,72 @@
       </div>
     </template>
     <template #cell-vehicle="{ row }">
-      <span class="font-medium text-gray-900">{{ row.vehicle?.plateNumber || '-' }}</span>
+      <span class="font-medium text-gray-900">{{
+        row.vehicle?.plateNumber || "-"
+      }}</span>
     </template>
 
     <template #cell-inspectionDate="{ row }">
-      <span class="text-gray-600">{{ row.inspectionDate ? row.inspectionDate.split('T')[0] : '-' }}</span>
+      <span class="text-gray-600">{{
+        row.inspectionDate ? row.inspectionDate.split("T")[0] : "-"
+      }}</span>
     </template>
 
     <template #cell-inspectionReason="{ row }">
-      <span class="text-gray-600">{{ row.inspectionReason || '-' }}</span>
+      <span class="text-gray-600">{{ row.inspectionReason || "-" }}</span>
     </template>
 
     <template #cell-inspector="{ row }">
-      <span class="text-gray-600">{{ row.inspector?.name || '-' }}</span>
+      <span class="text-gray-600">{{ row.inspector?.name || "-" }}</span>
     </template>
 
     <template #cell-odometerReading="{ row }">
-      <span class="text-gray-600">{{ row.odometerReading ?? '-' }}</span>
+      <span class="text-gray-600">{{ row.odometerReading ?? "-" }}</span>
     </template>
 
     <template #cell-remarks="{ row }">
-      <span class="text-gray-600">{{ row.remarks || '-' }}</span>
+      <span class="text-gray-600">{{ row.remarks || "-" }}</span>
     </template>
 
     <template #cell-issuesFound="{ row }">
-      <span class="text-gray-600">{{ row.issuesFound && row.issuesFound.length > 0 ? row.issuesFound.map((issue) => issue.issueType).join(', ') : '-' }}</span>
+      <span class="text-gray-600">{{
+        row.issuesFound && row.issuesFound.length > 0
+          ? row.issuesFound.map((issue) => issue.issueType).join(", ")
+          : "-"
+      }}</span>
     </template>
 
     <template #cell-actions="{ row }">
-      <div class="flex items-center justify-end">
+      <div class="flex items-center justify-center">
         <Dropdown>
           <template #default="{ close }">
-            <button v-permission="'INSPECTION:read'"
-              class="w-full text-left px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors"
-              @click="
+            <!-- <DropDownItem v-permission="'INSPECTION:read'"
+              :icon="icons.eye"
+              label="View Details"
+              @click.stop="
                 handleAction(row, 'view');
                 close();
               "
-            >
-              Details
-            </button>
-            <button v-permission="'INSPECTION:update'"
-              class="w-full text-left px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors text-brightBlue-dark"
-              @click="
+            /> -->
+            <DropDownItem
+              v-permission="'INSPECTION:update'"
+              :icon="icons.edit"
+              label="Edit"
+              @click.stop="
                 handleAction(row, 'edit');
                 close();
               "
-            >
-              Edit
-            </button>
+            />
+            <DropDownItem
+              v-permission="'INSPECTION:delete'"
+              :icon="icons.delete"
+              label="Delete"
+              class="text-error-600"
+              @click.stop="
+                handleAction(row, 'delete');
+                close();
+              "
+            />
           </template>
         </Dropdown>
       </div>
@@ -101,7 +118,9 @@
 import { computed, ref } from "vue";
 import Table from "@/components/common/Table.vue";
 import Dropdown from "@/components/common/Dropdown.vue";
+import DropDownItem from "@/components/common/DropDownItem.vue";
 import Select from "@/components/common/Select.vue";
+import { icons } from "@/utils/icons";
 import { usePagination } from "@/composables/usePagination";
 import type { Inspection } from "../../operation.types";
 import type { TableColumn } from "@/components/common/Table.vue";
@@ -116,7 +135,7 @@ const columns: TableColumn<Inspection>[] = [
   { key: "odometerReading", label: "Mileage" },
   { key: "remarks", label: "Remarks" },
   { key: "issuesFound", label: "Issue Found" },
-  { key: "actions", label: "Actions", cellAlign: "right" },
+  { key: "actions", label: "Actions", cellAlign: "center" },
 ];
 
 const searchFieldOptions = [

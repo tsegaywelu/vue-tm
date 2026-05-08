@@ -22,11 +22,7 @@
       </div>
     </template>
     <template #cell-status="{ row }">
-      <!-- <Badge :variant="getStatusVariant(row.status)">
-        {{ row.status }}
-      </Badge> -->
-      <!-- <Status :value="row.status" /> -->
-      {{ row.status }}
+      <Status :variant="row.status" />
     </template>
 
     <template #cell-items="{ row }">
@@ -66,7 +62,7 @@
     </template>
 
     <template #cell-actions="{ row }">
-      <div class="flex items-center justify-end">
+      <div class="flex items-center justify-center">
         <Dropdown>
           <template #default="{ close }">
             <DropDownItem
@@ -149,6 +145,7 @@ import DropDownItem from "@/components/common/DropDownItem.vue";
 import { usePagination } from "@/composables/usePagination";
 import { icons } from "@/utils/icons";
 import type { TableColumn } from "@/components/common/Table.vue";
+import Status from "@/components/common/Status.vue";
 
 const emit = defineEmits(["action"]);
 
@@ -182,11 +179,11 @@ const { response, refetch } = usePagination<any>({
 const columns: TableColumn<any>[] = [
   { key: "date", label: "Date", field: "date" },
   { key: "referenceNumber", label: "Reference No", field: "referenceNumber" },
-  { key: "status", label: "Status", field: "status" },
   { key: "items", label: "Items", field: "items" },
   { key: "requiredDate", label: "Required Date", field: "requiredDate" },
   { key: "preparedBy", label: "Prepared By", field: "preparedBy" },
-  { key: "actions", label: "Actions", field: "", cellAlign: "right" },
+  { key: "status", label: "Status", field: "status" },
+  { key: "actions", label: "Actions", field: "", cellAlign: "center" },
 ];
 
 const getStatusVariant = (status: string) => {

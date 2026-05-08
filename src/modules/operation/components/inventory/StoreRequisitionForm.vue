@@ -2,16 +2,16 @@
   <div class="flex flex-col gap-8">
     <!-- Requisition Header -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <Input
+      <DateInput
         name="date"
         label="Date"
-        :attributes="{ type: 'date' }"
+        :attributes="{ placeholder: 'Enter Date' }"
         :validation="{ required }"
       />
-      <Input
+      <DateInput
         name="requiredDate"
         label="Required Date"
-        :attributes="{ type: 'date' }"
+        :attributes="{ placeholder: 'Enter Date' }"
         :validation="{ required }"
       />
       <SelectInput
@@ -47,6 +47,7 @@ import Input from "@/components/form/Input.vue";
 import SelectInput from "@/components/form/SelectInput.vue";
 import RequisitionItemsInput from "../inputs/RequisitionItemsInput.vue";
 import { required } from "@/utils/validations";
+import DateInput from "@/components/form/DateInput.vue";
 
 const departmentOptions = [
   { label: "Operation", value: "Operation" },

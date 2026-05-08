@@ -69,27 +69,34 @@
     </template>
 
     <template #cell-actions="{ row }">
-      <div class="flex items-center justify-end">
+      <div class="flex items-center justify-center">
         <Dropdown>
           <template #default="{ close }">
-            <button v-permission="'SERVICE_TASK:read'"
-              class="w-full text-left px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors"
-              @click="
+            <DropDownItem v-permission="'SERVICE_TASK:read'"
+              :icon="icons.eye"
+              label="View Details"
+              @click.stop="
                 handleAction(row, 'view');
                 close();
               "
-            >
-              Details
-            </button>
-            <button v-permission="'SERVICE_TASK:update'"
-              class="w-full text-left px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors text-brightBlue-dark"
-              @click="
+            />
+            <DropDownItem v-permission="'SERVICE_TASK:update'"
+              :icon="icons.edit"
+              label="Edit"
+              @click.stop="
                 handleAction(row, 'edit');
                 close();
               "
-            >
-              Edit
-            </button>
+            />
+            <DropDownItem v-permission="'SERVICE_TASK:delete'"
+              :icon="icons.delete"
+              label="Delete"
+              class="text-error-600"
+              @click.stop="
+                handleAction(row, 'delete');
+                close();
+              "
+            />
           </template>
         </Dropdown>
       </div>
@@ -101,7 +108,9 @@
 import { computed, ref } from "vue";
 import Table from "@/components/common/Table.vue";
 import Dropdown from "@/components/common/Dropdown.vue";
+import DropDownItem from "@/components/common/DropDownItem.vue";
 import Select from "@/components/common/Select.vue";
+import { icons } from "@/utils/icons";
 import { usePagination } from "@/composables/usePagination";
 import type { ServiceTask } from "../operation.types";
 import type { TableColumn } from "@/components/common/Table.vue";
@@ -116,17 +125,15 @@ const columns: TableColumn<ServiceTask>[] = [
   { key: "estimatedCost", label: "Estimated Cost" },
   { key: "priority", label: "Priority" },
   { key: "description", label: "Description" },
-  { key: "actions", label: "Actions", cellAlign: "right" },
+  { key: "actions", label: "Actions", cellAlign: "center" },
 ];
 
 const searchFieldOptions = [
-  { label: "First Name", value: "firstName" },
-  { label: "Middle Name", value: "middleName" },
-  { label: "Last Name", value: "lastName" },
-  { label: "Phone Number", value: "phoneNumber" },
+  { label: "Name", value: "name" },
+  { label: "Code", value: "code" },
 ];
 
-const selectedSearchField = ref("firstName");
+const selectedSearchField = ref("name");
 const searchTerm = ref("");
 
 const dynamicSearchPlaceholder = computed(() => {

@@ -58,7 +58,10 @@ const mutation = useMutation({
 
 const handleUpdateMechanic = async (values: any) => {
   try {
-    const res = await mutation.mutateAsync(values);
+    // Strip out backend-generated fields that shouldn't be in the update payload
+    const { _id, workOrders, createdAt, updatedAt, __v, ...payload } = values;
+    
+    const res = await mutation.mutateAsync(payload);
     if (res.success) {
       toast.success("Mechanic updated successfully");
       router.push("/maintenance/mechanic");

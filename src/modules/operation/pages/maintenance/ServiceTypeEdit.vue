@@ -6,6 +6,7 @@
     v-else-if="initialValues"
     form-id="edit-service-type-form"
     :initial-values="initialValues"
+    :initial-labels="initialLabels"
     :on-submit="handleUpdateServiceType"
   >
     <template #submit-btn>
@@ -25,13 +26,14 @@ import { fetch_service_type_by_id, update_service_type } from "../../api/service
 import { useToastStore } from "@/store/toastStore";
 import SubmitButton from "@/components/form/SubmitButton.vue";
 import Button from "@/components/Button.vue";
-import { useMutation, useQuery } from "@tanstack/vue-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/vue-query";
 import type { AsyncResponse } from "@/api/types";
 import type { ServiceType } from "../../operation.types";
 
 const route = useRoute();
 const router = useRouter();
 const toast = useToastStore();
+const queryClient = useQueryClient();
 const serviceTypeId = route.params.id as string;
 
 const { data: serviceTypeResponse, isLoading } = useQuery<AsyncResponse<ServiceType>>({
@@ -50,21 +52,38 @@ const initialValues = computed(() => {
   };
 });
 
+const initialLabels = computed(() => {
+  if (!serviceTypeResponse.value?.data) return {};
+  const serviceType = serviceTypeResponse.value.data;
+  const labels: Record<string, string> = {};
+  serviceType.serviceTasks?.forEach((task: any) => {
+    if (task && typeof task === "object") {
+      labels[task._id] = task.name;
+    }
+  });
+  return labels;
+});
+
 const mutation = useMutation({
   mutationFn: (values: any) => update_service_type(serviceTypeId, values),
 });
 
 const handleUpdateServiceType = async (values: any) => {
-  try {
-    const res = await mutation.mutateAsync(values);
-    if (res.success) {
-      toast.success("Service type updated successfully");
-      router.push("/maintenance/service-type");
-    } else {
-      toast.error(res.error || "Failed to update service type");
-    }
-  } catch (error: any) {
-    toast.error(error.message || "An unexpected error occurred");
+  const payload = { ...values };
+  delete payload._id;
+  delete payload.createdAt;
+  delete payload.updatedAt;
+  delete payload.__v;
+  delete payload.status;
+
+  const res = await mutation.mutateAsync(payload);
+  if (res.success) {
+    toast.success("Service type updated successfully");
+    queryClient.invalidateQueries({ queryKey: ["service-types-list"] });
+    queryClient.invalidateQueries({ queryKey: ["service-type", serviceTypeId] });
+    router.push("/maintenance/service-type");
+  } else {
+    toast.error(res.error || "Failed to update service type");
   }
 };
 </script>

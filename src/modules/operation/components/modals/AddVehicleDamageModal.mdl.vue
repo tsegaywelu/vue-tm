@@ -15,14 +15,9 @@
           :validation="{ required, lessThanToday }"
           :attributes="{ placeholder: 'Select damage date' }"
         />
-        <SelectInput
+        <VehicleInput
           name="vehicle"
-          label="Vehicle"
-          url="/vehicle"
-          label_key="plateNumber"
-          value_key="_id"
           :validation="{ required }"
-          :attributes="{ placeholder: 'Select vehicle' }"
         />
         <SelectInput
           name="shipment"
@@ -196,6 +191,7 @@ import SelectInput from "@/components/form/SelectInput.vue";
 import DateInput from "@/components/form/DateInput.vue";
 import TextareaInput from "@/components/form/TextareaInput.vue";
 import FileInput from "@/components/form/FileInput.vue";
+import VehicleInput from "@/components/common/inputs/VehicleInput.vue";
 import SubmitButton from "@/components/form/SubmitButton.vue";
 import { lessThanToday, required } from "@/utils/validations";
 import { currencyFormatter } from "@/utils/utils";

@@ -175,6 +175,7 @@ import {
   onBeforeUnmount,
   nextTick,
   type SelectHTMLAttributes,
+  watchEffect,
 } from "vue";
 
 import InputLayout from "@/components/form/InputLayout.vue";
@@ -243,7 +244,13 @@ const props = withDefaults(defineProps<SelectProps>(), {
   initial_labels: () => ({}),
 });
 
-const emit = defineEmits(["search", "input-change", "select", "update:modelValue", "blur"]);
+const emit = defineEmits([
+  "search",
+  "input-change",
+  "select",
+  "update:modelValue",
+  "blur",
+]);
 
 const open = ref(false);
 const searchResult = ref("");
@@ -258,14 +265,25 @@ const isRemote = computed(() => !!props.url);
 
 const customApi = props.base_url ? new ApiService(props.base_url) : undefined;
 
-
 const currentSelectedValue = computed(() => props.modelValue);
 onMounted(() => {
-  if (props.display_value && props.searchable) {
-    searchResult.value = props.display_value;
+  const val = finalOptions.value.find(
+    (op: any) => op.item.value == currentSelectedValue.value,
+  );
+  if (
+    (val?.item.label && props.searchable) ||
+    (props.display_value && props.searchable)
+  ) {
+    searchResult.value = val?.item.label || props.display_value;
   }
 });
 
+watch(
+  () => props.modelValue,
+  () => {
+    console.log(props.modelValue, "value");
+  },
+);
 // Sync searchResult when value is set programmatically (e.g. from a modal)
 watch(
   () => currentSelectedValue.value,
@@ -285,6 +303,10 @@ watch(
     }
   },
 );
+
+onMounted(() => {
+  console.log("dd", finalOptions?.value, props?.name);
+});
 
 const syncedSearch = ref("");
 
@@ -509,9 +531,7 @@ onBeforeUnmount(() => {
 function selectOption(option: any) {
   const value = getOptionValue(option);
   if (props.multiple) {
-    let current = Array.isArray(props.modelValue)
-      ? [...props.modelValue]
-      : [];
+    let current = Array.isArray(props.modelValue) ? [...props.modelValue] : [];
     if (current.includes(value)) current = current.filter((v) => v !== value);
     else current.push(value);
     emit("update:modelValue", current);

@@ -48,14 +48,10 @@
             searchable
             :validation="{ required }"
           />
-          <SelectInput
+          <ContactInput
             v-if="issuedToBody === 'CONTACT'"
             name="issuedToContact"
             label="Issued To Contact"
-            url="/contact"
-            label_key="name"
-            value_key="_id"
-            searchable
             :validation="{ required }"
           />
         </template>
@@ -96,6 +92,7 @@
 import { inject } from "vue";
 import Input from "@/components/form/Input.vue";
 import SelectInput from "@/components/form/SelectInput.vue";
+import ContactInput from "@/components/common/inputs/ContactInput.vue";
 import TransferItemsInput from "../inputs/TransferItemsInput.vue";
 import { required } from "@/utils/validations";
 

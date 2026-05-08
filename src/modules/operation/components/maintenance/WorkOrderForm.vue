@@ -6,14 +6,18 @@
         description="Basic details about the work order."
       >
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <SelectInput
+          <VehicleInput
             name="vehicle"
-            label="Vehicle"
-            :attributes="{ placeholder: 'Choose vehicle' }"
-            searchable
-            label_key="plateNumber"
-            value_key="_id"
-            url="/vehicle"
+            :options="
+              initialLabels?.vehicle
+                ? [
+                    {
+                      label: initialLabels.vehicle,
+                      value: initialValues?.vehicle,
+                    },
+                  ]
+                : []
+            "
             :validation="{ required }"
           />
 
@@ -72,6 +76,16 @@
             label_key="name"
             value_key="_id"
             url="/workshop"
+            :options="
+              initialLabels?.workshop
+                ? [
+                    {
+                      label: initialLabels.workshop,
+                      value: initialValues?.workshop,
+                    },
+                  ]
+                : []
+            "
             :validation="{ required }"
           />
 
@@ -148,43 +162,7 @@
         description="List any mechanics or contacts involved."
       >
         <div class="space-y-4">
-          <div
-            v-for="(mechanic, index) in mechanics"
-            :key="index"
-            class="flex items-end gap-4 bg-gray-50 p-4 rounded-lg relative"
-          >
-            <div class="flex-1">
-              <SelectInput
-                :name="`mechanics.${index}`"
-                label="Contact"
-                :attributes="{ placeholder: 'Choose contact' }"
-                searchable
-                label_key="name"
-                value_key="_id"
-                url="/contact?group=MECHANIC"
-              />
-            </div>
-            <Button
-              type="button"
-              variant="outline"
-              class="w-fit text-error-600 border-error-200 hover:bg-error-50"
-              @click="removeMechanic(index, form)"
-            >
-              Remove
-            </Button>
-          </div>
-
-          <Button
-            type="button"
-            variant="outline"
-            class="mt-2"
-            @click="addMechanic(form)"
-          >
-            <template #leading>
-              <div class="size-4" v-html="icons.plus"></div>
-            </template>
-            Add Contact
-          </Button>
+          <MechanicsInput name="mechanics" :initialLabels="props.initialLabels?.mechanics" />
         </div>
       </Colapsable>
 
@@ -301,6 +279,8 @@ import SelectInput from "@/components/form/SelectInput.vue";
 import DateInput from "@/components/form/DateInput.vue";
 import TextareaInput from "@/components/form/TextareaInput.vue";
 import Colapsable from "@/components/common/Colapsable.vue";
+import VehicleInput from "@/components/common/inputs/VehicleInput.vue";
+import MechanicsInput from "../inputs/MechanicsInput.vue";
 import Button from "@/components/Button.vue";
 import { required } from "@/utils/validations";
 import { icons } from "@/utils/icons";
@@ -311,11 +291,11 @@ import { fetch_service_task_by_id } from "../../api/service-task.api";
 const props = defineProps<{
   formId: string;
   initialValues: Record<string, any>;
+  initialLabels?: Record<string, any>;
   onSubmit: (values: any) => Promise<void> | void;
 }>();
 
 const selectedServiceTypes = ref<any[]>(props.initialValues.serviceTypes || [""]);
-const mechanics = ref<any[]>(props.initialValues.mechanics || [""]);
 const tasks = ref<any[]>(props.initialValues.tasks || []);
 
 // Watchers for initialization and updates
@@ -323,9 +303,6 @@ watch(() => props.initialValues.serviceTypes, (newVal) => {
   selectedServiceTypes.value = newVal && newVal.length > 0 ? newVal : [""];
 }, { deep: true });
 
-watch(() => props.initialValues.mechanics, (newVal) => {
-  mechanics.value = newVal && newVal.length > 0 ? newVal : [""];
-}, { deep: true });
 
 watch(() => props.initialValues.tasks, (newVal) => {
   tasks.value = newVal || [];
@@ -346,19 +323,6 @@ const removeServiceType = (index: number, form: any) => {
   form.setFieldValue("serviceTypes", updated);
 };
 
-const addMechanic = (form: any) => {
-  const current = form.getFieldValue("mechanics") || [];
-  const updated = [...current, ""];
-  mechanics.value = updated;
-  form.setFieldValue("mechanics", updated);
-};
-
-const removeMechanic = (index: number, form: any) => {
-  const current = form.getFieldValue("mechanics") || [];
-  const updated = current.filter((_: any, i: number) => i !== index);
-  mechanics.value = updated;
-  form.setFieldValue("mechanics", updated);
-};
 
 const addTask = (form: any) => {
   const current = form.getFieldValue("tasks") || [];
@@ -444,7 +408,6 @@ const handleSubmit = async (values: any) => {
     odometer: values.odometer ? Number(values.odometer) : undefined,
     partsCost: values.partsCost ? Number(values.partsCost) : undefined,
     serviceTypes: values.serviceTypes?.filter((id: string) => !!id) || [],
-    mechanics: values.mechanics?.filter((id: string) => !!id) || [],
     tasks: values.tasks?.map((t: any) => ({
       ...t,
       // Ensure date strings are valid

@@ -1,6 +1,11 @@
 <template>
   <Teleport to="#page-actions" defer>
-    <Button v-permission="'CONTACT:create'" size="md" variant="primary" @click="openContactModal(null)">
+    <Button
+      v-permission="'CONTACT:create'"
+      size="md"
+      variant="primary"
+      @click="openContactModal(null)"
+    >
       New Contact
     </Button>
   </Teleport>
@@ -23,7 +28,9 @@
     >
       <!-- Put Select in the search input prefix slot -->
       <template #search-prefix>
-        <div class="h-full flex items-center border-r border-gray-200 pr-2 mr-2 w-48">
+        <div
+          class="h-full flex items-center border-r border-gray-200 pr-2 mr-2 w-48"
+        >
           <Select
             class="[&_.input-focus]:shadow-none! [&_.input-focus]:border-none [&_.input-focus]:min-h-full min-w-48"
             v-model="selectedGroup"
@@ -51,7 +58,7 @@
           />
           <div class="flex flex-col">
             <span class="font-bold text-grey-900">{{ row.name }}</span>
-            <span class="text-xs text-grey-500">{{ row.phone || '-' }}</span>
+            <span class="text-xs text-grey-500">{{ row.phone || "-" }}</span>
           </div>
         </div>
       </template>
@@ -66,8 +73,10 @@
 
       <template #cell-jobTitle="{ row }">
         <div class="flex flex-col">
-          <span class="text-grey-900 font-medium">{{ row.jobTitle || '-' }}</span>
-          <span class="text-xs text-grey-500">{{ row.email || '-' }}</span>
+          <span class="text-grey-900 font-medium">{{
+            row.jobTitle || "-"
+          }}</span>
+          <span class="text-xs text-grey-500">{{ row.email || "-" }}</span>
         </div>
       </template>
 
@@ -98,14 +107,14 @@
                   openContactModal(row);
                 "
               />
-              <DropDownItem
+              <!-- <DropDownItem
                 v-permission="'CONTACT:delete'"
                 label="Delete"
                 @click="
                   close();
                   handleDelete(row);
                 "
-              />
+              /> -->
             </template>
           </Dropdown>
         </div>

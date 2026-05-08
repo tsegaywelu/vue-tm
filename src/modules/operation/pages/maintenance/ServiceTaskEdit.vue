@@ -25,13 +25,14 @@ import { fetch_service_task_by_id, update_service_task } from "../../api/service
 import { useToastStore } from "@/store/toastStore";
 import SubmitButton from "@/components/form/SubmitButton.vue";
 import Button from "@/components/Button.vue";
-import { useMutation, useQuery } from "@tanstack/vue-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/vue-query";
 import type { AsyncResponse } from "@/api/types";
 import type { ServiceTask } from "../../operation.types";
 
 const route = useRoute();
 const router = useRouter();
 const toast = useToastStore();
+const queryClient = useQueryClient();
 const serviceTaskId = route.params.id as string;
 
 const { data: serviceTaskResponse, isLoading } = useQuery<AsyncResponse<ServiceTask>>({
@@ -57,9 +58,18 @@ const mutation = useMutation({
 
 const handleUpdateServiceTask = async (values: any) => {
   try {
-    const res = await mutation.mutateAsync(values);
+    const payload = { ...values };
+    delete payload._id;
+    delete payload.createdAt;
+    delete payload.updatedAt;
+    delete payload.__v;
+    delete payload.status;
+
+    const res = await mutation.mutateAsync(payload);
     if (res.success) {
       toast.success("Service task updated successfully");
+      queryClient.invalidateQueries({ queryKey: ["service-tasks-list"] });
+      queryClient.invalidateQueries({ queryKey: ["service-task", serviceTaskId] });
       router.push("/maintenance/service-task");
     } else {
       toast.error(res.error || "Failed to update service task");

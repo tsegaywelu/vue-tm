@@ -17,20 +17,10 @@
             }"
           />
 
-          <SelectInput
+          <VehicleInput
             name="vehicle"
-            label="Vehicle"
-            :attributes="{
-              placeholder: 'Choose vehicle',
-            }"
-            searchable
-            label_key="plateNumber"
-            value_key="_id"
-            url="/vehicle"
             :initial_labels="initialLabels"
-            :validation="{
-              required,
-            }"
+            :validation="{ required }"
           />
 
           <ToggleInput
@@ -169,6 +159,7 @@ import SelectInput from "@/components/form/SelectInput.vue";
 import DateInput from "@/components/form/DateInput.vue";
 import ToggleInput from "@/components/form/ToggleInput.vue";
 import Colapsable from "@/components/common/Colapsable.vue";
+import VehicleInput from "@/components/common/inputs/VehicleInput.vue";
 import { required } from "@/utils/validations";
 
 const props = defineProps<{
