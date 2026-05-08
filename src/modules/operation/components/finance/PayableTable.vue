@@ -25,7 +25,7 @@
 
     <template #cell-payableType="{ value }">
       <div
-        class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider w-fit"
+        class="px-3 py-1 rounded-full text-[10px] font-bold  tracking-wider w-fit"
         :class="typeClasses[value] || 'bg-gray-100 text-gray-500'"
       >
         {{ formatType(value) }}
@@ -101,15 +101,7 @@
       <div class="flex items-center justify-end">
         <Dropdown>
           <template #default="{ close }">
-            <DropDownItem
-              v-if="canAction(row, 'approve')"
-              :icon="icons.check"
-              label="Approve"
-              @click.stop="
-                handleAction(row, 'approve');
-                close();
-              "
-            />
+           
             <!-- <DropDownItem
               v-if="canAction(row, 'reject')"
               :icon="icons.x"
@@ -120,9 +112,18 @@
                 close();
               "
             /> -->
+               <DropDownItem v-permission="'TRANSACTION:read'"
+              :icon="icons.eye"
+              label="Details"
+              @click.stop="
+                handleAction(row, 'view');
+                close();
+              "
+            />
             <DropDownItem
+              v-permission="'ADVANCE_PAYMENT:pay'"
               v-if="canAction(row, 'pay')"
-              :icon="icons.check"
+              class="text-green-600"
               label="Pay"
               @click.stop="
                 handleAction(row, 'pay');
@@ -130,8 +131,9 @@
               "
             />
             <DropDownItem
+              v-permission="'ADVANCE_PAYMENT:authorize'"
               v-if="canAction(row, 'authorize')"
-              :icon="icons.check"
+              class="text-green-600"
               label="Authorize"
               @click.stop="
                 handleAction(row, 'authorize');
@@ -139,6 +141,7 @@
               "
             />
             <DropDownItem
+              v-permission="'ADVANCE_PAYMENT:update'"
               v-if="canAction(row, 'cancel')"
               :icon="icons.x"
               label="Cancel"
@@ -148,14 +151,7 @@
                 close();
               "
             />
-            <DropDownItem
-              :icon="icons.eye"
-              label="Details"
-              @click.stop="
-                handleAction(row, 'view');
-                close();
-              "
-            />
+         
           </template>
         </Dropdown>
       </div>
@@ -172,8 +168,10 @@ import Status from "@/components/common/Status.vue";
 import Select from "@/components/common/Select.vue";
 import { icons } from "@/utils/icons";
 import { usePagination } from "@/composables/usePagination";
+import { openModal } from "@customizer/modal-x";
 import type { TableColumn } from "@/components/common/Table.vue";
 import PayableFilters from "./PayableFilters.vue";
+import { formatType, getPaidTo } from "./payableUtils";
 import { currencyFormatter, dateFormatter } from "@/utils/utils";
 
 const emit = defineEmits(["action"]);
@@ -263,16 +261,30 @@ const canAction = (row: any, action: string) => {
   return false;
 };
 
-const handleAction = (row: any, action: string) => {
+const handleAction = async (row: any, action: string) => {
+  if (["authorize", "cancel", "pay", "approve"].includes(action)) {
+    const displayId = row.advanceNumber || row.shipmentCode || row._id || "this item";
+    const confirmed = await openModal("ConfirmationModal", {
+      title: `${action.charAt(0).toUpperCase() + action.slice(1)} Payable`,
+      message: `Are you sure you want to ${action} this payable (${displayId})?`,
+      action: action,
+      confirmText: `Yes, ${action}`,
+    });
+
+    if (!confirmed) return;
+  }
+
   emit("action", { row, action });
 };
 
-const formatType = (val: string) => {
-  if(!val) return '-';
-  return val.replace(/([A-Z])/g, " $1").trim();
-};
-
 const typeClasses: Record<string, string> = {
+  advance: "bg-blue-50 text-blue-600",
+  transaction: "bg-purple-50 text-purple-600",
+  prePayment: "bg-orange-50 text-orange-600",
+  vehicleLeaseAgreements: "bg-teal-50 text-teal-600",
+  shipment: "bg-green-50 text-green-600",
+  purchaseOrders: "bg-indigo-50 text-indigo-600",
+  // Fallbacks
   advancePayment: "bg-blue-50 text-blue-600",
   transactions: "bg-purple-50 text-purple-600",
   prePayments: "bg-orange-50 text-orange-600",
@@ -281,18 +293,6 @@ const typeClasses: Record<string, string> = {
   purchaseOrder: "bg-indigo-50 text-indigo-600",
 };
 
-const getPaidTo = (row: any) => {
-  if (row.payableType === "shipments") {
-    return row.transporter?.tradeName || row.transporter?.name || "-";
-  } else if (row.payableType === "purchaseOrder") {
-    return row.supplier?.name || row.supplier?.tradeName || "-";
-  } else if (row.driver) {
-    return `${row.driver?.firstName || ""} ${row.driver?.lastName || ""}`.trim() || "-";
-  } else if (row.supplier) {
-    return row.supplier?.name || "-";
-  }
-  return "-";
-};
 
-defineExpose({ refetch, fullResponse });
+defineExpose({ refetch, fullResponse, response });
 </script>

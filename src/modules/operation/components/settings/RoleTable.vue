@@ -23,7 +23,7 @@
         </span>
         <Dropdown v-else>
           <template #default="{ close }">
-            <DropDownItem
+            <DropDownItem v-permission="'ROLE:update'"
               :icon="icons.edit"
               label="Edit"
               @click.stop="
@@ -31,7 +31,8 @@
                 close();
               "
             />
-            <!-- <DropDownItem
+            <!-- Delete action commented out temporarily -->
+        <!-- <DropDownItem
               :icon="icons.delete"
               label="Delete"
               class="text-error-600"

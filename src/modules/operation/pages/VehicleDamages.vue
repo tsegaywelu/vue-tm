@@ -1,6 +1,6 @@
 <template>
   <Teleport defer to="#page-actions">
-    <Button variant="primary" size="md" @click="openAddDamageModal">
+    <Button v-permission="'VEHICLE_DAMAGE:create'" variant="primary" size="md" @click="openAddDamageModal">
       <template #leftIcon>
         <i class="mdi mdi-plus text-lg"></i>
       </template>

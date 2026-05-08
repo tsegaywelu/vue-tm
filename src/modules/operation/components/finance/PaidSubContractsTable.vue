@@ -82,7 +82,7 @@
       <div class="flex items-center justify-end">
         <Dropdown>
           <template #default="{ close }">
-            <DropDownItem
+            <DropDownItem v-permission="'TRANSACTION:read'"
               :icon="icons.eye"
               label="Details"
               @click.stop="
@@ -146,7 +146,7 @@ const dynamicSearchPlaceholder = computed(() => {
 
 const activeFilters = ref<any>({});
 
-const { response, refetch } = usePagination<any>({
+const { response, refetch, fullResponse } = usePagination<any>({
   id: "paid-sub-contracts-list",
   url: "/shipment/payableShipmentsPaid",
   params: computed(() => {
@@ -167,5 +167,5 @@ const handleAction = (row: any, action: string) => {
   emit("action", { row, action });
 };
 
-defineExpose({ refetch });
+defineExpose({ refetch, fullResponse });
 </script>

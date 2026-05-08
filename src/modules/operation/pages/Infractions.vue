@@ -3,7 +3,7 @@
     <!-- Tab 1: Infractions List -->
     <div v-if="activeTab === 'infractions'">
       <Teleport to="#page-actions" defer>
-        <Button size="md" variant="primary" @click="handleOpenAddModal">
+        <Button v-permission="'INFRACTION:create'" size="md" variant="primary" @click="handleOpenAddModal">
           New Infraction
         </Button>
       </Teleport>
@@ -42,6 +42,7 @@
                 />
                 <DropDownItem
                   v-if="row.status === 'approved'"
+                  v-permission="'INFRACTION:pay'"
                   label="Mark as Paid"
                   @click="
                     close();
@@ -50,6 +51,7 @@
                 />
                 <DropDownItem
                   v-if="row.status !== 'paid' && row.status !== 'rejected'"
+                  v-permission="'INFRACTION:update'"
                   label="Edit"
                   @click="
                     close();
@@ -58,6 +60,7 @@
                 />
                 <DropDownItem
                   v-if="row.status === 'pending'"
+                  v-permission="'INFRACTION:approve'"
                   label="Approve"
                   @click="
                     close();
@@ -66,6 +69,7 @@
                 />
                 <DropDownItem
                   v-if="row.status === 'pending'"
+                  v-permission="'INFRACTION:reject'"
                   label="Reject"
                   @click="
                     close();

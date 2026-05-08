@@ -7,7 +7,7 @@
     >
       Vehicle Metrics
     </Button>
-    <Button variant="primary" size="md" @click="handleRegisterVehicle">
+    <Button v-permission="'VEHICLE:create'" variant="primary" size="md" @click="handleRegisterVehicle">
       Register Vehicle
     </Button>
   </Teleport>

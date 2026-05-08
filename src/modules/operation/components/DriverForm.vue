@@ -415,10 +415,6 @@ const removeWork = (index: number) => {
   workExperience.value.splice(index, 1);
 };
 
-const triggerFileInput = () => {
-  // Logic handled by component
-};
-
 const handleSubmit = (values: any) => {
   // Filter out any empty array items to prevent backend validation errors
   const filteredEdu = educationalBackground.value

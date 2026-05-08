@@ -12,13 +12,12 @@
         multiple
         size="xs"
         :options="[
-          { label: 'Trip Type', value: 'tripType' },
-          { label: 'Product Type', value: 'productType' },
-          { label: 'Shipper', value: 'shipper' },
-          { label: 'Origin', value: 'origin' },
-          { label: 'Destination', value: 'destination' },
-          { label: 'Vehicle Ownership', value: 'vehicleOwnership' },
-          { label: 'Document Uploaded', value: 'documentUploaded' }
+          { label: 'Issue Voucher', value: 'shipperIssueVoucher' },
+          { label: 'Shipper Receive Voucher', value: 'agentReceiveVoucher' },
+          { label: 'Plate Number', value: 'vehiclePlateNumber' },
+          { label: 'Shipment Code', value: 'shipmentCode' },
+          { label: 'First Name', value: 'driverFirstName' },
+          { label: 'Middle Name', value: 'driverMiddleName' },
         ]"
         :attributes="{ placeholder: 'Choose Filters' }"
       />

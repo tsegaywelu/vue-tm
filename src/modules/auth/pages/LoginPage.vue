@@ -66,7 +66,7 @@ async function submitLogin(values: any) {
   toast_store.success("Welcome back! Login successful.");
   
   const redirectPath = router.currentRoute.value.query.redirect as string;
-  router.push(redirectPath || "/");
+  router.push(redirectPath || auth_store.get_default_home_route());
 }
 </script>
 

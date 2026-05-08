@@ -108,7 +108,7 @@
     <template #cell-actions="{ row }">
       <Dropdown>
         <template #default="{ close }">
-          <DropDownItem
+          <DropDownItem v-permission="'VEHICLE:read'"
             :icon="icons.eye"
             label="View Details"
             @click.stop="
@@ -116,7 +116,7 @@
               close();
             "
           />
-          <DropDownItem
+          <DropDownItem v-permission="'VEHICLE:update'"
             :icon="icons.editIcon"
             label="Edit Details"
             @click.stop="
@@ -124,7 +124,7 @@
               close();
             "
           />
-          <DropDownItem
+          <DropDownItem v-permission="'VEHICLE:update'"
             :icon="icons.shield"
             label="Change Status"
             @click.stop="

@@ -60,6 +60,10 @@
 
   
 
+    <template #after-search>
+      <PaymentCollectionFilters @change="handleFilterChange" />
+    </template>
+
     <template #cell-actions="{ row }">
       <div class="flex items-center justify-end">
         <Dropdown>
@@ -73,7 +77,7 @@
                 close();
               "
             />
-            <DropDownItem
+            <DropDownItem v-permission="'TRANSACTION:update'"
               :icon="icons.edit"
               label="Edit"
               @click.stop="
@@ -81,7 +85,7 @@
                 close();
               "
             />
-            <DropDownItem
+            <DropDownItem v-permission="'TRANSACTION:read'"
               :icon="icons.eye"
               label="Details"
               @click.stop="
@@ -106,6 +110,7 @@ import { icons } from "@/utils/icons";
 import { usePagination } from "@/composables/usePagination";
 import type { TableColumn } from "@/components/common/Table.vue";
 import { currencyFormatter, dateFormatter } from "@/utils/utils";
+import PaymentCollectionFilters from "./PaymentCollectionFilters.vue";
 
 const emit = defineEmits(["action"]);
 

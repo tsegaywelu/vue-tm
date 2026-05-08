@@ -68,11 +68,11 @@
       <span class="text-gray-600 line-clamp-1 max-w-xs">{{ value || '-' }}</span>
     </template>
 
-    <template #cell-actions="{ row }">
+    <!-- <template #cell-actions="{ row }">
       <div class="flex items-center justify-end">
         <Dropdown>
           <template #default="{ close }">
-            <DropDownItem
+            <DropDownItem v-permission="'TRANSACTION:read'"
               :icon="icons.eye"
               label="Details"
               @click.stop="
@@ -83,7 +83,7 @@
           </template>
         </Dropdown>
       </div>
-    </template>
+    </template> -->
   </Table>
 </template>
 
@@ -91,10 +91,7 @@
 import { computed, ref, watch } from "vue";
 import Table from "@/components/common/Table.vue";
 import Select from "@/components/common/Select.vue";
-import Dropdown from "@/components/common/Dropdown.vue";
-import DropDownItem from "@/components/common/DropDownItem.vue";
 import Status from "@/components/common/Status.vue";
-import { icons } from "@/utils/icons";
 import { usePagination } from "@/composables/usePagination";
 import type { TableColumn } from "@/components/common/Table.vue";
 import { currencyFormatter, dateFormatter } from "@/utils/utils";
@@ -108,7 +105,7 @@ const columns: TableColumn<any>[] = [
   { key: "typeStatus", label: "Type & Status", field: "type" },
   { key: "amountLiters", label: "Amount & Liters", field: "amount" },
   { key: "notes", label: "Notes", field: "notes" },
-  { key: "actions", label: "Actions", field: "", cellAlign: "right" },
+ 
 ];
 
 const searchFieldOptions = [

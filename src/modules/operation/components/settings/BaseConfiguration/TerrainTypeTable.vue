@@ -17,7 +17,7 @@
       <div class="flex items-center justify-end gap-2">
         <Dropdown>
           <template #default="{ close }">
-            <DropDownItem
+            <DropDownItem v-permission="'TERRAIN_TYPE:update'"
               :icon="icons.edit"
               label="Edit"
               @click.stop="

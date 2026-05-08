@@ -121,7 +121,7 @@
               close();
             "
           />
-          <DropDownItem
+          <DropDownItem v-permission="'ORDER:update'"
             :icon="icons.editIcon"
             label="Edit"
             @click.stop="

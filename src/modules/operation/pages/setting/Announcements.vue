@@ -3,6 +3,7 @@
     <!-- Page Actions (Teleported) -->
     <Teleport to="#page-actions" defer>
       <Button
+        v-permission="'ANNOUNCEMENT:create'"
         variant="primary"
         size="md"
         class="flex items-center gap-2"

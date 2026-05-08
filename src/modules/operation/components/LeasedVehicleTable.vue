@@ -48,7 +48,7 @@
       <div class="flex items-center justify-end">
         <Dropdown>
           <template #default="{ close }">
-            <DropDownItem
+            <DropDownItem v-permission="'VEHICLE_LEASE_AGREEMENT:read'"
               :icon="icons.eye"
               label="View Details"
               @click.stop="

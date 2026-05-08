@@ -1,6 +1,6 @@
 <template>
   <Teleport to="#page-actions" defer>
-    <Button size="md" variant="primary" @click="addDriver"> New Driver </Button>
+    <Button v-permission="'DRIVER:create'" size="md" variant="primary" @click="addDriver"> New Driver </Button>
   </Teleport>
 
   <div class="flex flex-col gap-4">
@@ -114,6 +114,7 @@
                 "
               />
               <DropDownItem
+                v-permission="'DRIVER:change_status'"
                 label="Edit Driver Status"
                 @click="
                   close();
@@ -121,6 +122,7 @@
                 "
               />
               <DropDownItem
+                v-permission="'DRIVER:update'"
                 label="Edit Driver"
                 @click="
                   close();

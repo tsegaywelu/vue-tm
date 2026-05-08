@@ -1,6 +1,6 @@
 <template>
   <Teleport to="#page-actions" defer>
-    <Button size="md" variant="primary" @click="handleOpenAddModal">
+    <Button v-permission="'SHIPPER:create'" size="md" variant="primary" @click="handleOpenAddModal">
       New Customer
     </Button>
   </Teleport>

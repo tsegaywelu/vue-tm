@@ -1,20 +1,18 @@
 <template>
   <Teleport to="#page-actions" defer>
     <Button
+      v-permission="'GOOD_TRANSFER_VOUCHER:create'"
       variant="primary"
       size="md"
       class="flex items-center gap-2"
       @click="handleCreateTransfer"
     >
       <i v-html="icons.plus" />
-      Create Transfer
+      Add Good Transfer
     </Button>
   </Teleport>
 
-  <GoodTransferTable
-    ref="tableRef"
-    @action="handleTransferAction"
-  />
+  <GoodTransferTable ref="tableRef" @action="handleTransferAction" />
 </template>
 
 <script setup lang="ts">
@@ -38,15 +36,19 @@ const handleCreateTransfer = () => {
 };
 
 const handleTransferAction = async ({ row, action }: any) => {
-  if (action === 'edit') {
+  if (action === "edit") {
     openModal("GoodTransferModal", {
       transfer: row,
       onSuccess: () => tableRef.value?.refetch(),
     });
-  } else if (action === 'view') {
+  } else if (action === "view") {
     router.push(`/inventory/good-transfer/${row._id}`);
-  } else if (action === 'delete') {
-    if (confirm(`Are you sure you want to delete transfer voucher "${row.referenceNumber}"?`)) {
+  } else if (action === "delete") {
+    if (
+      confirm(
+        `Are you sure you want to delete transfer voucher "${row.referenceNumber}"?`,
+      )
+    ) {
       try {
         const res = await delete_good_transfer(row._id);
         if (res.success) {

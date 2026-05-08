@@ -65,11 +65,17 @@ const initialValues = computed(() => {
 
 const handleSubmit = async (values: any) => {
   try {
+    const payload: any = {
+      name: values.name,
+      description: values.description,
+    };
+    if (values.category) payload.category = values.category;
+
     let res;
     if (isEdit.value) {
-      res = await update_item_group(props.data!.group._id, values);
+      res = await update_item_group(props.data!.group._id, payload);
     } else {
-      res = await create_item_group(values);
+      res = await create_item_group(payload);
     }
 
     if (res.success) {

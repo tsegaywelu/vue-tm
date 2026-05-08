@@ -7,7 +7,7 @@
         </template>
         Export to Excel
       </Button>
-      <Button @click="navigateToAddRoute">
+      <Button v-permission="'ROUTE:create'" @click="navigateToAddRoute">
         <template #leading>
           <div class="size-5" v-html="all_icons.plus"></div>
         </template>

@@ -79,11 +79,42 @@
       <div class="flex items-center justify-end">
         <Dropdown>
           <template #default="{ close }">
-            <DropDownItem
+            <DropDownItem v-permission="'TRANSACTION:read'"
               :icon="icons.eye"
               label="Details"
               @click.stop="
                 handleAction(row, 'view');
+                close();
+              "
+            />
+            <DropDownItem
+              v-if="row.status === 'AUTHORIZED'"
+              v-permission="'TRANSACTION:pay'"
+              :icon="icons.cash"
+              label="Collect"
+              @click.stop="
+                handleAction(row, 'pay');
+                close();
+              "
+            />
+            <DropDownItem
+              v-if="row.status === 'APPROVED'"
+              v-permission="'TRANSACTION:authorize'"
+              :icon="icons.checkCircle"
+              label="Authorize"
+              @click.stop="
+                handleAction(row, 'authorize');
+                close();
+              "
+            />
+            <DropDownItem
+              v-if="row.status === 'APPROVED'"
+              v-permission="'TRANSACTION:update'"
+              variant="danger"
+              :icon="icons.closeCircle"
+              label="Cancel"
+              @click.stop="
+                handleAction(row, 'cancel');
                 close();
               "
             />
@@ -95,7 +126,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import Table from "@/components/common/Table.vue";
 import Dropdown from "@/components/common/Dropdown.vue";
 import DropDownItem from "@/components/common/DropDownItem.vue";
@@ -137,6 +168,7 @@ const dynamicSearchPlaceholder = computed(() => {
 });
 
 const activeFilters = ref<any>({});
+
 const { response, refetch } = usePagination<any>({
   id: "receivable-settlement-list",
   url: "/transaction/receivableTransaction",
@@ -158,5 +190,5 @@ const handleAction = (row: any, action: string) => {
   emit("action", { row, action });
 };
 
-defineExpose({ refetch });
+defineExpose({ refetch, response });
 </script>

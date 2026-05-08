@@ -35,6 +35,7 @@ const insurance_api = getApi("/insurance");
 const tyre_api = getApi("/tyre");
 const approval_api = getApi("/approval-process");
 const shipper_api = getApi("/shipper");
+const bonus_api = getApi("/bonus");
 
 export function fetch_customer_by_id(id: string) {
   return shipper_api.addAuthenticationHeader().get(`/${id}`);
@@ -480,6 +481,38 @@ export function fetch_contact_by_id(id: string) {
   return getApi("/contact").addAuthenticationHeader().get(`/${id}`);
 }
 
+export function generate_invoice(data: any) {
+  return getApi("").addAuthenticationHeader().patch("/shipment/generateInvoice", data);
+}
+
+export function approve_invoice(id: string, data: any) {
+  return getApi("").addAuthenticationHeader().patch(`/shipment/approveInvoice/${id}`, data);
+}
+
+export function cancel_invoice(id: string, data: any) {
+  return getApi("").addAuthenticationHeader().patch(`/shipment/cancelInvoice/${id}`, data);
+}
+
+export function fetch_requested_invoice_count() {
+  return shipment_api.addAuthenticationHeader().get("/requestedInvoiceCount");
+}
+
+export function fetch_approved_and_collected_invoice_count(params?: any) {
+  return shipment_api.addAuthenticationHeader().get("/approvedAndCollectedInvoiceCount", { params });
+}
+
+export function collect_invoice(id: string, data: any) {
+  return getApi("").addAuthenticationHeader().patch(`/shipment/payPayment/${id}`, data);
+}
+
+export function fetch_shippers(params?: any) {
+  return shipper_api.addAuthenticationHeader().get("", { params });
+}
+
+export function collect_bonus(id: string) {
+  return bonus_api.addAuthenticationHeader().post(`/admin/${id}/collect`);
+}
+
 export function fetch_shipment_status_count() {
   return shipment_api.addAuthenticationHeader().get("/statusCount");
 }
@@ -492,14 +525,14 @@ export function fetch_all_shipments_unpaginated(
 }
 
 export function add_insurance(data: any) {
-  const config = data instanceof FormData 
+  const config = data instanceof FormData
     ? { headers: { 'Content-Type': 'multipart/form-data' } }
     : {};
   return insurance_api.addAuthenticationHeader().post("", data, config);
 }
 
 export function update_insurance(id: string, data: any) {
-  const config = data instanceof FormData 
+  const config = data instanceof FormData
     ? { headers: { 'Content-Type': 'multipart/form-data' } }
     : {};
   return insurance_api.addAuthenticationHeader().put(`/${id}`, data, config);

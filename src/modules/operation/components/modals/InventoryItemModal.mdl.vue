@@ -81,10 +81,23 @@ const initialValues = computed(() => {
 
 const handleSubmit = async (values: any) => {
   try {
-    const finalValues = { ...values };
+    const finalValues: any = {
+      name: values.name,
+      codeNumber: values.codeNumber,
+      partNumber: values.partNumber,
+      inventoryType: values.inventoryType,
+      uom: values.uom,
+      quantity: Number(values.quantity) || 0,
+      reorderLevel: Number(values.reorderLevel) || 0,
+      price: Number(values.price) || 0,
+      isTyre: values.isTyre,
+    };
+
+    if (values.itemGroup) finalValues.itemGroup = values.itemGroup;
+
     if (values.inventoryType === 'SERIALIZED') {
       finalValues.reorderLevel = 1;
-      // serialPrices are already in values thanks to SerialNumbersInput
+      finalValues.serialPrices = values.serialPrices || [];
     } else {
       finalValues.totalPrice = (Number(values.price) || 0) * (Number(values.quantity) || 0);
     }

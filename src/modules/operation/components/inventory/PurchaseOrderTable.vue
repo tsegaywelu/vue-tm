@@ -59,7 +59,7 @@
       <div class="flex items-center justify-end">
         <Dropdown>
           <template #default="{ close }">
-            <DropDownItem
+            <DropDownItem v-permission="'PURCHASE_ORDER:read'"
               :icon="icons.eye"
               label="View Details"
               @click.stop="
@@ -67,7 +67,7 @@
                 close();
               "
             />
-            <DropDownItem
+            <DropDownItem v-permission="'PURCHASE_ORDER:update'"
               v-if="row.status === 'PENDING'"
               :icon="icons.edit"
               label="Edit"
@@ -76,7 +76,8 @@
                 close();
               "
             />
-            <DropDownItem
+            <!-- Delete action commented out temporarily -->
+        <!-- <DropDownItem
               v-if="row.status === 'PENDING'"
               :icon="icons.delete"
               label="Delete"
@@ -85,7 +86,7 @@
                 handleAction(row, 'delete');
                 close();
               "
-            />
+            /> -->
           </template>
         </Dropdown>
       </div>

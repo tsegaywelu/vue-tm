@@ -1,6 +1,7 @@
 <template>
   <Teleport to="#page-actions" defer>
     <Button
+      v-permission="'CATEGORY:create'"
       variant="primary"
       size="md"
       class="flex items-center gap-2"

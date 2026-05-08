@@ -1,6 +1,6 @@
 <template>
   <Teleport to="#page-actions" defer>
-    <Button @click="router.push('/maintenance/service-record/add')">
+    <Button v-permission="'SERVICE_RECORD:create'" @click="router.push('/maintenance/service-record/add')">
       <template #leading>
         <div class="size-5" v-html="all_icons.plus"></div>
       </template>

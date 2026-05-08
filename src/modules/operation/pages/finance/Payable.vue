@@ -1,9 +1,42 @@
 <template>
+  <Teleport to="#page-actions" defer>
+    <div class="flex items-center gap-4">
+      <!-- <Dropdown
+        contentParent="shadow-none! ring-0! ring-offset-0! p-0! bg-tras border-none! bg-none!"
+      >
+        <template #trigger>
+          <Button
+            variant="secondary"
+            class="rounded-2xl h-[46px] px-4 gap-2 border border-gray-100"
+          >
+            <i class="mdi mdi-calendar-range text-lg text-primary"></i>
+            <span class="text-sm font-bold text-gray-700">
+              {{ dateRange.start || 'Start' }} - to - {{ dateRange.end || "End" }}
+            </span>
+          </Button>
+        </template>
+        <template #default>
+          <DatePicker
+            is-range
+            :value="dateRange"
+            @select="handleDateSelect"
+          />
+        </template>
+      </Dropdown> -->
+
+      <Button variant="secondary" @click="handleExport">
+        <template #leading>
+          <i class="mdi mdi-file-excel text-lg text-green-600"></i>
+        </template>
+        Export Excel
+      </Button>
+    </div>
+  </Teleport>
   <Teleport to="#extra-page-data" defer>
-    <StatsCards :stats="payableStats" :loading="isLoadingStats" />
+    <StatsCards v-permission="'ADVANCE_PAYMENT:read'" :stats="payableStats" :loading="isLoadingStats" />
   </Teleport>
 
-  <PayableTable ref="tableRef" @action="handlePayableAction" />
+  <PayableTable ref="tableRef" :filters="{ startDate: dateRange.start, endDate: dateRange.end }" @action="handlePayableAction" />
 </template>
 
 <script setup lang="ts">
@@ -11,6 +44,7 @@ import { ref, computed, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useQuery, useMutation } from "@tanstack/vue-query";
 import PayableTable from "../../components/finance/PayableTable.vue";
+import { formatType, getPaidTo } from "../../components/finance/payableUtils";
 import StatsCards from "@/components/common/StatsCards.vue";
 import { 
   fetch_advance_status_count, 
@@ -23,10 +57,55 @@ import {
   update_purchase_order_payment_status 
 } from "../../api/inventory.api";
 import { useToastStore } from "@/store/toastStore";
+import Button from "@/components/Button.vue";
+import DatePicker from "@/components/DatePicker.vue";
+import Dropdown from "@/components/common/Dropdown.vue";
+import * as XLSX from "xlsx";
+import { dateFormatter } from "@/utils/utils";
 
 const router = useRouter();
 const toast = useToastStore();
 const tableRef = ref();
+
+const dateRange = ref({
+  start: new Date(new Date().setDate(new Date().getDate() - 30))
+    .toISOString()
+    .split("T")[0],
+  end: new Date().toISOString().split("T")[0],
+});
+
+const handleDateSelect = (val: any) => {
+  if (typeof val === "object" && val.start) {
+    dateRange.value = val;
+  }
+};
+
+const handleExport = () => {
+  const rows = tableRef.value?.response || [];
+  if (rows.length === 0) {
+    toast.error("No data to export");
+    return;
+  }
+
+  const formattedData = rows.map((row: any) => ({
+    "Date of Request": dateFormatter(row.createdAt),
+    "Code": row.advanceNumber || "N/A",
+    "Paid To": getPaidTo(row),
+    "Type": formatType(row.payableType),
+    "Status": row.status || "N/A",
+    "Fuel": row.totalFuelAdvances || 0,
+    "Per Diem": row.totalPerDiemExpenses || 0,
+    "Other": row.totalOtherExpenses || 0,
+    "Total": row.total || 0,
+    "Shipment": row.shipmentCode || "N/A",
+    "Plate Number": row.plateNumber || "N/A",
+  }));
+
+  const worksheet = XLSX.utils.json_to_sheet(formattedData);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Payables");
+  XLSX.writeFile(workbook, `Payables_${new Date().toISOString().split('T')[0]}.xlsx`);
+};
 
 const { data: statsResponse, isLoading: isLoadingStats, refetch: refetchStats } = useQuery({
   queryKey: ["payableStatusCount"],
@@ -87,8 +166,27 @@ const handlePayableAction = ({
   action: string;
 }) => {
   if (action === "view") {
-    const shipmentId = row.shipmentId || row.shipment?._id || row._id;
-    router.push(`/operation/shipments/${shipmentId}`);
+    const type = row.payableType;
+    const id = row._id || row.id;
+
+    if (type === "shipment" || type === "shipments") {
+      router.push(`/operation/shipments/${row.shipmentId || id}`);
+    } else if (type === "advance" || type === "advancePayment") {
+      router.push(`/operation/advance-details/${id}`);
+    } else if (type === "transaction" || type === "transactions") {
+      // For transactions, we can either go to the driver or the advance details
+      // Based on user request "if driver advance then go to the driver detail /drivers/..."
+      if (row.driver?._id) {
+        router.push(`/drivers/${row.driver._id}`);
+      } else {
+        router.push(`/operation/advance-details/${row.advancePaymentId || id}`);
+      }
+    } else if (type === "purchaseOrders" || type === "purchaseOrder") {
+      router.push(`/inventory/purchase-order/${row.purchaseOrderId || row.purchaseOrder?._id || id}`);
+    } else {
+      // Default fallback
+      router.push(`/operation/advance-details/${id}`);
+    }
   } else if (["pay", "authorize", "cancel", "approve", "reject"].includes(action)) {
     const id = row._id || row.id;
     const type = row.payableType;

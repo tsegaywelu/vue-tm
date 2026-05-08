@@ -70,11 +70,42 @@
       <div class="flex items-center justify-end">
         <Dropdown>
           <template #default="{ close }">
-            <DropDownItem
+            <DropDownItem v-permission="'TRANSACTION:read'"
               :icon="icons.eye"
               label="Details"
               @click.stop="
                 handleAction(row, 'view');
+                close();
+              "
+            />
+            <DropDownItem
+              v-if="(row.settlementStatus || row.payableStatus) === 'AUTHORIZED'"
+              v-permission="'VEHICLE_LEASE_AGREEMENT:pay'"
+              :icon="icons.cash"
+              label="Collect"
+              @click.stop="
+                handleAction(row, 'pay');
+                close();
+              "
+            />
+            <DropDownItem
+              v-if="(row.settlementStatus || row.payableStatus) === 'APPROVED'"
+              v-permission="'VEHICLE_LEASE_AGREEMENT:authorize'"
+              :icon="icons.checkCircle"
+              label="Authorize"
+              @click.stop="
+                handleAction(row, 'authorize');
+                close();
+              "
+            />
+            <DropDownItem
+              v-if="(row.settlementStatus || row.payableStatus) === 'APPROVED'"
+              v-permission="'VEHICLE_LEASE_AGREEMENT:update'"
+              variant="danger"
+              :icon="icons.closeCircle"
+              label="Cancel"
+              @click.stop="
+                handleAction(row, 'cancel');
                 close();
               "
             />
@@ -86,7 +117,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import Table from "@/components/common/Table.vue";
 import Dropdown from "@/components/common/Dropdown.vue";
 import DropDownItem from "@/components/common/DropDownItem.vue";
@@ -125,5 +156,5 @@ const handleAction = (row: any, action: string) => {
   emit("action", { row, action });
 };
 
-defineExpose({ refetch });
+defineExpose({ refetch, response });
 </script>

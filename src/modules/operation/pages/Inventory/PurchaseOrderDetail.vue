@@ -45,6 +45,7 @@
           <div class="flex gap-2">
             <Button
               v-if="canVoid"
+              v-permission="'PURCHASE_ORDER:change_status'"
               variant="outline"
               size="md"
               class="text-red-600 border-red-600 hover:bg-red-50"

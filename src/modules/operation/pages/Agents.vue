@@ -1,6 +1,6 @@
 <template>
   <Teleport to="#page-actions" defer>
-    <Button size="md" variant="primary" @click="navigateToAddAgent">
+    <Button v-permission="'AGENT:create'" size="md" variant="primary" @click="navigateToAddAgent">
       New Agent
     </Button>
   </Teleport>

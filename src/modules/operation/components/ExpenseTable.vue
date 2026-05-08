@@ -31,11 +31,11 @@
       <span class="font-bold text-gray-900">{{ currencyFormatter(value || 0) }}</span>
     </template>
 
-    <template #cell-actions="{ row }">
+    <!-- <template #cell-actions="{ row }">
       <div class="flex items-center justify-end">
-        <Dropdown>
+         <Dropdown>
           <template #default="{ close }">
-            <DropDownItem
+            <DropDownItem v-permission="'TRANSACTION:read'"
               :icon="icons.eye"
               label="Details"
               @click.stop="
@@ -44,20 +44,24 @@
               "
             />
           </template>
-        </Dropdown>
+        </Dropdown> 
+      </div>
+    </template> -->
+    <template #extra-actions>
+      <div class="items-center gap-4 inline-flex border-l border-grey-100 overflow-x-auto px-3">
+        <ExpenseFilters @change="handleFilterChange" />
       </div>
     </template>
   </Table>
 </template>
 
 <script setup lang="ts">
+import { ref, computed } from "vue";
 import Table from "@/components/common/Table.vue";
-import Dropdown from "@/components/common/Dropdown.vue";
-import DropDownItem from "@/components/common/DropDownItem.vue";
-import { icons } from "@/utils/icons";
 import { usePagination } from "@/composables/usePagination";
 import type { TableColumn } from "@/components/common/Table.vue";
 import { currencyFormatter } from "@/utils/utils";
+import ExpenseFilters from "./ExpenseFilters.vue";
 
 const emit = defineEmits(["action"]);
 
@@ -68,23 +72,28 @@ const columns: TableColumn<any>[] = [
   { key: "totalTyreCost", label: "Tyre Cost", field: "totalTyreCost" },
   { key: "totalInsuranceCost", label: "Insurance Cost", field: "totalInsuranceCost" },
   { key: "totalExpenses", label: "Total Cost", field: "totalExpenses" },
-  { key: "actions", label: "Actions", field: "", cellAlign: "right" },
 ];
 
 const today = new Date();
 const oneMonthAgo = new Date();
 oneMonthAgo.setMonth(today.getMonth() - 1);
 
+const activeFilters = ref({
+  startDate: oneMonthAgo.toISOString(),
+  endDate: today.toISOString(),
+});
+
 const { response, refetch } = usePagination<any>({
   id: "expense-list",
   url: "/expense",
-  method: "POST", // API expects a POST for fetching expenses
-  paginate: false, // This endpoint does not support page/limit
-  params: {
-    startDate: oneMonthAgo.toISOString(),
-    endDate: today.toISOString(),
-  },
+  method: "POST",
+  paginate: false,
+  params: computed(() => activeFilters.value),
 });
+
+const handleFilterChange = (newFilters: any) => {
+  activeFilters.value = { ...newFilters };
+};
 
 const handleAction = (row: any, action: string) => {
   emit("action", { row, action });

@@ -1,7 +1,7 @@
 <template>
   <Dropdown>
     <template #default="{ close }">
-      <DropDownItem
+      <DropDownItem v-permission="'SHIPMENT:read'"
         v-if="shouldShow('view')"
         :icon="icons.eye"
         label="Details"
@@ -10,7 +10,7 @@
           close();
         "
       />
-      <DropDownItem
+      <DropDownItem v-permission="'SHIPMENT:update'"
         v-if="shouldShow('edit')"
         :icon="icons.editIcon"
         label="Edit Shipment"
@@ -19,7 +19,7 @@
           close();
         "
       />
-      <DropDownItem
+      <DropDownItem v-permission="'SHIPMENT:manage'"
         v-if="shouldShow('create_advance')"
         :icon="icons.plusIcon"
         label="Create Advance"
@@ -28,7 +28,7 @@
           close();
         "
       />
-      <DropDownItem
+      <DropDownItem v-permission="'SHIPMENT:change_status'"
         v-if="shouldShow('update_status')"
         :icon="icons.editIcon"
         label="Update Status"
@@ -37,7 +37,7 @@
           close();
         "
       />
-      <DropDownItem
+      <DropDownItem v-permission="'SHIPMENT:add_voucher'"
         v-if="shouldShow('add_voucher')"
         :icon="icons.plusIcon"
         label="Add Voucher"

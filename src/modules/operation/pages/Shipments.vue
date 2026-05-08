@@ -38,7 +38,7 @@
       </Dropdown>
 
       <!-- Add Shipment Button -->
-      <Button @click="router.push('/operation/shipments/add')">
+      <Button v-permission="'SHIPMENT:create'" @click="router.push('/operation/shipments/add')">
         <template #leading>
           <div class="size-5" v-html="all_icons.plus"></div>
         </template>

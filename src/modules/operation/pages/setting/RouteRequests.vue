@@ -1,6 +1,22 @@
 <template>
   <div class="flex flex-col h-full">
+<<<<<<< HEAD
    
+=======
+    <!-- Page Actions (Teleported) -->
+    <Teleport to="#page-actions" defer>
+      <Button
+        v-permission="'ROUTEREGISTER:create'"
+        variant="primary"
+        size="md"
+        class="flex items-center gap-2"
+        @click="router.push('/setting/route-request/add')"
+      >
+        <i v-html="icons.plus" />
+        Add Route Request
+      </Button>
+    </Teleport>
+>>>>>>> 945f0c2bd5a2ec72772ecca9f39f94f8db6b4edb
 
     <!-- Table Section -->
     <div class="flex-1 min-h-0">

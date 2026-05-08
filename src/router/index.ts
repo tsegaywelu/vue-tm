@@ -24,6 +24,11 @@ const router = createRouter({
       name: "login",
       component: () => import("@/modules/auth/pages/LoginPage.vue"),
     },
+    {
+      path: "/unauthorized",
+      name: "unauthorized",
+      component: () => import("@/modules/auth/pages/UnauthorizedPage.vue"),
+    },
   ],
 });
 
@@ -34,8 +39,30 @@ router.beforeEach(async (to, from, next) => {
   if (to.name !== "login" && !auth_store.is_authenticated) {
     next({ name: "login", query: { redirect: to.fullPath } });
   } else if (to.name === "login" && auth_store.is_authenticated) {
-    next({ path: "/operation/dashboard" });
+    next({ path: auth_store.get_default_home_route() });
   } else {
+    // Permission Guard
+    if (to.meta.permission && auth_store.is_authenticated) {
+      // If the user hasn't been fetched yet (hard refresh), let them pass to RouteGuard
+      if (!auth_store.current_user) {
+        return next();
+      }
+
+      // Check if user has 'view', 'read' or 'manage' permission for the subject
+      if (
+        !auth_store.has_permission(to.meta.permission as string, [
+          "view",
+          "read",
+          "manage",
+        ])
+      ) {
+        // If they don't have permission, redirect to unauthorized
+        if (from.path && from.path !== "/") {
+          return next(false); // cancel navigation
+        }
+        return next({ path: "/unauthorized" });
+      }
+    }
     next();
   }
 });

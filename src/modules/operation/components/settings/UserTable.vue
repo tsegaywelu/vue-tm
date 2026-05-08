@@ -29,7 +29,7 @@
         </Button> -->
         <Dropdown>
           <template #default="{ close }">
-            <DropDownItem
+            <DropDownItem v-permission="'USER:update'"
               :icon="icons.edit"
               label="Edit"
               @click.stop="
@@ -48,7 +48,9 @@
               "
             />
             
-            <!-- <DropDownItem
+            
+            <!-- Delete action commented out temporarily -->
+        <!-- <DropDownItem
               :icon="icons.delete"
               label="Delete"
               class="text-error-600"
@@ -66,7 +68,6 @@
 
 <script setup lang="ts">
 import Table from "@/components/common/Table.vue";
-import Button from "@/components/Button.vue";
 import Dropdown from "@/components/common/Dropdown.vue";
 import DropDownItem from "@/components/common/DropDownItem.vue";
 import { usePagination } from "@/composables/usePagination";

@@ -1,6 +1,6 @@
 <template>
   <Teleport to="#page-actions" defer>
-    <Button>
+    <Button v-permission="'ISSUE_REPORT:create'">
       <template #leading>
         <div class="size-5" v-html="all_icons.plus"></div>
       </template>

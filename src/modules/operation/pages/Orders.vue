@@ -1,6 +1,6 @@
 <template>
   <Teleport to="#page-actions" defer>
-    <Button @click="navigateToAddOrder">
+    <Button v-permission="'ORDER:create'" @click="navigateToAddOrder">
       <template #leading>
         <div class="size-5" v-html="all_icons.plus"></div>
       </template>
