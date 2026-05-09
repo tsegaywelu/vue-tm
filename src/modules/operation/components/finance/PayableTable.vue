@@ -176,6 +176,10 @@ import { currencyFormatter, dateFormatter } from "@/utils/utils";
 
 const emit = defineEmits(["action"]);
 
+const props = defineProps<{
+  filters?: Record<string, any>;
+}>();
+
 const columns: TableColumn<any>[] = [
   { key: "advanceNumber", label: "Code", field: "advanceNumber" },
   { key: "payableType", label: "Type of Payment", field: "payableType" },
@@ -190,6 +194,7 @@ const columns: TableColumn<any>[] = [
   { key: "transporterPrice", label: "Transporter Price", field: "transporterPrice" },
   { key: "purchaseCost", label: "Purchase Cost", field: "purchaseCost" },
   { key: "total", label: "Total", field: "total" },
+  { key: "status", label: "Status", field: "status" },
   { key: "actions", label: "Action", field: "", cellAlign: "right" },
 ];
 
@@ -218,7 +223,7 @@ const { response, refetch, fullResponse } = usePagination<any>({
   id: "payable-list",
   url: "/advance-payment/allPayables",
   params: computed(() => {
-    const params: any = { ...activeFilters.value };
+    const params: any = { ...activeFilters.value, ...props.filters };
     if (searchTerm.value) {
       params[`${selectedSearchField.value}`] = searchTerm.value;
       params.q = undefined;

@@ -28,10 +28,12 @@ import Button from "@/components/Button.vue";
 import { useMutation, useQuery } from "@tanstack/vue-query";
 import type { ServiceReminder } from "../../operation.types";
 import type { AsyncResponse } from "@/api/types";
+import { useQueryClient } from "@tanstack/vue-query";
 
 const router = useRouter();
 const route = useRoute();
 const toast = useToastStore();
+const queryClient = useQueryClient();
 const id = route.params.id as string;
 
 const { data: serviceReminderResponse, isLoading } = useQuery<AsyncResponse<ServiceReminder>>({
@@ -64,6 +66,8 @@ const handleUpdateServiceReminder = async (values: any) => {
     const res = await mutation.mutateAsync(values);
     if (res.success) {
       toast.success("Service Reminder updated successfully");
+      // invalidate query here
+      queryClient.invalidateQueries({ queryKey: ["service-reminders"] });
       router.push("/maintenance/service-reminder");
     } else {
       toast.error(res.error || "Failed to update service reminder");

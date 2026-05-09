@@ -33,7 +33,28 @@
     </div>
   </Teleport>
   <Teleport to="#extra-page-data" defer>
-    <StatsCards v-permission="'REPORT:view'" :stats="payableStats" :loading="isLoadingStats" />
+    <div v-if="isLoadingStats" class="flex justify-center items-center py-2">
+      <i class="mdi mdi-loading mdi-spin text-xl text-primary"></i>
+    </div>
+    <div v-else class="my-2 ml-2 flex flex-wrap items-center gap-3 overflow-x-auto scrollbar-none animate-fade-in py-1">
+      <div
+        v-for="stat in payableStats"
+        :key="stat.label"
+        class="bg-white border border-gray-100 rounded-2xl px-5 py-3 shadow-sm flex flex-col gap-1 min-w-[220px] transition-all hover:shadow-md cursor-pointer"
+      >
+        <div class="flex items-center gap-2">
+          <i :class="['mdi', stat.icon || 'mdi-cash', 'text-primary text-lg']"></i>
+          <span class="text-xs font-bold text-gray-400 uppercase tracking-wider whitespace-nowrap">
+            {{ stat.label }}
+          </span>
+        </div>
+        <div class="mt-1">
+          <span class="text-xl font-black text-gray-900 tracking-tight">
+            {{ stat.value }}
+          </span>
+        </div>
+      </div>
+    </div>
   </Teleport>
 
   <PayableTable ref="tableRef" :filters="{ startDate: dateRange.start, endDate: dateRange.end }" @action="handlePayableAction" />
@@ -57,14 +78,17 @@ import {
   update_purchase_order_payment_status 
 } from "../../api/inventory.api";
 import { useToastStore } from "@/store/toastStore";
+import { useAuthStore } from "@/store/authStore";
 import Button from "@/components/Button.vue";
 import DatePicker from "@/components/DatePicker.vue";
 import Dropdown from "@/components/common/Dropdown.vue";
 import * as XLSX from "xlsx";
-import { dateFormatter } from "@/utils/utils";
+import { currencyFormatter, dateFormatter } from "@/utils/utils";
+import { icons } from "@/utils/icons";
 
 const router = useRouter();
 const toast = useToastStore();
+const authStore = useAuthStore();
 const tableRef = ref();
 
 const dateRange = ref({
@@ -108,25 +132,21 @@ const handleExport = () => {
 };
 
 const { data: statsResponse, isLoading: isLoadingStats, refetch: refetchStats } = useQuery({
-  queryKey: ["payableStatusCount"],
-  queryFn: () => fetch_advance_status_count(),
+  queryKey: ["payableStatusCount", dateRange],
+  queryFn: () => fetch_advance_status_count({ startDate: dateRange.value.start, endDate: dateRange.value.end }),
 });
 
 const payableStats = computed(() => {
   const tableData = (tableRef.value?.fullResponse || {}) as any;
   const statsData = (statsResponse.value?.data || {}) as any;
   
-  // The totalSum from the main list is usually what matches the filtered results
   const total = tableData.totalSum ?? statsData.total ?? 0;
-  
-  console.log("Payable Stats Debug:", {
-    tableFullResponse: tableRef.value?.fullResponse,
-    statsApiResponse: statsResponse.value?.data,
-    computedTotal: total
-  });
+  const authorized = statsData.authorized ?? 0;
+  const pending = statsData.pending ?? 0;
   
   return [
-    { label: "Total Payable", value: total, class: "text-primary" },
+    { label: "Total Payable", value: currencyFormatter(total), icon: "mdi-cash-multiple" },
+  
   ];
 });
 

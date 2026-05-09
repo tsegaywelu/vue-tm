@@ -67,6 +67,12 @@
         {{ dateFormatter(value) }}
       </span>
     </template>
+    
+    <template #cell-status="{ value }">
+      <Status :variant="value || 'PENDING'" type="wrapped">
+        {{ value.replace(/_/g, " ") }}
+      </Status>
+    </template>
 
     <template #after-search>
       <div class="items-center gap-4 inline-flex border-l border-grey-100 overflow-x-auto px-3">
@@ -136,8 +142,13 @@ import type { TableColumn } from "@/components/common/Table.vue";
 import ReceivableSettlementFilters from "./ReceivableSettlementFilters.vue";
 import Select from "@/components/common/Select.vue";
 import { currencyFormatter, dateFormatter } from "@/utils/utils";
+import Status from "@/components/common/Status.vue";
 
 const emit = defineEmits(["action"]);
+
+const props = defineProps<{
+  dateRange?: { start: string; end: string };
+}>();
 
 const columns: TableColumn<any>[] = [
   { key: "advanceNumber", label: "Code", field: "advanceNumber" },
@@ -149,6 +160,7 @@ const columns: TableColumn<any>[] = [
   { key: "perdiemAdvance", label: "Per Diem", field: "perdiemAdvance" },
   { key: "otherAdvance", label: "Other", field: "otherAdvance" },
   { key: "total", label: "Total", field: "amount" },
+  { key: "status", label: "Status", field: "status" },
   { key: "actions", label: "Actions", field: "", cellAlign: "right" },
 ];
 
@@ -177,6 +189,12 @@ const { response, refetch } = usePagination<any>({
     if (searchTerm.value) {
       params[`${selectedSearchField.value}[regexAny]`] = searchTerm.value;
       params.q = undefined;
+    }
+    if (props.dateRange?.start) {
+      params.startDate = props.dateRange.start;
+    }
+    if (props.dateRange?.end) {
+      params.endDate = props.dateRange.end;
     }
     return params;
   }),

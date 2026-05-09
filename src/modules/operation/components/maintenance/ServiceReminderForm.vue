@@ -49,22 +49,23 @@
             :validation="{
               required,
             }"
+            :on_change="(val) => (selectedType = val)"
           />
         </div>
       </Colapsable>
 
       <!-- Time Based Fields -->
       <Colapsable
-        v-if="form.state.values.type === 'time'"
-        title="Time Intervals"
-        description="Settings for time-based reminders."
+        v-if="selectedType === 'time'"
+        title="Time Based Reminder Settings"
+        description="Configure how often the service should be performed based on time intervals."
       >
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <Input
             name="interval"
-            label="Time Interval"
+            label="Time Interval (Days)"
             :attributes="{
-              placeholder: 'Enter interval',
+              placeholder: 'Enter interval in days',
               type: 'number',
             }"
             :validation="{
@@ -85,9 +86,9 @@
 
           <Input
             name="reminderDays"
-            label="Reminder Days"
+            label="Reminder (Days Before)"
             :attributes="{
-              placeholder: 'Enter reminder days',
+              placeholder: 'Enter days before to remind',
               type: 'number',
             }"
             :validation="{
@@ -99,9 +100,9 @@
 
       <!-- Kilometer Based Fields -->
       <Colapsable
-        v-if="form.state.values.type === 'kilometer'"
-        title="Mileage Intervals"
-        description="Settings for kilometer-based reminders."
+        v-if="selectedType === 'kilometer'"
+        title="Kilometer Based Reminder Settings"
+        description="Configure how often the service should be performed based on mileage intervals."
       >
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <Input
@@ -151,6 +152,7 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from "vue";
 import Form from "@/components/form/Form.vue";
 import Input from "@/components/form/Input.vue";
 import SelectInput from "@/components/form/SelectInput.vue";
@@ -163,6 +165,8 @@ const props = defineProps<{
   initialValues: Record<string, any>;
   onSubmit: (values: any) => Promise<void> | void;
 }>();
+
+const selectedType = ref(props.initialValues.type || "kilometer");
 
 const handleSubmit = async (values: any) => {
   const payload = { ...values };
@@ -184,6 +188,9 @@ const handleSubmit = async (values: any) => {
     delete payload.lastServiceDate;
     delete payload.reminderDays;
   }
+
+  // Do not send type to the backend as requested
+  delete payload.type;
 
   await props.onSubmit(payload);
 };

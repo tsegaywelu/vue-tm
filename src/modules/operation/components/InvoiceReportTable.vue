@@ -38,14 +38,14 @@
       <div class="flex items-center justify-end">
         <Dropdown>
           <template #default="{ close }">
-            <DropDownItem v-permission="'REPORT:update'"
+            <!-- <DropDownItem v-permission="'REPORT:update'"
               :icon="icons.edit"
               label="Edit"
               @click.stop="
                 handleAction(row, 'edit');
                 close();
               "
-            />
+            /> -->
             <DropDownItem v-permission="'REPORT:approve'"
               :icon="icons.check"
               label="Approve"

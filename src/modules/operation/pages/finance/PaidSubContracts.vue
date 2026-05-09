@@ -1,7 +1,29 @@
 <template>
   <Teleport to="#extra-page-data" defer>
-    <StatsCards v-permission="'TRANSACTION:read'" :stats="stats" />
+    <div v-if="!tableRef?.fullResponse" class="flex justify-center items-center py-2">
+      <i class="mdi mdi-loading mdi-spin text-xl text-primary"></i>
+    </div>
+    <div v-else class="my-2 ml-2 flex flex-wrap items-center gap-3 overflow-x-auto scrollbar-none animate-fade-in py-1">
+      <div
+        v-for="stat in stats"
+        :key="stat.label"
+        class="bg-white border border-gray-100 rounded-2xl px-5 py-3 shadow-sm flex flex-col gap-1 min-w-[240px] transition-all hover:shadow-md cursor-pointer"
+      >
+        <div class="flex items-center gap-2">
+          <i :class="['mdi', stat.icon || 'mdi-cash', 'text-primary text-lg']"></i>
+          <span class="text-xs font-bold text-gray-400 uppercase tracking-wider whitespace-nowrap">
+            {{ stat.label }}
+          </span>
+        </div>
+        <div class="mt-1">
+          <span :class="['text-xl font-black tracking-tight', stat.colorClass || 'text-gray-900']">
+            {{ stat.value }}
+          </span>
+        </div>
+      </div>
+    </div>
   </Teleport>
+
   <PaidSubContractsTable ref="tableRef" @action="handleAction" />
 </template>
 
@@ -27,22 +49,24 @@ const stats = computed(() => {
     {
       label: "Total Shipment Price",
       value: currencyFormatter(totalShipmentsPrice),
-      class: "text-gray-900",
+      icon: "mdi-currency-usd"
     },
     {
       label: "Total Transporter Price",
       value: currencyFormatter(totalTransportersPrice),
-      class: "text-gray-900",
+      icon: "mdi-truck-delivery-outline"
     },
     {
       label: "Gross Profit",
       value: currencyFormatter(grossProfit),
-      class: grossProfit >= 0 ? "text-green-600" : "text-red-600",
+      icon: "mdi-trending-up",
+      colorClass: grossProfit >= 0 ? "text-green-600" : "text-red-600"
     },
     {
       label: "Profit Margin %",
       value: `${profitMargin.toFixed(2)}%`,
-      class: profitMargin >= 0 ? "text-primary" : "text-red-600",
+      icon: "mdi-percent-outline",
+      colorClass: profitMargin >= 0 ? "text-primary" : "text-red-600"
     },
   ];
 });

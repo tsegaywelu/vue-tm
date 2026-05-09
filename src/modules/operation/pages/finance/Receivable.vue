@@ -1,5 +1,5 @@
 <template>
-  <Teleport to="#page-actions" defer v-if="currentTab === 'shipment'">
+  <Teleport to="#page-actions" defer v-if="currentTab === 'shipment' || currentTab === 'settlement'">
     <div class="flex items-center gap-4">
       <Dropdown
         contentParent="shadow-none! ring-0! ring-offset-0! p-0! bg-tras border-none! bg-none!"
@@ -24,36 +24,38 @@
         </template>
       </Dropdown>
 
-      <Dropdown>
-        <template #trigger>
-          <Button variant="secondary" class="gap-2" size="md">
-            <i class="mdi mdi-download text-lg"></i>
-            Download
-          </Button>
-        </template>
-        <template #default="{ close }">
-          <DropDownItem
-            label="Raw Material"
-            :icon="icons.excel"
-            @click="handleExport('raw'); close()"
-          />
-          <DropDownItem
-            label="Full Product"
-            :icon="icons.excel"
-            @click="handleExport('full'); close()"
-          />
-        </template>
-      </Dropdown>
+      <template v-if="currentTab === 'shipment'">
+        <Dropdown>
+          <template #trigger>
+            <Button variant="secondary" class="gap-2" size="md">
+              <i class="mdi mdi-download text-lg"></i>
+              Download
+            </Button>
+          </template>
+          <template #default="{ close }">
+            <DropDownItem
+              label="Raw Material"
+              :icon="icons.excel"
+              @click="handleExport('raw'); close()"
+            />
+            <DropDownItem
+              label="Full Product"
+              :icon="icons.excel"
+              @click="handleExport('full'); close()"
+            />
+          </template>
+        </Dropdown>
 
-      <Button 
-        :disabled="selectedRows.length === 0" 
-        @click="handleGenerateInvoice"
-        class="gap-2"
-        size="md"
-      >
-        <i class="mdi mdi-file-document-plus text-lg"></i>
-        Generate Invoice
-      </Button>
+        <Button 
+          :disabled="selectedRows.length === 0" 
+          @click="handleGenerateInvoice"
+          class="gap-2"
+          size="md"
+        >
+          <i class="mdi mdi-file-document-plus text-lg"></i>
+          Generate Invoice
+        </Button>
+      </template>
     </div>
   </Teleport>
 
@@ -115,6 +117,7 @@
       <ReceivableSettlementTable 
         v-else-if="currentTab === 'settlement'" 
         ref="tableRef"
+        :date-range="dateRange"
         @action="handleAction" 
       />
       <ReceivableLeaseTable 

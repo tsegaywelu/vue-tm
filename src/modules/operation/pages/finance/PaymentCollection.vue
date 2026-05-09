@@ -27,7 +27,28 @@
   </Teleport>
 
   <Teleport to="#extra-page-data" defer>
-    <StatsCards v-permission="'TRANSACTION:read'" :stats="collectionStats" :loading="statsLoading" />
+    <div v-if="statsLoading" class="flex justify-center items-center py-2">
+      <i class="mdi mdi-loading mdi-spin text-xl text-primary"></i>
+    </div>
+    <div v-else class="my-2 ml-2 flex flex-wrap items-center gap-3 overflow-x-auto scrollbar-none animate-fade-in py-1">
+      <div
+        v-for="stat in collectionStats"
+        :key="stat.label"
+        class="bg-white border border-gray-100 rounded-2xl px-5 py-3 shadow-sm flex flex-col gap-1 min-w-[280px] transition-all hover:shadow-md cursor-pointer"
+      >
+        <div class="flex items-center gap-2">
+          <i :class="['mdi', stat.icon || 'mdi-cash', 'text-primary text-lg']"></i>
+          <span class="text-xs font-bold text-gray-400 uppercase tracking-wider whitespace-nowrap">
+            {{ stat.label }}
+          </span>
+        </div>
+        <div class="mt-1">
+          <span class="text-xl font-black text-gray-900 tracking-tight">
+            {{ stat.value }}
+          </span>
+        </div>
+      </div>
+    </div>
   </Teleport>
 
   <PaymentCollectionTable 
@@ -65,8 +86,8 @@ const handleDateSelect = (val: any) => {
 };
 
 const { data: statsResponse, isLoading: statsLoading, refetch: refetchStats } = useQuery({
-  queryKey: ["payment-collection-stats"],
-  queryFn: () => fetch_approved_and_collected_invoice_count(),
+  queryKey: ["payment-collection-stats", dateRange],
+  queryFn: () => fetch_approved_and_collected_invoice_count({ startDate: dateRange.value.start, endDate: dateRange.value.end }),
 });
 
 const collectionStats = computed(() => {
@@ -75,17 +96,17 @@ const collectionStats = computed(() => {
     { 
       label: "Total Invoices", 
       value: `${currencyFormatter(data.completeTotal || 0)} (${data.completeTotalCount || 0} Invoices)`,
-      class: "text-gray-900" 
+      icon: "mdi-file-document-multiple"
     },
     { 
       label: "Collected Invoices", 
       value: `${currencyFormatter(data.totalCollected || 0)} (${data.totalCollectedCount || 0} Invoices)`,
-      class: "text-green-600" 
+      icon: "mdi-cash-check"
     },
     { 
       label: "Remaining Invoices", 
       value: `${currencyFormatter(data.totalApproved || 0)} (${data.totalApprovedCount || 0} Invoices)`,
-      class: "text-amber-600" 
+      icon: "mdi-cash-clock"
     },
   ];
 });
