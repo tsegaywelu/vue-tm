@@ -1,7 +1,7 @@
 <template>
   <Teleport to="#page-actions" defer>
     <div class="flex items-center gap-4">
-      <!-- <Dropdown
+      <Dropdown
         contentParent="shadow-none! ring-0! ring-offset-0! p-0! bg-tras border-none! bg-none!"
       >
         <template #trigger>
@@ -22,7 +22,7 @@
             @select="handleDateSelect"
           />
         </template>
-      </Dropdown> -->
+      </Dropdown>
 
       <Button variant="secondary" @click="handleExport">
         <template #leading>
@@ -33,7 +33,7 @@
     </div>
   </Teleport>
   <Teleport to="#extra-page-data" defer>
-    <StatsCards v-permission="'ADVANCE_PAYMENT:read'" :stats="payableStats" :loading="isLoadingStats" />
+    <StatsCards v-permission="'REPORT:view'" :stats="payableStats" :loading="isLoadingStats" />
   </Teleport>
 
   <PayableTable ref="tableRef" :filters="{ startDate: dateRange.start, endDate: dateRange.end }" @action="handlePayableAction" />

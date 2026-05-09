@@ -99,11 +99,21 @@ const columns: TableColumn<any>[] = [
   { key: "actions", label: "Actions", field: "", cellAlign: "right" },
 ];
 
-const activeFilters = ref({});
+const props = defineProps<{
+  filters?: {
+    startDate?: string;
+    endDate?: string;
+  };
+}>();
+
 const { response, refetch } = usePagination<any>({
   id: "invoice-report-list",
   url: "/shipment/paymentRequestedInvoices",
-  params: computed(() => activeFilters.value),
+  params: computed(() => ({
+    ...props.filters,
+    ...(props.filters?.startDate && { "createdAt[gte]": props.filters.startDate }),
+    ...(props.filters?.endDate && { "createdAt[lte]": props.filters.endDate }),
+  })),
 });
 
 const handleAction = (row: any, action: string) => {

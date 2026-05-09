@@ -22,7 +22,7 @@
 
     <template #cell-vehicleDriver="{ row }">
       <div class="flex flex-col">
-        <span class="font-bold text-gray-900">{{ row.plateNumber?.toUpperCase() || 'N/A' }}</span>
+        <span class="font-bold text-gray-900">{{ row.plateNumber?.toUpperCase() || 'N/A' }} </span>
         <span class="text-xs text-gray-500">{{ row.driverName || 'N/A' }}</span>
       </div>
     </template>
@@ -38,20 +38,7 @@
       <span class="text-gray-700">{{ dateFormatter(value) }}</span>
     </template>
 
-    <template #cell-typeStatus="{ row }">
-      <div class="flex flex-col gap-1">
-        <Status
-          :type="row.type === 'RETURN' ? 'cancelled' : row.type === 'PAYMENT' ? 'active' : 'completed'"
-          :label="row.type"
-          class="w-fit"
-        />
-        <Status
-          :type="getStatusType(row.status)"
-          :label="row.status"
-          class="w-fit"
-        />
-      </div>
-    </template>
+   
 
     <template #cell-amountLiters="{ row }">
       <div class="flex flex-col">
@@ -67,7 +54,20 @@
     <template #cell-notes="{ value }">
       <span class="text-gray-600 line-clamp-1 max-w-xs">{{ value || '-' }}</span>
     </template>
-
+ <template #cell-typeStatus="{ row }">
+      <div class="flex flex-col gap-1">
+        <Status
+          :variant="row.type === 'RETURN' ? 'warning' : row.type === 'PENDING' ? 'completed' : row.type === 'APPROVED' ? 'active' : row.type === 'PAID' ? 'active' : 'completed'"
+          :label="row.type"
+          class="w-fit"
+        />
+        <Status
+          :type="getStatusType(row.status)"
+          :label="row.status"
+          class="w-fit"
+        />
+      </div>
+    </template>
     <!-- <template #cell-actions="{ row }">
       <div class="flex items-center justify-end">
         <Dropdown>
@@ -102,9 +102,10 @@ const columns: TableColumn<any>[] = [
   { key: "vehicleDriver", label: "Vehicle & Driver", field: "plateNumber" },
   { key: "shipmentRoute", label: "Shipment & Route", field: "shipmentCode" },
   { key: "date", label: "Date", field: "createdAt" },
-  { key: "typeStatus", label: "Type & Status", field: "type" },
+ 
   { key: "amountLiters", label: "Amount & Liters", field: "amount" },
   { key: "notes", label: "Notes", field: "notes" },
+   { key: "typeStatus", label: "Type & Status", field: "type" },
  
 ];
 
@@ -132,7 +133,7 @@ const { response, refetch } = usePagination<any>({
     const params: any = { ...activeFilters.value };
     // Map the search query to the dynamic key the backend expects
     if (searchTerm.value) {
-      params[`${selectedSearchField.value}[regexAny]`] = searchTerm.value;
+      params[`${selectedSearchField.value}`] = searchTerm.value;
       params.q = undefined; // Prevent sending the default 'q' parameter
     }
     return params;

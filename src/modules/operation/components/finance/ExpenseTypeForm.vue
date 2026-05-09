@@ -56,13 +56,13 @@ import TextareaInput from "@/components/form/TextareaInput.vue";
 import Colapsable from "@/components/common/Colapsable.vue";
 import { required, number } from "@/utils/validations";
 
-defineProps<{
+const props = defineProps<{
   formId: string;
   initialValues: Record<string, any>;
   onSubmit: (values: any) => Promise<void> | void;
 }>();
 
 const handleSubmit = async (values: any) => {
-  await props.onSubmit(values);
+  await props.onSubmit({...values, typicalPrice: +values.typicalPrice });
 };
 </script>

@@ -112,6 +112,13 @@ import type { TableColumn } from "@/components/common/Table.vue";
 import { currencyFormatter, dateFormatter } from "@/utils/utils";
 import PaymentCollectionFilters from "./PaymentCollectionFilters.vue";
 
+const props = defineProps<{
+  filters?: {
+    startDate?: string;
+    endDate?: string;
+  };
+}>();
+
 const emit = defineEmits(["action"]);
 
 const columns: TableColumn<any>[] = [
@@ -133,7 +140,16 @@ const activeFilters = ref({});
 const { response, refetch } = usePagination<any>({
   id: "payment-collection-list",
   url: "/shipment/approvedAndCollectedInvoices",
-  params: computed(() => activeFilters.value),
+  params: computed(() => {
+    const params: any = { ...activeFilters.value };
+    if (props.filters?.startDate) {
+      params["createdAt[gte]"] = props.filters.startDate;
+    }
+    if (props.filters?.endDate) {
+      params["createdAt[lte]"] = props.filters.endDate;
+    }
+    return params;
+  }),
 });
 
 const handleFilterChange = (newFilters: any) => {

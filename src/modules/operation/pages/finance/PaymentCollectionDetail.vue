@@ -54,6 +54,16 @@
             <Button
               variant="outline"
               size="md"
+              @click="handleExport"
+            >
+              <template #leading>
+                <i class="mdi mdi-microsoft-excel text-lg text-green-600"></i>
+              </template>
+              Export
+            </Button>
+            <Button
+              variant="outline"
+              size="md"
               @click="handlePrint"
             >
               <template #leading>
@@ -124,6 +134,7 @@ import Status from "@/components/common/Status.vue";
 import Button from "@/components/Button.vue";
 import ModalWrapper from "@/components/modals/ModalWrapper.vue";
 import { dateFormatter } from "@/utils/utils";
+import { exportToExcel, mapShipmentsForExcel } from "@/utils/excel";
 import { useToastStore } from "@/store/toastStore";
 import { useAuthStore } from "@/store/authStore";
 
@@ -191,5 +202,11 @@ const handleCollect = () => {
 
 const handlePrint = () => {
   window.print();
+};
+
+const handleExport = () => {
+  if (!invoice.value?.shipments) return;
+  const data = mapShipmentsForExcel(invoice.value.shipments);
+  exportToExcel(data, `Collection_${invoice.value.reference || 'Details'}`, "Shipments");
 };
 </script>

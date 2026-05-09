@@ -3,9 +3,9 @@
     id="expense-list"
     :columns="columns"
     :rows="response"
+    v-model:search_value="searchTerm"
     search_placeholder="Search by plate number..."
     @row_click="handleAction($event, 'view')"
-    
   >
     <template #cell-plateNumber="{ value }">
       <span class="font-bold">{{ value || '-' }}</span>
@@ -47,11 +47,7 @@
         </Dropdown> 
       </div>
     </template> -->
-    <template #extra-actions>
-      <div class="items-center gap-4 inline-flex border-l border-grey-100 overflow-x-auto px-3">
-        <ExpenseFilters @change="handleFilterChange" />
-      </div>
-    </template>
+  
   </Table>
 </template>
 
@@ -61,7 +57,14 @@ import Table from "@/components/common/Table.vue";
 import { usePagination } from "@/composables/usePagination";
 import type { TableColumn } from "@/components/common/Table.vue";
 import { currencyFormatter } from "@/utils/utils";
-import ExpenseFilters from "./ExpenseFilters.vue";
+
+
+const props = defineProps<{
+  filters?: {
+    startDate?: string;
+    endDate?: string;
+  };
+}>();
 
 const emit = defineEmits(["action"]);
 
@@ -74,26 +77,28 @@ const columns: TableColumn<any>[] = [
   { key: "totalExpenses", label: "Total Cost", field: "totalExpenses" },
 ];
 
-const today = new Date();
-const oneMonthAgo = new Date();
-oneMonthAgo.setMonth(today.getMonth() - 1);
-
-const activeFilters = ref({
-  startDate: oneMonthAgo.toISOString(),
-  endDate: today.toISOString(),
-});
+const searchTerm = ref("");
 
 const { response, refetch } = usePagination<any>({
   id: "expense-list",
   url: "/expense",
   method: "POST",
   paginate: false,
-  params: computed(() => activeFilters.value),
+  params: computed(() => {
+    const params: any = {};
+    if (props.filters?.startDate) {
+      params["createdAt[gte]"] = props.filters.startDate;
+    }
+    if (props.filters?.endDate) {
+      params["createdAt[lte]"] = props.filters.endDate;
+    }
+    if (searchTerm.value) {
+      params.plateNumber = searchTerm.value;
+      params.q = undefined;
+    }
+    return params;
+  }),
 });
-
-const handleFilterChange = (newFilters: any) => {
-  activeFilters.value = { ...newFilters };
-};
 
 const handleAction = (row: any, action: string) => {
   emit("action", { row, action });

@@ -12,12 +12,13 @@
         multiple
         size="xs"
         :options="[
-          { label: 'Issue Voucher', value: 'shipperIssueVoucher' },
-          { label: 'Shipper Receive Voucher', value: 'agentReceiveVoucher' },
-          { label: 'Plate Number', value: 'vehiclePlateNumber' },
-          { label: 'Shipment Code', value: 'shipmentCode' },
-          { label: 'First Name', value: 'driverFirstName' },
-          { label: 'Middle Name', value: 'driverMiddleName' },
+        'Product Type',
+        'Trip Type',
+        'Shipper',
+        'Origin',
+        'Destination',
+        'Vehicle Ownership',
+        'Document Uploaded',
         ]"
         :attributes="{ placeholder: 'Choose Filters' }"
       />

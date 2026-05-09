@@ -99,10 +99,14 @@
         </Status>
       </template>
 
-      <template #extra-actions>
+      <template #after-search>
         <div class="items-center gap-4 inline-flex border-l border-grey-100 overflow-x-auto px-3">
           <i v-html="icons.filter" />
-          <ReceivableShipmentFilters @change="handleFilterChange" />
+          <!-- <ReceivableShipmentFilters @change="handleFilterChange" /> -->
+              <ShipmentFilters
+          @change="handleFilterChange"
+       
+        />
         </div>
       </template>
 
@@ -135,7 +139,8 @@ import Status from "@/components/common/Status.vue";
 import { icons } from "@/utils/icons";
 import { usePagination } from "@/composables/usePagination";
 import type { TableColumn } from "@/components/common/Table.vue";
-import ReceivableShipmentFilters from "./ReceivableShipmentFilters.vue";
+import ShipmentFilters from "../ShipmentFilters.vue";
+// import ReceivableShipmentFilters from "./ReceivableShipmentFilters.vue";
 import Select from "@/components/common/Select.vue";
 import { currencyFormatter, dateFormatter } from "@/utils/utils";
 

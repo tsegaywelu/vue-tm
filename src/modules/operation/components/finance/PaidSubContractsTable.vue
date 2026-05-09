@@ -71,7 +71,7 @@
       <span class="font-bold text-gray-900">{{ currencyFormatter(value) }}</span>
     </template>
 
-    <template #extra-actions>
+    <template #after-search>
       <div class="items-center gap-4 inline-flex border-l border-grey-100 overflow-x-auto px-3">
         <i v-html="icons.filter" />
         <PaidSubContractsFilters @change="handleFilterChange" />
@@ -152,7 +152,7 @@ const { response, refetch, fullResponse } = usePagination<any>({
   params: computed(() => {
     const params: any = { ...activeFilters.value };
     if (searchTerm.value) {
-      params[`${selectedSearchField.value}[regexAny]`] = searchTerm.value;
+      params[`${selectedSearchField.value}`] = searchTerm.value;
       params.q = undefined;
     }
     return params;

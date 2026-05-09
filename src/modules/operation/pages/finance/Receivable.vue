@@ -146,7 +146,8 @@ import { openModal } from "@customizer/modal-x";
 import { 
   generate_invoice, 
   update_transaction_status, 
-  update_lease_status 
+  update_lease_status, 
+  collect_lease
 } from "../../api/operation.api";
 
 const route = useRoute();
@@ -198,7 +199,10 @@ const generateInvoiceMutation = useMutation({
 
 const updateStatusMutation = useMutation({
   mutationFn: ({ id, status, type }: { id: string; status: any; type: string }) => {
-    if (type === 'lease') return update_lease_status(id, status);
+    if (type === 'lease') {
+      if (status === 'authorize') return update_lease_status(id, status);
+      if (status === 'pay') return collect_lease(id);
+    }
     return update_transaction_status(id, status);
   },
   onSuccess: () => {
@@ -247,6 +251,11 @@ const handleAction = async ({ row, action }: any) => {
       router.push(`/operation/shipments/${id}`);
     } else if (currentTab.value === 'settlement') {
       router.push(`/operation/advance-details/${id}`);
+    } else if (currentTab.value === 'lease') {
+      const vehicleId = row.vehicle?._id || row.vehicle?.id;
+      if (vehicleId) {
+        router.push(`/vehicles/${vehicleId}`);
+      }
     }
   } else if (['pay', 'authorize', 'cancel'].includes(action)) {
     const actionLabels: Record<string, string> = {

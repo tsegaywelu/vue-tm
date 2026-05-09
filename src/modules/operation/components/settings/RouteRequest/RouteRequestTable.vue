@@ -53,8 +53,8 @@
                 close();
               "
             />
-            <!-- Delete action commented out temporarily -->
-        <!-- <DropDownItem
+          
+         <DropDownItem
               :icon="icons.delete"
               label="Delete"
               class="text-error-600"
@@ -62,7 +62,7 @@
                 handleAction(row, 'delete');
                 close();
               "
-            /> -->
+            /> 
           </template>
         </Dropdown>
       </div> -->

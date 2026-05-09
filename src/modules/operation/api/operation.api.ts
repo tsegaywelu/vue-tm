@@ -158,9 +158,14 @@ export function update_prepayment_status(id: string, status: ApprovalAction) {
 export function update_lease_status(id: string, status: ApprovalAction) {
   return lease_api
     .addAuthenticationHeader()
-    .post(`/updateStatus`, { id, status });
+    .patch(`/${id}/settlements/authorize`, { id, status });
 }
 
+export function collect_lease(id: string) {
+  return lease_api
+    .addAuthenticationHeader()
+    .patch(`/${id}/settlements/settle`, { id });
+}
 // ─── Orders ───────────────────────────────────────────────────
 export function fetch_orders(params: Record<string, any>) {
   return order_api.addAuthenticationHeader().get("/shipper", { params });
@@ -510,7 +515,7 @@ export function fetch_shippers(params?: any) {
 }
 
 export function collect_bonus(id: string) {
-  return bonus_api.addAuthenticationHeader().post(`/admin/${id}/collect`);
+  return bonus_api.addAuthenticationHeader().post(`/admin/${id}/collect`, {});
 }
 
 export function fetch_shipment_status_count() {

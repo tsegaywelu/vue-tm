@@ -561,6 +561,11 @@ export const finance_navs: Navs[] = [
             name: "Invoice Report Details",
             show: false,
           },
+          {
+            path: "/finance/invoice-report/edit/$id",
+            name: "Edit Invoice Report",
+            show: false,
+          },
         ],
       },
       {
@@ -571,6 +576,11 @@ export const finance_navs: Navs[] = [
           {
             path: "/finance/payment-collection/$id",
             name: "Payment Collection Details",
+            show: false,
+          },
+          {
+            path: "/finance/payment-collection/edit/$id",
+            name: "Edit Payment Collection",
             show: false,
           },
         ],

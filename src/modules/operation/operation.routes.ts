@@ -994,6 +994,26 @@ export const operation_routes: RouteRecordRaw[] = [
         },
       },
       {
+        path: "invoice-report/edit/:id",
+        name: "operation_finance_invoice_report_edit",
+        component: () => import("./pages/finance/InvoiceReportEdit.vue"),
+        meta: {
+          permission: "REPORT",
+          title: "Edit Invoice Report",
+          description: "Update existing invoice report details.",
+        },
+      },
+      {
+        path: "editPaymentRequest/:id",
+        name: "operation_finance_edit_payment_request",
+        component: () => import("./pages/finance/InvoiceReportEdit.vue"), // Shared component or similar logic
+        meta: {
+          permission: "REPORT",
+          title: "Edit Payment Request",
+          description: "Update existing payment request details.",
+        },
+      },
+      {
         path: "payment-collection",
         name: "operation_finance_payment_collection",
         component: () => import("./pages/finance/PaymentCollection.vue"),
@@ -1013,6 +1033,16 @@ export const operation_routes: RouteRecordRaw[] = [
           description: "Detailed breakdown of the payment collection.",
           tabsTeleportTo: "#payment-collection-details-tabs",
           tabs: [{ label: "Overview", value: "overview" }],
+        },
+      },
+      {
+        path: "payment-collection/edit/:id",
+        name: "operation_finance_payment_collection_edit",
+        component: () => import("./pages/finance/PaymentCollectionEdit.vue"),
+        meta: {
+          permission: "TRANSACTION",
+          title: "Edit Payment Collection",
+          description: "Update existing payment collection details.",
         },
       },
       {
