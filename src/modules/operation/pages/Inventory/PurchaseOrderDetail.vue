@@ -1,13 +1,11 @@
 <template>
   <div class="h-full flex flex-col gap-4">
     <!-- Tab container must be always present for Teleport to work reliably -->
-    <div id="purchase-order-details-tabs" class="w-full"></div>
+    <div id="purchase-order-details-tabs" class="w-full mt-2"></div>
 
     <div v-if="isLoading" class="flex justify-center py-20">
       <i class="mdi mdi-loading mdi-spin text-4xl text-primary"></i>
     </div>
-
-    <div id="purchase-order-details-tabs" class="w-full mt-2"></div>
 
     <template v-else-if="purchaseOrder">
       <!-- Header Section -->

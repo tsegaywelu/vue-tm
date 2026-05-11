@@ -1,11 +1,11 @@
 <template>
   <div class="h-full flex flex-col gap-4">
+    <!-- Teleport target for tabs, kept outside of conditional rendering to prevent crashes -->
+    <div id="issue-report-details-tabs" class="w-full mt-2"></div>
+
     <div v-if="isLoading" class="flex justify-center py-20">
       <i class="mdi mdi-loading mdi-spin text-4xl text-primary"></i>
     </div>
-
-    <!-- Teleport target for tabs, kept outside of conditional rendering to prevent crashes -->
-    <div id="issue-report-details-tabs" class="w-full mt-2"></div>
 
     <template v-else-if="issueReport">
       <!-- Header Section -->

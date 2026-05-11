@@ -7,8 +7,6 @@
       <i class="mdi mdi-loading mdi-spin text-4xl text-primary"></i>
     </div>
 
-    <div id="work-order-details-tabs" class="w-full mt-2"></div>
-
     <template v-else-if="workOrder">
       <!-- Header Section -->
       <div
