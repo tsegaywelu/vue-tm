@@ -1,5 +1,8 @@
 <template>
   <div class="h-full flex flex-col gap-4">
+    <!-- Tab container must be always present for Teleport to work reliably -->
+    <div id="tyre-handoff-details-tabs" class="w-full"></div>
+
     <div v-if="isLoading" class="flex justify-center py-20">
       <i class="mdi mdi-loading mdi-spin text-4xl text-primary"></i>
     </div>
@@ -67,6 +70,7 @@
       <div class="flex-1 min-h-0 overflow-y-auto">
         <component
           :is="activeTabComponent"
+          :key="activeTab"
           :handoff="handoff"
           @refresh="refetch"
         />

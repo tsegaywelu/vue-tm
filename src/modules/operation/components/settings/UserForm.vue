@@ -9,8 +9,10 @@
           <Input
             name="username"
             label="Username"
-            :attributes="{ placeholder: 'Enter username' }"
             :validation="{ required }"
+            :attributes="{
+              placeholder: 'Enter username...',
+            }"
           />
 
           <template v-if="!isEdit">

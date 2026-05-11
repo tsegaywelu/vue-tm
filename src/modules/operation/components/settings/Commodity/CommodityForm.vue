@@ -18,6 +18,9 @@
             name="name"
             label="Name"
             :validation="{ required }"
+            :attributes="{
+              placeholder:'Enter commodity name'
+            }"
           />
         </div>
       </Colapsable>

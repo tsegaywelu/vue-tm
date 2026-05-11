@@ -19,10 +19,12 @@ import { getApi } from "@/utils/getApi";
 import { useToastStore } from "@/store/toastStore";
 import Button from "@/components/Button.vue";
 import SubmitButton from "@/components/form/SubmitButton.vue";
+import { useQueryClient } from "@tanstack/vue-query";
 
 const router = useRouter();
 const toast = useToastStore();
-const api = getApi("/carrierSetting");
+const api = getApi("/carrier-settings");
+const queryClient = useQueryClient();
 
 const mutation = useMutation({
   mutationFn: (values: any) => api.addAuthenticationHeader().post("", values),
@@ -32,6 +34,8 @@ const handleCreate = async (values: any) => {
   try {
     const res = await mutation.mutateAsync(values);
     if (res.success) {
+      //invalidate query here 
+       queryClient.invalidateQueries({ queryKey: ["carrier-setting-list"] });
       toast.success("Carrier setting created successfully");
       router.push("/setting/base-configuration?tab=settings");
     } else {

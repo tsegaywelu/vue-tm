@@ -73,6 +73,16 @@ const columns: TableColumn<any>[] = [
 const { response, refetch } = usePagination<any>({
   id: "expense-type-list",
   url: "/expense-type",
+  params: (state) => {
+    return (
+      {
+        name: {
+          regex: state.search
+        },
+        q: undefined
+      }
+    )
+  }
 });
 
 const handleAction = (row: any, action: string) => {

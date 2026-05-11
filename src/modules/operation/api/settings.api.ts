@@ -2,6 +2,7 @@ import { getApi } from "@/utils/getApi";
 
 // ─── User Management ──────────────────────────────────────────
 const user_api = getApi('/user')
+const user_api2 = getApi('/auth')
 
 export function fetch_users(params?: Record<string, any>) {
   const queryParams = { ...params }
@@ -17,7 +18,7 @@ export function fetch_user_details(id: string) {
 }
 
 export function create_user(data: any) {
-  return user_api.addAuthenticationHeader().post('', data)
+  return user_api2.addAuthenticationHeader().post('/register', data)
 }
 
 export function update_user(id: string, data: any) {
@@ -29,7 +30,7 @@ export function delete_user(id: string) {
 }
 
 export function reset_user_password(id: string, data: any) {
-  return user_api.addAuthenticationHeader().patch(`/${id}/resetPassword`, data)
+  return user_api2.addAuthenticationHeader().post(`/resetPassword/${id}`, data)
 }
 
 // ─── Role Management ──────────────────────────────────────────
@@ -88,6 +89,7 @@ const contract_api = getApi('/contract')
 export const fetch_contracts = (params: any) => contract_api.addAuthenticationHeader().get('', { params })
 export const fetch_contract_details = (id: string) => contract_api.addAuthenticationHeader().get(`/${id}`)
 export const create_contract = (data: any) => contract_api.addAuthenticationHeader().post('', data)
+export const update_contract = (id: string, data: any) => contract_api.addAuthenticationHeader().patch(`/${id}`, data)
 export const delete_contract = (id: string) => contract_api.addAuthenticationHeader().delete(`/${id}`)
 
 
@@ -97,20 +99,20 @@ export const fetch_carriers = (params?: any) => carrier_api.addAuthenticationHea
 
 // ─── Route Management (Contract context) ──────────────────────
 const route_api = getApi('/route')
-export const fetch_uncontracted_routes = (carrierId: string, params?: any) => 
+export const fetch_uncontracted_routes = (carrierId: string, params?: any) =>
   route_api.addAuthenticationHeader().get(`/carrierAllRoutes/${carrierId}`, { params })
 export const fetch_route_details = (id: string) => route_api.addAuthenticationHeader().get(`/${id}`)
 
 // ─── Vehicle Type (Carrier context) ──────────────────────────
 const vehicle_type_api = getApi('/vehicle-type')
-export const fetch_vehicle_types_by_carrier = (carrierId: string, params?: any) => 
+export const fetch_vehicle_types_by_carrier = (carrierId: string, params?: any) =>
   vehicle_type_api.addAuthenticationHeader().get(`/carrier/${carrierId}`, { params })
 
 // ─── Commodity Management ─────────────────────────────────────
 const commodity_api = getApi('/commodity')
 export const fetch_commodities = (params?: any) => commodity_api.addAuthenticationHeader().get('', { params })
-export const fetch_commodity_details = (id: string) => commodity_api.addAuthenticationHeader().get(`/${id}`)
-export const create_commodity = (data: any) => commodity_api.addAuthenticationHeader().post('', data)
+export const fetch_commodity_details = (id: string) => commodity_api.addAuthenticationHeader().get(`/${id}/carrier`)
+export const create_commodity = (data: any) => commodity_api.addAuthenticationHeader().post('/carrier', data)
 export const update_commodity = (id: string, data: any) => commodity_api.addAuthenticationHeader().patch(`/${id}`, data)
 export const delete_commodity = (id: string) => commodity_api.addAuthenticationHeader().delete(`/${id}`)
 
@@ -122,15 +124,14 @@ export const fetch_shippers = (params?: any) => shipper_api.addAuthenticationHea
 // ─── Packaging Management ─────────────────────────────────────
 const packaging_api = getApi('/packaging')
 export const fetch_packagings = (params?: any) => packaging_api.addAuthenticationHeader().get('', { params })
-export const fetch_packaging_details = (id: string) => packaging_api.addAuthenticationHeader().get(`/${id}`)
-export const create_packaging = (data: any) => packaging_api.addAuthenticationHeader().post('', data)
-export const update_packaging = (id: string, data: any) => packaging_api.addAuthenticationHeader().patch(`/${id}`, data)
+export const fetch_packaging_details = (id: string) => packaging_api.addAuthenticationHeader().get(`/${id}/carrier`)
+export const create_packaging = (data: any) => packaging_api.addAuthenticationHeader().post('/carrier', data)
+export const update_packaging = (id: string, data: any) => packaging_api.addAuthenticationHeader().patch(`/${id}/carrier`, data)
 export const delete_packaging = (id: string) => packaging_api.addAuthenticationHeader().delete(`/${id}`)
 
 
 // ─── Agent Management ─────────────────────────────────────────
 const agent_api = getApi('/agent')
 export const fetch_agents = (params?: any) => agent_api.addAuthenticationHeader().get('', { params })
-
 
 

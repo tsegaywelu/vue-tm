@@ -17,3 +17,11 @@ export function cancel_invoice(id: string, data: any) {
 export function collect_invoice(id: string, data: any) {
   return shipment_api.addAuthenticationHeader().patch(`/collectInvoice/${id}`, data);
 }
+
+export function update_payment_request(id: string, data: any) {
+  return shipment_api.addAuthenticationHeader().patch(`/paymentRequest/${id}`, data);
+}
+
+export function fetch_receivable_shipments(params: any = {}) {
+  return shipment_api.addAuthenticationHeader().get("/receivableShipment", { params });
+}

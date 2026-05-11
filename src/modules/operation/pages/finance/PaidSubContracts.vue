@@ -1,15 +1,80 @@
 <template>
-  <PaidSubContractsTable @action="handleAction" />
+  <Teleport to="#extra-page-data" defer>
+    <div v-if="!tableRef?.fullResponse" class="flex justify-center items-center py-2">
+      <i class="mdi mdi-loading mdi-spin text-xl text-primary"></i>
+    </div>
+    <div v-else class="my-2 ml-2 flex flex-wrap items-center gap-3 overflow-x-auto scrollbar-none animate-fade-in py-1">
+      <div
+        v-for="stat in stats"
+        :key="stat.label"
+        class="bg-white border border-gray-100 rounded-2xl px-5 py-3 shadow-sm flex flex-col gap-1 min-w-[240px] transition-all hover:shadow-md cursor-pointer"
+      >
+        <div class="flex items-center gap-2">
+          <i :class="['mdi', stat.icon || 'mdi-cash', 'text-primary text-lg']"></i>
+          <span class="text-xs font-bold text-gray-400 uppercase tracking-wider whitespace-nowrap">
+            {{ stat.label }}
+          </span>
+        </div>
+        <div class="mt-1">
+          <span :class="['text-xl font-black tracking-tight', stat.colorClass || 'text-gray-900']">
+            {{ stat.value }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </Teleport>
+
+  <PaidSubContractsTable ref="tableRef" @action="handleAction" />
 </template>
 
 <script setup lang="ts">
+import { ref, computed } from "vue";
+import { useRouter } from "vue-router";
 import PaidSubContractsTable from "../../components/finance/PaidSubContractsTable.vue";
+import StatsCards from "@/components/common/StatsCards.vue";
+import { currencyFormatter } from "@/utils/utils";
+
+const router = useRouter();
+const tableRef = ref<any>(null);
+
+const stats = computed(() => {
+  const summary = tableRef.value?.fullResponse?.result?.summary || {};
+  
+  const totalShipmentsPrice = summary.totalShipmentsPrice || 0;
+  const totalTransportersPrice = (summary.totalTransportersPrice || 0) + (summary.totalPrePaymentsAmount || 0);
+  const grossProfit = totalShipmentsPrice - totalTransportersPrice;
+  const profitMargin = totalShipmentsPrice > 0 ? (grossProfit / totalShipmentsPrice) * 100 : 0;
+
+  return [
+    {
+      label: "Total Shipment Price",
+      value: currencyFormatter(totalShipmentsPrice),
+      icon: "mdi-currency-usd"
+    },
+    {
+      label: "Total Transporter Price",
+      value: currencyFormatter(totalTransportersPrice),
+      icon: "mdi-truck-delivery-outline"
+    },
+    {
+      label: "Gross Profit",
+      value: currencyFormatter(grossProfit),
+      icon: "mdi-trending-up",
+      colorClass: grossProfit >= 0 ? "text-green-600" : "text-red-600"
+    },
+    {
+      label: "Profit Margin %",
+      value: `${profitMargin.toFixed(2)}%`,
+      icon: "mdi-percent-outline",
+      colorClass: profitMargin >= 0 ? "text-primary" : "text-red-600"
+    },
+  ];
+});
 
 const handleAction = ({ row, action }: any) => {
+  const id = row._id || row.id;
   if (action === 'view') {
-    console.log(`View sub contract details for:`, row);
-  } else {
-    console.log(`Action: ${action} on PaidSubContract:`, row);
+    router.push(`/operation/shipments/${id}`);
   }
 };
 </script>

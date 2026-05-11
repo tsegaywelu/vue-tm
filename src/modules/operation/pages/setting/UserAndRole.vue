@@ -37,6 +37,8 @@ import { icons } from "@/utils/icons";
 import { delete_user, delete_role } from "../../api/settings.api";
 import { useToastStore } from "@/store/toastStore";
 
+import { openModal } from "@customizer/modal-x";
+
 const router = useRouter();
 const route = useRoute();
 const toast = useToastStore();
@@ -66,6 +68,13 @@ const handleAction = async ({ row, action }: any, type: "user" | "role") => {
     router.push(`/setting/user-and-role/${type}/edit/${row._id}`);
   } else if (action === "reset" && type === "user") {
     router.push(`/setting/user-and-role/user/reset-password/${row._id}`);
+  } else if (action === "delete") {
+    const name = type === "user" ? row.username : row.name;
+  } else if (action === "reset" && type === "user") {
+    openModal("UserResetPassword", {
+      user: row,
+      onSuccess: () => userTableRef.value?.refetch(),
+    });
   } else if (action === "delete") {
     const name = type === "user" ? row.username : row.name;
     if (confirm(`Are you sure you want to delete ${type} "${name}"?`)) {

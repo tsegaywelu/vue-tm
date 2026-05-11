@@ -12,13 +12,13 @@
         <div class="flex flex-col gap-2 flex-1">
           <div class="flex items-center gap-4">
             <div class="size-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-              <i class="mdi mdi-file-edit-outline text-2xl"></i>
+              <i class="mdi mdi-cash-edit text-2xl"></i>
             </div>
             <div>
               <h1 class="font-bold text-2xl leading-tight text-gray-900">
-                Edit Invoice #{{ originalInvoice?.reference || '-------' }}
+                Edit Collection #{{ originalInvoice?.reference || '-------' }}
               </h1>
-              <p class="text-sm text-gray-500">Modify payment request details and associated shipments.</p>
+              <p class="text-sm text-gray-500">Modify collection details and associated shipments.</p>
             </div>
           </div>
         </div>
@@ -47,7 +47,7 @@
           <!-- Basic Information -->
           <div class="lg:col-span-1 flex flex-col gap-6">
             <div class="bg-white rounded-[20px] p-6 shadow-sm border border-gray-100 flex flex-col gap-5">
-              <h3 class="text-lg font-bold text-gray-900 border-b border-gray-50 pb-3">Basic Information</h3>
+              <h3 class="text-lg font-bold text-gray-900 border-b border-gray-50 pb-3">Collection Details</h3>
               
               <div class="flex flex-col gap-1.5">
                 <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider ml-1">Reference</label>
@@ -57,23 +57,27 @@
               <div class="flex flex-col gap-1.5">
                 <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider ml-1">Status</label>
                 <select v-model="formData.status" class="bg-gray-50 border-none rounded-2xl px-4 py-3 outline-none focus:ring-2 focus:ring-primary/20 text-sm transition-all appearance-none cursor-pointer">
-                  <option value="PENDING">Pending</option>
-                  <option value="PAYMENT_REQUESTED">Payment Requested</option>
-                  <option value="PAYMENT_APPROVED">Payment Approved</option>
-                  <option value="PAYMENT_REJECTED">Payment Rejected</option>
-                  <option value="PAID">Paid</option>
+                  <option value="PAYMENT_APPROVED">Approved</option>
+                  <option value="PAID">Paid / Collected</option>
+                  <option value="REJECTED">Rejected</option>
                 </select>
               </div>
 
-              <div class="flex flex-col gap-1.5">
-                <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider ml-1">CRV</label>
-                <input v-model="formData.crv" type="text" placeholder="Enter CRV" class="bg-gray-50 border-none rounded-2xl px-4 py-3 outline-none focus:ring-2 focus:ring-primary/20 text-sm transition-all" />
+              <div class="grid grid-cols-2 gap-4">
+                <div class="flex flex-col gap-1.5">
+                  <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider ml-1">CRV</label>
+                  <input v-model="formData.crv" type="text" placeholder="CRV" class="bg-gray-50 border-none rounded-2xl px-4 py-3 outline-none focus:ring-2 focus:ring-primary/20 text-sm transition-all" />
+                </div>
+                <div class="flex flex-col gap-1.5">
+                  <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider ml-1">CSI</label>
+                  <input v-model="formData.csi" type="text" placeholder="CSI" class="bg-gray-50 border-none rounded-2xl px-4 py-3 outline-none focus:ring-2 focus:ring-primary/20 text-sm transition-all" />
+                </div>
               </div>
 
               <div class="flex flex-col gap-1.5">
                 <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider ml-1">Total Amount</label>
                 <div class="bg-primary/5 rounded-2xl px-4 py-3 flex items-center justify-between">
-                  <span class="text-sm font-medium text-gray-600">Calculated Sum:</span>
+                  <span class="text-sm font-medium text-gray-600">Total:</span>
                   <span class="text-lg font-bold text-primary">{{ currencyFormatter(formData.totalAmount) }}</span>
                 </div>
               </div>
@@ -82,8 +86,8 @@
 
           <!-- Associated Shipments -->
           <div class="lg:col-span-2 flex flex-col gap-6">
-            <div class="bg-white rounded-[20px] p-6 shadow-sm border border-gray-100 flex flex-col gap-5 text-gray-500">
-              <div class="flex justify-between items-center border-b border-gray-50 pb-3">
+            <div class="bg-white rounded-[20px] p-6 shadow-sm border border-gray-100 flex flex-col gap-5">
+              <div class="flex justify-between items-center border-b border-gray-50 pb-3 text-gray-500">
                 <h3 class="text-lg font-bold text-gray-900">Associated Shipments</h3>
                 <Button variant="primary" size="sm" @click="showShipmentSelector = true">
                   <template #leading><i class="mdi mdi-plus"></i></template>
@@ -96,22 +100,18 @@
                   <thead class="bg-gray-50">
                     <tr>
                       <th class="px-4 py-3 text-left text-[11px] font-bold text-gray-400 uppercase tracking-wider">Code</th>
-                      <th class="px-4 py-3 text-left text-[11px] font-bold text-gray-400 uppercase tracking-wider">Status</th>
+                      <th class="px-4 py-3 text-left text-[11px] font-bold text-gray-400 uppercase tracking-wider">Vehicle</th>
                       <th class="px-4 py-3 text-left text-[11px] font-bold text-gray-400 uppercase tracking-wider text-right">Amount</th>
                       <th class="px-4 py-3 text-center text-[11px] font-bold text-gray-400 uppercase tracking-wider">Actions</th>
                     </tr>
                   </thead>
-                  <tbody class="bg-white divide-y divide-gray-50">
+                  <tbody class="bg-white divide-y divide-gray-50 text-gray-500">
                     <tr v-if="!shipments.length">
                       <td colspan="4" class="px-4 py-10 text-center text-sm text-gray-400 italic">No shipments added yet.</td>
                     </tr>
                     <tr v-for="shipment in shipments" :key="shipment._id" class="hover:bg-gray-50 transition-colors">
                       <td class="px-4 py-4 whitespace-nowrap text-sm font-medium text-primary">{{ shipment.shipmentCode }}</td>
-                      <td class="px-4 py-4 whitespace-nowrap">
-                        <Status :variant="shipment.paymentDetail?.paymentStatus || 'pending'" type="wrapped" size="sm">
-                          {{ shipment.paymentDetail?.paymentStatus }}
-                        </Status>
-                      </td>
+                      <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-600 font-semibold">{{ shipment.vehicle?.plateNumber || '-' }}</td>
                       <td class="px-4 py-4 whitespace-nowrap text-sm font-bold text-gray-900 text-right">{{ currencyFormatter(shipment.totalPrice || 0) }}</td>
                       <td class="px-4 py-4 whitespace-nowrap text-center">
                         <button @click="removeShipment(shipment._id)" class="text-red-400 hover:text-red-600 transition-colors">
@@ -156,7 +156,7 @@
               <div 
                 v-for="shipment in filteredReceivableShipments" 
                 :key="shipment._id"
-                class="flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-50 transition-colors cursor-pointer border border-transparent hover:border-gray-100"
+                class="flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-50 transition-colors cursor-pointer border border-transparent hover:border-gray-100 text-gray-500"
                 @click="toggleShipmentSelection(shipment._id)"
               >
                 <div class="relative flex items-center justify-center">
@@ -174,8 +174,8 @@
                   </div>
                   <div class="flex items-center gap-3 mt-0.5">
                     <span class="text-xs text-gray-500 flex items-center gap-1">
-                      <i class="mdi mdi-calendar-range text-sm"></i>
-                      {{ dateFormatter(shipment.dispatchDate) }}
+                      <i class="mdi mdi-truck-outline text-sm"></i>
+                      {{ shipment.vehicle?.plateNumber || '-' }}
                     </span>
                     <span class="text-xs text-gray-500 flex items-center gap-1">
                       <i class="mdi mdi-map-marker-outline text-sm"></i>
@@ -198,7 +198,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, watch } from "vue";
+import { ref, reactive, computed, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/vue-query";
 import { 
@@ -228,12 +228,13 @@ const formData = reactive({
   status: "",
   totalAmount: 0,
   crv: "",
+  csi: "",
   shipments: [] as string[],
 });
 
-// Fetch Invoice Details
+// Fetch Collection Details
 const { data: response, isLoading } = useQuery({
-  queryKey: ["invoice-report", invoiceId],
+  queryKey: ["payment-collection", invoiceId],
   queryFn: () => fetch_invoice_details(invoiceId),
   enabled: !!invoiceId,
 });
@@ -251,7 +252,6 @@ const receivableShipments = computed(() => receivableResponse.value?.data?.resul
 const filteredReceivableShipments = computed(() => {
   const all = receivableShipments.value || [];
   const search = shipmentSearch.value.toLowerCase();
-  // Filter out already added shipments
   return all.filter((s: any) => 
     !formData.shipments.includes(s._id) && 
     (s.shipmentCode || '').toLowerCase().includes(search)
@@ -260,23 +260,23 @@ const filteredReceivableShipments = computed(() => {
 
 const shipments = computed(() => {
   const existing = originalInvoice.value?.shipments || [];
-  // Filter existing based on formData.shipments in case some were removed
   const filteredExisting = existing.filter((s: any) => formData.shipments.includes(s._id));
   return [...filteredExisting, ...newlyAddedShipments.value];
 });
 
-// Initialize form data when invoice is loaded
+// Initialize form data
 watch(originalInvoice, (newVal) => {
   if (newVal) {
     formData.reference = newVal.reference || "";
-    formData.status = newVal.status || "PENDING";
+    formData.status = newVal.status || "PAYMENT_APPROVED";
     formData.totalAmount = newVal.totalAmount || 0;
     formData.crv = newVal.crv || "";
+    formData.csi = newVal.csi || "";
     formData.shipments = newVal.shipments?.map((s: any) => s._id) || [];
   }
 }, { immediate: true });
 
-// Recalculate total amount when shipments change
+// Recalculate total amount
 watch(shipments, (newShipments) => {
   formData.totalAmount = newShipments.reduce((acc, s) => acc + (s.totalPrice || 0), 0);
 }, { deep: true });
@@ -307,12 +307,12 @@ const removeShipment = (id: string) => {
 const updateMutation = useMutation({
   mutationFn: (data: any) => update_payment_request(invoiceId, data),
   onSuccess: () => {
-    toast.success("Invoice updated successfully");
-    queryClient.invalidateQueries({ queryKey: ["invoice-report", invoiceId] });
+    toast.success("Collection updated successfully");
+    queryClient.invalidateQueries({ queryKey: ["payment-collection", invoiceId] });
     router.back();
   },
   onError: (error: any) => {
-    toast.error(error.response?.data?.description || "Failed to update invoice");
+    toast.error(error.response?.data?.description || "Failed to update collection");
   },
 });
 
@@ -322,6 +322,7 @@ const handleSubmit = () => {
     status: formData.status,
     totalAmount: formData.totalAmount,
     crv: formData.crv,
+    csi: formData.csi,
     shipments: formData.shipments,
   });
 };

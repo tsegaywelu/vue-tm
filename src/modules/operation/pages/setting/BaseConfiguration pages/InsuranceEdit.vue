@@ -26,7 +26,9 @@ import { getApi } from "@/utils/getApi";
 import { useToastStore } from "@/store/toastStore";
 import SubmitButton from "@/components/form/SubmitButton.vue";
 import Button from "@/components/Button.vue";
+import { useQueryClient } from "@tanstack/vue-query";
 
+const queryClient = useQueryClient();
 const route = useRoute();
 const router = useRouter();
 const toast = useToastStore();
@@ -41,7 +43,7 @@ const { data: response, isLoading } = useQuery({
 
 const initialValues = computed(() => {
   if (!response.value?.data) return null;
-  const data = response.value.data.result || response.value.data;
+  const data = (response.value.data as any).result || response.value.data;
   return {
     name: data.name || "",
   };
@@ -55,6 +57,7 @@ const handleUpdate = async (values: any) => {
   try {
     const res = await mutation.mutateAsync(values);
     if (res.success) {
+      queryClient.invalidateQueries({ queryKey: ["insurance-list"] });
       toast.success("Insurance provider updated successfully");
       router.push("/setting/base-configuration?tab=insurance");
     } else {

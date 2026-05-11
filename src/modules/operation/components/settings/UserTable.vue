@@ -32,15 +32,15 @@
     </template>
 
     <template #cell-actions="{ row }">
-      <div class="flex items-center w-full justify-center gap-2">
-        <Button
+      <div class="flex items-center justify-center w-full gap-2">
+        <!-- <Button
           size="sm"
           variant="outline"
           class="text-error-600 border-error-200 hover:bg-error-50"
           @click.stop="handleAction(row, 'reset')"
         >
           Reset Password
-        </Button>
+        </Button> -->
         <Dropdown>
           <template #default="{ close }">
             <DropDownItem
@@ -52,6 +52,17 @@
                 close();
               "
             />
+
+            <DropDownItem
+              :icon="icons.lock"
+              label="Reset Password"
+              class="text-error-600"
+              @click.stop="
+                handleAction(row, 'reset');
+                close();
+              "
+            />
+
             <!-- Delete action commented out temporarily -->
             <!-- <DropDownItem
               :icon="icons.delete"
@@ -71,7 +82,6 @@
 
 <script setup lang="ts">
 import Table from "@/components/common/Table.vue";
-import Button from "@/components/Button.vue";
 import Dropdown from "@/components/common/Dropdown.vue";
 import DropDownItem from "@/components/common/DropDownItem.vue";
 import { usePagination } from "@/composables/usePagination";

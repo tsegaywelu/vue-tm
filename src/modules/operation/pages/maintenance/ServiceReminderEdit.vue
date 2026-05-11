@@ -1,6 +1,8 @@
 <template>
   <div v-if="isLoading" class="flex justify-center py-10">
-    <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-brightBlue"></div>
+    <div
+      class="animate-spin rounded-full h-10 w-10 border-b-2 border-brightBlue"
+    ></div>
   </div>
   <ServiceReminderForm
     v-else-if="initialValues"
@@ -22,7 +24,10 @@
 import { computed } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import ServiceReminderForm from "../../components/maintenance/ServiceReminderForm.vue";
-import { fetch_service_reminder_by_id, update_service_reminder } from "../../api/service-reminder.api";
+import {
+  fetch_service_reminder_by_id,
+  update_service_reminder,
+} from "../../api/service-reminder.api";
 import { useToastStore } from "@/store/toastStore";
 import SubmitButton from "@/components/form/SubmitButton.vue";
 import Button from "@/components/Button.vue";
@@ -36,7 +41,9 @@ const toast = useToastStore();
 const queryClient = useQueryClient();
 const id = route.params.id as string;
 
-const { data: serviceReminderResponse, isLoading } = useQuery<AsyncResponse<ServiceReminder>>({
+const { data: serviceReminderResponse, isLoading } = useQuery<
+  AsyncResponse<ServiceReminder>
+>({
   queryKey: ["service-reminder", id],
   queryFn: () => fetch_service_reminder_by_id(id),
   enabled: !!id,
@@ -45,10 +52,12 @@ const { data: serviceReminderResponse, isLoading } = useQuery<AsyncResponse<Serv
 const initialValues = computed(() => {
   const sr = serviceReminderResponse.value?.data;
   if (!sr) return null;
-  
+
   const vehicleObj = Array.isArray(sr.vehicle) ? sr.vehicle[0] : sr.vehicle;
-  const taskObj = Array.isArray(sr.serviceTask) ? sr.serviceTask[0] : sr.serviceTask;
-  
+  const taskObj = Array.isArray(sr.serviceTask)
+    ? sr.serviceTask[0]
+    : sr.serviceTask;
+
   return {
     ...sr,
     vehicle: vehicleObj?._id || vehicleObj,
@@ -65,9 +74,11 @@ const initialLabels = computed(() => {
   if (!sr) return {};
 
   const labels: Record<string, string> = {};
-  
+
   const vehicleObj = Array.isArray(sr.vehicle) ? sr.vehicle[0] : sr.vehicle;
-  const taskObj = Array.isArray(sr.serviceTask) ? sr.serviceTask[0] : sr.serviceTask;
+  const taskObj = Array.isArray(sr.serviceTask)
+    ? sr.serviceTask[0]
+    : sr.serviceTask;
 
   if (vehicleObj) labels.vehicle = vehicleObj.plateNumber || "";
   if (taskObj) labels.serviceTask = taskObj.name || "";

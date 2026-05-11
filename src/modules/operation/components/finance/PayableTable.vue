@@ -8,7 +8,7 @@
     @row_click="handleAction($event, 'view')"
   >
     <template #search-prefix>
-      <div class="h-full flex items-center border-r border-gray-200 pr-2 mr-2">
+      <div class="h-full flex items-center border-r border-gray-200 pr-2 mr-2 w-48">
         <Select
           class="[&_.input-focus]:shadow-none! [&_.input-focus]:border-none [&_.input-focus]:min-h-full min-w-48"
           v-model="selectedSearchField"
@@ -25,22 +25,21 @@
 
     <template #cell-payableType="{ value }">
       <div
-        class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider w-fit"
+        class="px-3 py-1 rounded-full text-[10px] font-bold  tracking-wider w-fit"
         :class="typeClasses[value] || 'bg-gray-100 text-gray-500'"
       >
         {{ formatType(value) }}
       </div>
     </template>
 
-    <template #cell-driver="{ row }">
-      <div class="flex flex-col">
-        <span class="font-semibold text-gray-900">
-          {{ row.plateNumber || '-' }}
-        </span>
-        <span class="text-xs text-gray-400 font-medium" v-if="row.driver">
-          {{ row.driver.firstName }} {{ row.driver.lastName }}
-        </span>
-      </div>
+    <template #cell-paidTo="{ row }">
+      <span class="text-sm text-gray-700 font-medium">
+        {{ getPaidTo(row) }}
+      </span>
+    </template>
+
+    <template #cell-plateNumber="{ value }">
+      <span class="text-sm text-gray-600">{{ value || '-' }}</span>
     </template>
 
     <template #cell-route="{ row }">
@@ -65,14 +64,34 @@
       </Status>
     </template>
     
+    <template #cell-totalFuelAdvances="{ value }">
+      <span class="text-sm text-gray-600">{{ currencyFormatter(value || 0) }}</span>
+    </template>
+
+    <template #cell-totalPerDiemExpenses="{ value }">
+      <span class="text-sm text-gray-600">{{ currencyFormatter(value || 0) }}</span>
+    </template>
+
+    <template #cell-totalOtherExpenses="{ value }">
+      <span class="text-sm text-gray-600">{{ currencyFormatter(value || 0) }}</span>
+    </template>
+
+    <template #cell-transporterPrice="{ value }">
+      <span class="text-sm text-gray-600">{{ currencyFormatter(value || 0) }}</span>
+    </template>
+
+    <template #cell-purchaseCost="{ row }">
+      <span class="text-sm text-gray-600">{{ currencyFormatter(row.payableType === 'purchaseOrder' ? row.total : 0) }}</span>
+    </template>
+
     <template #cell-createdAt="{ value }">
       <span class="text-sm text-gray-600">
         {{ dateFormatter(value) }}
       </span>
     </template>
 
-    <template #extra-actions>
-      <div class="items-center gap-4 inline-flex border-l border-grey-100 overflow-x-auto px-3 ">
+    <template #after-search>
+      <div class="items-center gap-4 inline-flex border-l border-grey-100 overflow-x-auto px-3">
         <i v-html="icons.filter" />
         <PayableFilters @change="handleFilterChange" />
       </div>
@@ -82,7 +101,18 @@
       <div class="flex items-center justify-end">
         <Dropdown>
           <template #default="{ close }">
-            <DropDownItem v-permission="'TRANSACTION:read'"
+           
+            <!-- <DropDownItem
+              v-if="canAction(row, 'reject')"
+              :icon="icons.x"
+              label="Reject"
+              class="text-orange-600"
+              @click.stop="
+                handleAction(row, 'reject');
+                close();
+              "
+            /> -->
+               <DropDownItem v-permission="'TRANSACTION:read'"
               :icon="icons.eye"
               label="Details"
               @click.stop="
@@ -90,6 +120,38 @@
                 close();
               "
             />
+            <DropDownItem
+              v-permission="'ADVANCE_PAYMENT:pay'"
+              v-if="canAction(row, 'pay')"
+              class="text-green-600"
+              label="Pay"
+              @click.stop="
+                handleAction(row, 'pay');
+                close();
+              "
+            />
+            <DropDownItem
+              v-permission="'ADVANCE_PAYMENT:authorize'"
+              v-if="canAction(row, 'authorize')"
+              class="text-green-600"
+              label="Authorize"
+              @click.stop="
+                handleAction(row, 'authorize');
+                close();
+              "
+            />
+            <DropDownItem
+              v-permission="'ADVANCE_PAYMENT:update'"
+              v-if="canAction(row, 'cancel')"
+              :icon="icons.x"
+              label="Cancel"
+              class="text-red-600"
+              @click.stop="
+                handleAction(row, 'cancel');
+                close();
+              "
+            />
+         
           </template>
         </Dropdown>
       </div>
@@ -106,22 +168,34 @@ import Status from "@/components/common/Status.vue";
 import Select from "@/components/common/Select.vue";
 import { icons } from "@/utils/icons";
 import { usePagination } from "@/composables/usePagination";
+import { openModal } from "@customizer/modal-x";
 import type { TableColumn } from "@/components/common/Table.vue";
 import PayableFilters from "./PayableFilters.vue";
+import { formatType, getPaidTo } from "./payableUtils";
 import { currencyFormatter, dateFormatter } from "@/utils/utils";
 
 const emit = defineEmits(["action"]);
 
+const props = defineProps<{
+  filters?: Record<string, any>;
+}>();
+
 const columns: TableColumn<any>[] = [
   { key: "advanceNumber", label: "Code", field: "advanceNumber" },
-  { key: "payableType", label: "Type", field: "payableType" },
-  { key: "driver", label: "Driver/Vehicle", field: "driver" },
+  { key: "payableType", label: "Type of Payment", field: "payableType" },
+  { key: "paidTo", label: "Paid To", field: "paidTo" },
+  { key: "createdAt", label: "Date", field: "createdAt" },
+  { key: "shipmentCode", label: "Shipment", field: "shipmentCode" },
   { key: "route", label: "Route", field: "route" },
-  { key: "shipmentCode", label: "Shipment Code", field: "shipmentCode" },
+  { key: "plateNumber", label: "Vehicle", field: "plateNumber" },
+  { key: "totalFuelAdvances", label: "Fuel Advance", field: "totalFuelAdvances" },
+  { key: "totalPerDiemExpenses", label: "Perdiem Advance", field: "totalPerDiemExpenses" },
+  { key: "totalOtherExpenses", label: "Other Advance", field: "totalOtherExpenses" },
+  { key: "transporterPrice", label: "Transporter Price", field: "transporterPrice" },
+  { key: "purchaseCost", label: "Purchase Cost", field: "purchaseCost" },
   { key: "total", label: "Total", field: "total" },
   { key: "status", label: "Status", field: "status" },
-  { key: "createdAt", label: "Created At", field: "createdAt" },
-  { key: "actions", label: "Actions", field: "", cellAlign: "right" },
+  { key: "actions", label: "Action", field: "", cellAlign: "right" },
 ];
 
 const searchFieldOptions = [
@@ -145,13 +219,13 @@ const dynamicSearchPlaceholder = computed(() => {
 
 const activeFilters = ref({ select: "all" });
 
-const { response, refetch } = usePagination<any>({
+const { response, refetch, fullResponse } = usePagination<any>({
   id: "payable-list",
   url: "/advance-payment/allPayables",
   params: computed(() => {
-    const params: any = { ...activeFilters.value };
+    const params: any = { ...activeFilters.value, ...props.filters };
     if (searchTerm.value) {
-      params[`${selectedSearchField.value}[regexAny]`] = searchTerm.value;
+      params[`${selectedSearchField.value}`] = searchTerm.value;
       params.q = undefined;
     }
     return params;
@@ -162,16 +236,60 @@ const handleFilterChange = (newFilters: any) => {
   activeFilters.value = { ...newFilters };
 };
 
-const handleAction = (row: any, action: string) => {
+const canAction = (row: any, action: string) => {
+  const status = row.status || row.payableStatus;
+
+  if (action === "pay") {
+    return status === "AUTHORIZED";
+  }
+
+  if (action === "authorize") {
+    const pendingStatus =
+      row.payableType === "shipments" || row.payableType === "purchaseOrder"
+        ? "PENDING"
+        : "APPROVED";
+    return status === pendingStatus;
+  }
+
+  if (action === "cancel") {
+    return status === "APPROVED" || status === "PENDING";
+  }
+
+  if (action === "approve") {
+    return status === "PENDING";
+  }
+
+  if (action === "reject") {
+    return status === "PENDING" || status === "APPROVED";
+  }
+
+  return false;
+};
+
+const handleAction = async (row: any, action: string) => {
+  if (["authorize", "cancel", "pay", "approve"].includes(action)) {
+    const displayId = row.advanceNumber || row.shipmentCode || row._id || "this item";
+    const confirmed = await openModal("ConfirmationModal", {
+      title: `${action.charAt(0).toUpperCase() + action.slice(1)} Payable`,
+      message: `Are you sure you want to ${action} this payable (${displayId})?`,
+      action: action,
+      confirmText: `Yes, ${action}`,
+    });
+
+    if (!confirmed) return;
+  }
+
   emit("action", { row, action });
 };
 
-const formatType = (val: string) => {
-  if(!val) return '-';
-  return val.replace(/([A-Z])/g, " $1").trim();
-};
-
 const typeClasses: Record<string, string> = {
+  advance: "bg-blue-50 text-blue-600",
+  transaction: "bg-purple-50 text-purple-600",
+  prePayment: "bg-orange-50 text-orange-600",
+  vehicleLeaseAgreements: "bg-teal-50 text-teal-600",
+  shipment: "bg-green-50 text-green-600",
+  purchaseOrders: "bg-indigo-50 text-indigo-600",
+  // Fallbacks
   advancePayment: "bg-blue-50 text-blue-600",
   transactions: "bg-purple-50 text-purple-600",
   prePayments: "bg-orange-50 text-orange-600",
@@ -180,5 +298,6 @@ const typeClasses: Record<string, string> = {
   purchaseOrder: "bg-indigo-50 text-indigo-600",
 };
 
-defineExpose({ refetch });
+
+defineExpose({ refetch, fullResponse, response });
 </script>

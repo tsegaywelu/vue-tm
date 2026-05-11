@@ -1,5 +1,8 @@
 <template>
   <div class="h-full flex flex-col gap-4">
+    <!-- Tab container must be always present for Teleport to work reliably -->
+    <div id="invoice-report-details-tabs" class="w-full"></div>
+
     <div v-if="isLoading" class="flex justify-center py-20">
       <i class="mdi mdi-loading mdi-spin text-4xl text-primary"></i>
     </div>
@@ -54,6 +57,16 @@
             <Button
               variant="outline"
               size="md"
+              @click="handleExport"
+            >
+              <template #leading>
+                <i class="mdi mdi-microsoft-excel text-lg text-green-600"></i>
+              </template>
+              Export
+            </Button>
+            <Button
+              variant="outline"
+              size="md"
               @click="handlePrint"
             >
               <template #leading>
@@ -65,11 +78,10 @@
         </div>
       </div>
 
-      <div id="invoice-report-details-tabs" class="w-full mt-2"></div>
-
       <div class="flex-1 min-h-0 overflow-y-auto">
         <component
           :is="activeTabComponent"
+          :key="activeTab"
           :invoice="invoice"
         />
       </div>
@@ -85,6 +97,7 @@ import { fetch_invoice_details, approve_invoice } from "../../api/invoice.api";
 import Status from "@/components/common/Status.vue";
 import Button from "@/components/Button.vue";
 import { dateFormatter } from "@/utils/utils";
+import { exportToExcel, mapShipmentsForExcel } from "@/utils/excel";
 import { useToastStore } from "@/store/toastStore";
 import { useAuthStore } from "@/store/authStore";
 
@@ -138,5 +151,11 @@ const handleApprove = () => {
 
 const handlePrint = () => {
   window.print();
+};
+
+const handleExport = () => {
+  if (!invoice.value?.shipments) return;
+  const data = mapShipmentsForExcel(invoice.value.shipments);
+  exportToExcel(data, `Invoice_${invoice.value.reference || 'Details'}`, "Shipments");
 };
 </script>

@@ -17,19 +17,22 @@
       "
       class="[&_.input-focus]:bg-grey-25 flex-1 flex max-h-16 h-16 min-h-16 *:w-[220px] *:shrink-0 px-2 gap-2 overflow-auto"
     >
+    
+     
+    
     <SelectInput
       :show_validation_status="false"
       label="Type"
       name="select"
       size="xs"
       :options="[
-        { label: 'All', value: 'all' },
-        { label: 'Advance Payment', value: 'advancePayment' },
-        { label: 'Settlement', value: 'transactions' },
-        { label: 'Pre Payment', value: 'prePayments' },
-        { label: 'Agreement', value: 'vehicleLeaseAgreement' },
-        { label: 'Shipment', value: 'shipments' },
-        { label: 'Purchase Order', value: 'purchaseOrder' }
+        { label: 'Showing all', value: 'all' },
+        { label: 'Driver Advance', value: 'advance' },
+        { label: 'Sub-Contract Advance', value: 'prePayment' },
+        { label: 'Drivers Additional', value: 'transaction' },
+        { label: 'Shipment', value: 'shipment' },
+        { label: 'Purchase Order', value: 'purchaseOrders' },
+        { label: 'Vehicle Lease', value: 'vehicleLeaseAgreements' }
       ]"
       :attributes="{ placeholder: 'Select a Type' }"
     />
@@ -40,11 +43,10 @@
       size="xs"
       :options="[
         { label: 'All', value: '' },
-        { label: 'Pending', value: 'PENDING' },
+       
         { label: 'Approved', value: 'APPROVED' },
         { label: 'Authorized', value: 'AUTHORIZED' },
-        { label: 'Paid', value: 'COMPLETED' },
-        { label: 'Cancelled', value: 'CANCELLED' }
+      
       ]"
       :attributes="{ placeholder: 'Select a Status' }"
     />

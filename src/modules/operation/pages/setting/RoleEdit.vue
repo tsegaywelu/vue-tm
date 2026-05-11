@@ -26,7 +26,9 @@ import { fetch_role_details, update_role } from "../../api/settings.api";
 import { useToastStore } from "@/store/toastStore";
 import SubmitButton from "@/components/form/SubmitButton.vue";
 import Button from "@/components/Button.vue";
+import { useQueryClient } from "@tanstack/vue-query";
 
+const queryClient = useQueryClient();
 const route = useRoute();
 const router = useRouter();
 const toast = useToastStore();
@@ -40,7 +42,7 @@ const { data: response, isLoading } = useQuery({
 
 const initialValues = computed(() => {
   if (!response.value?.data) return null;
-  const data = response.value.data.result || response.value.data;
+  const data = (response.value.data as any).result || response.value.data;
   return {
     name: data.name || "",
     type: data.type || "USER",
@@ -58,6 +60,7 @@ const handleUpdate = async (values: any) => {
     const res = await mutation.mutateAsync(values);
     if (res.success) {
       toast.success("Role updated successfully");
+      queryClient.invalidateQueries({ queryKey: ["roles-list"] });
       router.push("/setting/user-and-role");
     } else {
       toast.error(res.error || "Failed to update role");

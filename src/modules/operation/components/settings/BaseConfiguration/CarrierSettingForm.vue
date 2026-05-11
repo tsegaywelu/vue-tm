@@ -11,18 +11,30 @@
             label="Movement Alert Start Hour"
             type="number"
             :validation="{ required }"
+            :attributes="{
+              placeholder: 'Enter movement alert start hour',
+             
+            }"
           />
           <Input
             name="movementAlertEndHour"
             label="Movement Alert End Hour"
             type="number"
             :validation="{ required }"
+             :attributes="{
+              placeholder: 'Enter movement alert end hour',
+             
+            }"
           />
           <Input
             name="speedAlertThreshold"
             label="Speed Alert Threshold (km/h)"
             type="number"
             :validation="{ required }"
+             :attributes="{
+              placeholder: 'Enter speed alert threshold',
+             
+            }"
           />
         </div>
       </Colapsable>

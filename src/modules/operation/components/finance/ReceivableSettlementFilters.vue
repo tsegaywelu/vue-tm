@@ -9,12 +9,7 @@
       label="Status"
       name="payableType"
       size="xs"
-      :options="[
-        { label: 'All', value: '' },
-        { label: 'Driver Advance', value: 'advancePayment' },
-        { label: 'Transporter Advance', value: 'prePayments' },
-        { label: 'Settlement', value: 'settlement' }
-      ]"
+      :options="payableTypeOptions"
       :attributes="{ placeholder: 'Select Status' }"
     />
     <SelectInput
@@ -53,6 +48,19 @@ import SelectInput from "@/components/form/SelectInput.vue";
 import Form from "@/components/form/Form.vue";
 
 const emit = defineEmits(["change"]);
+
+const payableTypeOptions = [
+  { label: 'All', value: '' },
+  { label: 'Driver Advance', value: 'advancePayment' },
+  { label: 'Transporter Advance', value: 'prePayments' },
+  { label: 'Settlement', value: 'settlement' }
+];
+
+const routeParams = (values: any) => ({ 
+  sort: 'shipmentCount', 
+  q: undefined, 
+  ...(values.search ? { routeName: { regexAny: values.search } } : {}) 
+});
 
 const handleChange = (values: any) => {
   emit('change', {

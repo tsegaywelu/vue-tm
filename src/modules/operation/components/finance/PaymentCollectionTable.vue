@@ -60,6 +60,10 @@
 
   
 
+    <template #after-search>
+      <PaymentCollectionFilters @change="handleFilterChange" />
+    </template>
+
     <template #cell-actions="{ row }">
       <div class="flex items-center justify-end">
         <Dropdown>
@@ -73,14 +77,14 @@
                 close();
               "
             />
-            <DropDownItem v-permission="'TRANSACTION:update'"
+            <!-- <DropDownItem v-permission="'TRANSACTION:update'"
               :icon="icons.edit"
               label="Edit"
               @click.stop="
                 handleAction(row, 'edit');
                 close();
               "
-            />
+            /> -->
             <DropDownItem v-permission="'TRANSACTION:read'"
               :icon="icons.eye"
               label="Details"
@@ -106,6 +110,14 @@ import { icons } from "@/utils/icons";
 import { usePagination } from "@/composables/usePagination";
 import type { TableColumn } from "@/components/common/Table.vue";
 import { currencyFormatter, dateFormatter } from "@/utils/utils";
+import PaymentCollectionFilters from "./PaymentCollectionFilters.vue";
+
+const props = defineProps<{
+  filters?: {
+    startDate?: string;
+    endDate?: string;
+  };
+}>();
 
 const emit = defineEmits(["action"]);
 
@@ -128,7 +140,16 @@ const activeFilters = ref({});
 const { response, refetch } = usePagination<any>({
   id: "payment-collection-list",
   url: "/shipment/approvedAndCollectedInvoices",
-  params: computed(() => activeFilters.value),
+  params: computed(() => {
+    const params: any = { ...activeFilters.value };
+    if (props.filters?.startDate) {
+      params["createdAt[gte]"] = props.filters.startDate;
+    }
+    if (props.filters?.endDate) {
+      params["createdAt[lte]"] = props.filters.endDate;
+    }
+    return params;
+  }),
 });
 
 const handleFilterChange = (newFilters: any) => {

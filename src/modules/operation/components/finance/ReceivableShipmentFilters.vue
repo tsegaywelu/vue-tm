@@ -12,13 +12,13 @@
         multiple
         size="xs"
         :options="[
-          { label: 'Trip Type', value: 'tripType' },
-          { label: 'Product Type', value: 'productType' },
-          { label: 'Shipper', value: 'shipper' },
-          { label: 'Origin', value: 'origin' },
-          { label: 'Destination', value: 'destination' },
-          { label: 'Vehicle Ownership', value: 'vehicleOwnership' },
-          { label: 'Document Uploaded', value: 'documentUploaded' }
+        'Product Type',
+        'Trip Type',
+        'Shipper',
+        'Origin',
+        'Destination',
+        'Vehicle Ownership',
+        'Document Uploaded',
         ]"
         :attributes="{ placeholder: 'Choose Filters' }"
       />

@@ -18,10 +18,28 @@
       id="receivable-shipment-list"
       :columns="columns"
       :rows="response"
+      @row_click="handleAction($event, 'view')"
       v-model:search_value="searchTerm"
       :search_placeholder="dynamicSearchPlaceholder"
-      @row_click="handleAction($event, 'view')"
     >
+      <template #header-selection>
+        <input 
+          type="checkbox" 
+          :checked="isAllSelected" 
+          @change="toggleSelectAll"
+          class="rounded border-gray-300 text-primary focus:ring-primary h-4 w-4"
+        />
+      </template>
+
+      <template #cell-selection="{ row }">
+        <input 
+          type="checkbox" 
+          :checked="isSelected(row)" 
+          @change="toggleSelection(row)"
+          @click.stop
+          class="rounded border-gray-300 text-primary focus:ring-primary h-4 w-4"
+        />
+      </template>
       <template #search-prefix>
         <div class="h-full flex items-center border-r border-gray-200 pr-2 mr-2">
           <Select
@@ -81,10 +99,14 @@
         </Status>
       </template>
 
-      <template #extra-actions>
+      <template #after-search>
         <div class="items-center gap-4 inline-flex border-l border-grey-100 overflow-x-auto px-3">
           <i v-html="icons.filter" />
-          <ReceivableShipmentFilters @change="handleFilterChange" />
+          <!-- <ReceivableShipmentFilters @change="handleFilterChange" /> -->
+              <ShipmentFilters
+          @change="handleFilterChange"
+       
+        />
         </div>
       </template>
 
@@ -109,7 +131,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import Table from "@/components/common/Table.vue";
 import Dropdown from "@/components/common/Dropdown.vue";
 import DropDownItem from "@/components/common/DropDownItem.vue";
@@ -117,13 +139,20 @@ import Status from "@/components/common/Status.vue";
 import { icons } from "@/utils/icons";
 import { usePagination } from "@/composables/usePagination";
 import type { TableColumn } from "@/components/common/Table.vue";
-import ReceivableShipmentFilters from "./ReceivableShipmentFilters.vue";
+import ShipmentFilters from "../ShipmentFilters.vue";
+// import ReceivableShipmentFilters from "./ReceivableShipmentFilters.vue";
 import Select from "@/components/common/Select.vue";
 import { currencyFormatter, dateFormatter } from "@/utils/utils";
 
-const emit = defineEmits(["action"]);
+const props = defineProps<{
+  selection?: any[];
+  dateRange?: { start: string; end: string };
+}>();
+
+const emit = defineEmits(["action", "update:selection"]);
 
 const columns: TableColumn<any>[] = [
+  { key: "selection", label: "", field: "selection" },
   { key: "shipmentCode", label: "Shipment Code", field: "shipmentCode" },
   { key: "dispatchDate", label: "Dispatch Date", field: "dispatchDate" },
   { key: "route", label: "Route", field: "route" },
@@ -164,6 +193,38 @@ const dynamicSearchPlaceholder = computed(() => {
 });
 
 const activeFilters = ref({});
+
+const isSelected = (row: any) => {
+  return props.selection?.some((s) => s._id === row._id);
+};
+
+const isAllSelected = computed(() => {
+  return response.value.length > 0 && response.value.every((row) => isSelected(row));
+});
+
+const toggleSelection = (row: any) => {
+  const newSelection = [...(props.selection || [])];
+  const index = newSelection.findIndex((s) => s._id === row._id);
+  if (index > -1) {
+    newSelection.splice(index, 1);
+  } else {
+    newSelection.push(row);
+  }
+  emit("update:selection", newSelection);
+};
+
+const toggleSelectAll = () => {
+  if (isAllSelected.value) {
+    emit("update:selection", []);
+  } else {
+    emit("update:selection", [...response.value]);
+  }
+};
+
+watch(() => props.dateRange, () => {
+  refetch();
+}, { deep: true });
+
 const { response, fullResponse, refetch } = usePagination<any>({
   id: "receivable-shipment-list",
   url: "/shipment/receivableShipment",
@@ -172,6 +233,12 @@ const { response, fullResponse, refetch } = usePagination<any>({
     if (searchTerm.value) {
       params[`${selectedSearchField.value}[regexAny]`] = searchTerm.value;
       params.q = undefined;
+    }
+    if (props.dateRange?.start) {
+      params.startDate = props.dateRange.start;
+    }
+    if (props.dateRange?.end) {
+      params.endDate = props.dateRange.end;
     }
     return params;
   }),
@@ -184,18 +251,24 @@ const summaryItems = computed(() => {
   return [
     {
       label: "Total Receivable",
+      fullLabel: `Total Receivable - ${summary.value.countAll} Trips`,
       value: currencyFormatter(summary.value.totalAll),
-      count: summary.value.countAll
+      rawValue: summary.value.totalAll,
+      icon: "mdi-cash"
     },
     {
       label: "Uploaded",
+      fullLabel: `Uploaded - ${summary.value.countWithDocuments} Trips`,
       value: currencyFormatter(summary.value.totalWithDocuments),
-      count: summary.value.countWithDocuments
+      rawValue: summary.value.totalWithDocuments,
+      icon: "mdi-cash-check"
     },
     {
       label: "Not Uploaded",
+      fullLabel: `Not Uploaded - ${summary.value.countWithoutDocuments} Trips`,
       value: currencyFormatter(summary.value.totalWithoutDocuments),
-      count: summary.value.countWithoutDocuments
+      rawValue: summary.value.totalWithoutDocuments,
+      icon: "mdi-cash-remove"
     }
   ];
 });
@@ -208,5 +281,5 @@ const handleAction = (row: any, action: string) => {
   emit("action", { row, action });
 };
 
-defineExpose({ refetch });
+defineExpose({ refetch, summaryItems, response });
 </script>

@@ -10,11 +10,17 @@
             name="name"
             label="Name"
             :validation="{ required }"
+            :attributes="{
+              placeholder: 'Enter terrain type name',
+            }"
           />
           <Input
             name="code"
             label="Code"
             :validation="{ required }"
+            :attributes="{
+              placeholder: 'Enter terrain type code',
+            }"
           />
         </div>
       </Colapsable>

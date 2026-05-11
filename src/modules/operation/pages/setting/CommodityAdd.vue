@@ -19,9 +19,11 @@ import { create_commodity } from "../../api/settings.api";
 import { useToastStore } from "@/store/toastStore";
 import Button from "@/components/Button.vue";
 import SubmitButton from "@/components/form/SubmitButton.vue";
+import { useQueryClient } from "@tanstack/vue-query";
 
 const router = useRouter();
 const toast = useToastStore();
+const queryClient = useQueryClient();
 
 const mutation = useMutation({
   mutationFn: (values: any) => create_commodity(values),
@@ -32,6 +34,9 @@ const handleCreate = async (values: any) => {
     const res = await mutation.mutateAsync(values);
     if (res.success) {
       toast.success("Commodity created successfully");
+      //invalidat query commodaity table 
+      queryClient.invalidateQueries({ queryKey: ["commodity-list"] });
+
       router.push("/setting/commodity");
     } else {
       toast.error(res.error || "Failed to create commodity");

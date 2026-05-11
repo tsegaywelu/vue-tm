@@ -26,11 +26,13 @@ import { fetch_region_details, update_region } from "../../api/region.api";
 import { useToastStore } from "@/store/toastStore";
 import SubmitButton from "@/components/form/SubmitButton.vue";
 import Button from "@/components/Button.vue";
+import { useQueryClient } from "@tanstack/vue-query";
 
 const route = useRoute();
 const router = useRouter();
 const toast = useToastStore();
 const id = route.params.id as string;
+const queryClient = useQueryClient();
 
 const { data: response, isLoading } = useQuery({
   queryKey: ["region", id],
@@ -40,7 +42,7 @@ const { data: response, isLoading } = useQuery({
 
 const initialValues = computed(() => {
   if (!response.value?.data) return null;
-  const data = response.value.data.result || response.value.data;
+  const data = (response.value.data as any).result || response.value.data;
   return {
     name: data.name || "",
     odometerRouteToleranceKilometer: data.odometerRouteToleranceKilometer ?? 200,
@@ -58,6 +60,7 @@ const handleUpdate = async (values: any) => {
     const res = await mutation.mutateAsync(values);
     if (res.success) {
       toast.success("Region updated successfully");
+      queryClient.invalidateQueries({ queryKey: ["region-list"] });
       router.push("/setting/region");
     } else {
       toast.error(res.error || "Failed to update region");

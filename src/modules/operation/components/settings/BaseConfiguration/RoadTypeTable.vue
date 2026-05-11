@@ -25,8 +25,7 @@
                 close();
               "
             />
-            <!-- Delete action commented out temporarily -->
-        <!-- <DropDownItem
+            <!-- <DropDownItem
               :icon="icons.delete"
               label="Delete"
               class="text-error-600"
@@ -61,7 +60,7 @@ const { response, refetch } = usePagination<any>({
 const columns: TableColumn<any>[] = [
   { key: "name", label: "Name", field: "name" },
   { key: "code", label: "Code", field: "code" },
-  { key: "actions", label: "Action", field: "", cellAlign: "right" },
+  { key: "actions", label: "Action", field: "",  },
 ];
 
 const handleAction = (row: any, action: string) => {

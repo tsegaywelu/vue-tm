@@ -24,12 +24,14 @@ import { getApi } from "@/utils/getApi";
 import { useToastStore } from "@/store/toastStore";
 import SubmitButton from "@/components/form/SubmitButton.vue";
 import Button from "@/components/Button.vue";
+import { useQueryClient } from "@tanstack/vue-query";
 
 const route = useRoute();
 const router = useRouter();
 const toast = useToastStore();
 const id = route.params.id as string;
-const api = getApi("/carrierSetting");
+const api = getApi("/carrier-settings");
+const queryClient = useQueryClient();
 
 const { data: response, isLoading } = useQuery({
   queryKey: ["carrier-setting", id],
@@ -39,7 +41,7 @@ const { data: response, isLoading } = useQuery({
 
 const initialValues = computed(() => {
   if (!response.value?.data) return null;
-  const data = response.value.data.result || response.value.data;
+  const data = (response.value.data as any).result || (response.value.data as any);
   return {
     movementAlertStartHour: data.movementAlertStartHour || 0,
     movementAlertEndHour: data.movementAlertEndHour || 0,
@@ -56,6 +58,8 @@ const handleUpdate = async (values: any) => {
     const res = await mutation.mutateAsync(values);
     if (res.success) {
       toast.success("Carrier setting updated successfully");
+      //invalidate query here 
+      queryClient.invalidateQueries({ queryKey: ["carrier-setting-list"] });
       router.push("/setting/base-configuration?tab=settings");
     } else {
       toast.error(res.error || "Failed to update setting");

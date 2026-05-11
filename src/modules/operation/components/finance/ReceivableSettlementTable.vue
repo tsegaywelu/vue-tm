@@ -67,8 +67,14 @@
         {{ dateFormatter(value) }}
       </span>
     </template>
+    
+    <template #cell-status="{ value }">
+      <Status :variant="value || 'PENDING'" type="wrapped">
+        {{ value.replace(/_/g, " ") }}
+      </Status>
+    </template>
 
-    <template #extra-actions>
+    <template #after-search>
       <div class="items-center gap-4 inline-flex border-l border-grey-100 overflow-x-auto px-3">
         <i v-html="icons.filter" />
         <ReceivableSettlementFilters @change="handleFilterChange" />
@@ -87,6 +93,37 @@
                 close();
               "
             />
+            <DropDownItem
+              v-if="row.status === 'AUTHORIZED'"
+              v-permission="'TRANSACTION:pay'"
+              :icon="icons.cash"
+              label="Collect"
+              @click.stop="
+                handleAction(row, 'pay');
+                close();
+              "
+            />
+            <DropDownItem
+              v-if="row.status === 'APPROVED'"
+              v-permission="'TRANSACTION:authorize'"
+              :icon="icons.checkCircle"
+              label="Authorize"
+              @click.stop="
+                handleAction(row, 'authorize');
+                close();
+              "
+            />
+            <DropDownItem
+              v-if="row.status === 'APPROVED'"
+              v-permission="'TRANSACTION:update'"
+              variant="danger"
+              :icon="icons.closeCircle"
+              label="Cancel"
+              @click.stop="
+                handleAction(row, 'cancel');
+                close();
+              "
+            />
           </template>
         </Dropdown>
       </div>
@@ -95,7 +132,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import Table from "@/components/common/Table.vue";
 import Dropdown from "@/components/common/Dropdown.vue";
 import DropDownItem from "@/components/common/DropDownItem.vue";
@@ -105,8 +142,13 @@ import type { TableColumn } from "@/components/common/Table.vue";
 import ReceivableSettlementFilters from "./ReceivableSettlementFilters.vue";
 import Select from "@/components/common/Select.vue";
 import { currencyFormatter, dateFormatter } from "@/utils/utils";
+import Status from "@/components/common/Status.vue";
 
 const emit = defineEmits(["action"]);
+
+const props = defineProps<{
+  dateRange?: { start: string; end: string };
+}>();
 
 const columns: TableColumn<any>[] = [
   { key: "advanceNumber", label: "Code", field: "advanceNumber" },
@@ -118,6 +160,7 @@ const columns: TableColumn<any>[] = [
   { key: "perdiemAdvance", label: "Per Diem", field: "perdiemAdvance" },
   { key: "otherAdvance", label: "Other", field: "otherAdvance" },
   { key: "total", label: "Total", field: "amount" },
+  { key: "status", label: "Status", field: "status" },
   { key: "actions", label: "Actions", field: "", cellAlign: "right" },
 ];
 
@@ -137,6 +180,7 @@ const dynamicSearchPlaceholder = computed(() => {
 });
 
 const activeFilters = ref<any>({});
+
 const { response, refetch } = usePagination<any>({
   id: "receivable-settlement-list",
   url: "/transaction/receivableTransaction",
@@ -145,6 +189,12 @@ const { response, refetch } = usePagination<any>({
     if (searchTerm.value) {
       params[`${selectedSearchField.value}[regexAny]`] = searchTerm.value;
       params.q = undefined;
+    }
+    if (props.dateRange?.start) {
+      params.startDate = props.dateRange.start;
+    }
+    if (props.dateRange?.end) {
+      params.endDate = props.dateRange.end;
     }
     return params;
   }),
@@ -158,5 +208,5 @@ const handleAction = (row: any, action: string) => {
   emit("action", { row, action });
 };
 
-defineExpose({ refetch });
+defineExpose({ refetch, response });
 </script>

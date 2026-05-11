@@ -26,10 +26,12 @@ import { fetch_expense_type_details, update_expense_type } from "../../api/finan
 import { useToastStore } from "@/store/toastStore";
 import SubmitButton from "@/components/form/SubmitButton.vue";
 import Button from "@/components/Button.vue";
+import { useQueryClient } from "@tanstack/vue-query";
 
 const route = useRoute();
 const router = useRouter();
 const toast = useToastStore();
+const queryClient = useQueryClient();
 const id = route.params.id as string;
 
 const { data: response, isLoading } = useQuery({
@@ -42,7 +44,7 @@ const initialValues = computed(() => {
   if (!response.value?.data) return null;
   
   // Mapping based on the provided backend response structure
-  const data = response.value.data.result || response.value.data;
+  const data = response.value.data || (response.value.data as any).result;
   
   return {
     name: data.name || "",
@@ -60,6 +62,8 @@ const handleUpdate = async (values: any) => {
     const res = await mutation.mutateAsync(values);
     if (res.success) {
       toast.success("Expense type updated successfully");
+      //invalidate query
+      queryClient.invalidateQueries({ queryKey: ["expense-type-list"] });
       router.push("/finance/expense-types");
     } else {
       toast.error(res.error || "Failed to update expense type");

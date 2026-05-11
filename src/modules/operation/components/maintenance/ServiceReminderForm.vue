@@ -59,6 +59,7 @@
             :validation="{
               required,
             }"
+            :on_change="(val) => (selectedType = val)"
           />
         </div>
       </Colapsable>
@@ -169,6 +170,7 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from "vue";
 import Form from "@/components/form/Form.vue";
 import Input from "@/components/form/Input.vue";
 import SelectInput from "@/components/form/SelectInput.vue";
@@ -184,15 +186,20 @@ const props = defineProps<{
   onSubmit: (values: any) => Promise<void> | void;
 }>();
 
+const selectedType = ref(props.initialValues.type || "kilometer");
+
 const handleSubmit = async (values: any) => {
   const payload = { ...values };
 
   // Convert string numbers to Number
   if (payload.interval) payload.interval = Number(payload.interval);
   if (payload.reminderDays) payload.reminderDays = Number(payload.reminderDays);
-  if (payload.mileageInterval) payload.mileageInterval = Number(payload.mileageInterval);
-  if (payload.lastServiceMileage) payload.lastServiceMileage = Number(payload.lastServiceMileage);
-  if (payload.reminderMileage) payload.reminderMileage = Number(payload.reminderMileage);
+  if (payload.mileageInterval)
+    payload.mileageInterval = Number(payload.mileageInterval);
+  if (payload.lastServiceMileage)
+    payload.lastServiceMileage = Number(payload.lastServiceMileage);
+  if (payload.reminderMileage)
+    payload.reminderMileage = Number(payload.reminderMileage);
 
   // Clean up unused fields based on type
   if (payload.type === "time") {
