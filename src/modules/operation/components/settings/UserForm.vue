@@ -9,31 +9,41 @@
           <Input
             name="username"
             label="Username"
+            :attributes="{ placeholder: 'Enter username' }"
             :validation="{ required }"
           />
-          
+
           <template v-if="!isEdit">
-            <div class="space-y-1">
-              <Input
-                name="password"
-                label="Password"
+            <div class="grid grid-cols-2 gap-2">
+              <div class="space-y-1">
+                <PasswordInput
+                  name="password"
+                  label="Password"
+                  type="password"
+                  :attributes="{ placeholder: 'Enter password' }"
+                  :validation="{ required, password }"
+                />
+                <button
+                  type="button"
+                  @click="generatePassword(form)"
+                  class="text-[10px] text-primary font-bold hover:underline ml-1"
+                >
+                  Generate Random
+                </button>
+              </div>
+              <PasswordInput
+                name="confirmPassword"
+                label="Confirm Password"
                 type="password"
-                :validation="{ required }"
+                :attributes="{ placeholder: 'Confirm your password' }"
+                :validation="{
+                  required,
+                  fun: (value: string, msg: any, form: any) => {
+                    return isEqualTo(value, form.state.values.password);
+                  },
+                }"
               />
-              <button
-                type="button"
-                @click="generatePassword(form)"
-                class="text-[10px] text-primary font-bold hover:underline ml-1"
-              >
-                Generate Random
-              </button>
             </div>
-            <Input
-              name="confirmPassword"
-              label="Confirm Password"
-              type="password"
-              :validation="{ required }"
-            />
           </template>
 
           <SelectInput
@@ -69,7 +79,8 @@ import Form from "@/components/form/Form.vue";
 import Input from "@/components/form/Input.vue";
 import SelectInput from "@/components/form/SelectInput.vue";
 import Colapsable from "@/components/common/Colapsable.vue";
-import { required } from "@/utils/validations";
+import { isEqualTo, password, required } from "@/utils/validations";
+import PasswordInput from "@/components/form/PasswordInput.vue";
 
 const props = defineProps<{
   formId: string;
@@ -79,8 +90,10 @@ const props = defineProps<{
 }>();
 
 const generatePassword = (form: any) => {
-  const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*";
-  const retVal = Array.from({ length: 12 }, () => charset.charAt(Math.floor(Math.random() * charset.length))).join("");
+  const charset = "0123456789";
+  const retVal = Array.from({ length: 6 }, () =>
+    charset.charAt(Math.floor(Math.random() * charset.length)),
+  ).join("");
   form.setFieldValue("password", retVal);
   form.setFieldValue("confirmPassword", retVal);
 };

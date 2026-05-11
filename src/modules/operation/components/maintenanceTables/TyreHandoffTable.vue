@@ -23,29 +23,42 @@
     :rows="response"
   >
     <template #cell-serialNumber="{ row }">
-      <span class="font-medium text-gray-900">{{ row.serialNumber || '-' }}</span>
+      <span class="font-medium text-gray-900">{{
+        row.serialNumber || "-"
+      }}</span>
     </template>
 
     <template #cell-eventType="{ row }">
-      <span :class="getEventTypeClass(row.eventType)" class="inline-flex rounded-full px-2 py-1 text-xs font-semibold">
-        {{ formatEventType(row.eventType) || '-' }}
+      <span
+        :class="getEventTypeClass(row.eventType)"
+        class="inline-flex rounded-full px-2 py-1 text-xs font-semibold"
+      >
+        {{ formatEventType(row.eventType) || "-" }}
       </span>
     </template>
 
     <template #cell-status="{ row }">
-      <Status :variant="getStatusVariant(row.status)">{{ row.status || 'PENDING' }}</Status>
+      <Status :variant="getStatusVariant(row.status)">{{
+        row.status || "PENDING"
+      }}</Status>
     </template>
 
     <template #cell-vehicle="{ row }">
       <div class="text-gray-900" v-if="row.toVehicle || row.fromVehicle">
-        <span v-if="row.toVehicle">To: {{ row.toVehicle?.plateNumber || 'N/A' }}</span>
-        <span v-else-if="row.fromVehicle">From: {{ row.fromVehicle?.plateNumber || 'N/A' }}</span>
+        <span v-if="row.toVehicle"
+          >To: {{ row.toVehicle?.plateNumber || "N/A" }}</span
+        >
+        <span v-else-if="row.fromVehicle"
+          >From: {{ row.fromVehicle?.plateNumber || "N/A" }}</span
+        >
       </div>
       <span v-else class="text-gray-400">-</span>
     </template>
 
     <template #cell-assignedTo="{ row }">
-      <span class="text-gray-600">{{ row.assignedTo?.username || 'Unassigned' }}</span>
+      <span class="text-gray-600">{{
+        row.assignedTo?.username || "Unassigned"
+      }}</span>
     </template>
 
     <template #cell-createdAt="{ row }">
@@ -68,7 +81,8 @@
       <div class="flex items-center justify-center">
         <Dropdown>
           <template #default="{ close }">
-            <DropDownItem v-permission="'TYRE:read'"
+            <DropDownItem
+              v-permission="'TYRE:read'"
               :icon="icons.eye"
               label="View Details"
               @click.stop="
@@ -76,7 +90,8 @@
                 close();
               "
             />
-            <DropDownItem v-permission="'TYRE:update'"
+            <DropDownItem
+              v-permission="'TYRE:update'"
               v-if="row.status === 'PENDING'"
               :icon="icons.edit"
               label="Assign"
@@ -85,7 +100,8 @@
                 close();
               "
             />
-            <DropDownItem v-permission="'TYRE:delete'"
+            <DropDownItem
+              v-permission="'TYRE:delete'"
               :icon="icons.delete"
               label="Delete"
               class="text-error-600"
@@ -117,10 +133,10 @@ const emit = defineEmits(["action"]);
 const columns: TableColumn<TyreHandoff>[] = [
   { key: "serialNumber", label: "Serial Number" },
   { key: "eventType", label: "Event Type" },
-  { key: "status", label: "Status" },
   { key: "vehicle", label: "Vehicle" },
   { key: "assignedTo", label: "Assigned To" },
   { key: "createdAt", label: "Created At" },
+  { key: "status", label: "Status" },
   { key: "actions", label: "Actions", cellAlign: "center" },
 ];
 
@@ -159,7 +175,9 @@ const getEventTypeClass = (eventType?: string) => {
     CANCELLED: "bg-gray-100 text-gray-800",
     FAILED: "bg-red-100 text-red-800",
   };
-  return eventType && classes[eventType] ? classes[eventType] : "bg-gray-100 text-gray-800";
+  return eventType && classes[eventType]
+    ? classes[eventType]
+    : "bg-gray-100 text-gray-800";
 };
 
 const formatEventType = (eventType?: string) => {

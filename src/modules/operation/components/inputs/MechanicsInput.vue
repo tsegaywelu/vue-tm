@@ -5,6 +5,7 @@ import InputParent from "@/components/form/InputParent.vue";
 import Select from "@/components/common/Select.vue";
 import { required, validateArrayItems } from "@/utils/validations";
 import InputError from "@/components/form/InputError.vue";
+import { icons } from "@/utils/icons";
 
 type MechanicItem = {
   fakeId: string;
@@ -102,7 +103,7 @@ function remove(id: string) {
     <div
       tabindex="0"
       :data-name="props.name"
-      class="space-y-4 grid grid-cols-4 rounded"
+      class="space-y-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 rounded gap-4"
     >
       <div
         v-for="(mechanic, i) in mechanics"
@@ -149,10 +150,10 @@ function remove(id: string) {
 
         <button
           type="button"
-          class="mt-7 min-w-6 min-h-6 w-6 h-6 flex items-center justify-center text-red-500 hover:text-red-700 hover:bg-red-50 rounded-full transition-colors p-2"
+          class="absolute size-6 top-2 right-2 flex items-center justify-center text-error-600 hover:bg-error-50 rounded-full transition-colors"
           @click="remove(mechanic.fakeId)"
         >
-          x
+          <div class="size-4" v-html="icons.close"></div>
         </button>
       </div>
     </div>

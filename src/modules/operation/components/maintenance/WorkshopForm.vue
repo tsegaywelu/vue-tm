@@ -93,13 +93,21 @@
           <Input
             name="latitude"
             label="Latitude"
-            :attributes="{ placeholder: 'e.g. 9.03', type: 'number', step: 'any' }"
+            :attributes="{
+              placeholder: 'e.g. 9.03',
+              type: 'number',
+              step: 'any',
+            }"
           />
 
           <Input
             name="longitude"
             label="Longitude"
-            :attributes="{ placeholder: 'e.g. 38.74', type: 'number', step: 'any' }"
+            :attributes="{
+              placeholder: 'e.g. 38.74',
+              type: 'number',
+              step: 'any',
+            }"
           />
         </div>
       </Colapsable>
@@ -120,7 +128,7 @@ import PhoneInput from "@/components/form/PhoneInput.vue";
 import Colapsable from "@/components/common/Colapsable.vue";
 import { required } from "@/utils/validations";
 
-defineProps<{
+const props = defineProps<{
   formId: string;
   initialValues: Record<string, any>;
   onSubmit: (values: any) => Promise<void> | void;

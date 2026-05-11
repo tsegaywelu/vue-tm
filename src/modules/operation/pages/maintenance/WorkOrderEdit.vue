@@ -51,53 +51,86 @@ const { data: workOrderResponse, isLoading } = useQuery<
 
 const initialValues = computed(() => {
   if (!workOrderResponse.value?.data) return null;
-  const wo = workOrderResponse.value.data;
+  const wo = workOrderResponse.value.data as any;
 
   return {
     ...wo,
-    vehicle: (wo.vehicle as any)?._id || wo.vehicle,
-    workshop: (wo.workshop as any)?._id || wo.workshop,
+    vehicle: wo.vehicle?._id || wo.vehicle,
+    workshop: wo.workshop?._id || wo.workshop,
     serviceTypes: wo.serviceTypes?.map((st: any) => st._id || st) || [""],
     mechanics: wo.mechanics?.map((m: any) => m._id || m) || [""],
+    fuelLevel: wo.vehicleStats?.fuelLevel || wo.fuelLevel,
+    odometer: wo.vehicleStats?.odometer || wo.odometer,
+    partsCost: wo.costBreakdown?.partsCost || wo.partsCost,
     tasks:
-      wo.tasks?.map((t: any) => ({
+      (wo.serviceTasks || wo.tasks || []).map((t: any) => ({
         ...t,
-        serviceTask: (t.serviceTask as any)?._id || t.serviceTask,
+        serviceTask: t.serviceTask?._id || t.serviceTask,
         taskStartTime: t.taskStartTime ? t.taskStartTime.slice(0, 16) : "",
         taskEndTime: t.taskEndTime ? t.taskEndTime.slice(0, 16) : "",
+        requiredParts: Array.isArray(t.requiredParts)
+          ? t.requiredParts.join(", ")
+          : t.requiredParts,
       })) || [],
     startDate: wo.startDate ? wo.startDate.split("T")[0] : "",
     estimatedCompletionDate: wo.estimatedCompletionDate
       ? wo.estimatedCompletionDate.split("T")[0]
       : "",
-    partsCost: wo.costBreakdown?.partsCost || wo.partsCost,
   };
 });
 
 const initialLabels = computed(() => {
-  const wo = workOrderResponse.value?.data;
+  const wo = workOrderResponse.value?.data as any;
   if (!wo) return {};
 
   const labels: Record<string, any> = {};
 
   if (wo.vehicle) {
-    labels.vehicle = (wo.vehicle as any).plateNumber || "";
+    labels.vehicle = wo.vehicle.plateNumber || "";
   }
 
   if (wo.workshop) {
-    labels.workshop = (wo.workshop as any).name || "";
+    labels.workshop = wo.workshop.name || "";
   }
 
+  // Mechanics
   const mechanicLabels: Record<string, string> = {};
   if (wo.mechanics?.length) {
     wo.mechanics.forEach((m: any) => {
-      if (m._id) {
-        mechanicLabels[m._id] =
-          m.name || `${m.firstName || ""} ${m.lastName || ""}`.trim();
+      const id = m._id || m;
+      if (id) {
+        mechanicLabels[id] =
+          m.name || `${m.firstName || ""} ${m.lastName || ""}`.trim() || id;
       }
     });
   }
   labels.mechanics = mechanicLabels;
+
+  // Service Types
+  const serviceTypeLabels: Record<string, string> = {};
+  if (wo.serviceTypes?.length) {
+    wo.serviceTypes.forEach((st: any) => {
+      const id = st._id || st;
+      if (id) {
+        serviceTypeLabels[id] = st.name || id;
+      }
+    });
+  }
+  labels.serviceTypes = serviceTypeLabels;
+
+  // Tasks (Service Tasks)
+  const taskLabels: Record<string, string> = {};
+  const serviceTasks = wo.serviceTasks || wo.tasks || [];
+  if (serviceTasks.length) {
+    serviceTasks.forEach((t: any) => {
+      const st = t.serviceTask;
+      if (st) {
+        const id = st._id || st;
+        taskLabels[id] = st.name || id;
+      }
+    });
+  }
+  labels.tasks = taskLabels;
 
   return labels;
 });
@@ -110,11 +143,11 @@ const handleUpdateWorkOrder = async (values: any) => {
   try {
     const payload = { ...values };
     delete payload._id;
+    delete payload.id;
     delete payload.createdAt;
     delete payload.updatedAt;
     delete payload.__v;
     delete payload.status;
-    delete payload.serviceTasks; // Exclude populated field from backend
 
     const res = await mutation.mutateAsync(payload);
     if (res.success) {

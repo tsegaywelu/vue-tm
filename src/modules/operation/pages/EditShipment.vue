@@ -203,8 +203,66 @@ const updateMutation = useMutation({
   mutationFn: (values: any) => update_shipment(shipmentId, values),
 });
 
-const handleUpdateShipment = async (values: any) => {
-  const res = await updateMutation.mutateAsync(values);
+const handleUpdateShipment = async (values: any, context: any) => {
+  const { selectedOrder, selectedVehicle, filteredPricingType } = context;
+
+  const shipperId = selectedOrder?.shipper?._id || values.shipper;
+  const driverId = selectedVehicle?.driver?._id || values.driver;
+  const transporterId = selectedVehicle?.transporter?._id || values.transporter;
+  const vehicleTypeId = selectedOrder?.vehicleType?._id || values.vehicleType;
+  const routeId = selectedOrder?.route?._id || values.route;
+  const productType = selectedOrder?.productType || values.productType;
+  const tripType = selectedOrder?.tripType || values.tripType;
+  const packagingId = selectedOrder?.packaging?._id || values.packaging;
+  const vehicleId = selectedVehicle?._id || values.vehicle;
+
+  const payload: any = {
+    shipper: shipperId,
+    driver: driverId,
+    vehicleType: vehicleTypeId,
+    route: routeId,
+    productType: productType,
+    tripType: tripType,
+    packaging: packagingId,
+    vehicle: vehicleId,
+    waypoint: values.waypoint,
+    freightOrder: values.freightOrder,
+    dispatchWeight: Number(values.dispatchWeight) || 0,
+    odometerAtDispatch: Number(values.odometerAtDispatch) || 0,
+    fuelReadingAtDispatch: Number(values.fuelReadingAtDispatch) || 0,
+    deadHole: Math.max(0, Number(values.deadHole) || 0),
+    dispatchDate: values.dispatchDate,
+    remark: values.remark,
+    totalPrice: Number(values.totalPrice) || 0,
+    CKRF: !!values.CKRF,
+    status: values.status,
+    commodity: values.commodity, // Array of IDs for Edit
+    pricingType: values.pricingType, // _id for Edit
+    amount: values.amount,
+    isDamaged: values.isDamaged,
+  };
+
+  if (values.CKRF) {
+    payload.CKRFCode = values.CKRFCode;
+  }
+
+  if (productType !== ProductType["Site Transfer"]) {
+    payload.agent = values.agent;
+  }
+
+  const isVehicleOwned = selectedVehicle 
+    ? selectedVehicle.ownership === "Owned" 
+    : false;
+
+  if (!isVehicleOwned) {
+    payload.transporter = transporterId;
+    payload.transporterPrice = values.transporterPrice ? Number(values.transporterPrice) : undefined;
+  } else {
+    payload.transporter = null;
+    payload.transporterPrice = null;
+  }
+
+  const res = await updateMutation.mutateAsync(payload);
   if (res.success) {
     toast.success("Shipment updated successfully");
     queryClient.invalidateQueries({ queryKey: ["shipment", shipmentId] });

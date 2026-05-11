@@ -38,7 +38,13 @@
           <Input
             name="odometer"
             label="Odometer"
-            :attributes="{ placeholder: 'Enter odometer reading', type: 'number' }"
+            :attributes="{
+              placeholder: 'Enter odometer reading',
+              type: 'number',
+            }"
+            :validation="{
+              required,
+            }"
           />
 
           <DateInput
@@ -116,44 +122,11 @@
         description="Select the service types for this work order."
       >
         <div class="space-y-4">
-          <div
-            v-for="(st, index) in selectedServiceTypes"
-            :key="index"
-            class="flex items-end gap-4 bg-gray-50 p-4 rounded-lg relative"
-          >
-            <div class="flex-1">
-              <SelectInput
-                :name="`serviceTypes.${index}`"
-                label="Service Type"
-                :attributes="{ placeholder: 'Choose service type' }"
-                searchable
-                label_key="name"
-                value_key="_id"
-                url="/service-type"
-                @change="(val: any) => handleServiceTypeChange(val, form)"
-              />
-            </div>
-            <Button
-              type="button"
-              variant="outline"
-              class="w-fit text-error-600 border-error-200 hover:bg-error-50"
-              @click="removeServiceType(index, form)"
-            >
-              Remove
-            </Button>
-          </div>
-
-          <Button
-            type="button"
-            variant="outline"
-            class="mt-2"
-            @click="addServiceType(form)"
-          >
-            <template #leading>
-              <div class="size-4" v-html="icons.plus"></div>
-            </template>
-            Add Service Type
-          </Button>
+          <ServiceTypeSelectInput
+            name="serviceTypes"
+            :initialLabels="props.initialLabels?.serviceTypes"
+            @change="(val: any) => handleServiceTypeChange(val, form)"
+          />
         </div>
       </Colapsable>
 
@@ -162,7 +135,10 @@
         description="List any mechanics or contacts involved."
       >
         <div class="space-y-4">
-          <MechanicsInput name="mechanics" :initialLabels="props.initialLabels?.mechanics" />
+          <MechanicsInput
+            name="mechanics"
+            :initialLabels="props.initialLabels?.mechanics"
+          />
         </div>
       </Colapsable>
 
@@ -171,99 +147,13 @@
         description="Individual tasks included in this work order."
       >
         <div class="space-y-6">
-          <div
-            v-for="(task, index) in tasks"
-            :key="index"
-            class="border border-gray-200 rounded-lg overflow-hidden"
-          >
-            <div class="bg-gray-50 px-4 py-3 flex justify-between items-center border-b border-gray-200">
-              <span class="font-semibold text-gray-700">Task {{ index + 1 }}</span>
-              <Button
-                type="button"
-                variant="ghost"
-                class="text-error-600 size-8 !p-0"
-                @click="removeTask(index, form)"
-              >
-                <div class="size-4" v-html="icons.trash"></div>
-              </Button>
-            </div>
-            <div class="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <SelectInput
-                :name="`tasks.${index}.serviceTask`"
-                label="Service Task"
-                :attributes="{ placeholder: 'Choose task' }"
-                searchable
-                label_key="name"
-                value_key="_id"
-                url="/service-task"
-                :validation="{ required }"
-                @change="(val: any) => handleServiceTaskChange(val, index, form)"
-              />
-
-              <Input
-                :name="`tasks.${index}.code`"
-                label="Code"
-                :attributes="{ placeholder: 'Task code' }"
-              />
-
-              <Input
-                :name="`tasks.${index}.status`"
-                label="Status"
-                :attributes="{ placeholder: 'Current status' }"
-              />
-
-              <Input
-                :name="`tasks.${index}.taskStartTime`"
-                label="Task Start Time"
-                :attributes="{ type: 'datetime-local' }"
-                :validation="{ required }"
-              />
-
-              <Input
-                :name="`tasks.${index}.taskEndTime`"
-                label="Task End Time"
-                :attributes="{ type: 'datetime-local' }"
-              />
-
-              <div class="md:col-span-2 lg:col-span-3">
-                <TextareaInput
-                  :name="`tasks.${index}.requiredParts`"
-                  label="Required Parts"
-                  :attributes="{ placeholder: 'List parts required for this task', rows: 2 }"
-                />
-              </div>
-            </div>
-          </div>
-
-          <Button
-            type="button"
-            variant="outline"
-            class="mt-2"
-            @click="addTask(form)"
-          >
-            <template #leading>
-              <div class="size-4" v-html="icons.plus"></div>
-            </template>
-            Add Custom Task
-          </Button>
+          <ServiceTasksInput
+            name="tasks"
+            :initialLabels="props.initialLabels?.tasks"
+          />
         </div>
       </Colapsable>
 
-      <Colapsable
-        title="Description"
-        description="Additional comments or details about the work order."
-      >
-        <TextareaInput
-          name="description"
-          label="Description"
-          :attributes="{
-            placeholder: 'Enter any additional details here...',
-            rows: 4,
-          }"
-        />
-      </Colapsable>
-
-      <!-- Action Footer -->
       <div class="pt-10 flex justify-end gap-4">
         <slot :form="form" name="submit-btn"></slot>
       </div>
@@ -281,6 +171,8 @@ import TextareaInput from "@/components/form/TextareaInput.vue";
 import Colapsable from "@/components/common/Colapsable.vue";
 import VehicleInput from "@/components/common/inputs/VehicleInput.vue";
 import MechanicsInput from "../inputs/MechanicsInput.vue";
+import ServiceTypeSelectInput from "./ServiceTypeSelectInput.vue";
+import ServiceTasksInput from "./ServiceTasksInput.vue";
 import Button from "@/components/Button.vue";
 import { required } from "@/utils/validations";
 import { icons } from "@/utils/icons";
@@ -295,71 +187,22 @@ const props = defineProps<{
   onSubmit: (values: any) => Promise<void> | void;
 }>();
 
-const selectedServiceTypes = ref<any[]>(props.initialValues.serviceTypes || [""]);
-const tasks = ref<any[]>(props.initialValues.tasks || []);
-
 // Watchers for initialization and updates
-watch(() => props.initialValues.serviceTypes, (newVal) => {
-  selectedServiceTypes.value = newVal && newVal.length > 0 ? newVal : [""];
-}, { deep: true });
 
-
-watch(() => props.initialValues.tasks, (newVal) => {
-  tasks.value = newVal || [];
-}, { deep: true });
-
-// List management
-const addServiceType = (form: any) => {
-  const current = form.getFieldValue("serviceTypes") || [];
-  const updated = [...current, ""];
-  selectedServiceTypes.value = updated;
-  form.setFieldValue("serviceTypes", updated);
-};
-
-const removeServiceType = (index: number, form: any) => {
-  const current = form.getFieldValue("serviceTypes") || [];
-  const updated = current.filter((_: any, i: number) => i !== index);
-  selectedServiceTypes.value = updated;
-  form.setFieldValue("serviceTypes", updated);
-};
-
-
-const addTask = (form: any) => {
-  const current = form.getFieldValue("tasks") || [];
-  const newTask = {
-    serviceTask: "",
-    code: "",
-    status: "",
-    taskStartTime: form.getFieldValue("startDate") ? `${form.getFieldValue("startDate")}T00:00` : "",
-    taskEndTime: "",
-    requiredParts: "",
-    __fromServiceType: false,
-  };
-  const updated = [...current, newTask];
-  tasks.value = updated;
-  form.setFieldValue("tasks", updated);
-};
-
-const removeTask = (index: number, form: any) => {
-  const current = form.getFieldValue("tasks") || [];
-  const updated = current.filter((_: any, i: number) => i !== index);
-  tasks.value = updated;
-  form.setFieldValue("tasks", updated);
-};
-
-// Auto-population logic
 const handleServiceTypeChange = async (serviceTypeId: string, form: any) => {
   if (!serviceTypeId) return;
-  
+
   try {
     const res = await fetch_service_type_by_id(serviceTypeId);
     if (res.success && res.data?.serviceTasks) {
       const currentTasks = form.getFieldValue("tasks") || [];
-      const existingTaskIds = new Set(currentTasks.map((t: any) => t.serviceTask));
-      
+      const existingTaskIds = new Set(
+        currentTasks.map((t: any) => t.serviceTask),
+      );
+
       const newTasks = [];
       for (const taskRef of res.data.serviceTasks) {
-        const taskId = typeof taskRef === 'string' ? taskRef : taskRef._id;
+        const taskId = typeof taskRef === "string" ? taskRef : taskRef._id;
         if (!existingTaskIds.has(taskId)) {
           // Fetch task details for pre-filling
           const taskRes = await fetch_service_task_by_id(taskId);
@@ -368,7 +211,9 @@ const handleServiceTypeChange = async (serviceTypeId: string, form: any) => {
               serviceTask: taskId,
               code: taskRes.data.code || "",
               status: "PENDING",
-              taskStartTime: form.getFieldValue("startDate") ? `${form.getFieldValue("startDate")}T00:00` : "",
+              taskStartTime: form.getFieldValue("startDate")
+                ? `${form.getFieldValue("startDate")}T00:00`
+                : "",
               taskEndTime: "",
               requiredParts: taskRes.data.requiredParts?.join(", ") || "",
               __fromServiceType: true,
@@ -376,10 +221,9 @@ const handleServiceTypeChange = async (serviceTypeId: string, form: any) => {
           }
         }
       }
-      
+
       if (newTasks.length > 0) {
         const updatedTasks = [...currentTasks, ...newTasks];
-        tasks.value = updatedTasks;
         form.setFieldValue("tasks", updatedTasks);
       }
     }
@@ -388,40 +232,46 @@ const handleServiceTypeChange = async (serviceTypeId: string, form: any) => {
   }
 };
 
-const handleServiceTaskChange = async (serviceTaskId: string, index: number, form: any) => {
-  if (!serviceTaskId) return;
-
-  try {
-    const res = await fetch_service_task_by_id(serviceTaskId);
-    if (res.success) {
-      form.setFieldValue(`tasks.${index}.code`, res.data.code || "");
-      form.setFieldValue(`tasks.${index}.requiredParts`, res.data.requiredParts?.join(", ") || "");
-    }
-  } catch (err) {
-    console.error("Failed to fetch task details", err);
-  }
-};
-
 const handleSubmit = async (values: any) => {
   const payload = {
     ...values,
-    odometer: values.odometer ? Number(values.odometer) : undefined,
-    partsCost: values.partsCost ? Number(values.partsCost) : undefined,
-    serviceTypes: values.serviceTypes?.filter((id: string) => !!id) || [],
-    tasks: values.tasks?.map((t: any) => ({
-      ...t,
-      // Ensure date strings are valid
-      taskStartTime: t.taskStartTime || undefined,
-      taskEndTime: t.taskEndTime || undefined,
-    })) || [],
-    // Nest costBreakdown as expected by API
+    vehicleStats: {
+      fuelLevel: values.fuelLevel,
+      odometer: values.odometer ? Number(values.odometer) : undefined,
+    },
     costBreakdown: {
       partsCost: values.partsCost ? Number(values.partsCost) : undefined,
-    }
+    },
+    serviceTypes: values.serviceTypes?.filter((id: string) => !!id) || [],
+    serviceTasks: (values.tasks || []).map((t: any) => ({
+      serviceTask: t.serviceTask,
+      code: t.code,
+      status: t.status,
+      taskStartTime: t.taskStartTime || undefined,
+      taskEndTime: t.taskEndTime || undefined,
+      requiredParts:
+        typeof t.requiredParts === "string"
+          ? t.requiredParts
+              .split(",")
+              .map((p: string) => p.trim())
+              .filter((p: string) => !!p)
+          : Array.isArray(t.requiredParts)
+            ? t.requiredParts
+            : [],
+    })),
+    mechanics: values.mechanics || [],
   };
-  
-  // Clean up flattened fields
+
+  // Conditionally include workshop
+  if (values.workArea === "WORKSHOP" && values.workshop) {
+    payload.workshop = values.workshop;
+  }
+
+  // Clean up flattened/temporary fields
+  delete payload.fuelLevel;
+  delete payload.odometer;
   delete payload.partsCost;
+  delete payload.tasks;
 
   await props.onSubmit(payload);
 };

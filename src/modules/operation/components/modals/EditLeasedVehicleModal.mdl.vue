@@ -1,15 +1,11 @@
 <template>
   <FormModalParent
-    title="Add Vehicle Lease Agreement"
-    subtitle="Register a new leased vehicle agreement"
-    form-id="addLeaseForm"
+    title="Edit Vehicle Lease Agreement"
+    subtitle="Update lease agreement details"
+    form-id="editLeaseForm"
     :submit-handler="handleSubmit"
     modal-style="auto"
-    :values="{
-      leaseDirection: 'INWARD',
-      coversMaintenance: true,
-      coversAdvance: true,
-    }"
+    :values="initialValues"
   >
     <template #center="{ form }">
       <div class="flex flex-col gap-4">
@@ -26,6 +22,7 @@
                 ownership: leaseDirection === 'OUTWARD' ? 'Owned' : 'Leased',
               }"
               :key="leaseDirection"
+              :initial_labels="initialVehicleLabel"
             />
           </template>
         </component>
@@ -95,14 +92,14 @@
           "
           >Cancel</Button
         >
-        <SubmitButton :loading="addMutation.isPending">Submit</SubmitButton>
+        <SubmitButton :loading="updateMutation.isPending">Update</SubmitButton>
       </div>
     </template>
   </FormModalParent>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useMutation, useQueryClient } from "@tanstack/vue-query";
 import FormModalParent from "@/components/modals/FormModalParent.vue";
 import Input from "@/components/form/Input.vue";
@@ -117,26 +114,49 @@ import Button from "@/components/common/Button.vue";
 import SubmitButton from "@/components/form/SubmitButton.vue";
 import DateInput from "@/components/form/DateInput.vue";
 
-// [MODAL-X] AUTO-GENERATED INSTANCE
-// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
-// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
-
+const props = defineProps<{
+  data: { lease: any };
+}>();
 
 const toast = useToastStore();
 const api = new ApiService();
 const queryClient = useQueryClient();
-const selectedVehicle = ref<any>(null);
+const selectedVehicle = ref<any>(props.data.lease?.vehicle || null);
 
-const addMutation = useMutation({
+const initialValues = computed(() => {
+  const lease = props.data.lease;
+  return {
+    vehicle: lease.vehicle?._id || lease.vehicle,
+    startDate: lease.startDate ? new Date(lease.startDate).toISOString().substr(0, 10) : "",
+    endDate: lease.endDate ? new Date(lease.endDate).toISOString().substr(0, 10) : "",
+    amount: lease.amount || "",
+    leaseDirection: lease.leaseDirection || "INWARD",
+    transporter: lease.transporter?._id || lease.transporter,
+    coversMaintenance: lease.leaseAgreement?.coversMaintenance ?? true,
+    coversAdvance: lease.leaseAgreement?.coversAdvance ?? true,
+  };
+});
+
+const initialVehicleLabel = computed(() => {
+  const lease = props.data.lease;
+  if (lease.vehicle?._id) {
+    return { [lease.vehicle._id]: lease.vehicle.plateNumber };
+  }
+  return {};
+});
+
+const updateMutation = useMutation({
   mutationFn: (payload: any) =>
-    api.addAuthenticationHeader().post("/vehicle-lease-agreement", payload),
+    api
+      .addAuthenticationHeader()
+      .patch(`/vehicle-lease-agreement/${props.data.lease._id}`, payload),
   onSuccess: (res) => {
     if (res.success || res.status === 200 || res.status === 201) {
-      toast.success("Vehicle lease agreement added successfully!");
+      toast.success("Vehicle lease agreement updated successfully!");
       queryClient.invalidateQueries({ queryKey: ["leased-vehicle-list"] });
       closeModal(true);
     } else {
-      toast.error(res.error || "Failed to add vehicle lease agreement");
+      toast.error(res.error || "Failed to update vehicle lease agreement");
     }
   },
   onError: (error: any) => {
@@ -158,7 +178,7 @@ const handleSubmit = async (values: any) => {
     transporter:
       values.leaseDirection === "OUTWARD"
         ? values.transporter
-        : selectedVehicle.value?.transporter?._id,
+        : selectedVehicle.value?.transporter?._id || values.transporter,
     leaseDirection: values.leaseDirection,
     leaseAgreement: {
       coversMaintenance: values.coversMaintenance ?? true,
@@ -166,6 +186,6 @@ const handleSubmit = async (values: any) => {
     },
   };
 
-  await addMutation.mutateAsync(payload);
+  await updateMutation.mutateAsync(payload);
 };
 </script>

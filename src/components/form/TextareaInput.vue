@@ -6,42 +6,23 @@
     :on_change="on_change"
   >
     <template #default="{ field }">
-      <InputLayout
-        :name="name"
-        input_style="!h-auto border-[#DFE1E7] p-2.5 px-3"
-        :show_validation_status="show_validation_status"
-        :parent_class_name="parent_class_name"
-        :size="size"
-        :label="label"
-        :error="field.state.meta.errors.length ? field.state.meta.errors : undefined"
-        :validations="validation"
-        :left_component="left_component"
-        :right_component="right_component"
-        :description="description"
-        :error_type="error_type"
+      <Textarea
+        v-bind="props"
+        :name="field.name"
+        :modelValue="field.state.value ?? ''"
+        :error="
+          field.state.meta.errors.length ? field.state.meta.errors : undefined
+        "
+        @update:modelValue="field.handleChange"
+        @blur="field.handleBlur"
       >
         <template #left_component v-if="$slots.left_component">
           <slot name="left_component" />
         </template>
-        
-        <textarea
-          autocomplete="off"
-          class="focus:shadow-none w-full bg-transparent outline-none resize-y"
-          :id="field.name"
-          :name="field.name"
-          :data-name="name"
-          :value="field.state.value ?? ''"
-          :cols="cols"
-          :rows="rows"
-          @input="handleInput($event, field)"
-          @blur="field.handleBlur"
-          v-bind="attributes"
-        />
-
         <template #right_component v-if="$slots.right_component">
           <slot name="right_component" />
         </template>
-      </InputLayout>
+      </Textarea>
     </template>
   </InputParent>
 </template>
@@ -49,7 +30,7 @@
 <script setup lang="ts">
 import { type TextareaHTMLAttributes } from 'vue';
 import InputParent from "./InputParent.vue";
-import InputLayout from "./InputLayout.vue";
+import Textarea from "../common/Textarea.vue";
 import { type InputProps } from "./Input.vue";
 
 export interface TextareaInputProps extends InputProps {
@@ -66,7 +47,7 @@ const props = withDefaults(defineProps<TextareaInputProps>(), {
   capitalize: false,
   cols: undefined,
   rows: 4,
-  
+
   show_validation_status: true,
   parent_class_name: "",
   size: "sm",
@@ -76,14 +57,4 @@ const props = withDefaults(defineProps<TextareaInputProps>(), {
   description: "",
   error_type: "text",
 });
-
-function handleInput(ev: Event, field: any) {
-  const target = ev.target as HTMLTextAreaElement;
-  let val = target.value;
-  if (props.capitalize && val) {
-    val = val.trim().charAt(0).toUpperCase() + val.slice(1);
-    target.value = val;
-  }
-  field.handleChange(val);
-}
 </script>

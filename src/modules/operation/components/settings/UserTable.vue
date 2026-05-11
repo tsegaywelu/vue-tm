@@ -4,21 +4,35 @@
     :columns="columns"
     :rows="response"
     search_placeholder="Search by username..."
+    :row_alignment="{
+      username: 'left',
+      roleName: 'left',
+      roleType: 'left',
+      region: 'left',
+      actions: 'right',
+    }"
+    :head_alignment="{
+      username: 'left',
+      roleName: 'left',
+      roleType: 'left',
+      region: 'left',
+      actions: 'center',
+    }"
   >
     <template #cell-roleName="{ row }">
-      {{ row.role?.name || '-' }}
+      {{ row.role?.name || "-" }}
     </template>
-    
+
     <template #cell-roleType="{ row }">
-      {{ row.role?.type || '-' }}
+      {{ row.role?.type || "-" }}
     </template>
 
     <template #cell-region="{ row }">
-      {{ row.region?.name || '-' }}
+      {{ row.region?.name || "-" }}
     </template>
 
     <template #cell-actions="{ row }">
-      <div class="flex items-center justify-end gap-2">
+      <div class="flex items-center w-full justify-center gap-2">
         <Button
           size="sm"
           variant="outline"
@@ -29,7 +43,8 @@
         </Button>
         <Dropdown>
           <template #default="{ close }">
-            <DropDownItem v-permission="'USER:update'"
+            <DropDownItem
+              v-permission="'USER:update'"
               :icon="icons.edit"
               label="Edit"
               @click.stop="
@@ -38,7 +53,7 @@
               "
             />
             <!-- Delete action commented out temporarily -->
-        <!-- <DropDownItem
+            <!-- <DropDownItem
               :icon="icons.delete"
               label="Delete"
               class="text-error-600"

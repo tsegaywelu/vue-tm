@@ -27,9 +27,7 @@
     :search_placeholder="dynamicSearchPlaceholder"
   >
     <template #search-prefix>
-      <div
-        class="h-full flex items-center border-r border-gray-200 pr-2 mr-2 w-38"
-      >
+      <div class="h-full flex items-center border-r border-gray-200 pr-2 mr-2">
         <Select
           class="[&_.input-focus]:shadow-none! [&_.input-focus]:border-none [&_.input-focus]:min-h-full min-w-48"
           v-model="selectedSearchField"

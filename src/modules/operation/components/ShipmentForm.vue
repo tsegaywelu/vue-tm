@@ -415,7 +415,7 @@ const props = withDefaults(
     formId: string;
     initialValues: Record<string, any>;
     labels?: Record<string, any>;
-    onSubmit: (values: any) => Promise<void> | void;
+    onSubmit: (values: any, context?: any) => Promise<void> | void;
   }>(),
   {
     labels: () => ({}),
@@ -663,28 +663,11 @@ onMounted(async () => {
 });
 
 const handleSubmit = async (values: any) => {
-  const payload = {
-    ...values,
-    shipper: selectedOrder.value?.shipper?._id,
-    driver: selectedVehicle.value?.driver?._id,
-    transporter: selectedVehicle.value?.transporter?._id,
-    vehicleType: selectedOrder.value?.vehicleType?._id,
-    route: selectedOrder.value?.route?._id,
-    productType: selectedOrder.value?.productType,
-    tripType: selectedOrder.value?.tripType,
-    packaging: selectedOrder.value?.packaging?._id,
-    totalPrice: Number(values.totalPrice) || calculateTotalPrice(values),
-    dispatchWeight: Number(values.dispatchWeight) || 0,
-    odometerAtDispatch: Number(values.odometerAtDispatch) || 0,
-    fuelReadingAtDispatch: Number(values.fuelReadingAtDispatch) || 0,
-    deadHole: Math.max(0, Number(values.deadHole) || 0),
-    transporterPrice: values.transporterPrice
-      ? Number(values.transporterPrice)
-      : undefined,
-    pricingType: filteredPricingType.value?.type || PricingType.PerKilometer,
-  };
-
-  await props.onSubmit(payload);
+  await props.onSubmit(values, {
+    selectedOrder: selectedOrder.value,
+    selectedVehicle: selectedVehicle.value,
+    filteredPricingType: filteredPricingType.value,
+  });
 };
 </script>
 

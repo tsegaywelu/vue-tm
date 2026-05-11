@@ -279,13 +279,6 @@ onMounted(() => {
 });
 
 watch(
-  () => props.modelValue,
-  () => {
-    console.log(props.modelValue, "value");
-  },
-);
-// Sync searchResult when value is set programmatically (e.g. from a modal)
-watch(
   () => currentSelectedValue.value,
   (newVal) => {
     if (!props.searchable) return;
@@ -303,10 +296,6 @@ watch(
     }
   },
 );
-
-onMounted(() => {
-  console.log("dd", finalOptions?.value, props?.name);
-});
 
 const syncedSearch = ref("");
 

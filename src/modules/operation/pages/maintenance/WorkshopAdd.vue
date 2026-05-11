@@ -20,10 +20,11 @@ import { create_workshop } from "../../api/workshop.api";
 import { useToastStore } from "@/store/toastStore";
 import SubmitButton from "@/components/form/SubmitButton.vue";
 import Button from "@/components/Button.vue";
-import { useMutation } from "@tanstack/vue-query";
+import { useMutation, useQueryClient } from "@tanstack/vue-query";
 
 const router = useRouter();
 const toast = useToastStore();
+const queryClient = useQueryClient();
 
 const mutation = useMutation({
   mutationFn: (values: any) => create_workshop(values),
@@ -33,7 +34,7 @@ const initialValues = {
   name: "",
   tradeName: "",
   contactPerson: "",
-  contactPhone: "+251",
+  contactPhone: "",
   specialization: "",
   tin: "",
   latitude: null,
@@ -46,16 +47,14 @@ const initialValues = {
 };
 
 const handleCreateWorkshop = async (values: any) => {
-  try {
-    const res = await mutation.mutateAsync(values);
-    if (res.success) {
-      toast.success("Workshop created successfully");
-      router.push("/maintenance/workshop");
-    } else {
-      toast.error(res.error || "Failed to create workshop");
-    }
-  } catch (error: any) {
-    toast.error(error.message || "An unexpected error occurred");
+  const res = await mutation.mutateAsync(values);
+  if (res.success) {
+    toast.success("Workshop created successfully");
+    queryClient.invalidateQueries({ queryKey: ["workshops-list"] });
+    queryClient.invalidateQueries({ queryKey: ["/workshop"] });
+    router.push("/maintenance/workshop");
+  } else {
+    toast.error(res.error || "Failed to create workshop");
   }
 };
 </script>

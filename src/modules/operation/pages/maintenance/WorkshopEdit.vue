@@ -1,6 +1,8 @@
 <template>
   <div v-if="isLoading" class="flex justify-center py-10">
-    <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-brightBlue"></div>
+    <div
+      class="animate-spin rounded-full h-10 w-10 border-b-2 border-brightBlue"
+    ></div>
   </div>
   <WorkshopForm
     v-else-if="initialValues"
@@ -25,20 +27,23 @@ import { fetch_workshop_by_id, update_workshop } from "../../api/workshop.api";
 import { useToastStore } from "@/store/toastStore";
 import SubmitButton from "@/components/form/SubmitButton.vue";
 import Button from "@/components/Button.vue";
-import { useMutation, useQuery } from "@tanstack/vue-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/vue-query";
 import type { AsyncResponse } from "@/api/types";
 import type { Workshop } from "../../operation.types";
 
 const route = useRoute();
 const router = useRouter();
 const toast = useToastStore();
+const queryClient = useQueryClient();
 const workshopId = route.params.id as string;
 
-const { data: workshopResponse, isLoading } = useQuery<AsyncResponse<Workshop>>({
-  queryKey: ["workshop", workshopId],
-  queryFn: () => fetch_workshop_by_id(workshopId),
-  enabled: !!workshopId,
-});
+const { data: workshopResponse, isLoading } = useQuery<AsyncResponse<Workshop>>(
+  {
+    queryKey: ["workshop", workshopId],
+    queryFn: () => fetch_workshop_by_id(workshopId),
+    enabled: !!workshopId,
+  },
+);
 
 const initialValues = computed(() => {
   if (!workshopResponse.value?.data) return null;
@@ -50,16 +55,16 @@ const mutation = useMutation({
 });
 
 const handleUpdateWorkshop = async (values: any) => {
-  try {
-    const res = await mutation.mutateAsync(values);
-    if (res.success) {
-      toast.success("Workshop updated successfully");
-      router.push("/maintenance/workshop");
-    } else {
-      toast.error(res.error || "Failed to update workshop");
-    }
-  } catch (error: any) {
-    toast.error(error.message || "An unexpected error occurred");
+  const { _id, workOrders, createdAt, updatedAt, __v, ...payload } = values;
+  const res = await mutation.mutateAsync(payload);
+  if (res.success) {
+    toast.success("Workshop updated successfully");
+    queryClient.invalidateQueries({ queryKey: ["workshops-list"] });
+    queryClient.invalidateQueries({ queryKey: ["/workshop"] });
+    queryClient.invalidateQueries({ queryKey: ["workshop", workshopId] });
+    router.push("/maintenance/workshop");
+  } else {
+    toast.error(res.error || "Failed to update workshop");
   }
 };
 </script>

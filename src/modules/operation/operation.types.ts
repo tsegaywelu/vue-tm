@@ -483,15 +483,31 @@ export interface Workshop {
 export interface IssueReport {
   _id: string;
   driver?: {
+    _id?: string;
     firstName?: string;
     lastName?: string;
     email?: string;
+    phone?: string;
+  };
+  carrier?: {
+    _id?: string;
+    name?: string;
+    email?: string;
+  };
+  shipment?: {
+    _id: string;
+    shipmentNumber?: string;
   };
   type?: string;
   severity?: string;
   status?: string;
   location?: string;
+  lat?: number;
+  long?: number;
+  description?: string;
+  picture?: string;
   createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface TyreHandoff {

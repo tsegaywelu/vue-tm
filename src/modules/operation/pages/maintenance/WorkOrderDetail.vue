@@ -4,6 +4,8 @@
       <i class="mdi mdi-loading mdi-spin text-4xl text-primary"></i>
     </div>
 
+    <div id="work-order-details-tabs" class="w-full mt-2"></div>
+
     <template v-else-if="workOrder">
       <!-- Header Section -->
       <div
@@ -63,8 +65,6 @@
           </div>
         </div>
       </div>
-
-      <div id="work-order-details-tabs" class="w-full mt-2"></div>
 
       <div class="flex-1 min-h-0 overflow-y-auto">
         <component

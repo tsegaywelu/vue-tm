@@ -42,7 +42,6 @@ const initialValues = {
   serviceTypes: [""],
   mechanics: [""],
   tasks: [],
-  description: "",
 };
 
 const handleCreateWorkOrder = async (values: any) => {

@@ -922,6 +922,18 @@ export const operation_routes: RouteRecordRaw[] = [
         },
       },
       {
+        path: "issue-report/:id",
+        name: "operation_maintenance_issue_report_details",
+        component: () => import("./pages/maintenance/IssueReportDetail.vue"),
+        meta: {
+          permission: "ISSUE_REPORT",
+          title: "Issue Report Details",
+          description: "View detailed information about an issue report.",
+          tabsTeleportTo: "#issue-report-details-tabs",
+          tabs: [{ label: "Overview", value: "overview" }],
+        },
+      },
+      {
         path: "tyre-handoffs",
         name: "operation_maintenance_tyre_handoffs",
         component: () => import("./pages/maintenance/TyreHandoffs.vue"),
@@ -1308,6 +1320,10 @@ export const operation_routes: RouteRecordRaw[] = [
           permission: "USER",
           title: "User and Role",
           description: "Manage users, roles and permissions.",
+          tabs: [
+            { value: "user", label: "Users" },
+            { value: "role", label: "Roles" },
+          ],
         },
       },
       {

@@ -1,23 +1,13 @@
 <template>
-  <Teleport to="#page-actions" defer>
-    <Button v-permission="'ISSUE_REPORT:create'">
-      <template #leading>
-        <div class="size-5" v-html="all_icons.plus"></div>
-      </template>
-      New Issue Report
-    </Button>
-  </Teleport>
   <IssueReportTable @action="handleIssueReportAction" />
 </template>
 
 <script setup lang="ts">
+import { useRouter } from "vue-router";
 import IssueReportTable from "../../components/maintenanceTables/IssueReportTable.vue";
-import Button from "@/components/Button.vue";
 import type { IssueReport } from "../../operation.types";
-import { icons } from "@/utils/icons";
-import { raaz_icons } from "@/utils/raaz_icons";
 
-const all_icons = { ...icons, ...raaz_icons };
+const router = useRouter();
 
 const handleIssueReportAction = ({
   row,
@@ -26,7 +16,14 @@ const handleIssueReportAction = ({
   row: IssueReport;
   action: string;
 }) => {
-  console.log(`Action: ${action} on IssueReport: ${row._id}`);
-  // TODO: Implement modal views or navigation for issue report details and status changes
+  if (action === "view" || action === "edit-status") {
+    router.push({
+      name: "operation_maintenance_issue_report_details",
+      params: { id: row._id },
+    });
+  } else if (action === "delete") {
+    // TODO: Implement delete confirmation modal
+    console.log("Delete issue report", row._id);
+  }
 };
 </script>

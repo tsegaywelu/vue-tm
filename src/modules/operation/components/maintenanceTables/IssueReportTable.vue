@@ -22,29 +22,46 @@
     :columns="columns"
     :rows="response"
   >
+    <template #after-search>
+      <div
+        class="items-center gap-4 inline-flex border-l border-grey-100 overflow-x-auto px-3"
+      >
+        <i v-html="icons.filter" />
+        <IssueReportFilters @change="handleFilterChange" />
+      </div>
+    </template>
     <template #cell-driver="{ row }">
       <div class="text-sm text-gray-700">
-        <div class="font-medium text-gray-900">{{ row.driver?.firstName || '' }} {{ row.driver?.lastName || '' }}</div>
-        <div class="text-xs text-gray-500">{{ row.driver?.email || 'N/A' }}</div>
+        <div class="font-medium text-gray-900">
+          {{ row.driver?.firstName || "" }} {{ row.driver?.lastName || "" }}
+        </div>
+        <div class="text-xs text-gray-500">
+          {{ row.driver?.email || "N/A" }}
+        </div>
       </div>
     </template>
 
     <template #cell-type="{ row }">
-      <span class="text-gray-600">{{ row.type || '-' }}</span>
+      <span class="text-gray-600">{{ row.type || "-" }}</span>
     </template>
 
     <template #cell-severity="{ row }">
-      <span :class="getSeverityClass(row.severity)" class="inline-flex rounded-full px-2 py-1 text-xs font-semibold">
-        {{ row.severity || '-' }}
+      <span
+        :class="getSeverityClass(row.severity)"
+        class="inline-flex rounded-full px-2 py-1 text-xs font-semibold"
+      >
+        {{ row.severity || "-" }}
       </span>
     </template>
 
     <template #cell-status="{ row }">
-      <Status :variant="getStatusVariant(row.status)">{{ row.status || 'OPEN' }}</Status>
+      <Status :variant="getStatusVariant(row.status)">{{
+        row.status || "OPEN"
+      }}</Status>
     </template>
 
     <template #cell-location="{ row }">
-      <span class="text-gray-600">{{ row.location || 'N/A' }}</span>
+      <span class="text-gray-600">{{ row.location || "N/A" }}</span>
     </template>
 
     <template #cell-createdAt="{ row }">
@@ -67,7 +84,8 @@
       <div class="flex items-center justify-center">
         <Dropdown>
           <template #default="{ close }">
-            <DropDownItem v-permission="'ISSUE_REPORT:read'"
+            <DropDownItem
+              v-permission="'ISSUE_REPORT:read'"
               :icon="icons.eye"
               label="View Details"
               @click.stop="
@@ -75,7 +93,8 @@
                 close();
               "
             />
-            <DropDownItem v-permission="'ISSUE_REPORT:update'"
+            <DropDownItem
+              v-permission="'ISSUE_REPORT:update'"
               :icon="icons.edit"
               label="Change Status"
               @click.stop="
@@ -83,7 +102,8 @@
                 close();
               "
             />
-            <DropDownItem v-permission="'ISSUE_REPORT:delete'"
+            <DropDownItem
+              v-permission="'ISSUE_REPORT:delete'"
               :icon="icons.delete"
               label="Delete"
               class="text-error-600"
@@ -110,24 +130,33 @@ import { usePagination } from "@/composables/usePagination";
 import type { IssueReport } from "../../operation.types";
 import type { TableColumn } from "@/components/common/Table.vue";
 
+import IssueReportFilters from "../IssueReportFilters.vue";
+
 const emit = defineEmits(["action"]);
 
 const columns: TableColumn<IssueReport>[] = [
   { key: "driver", label: "Driver" },
   { key: "type", label: "Type" },
   { key: "severity", label: "Severity" },
-  { key: "status", label: "Status" },
   { key: "location", label: "Location" },
   { key: "createdAt", label: "Created At" },
+  { key: "status", label: "Status" },
   { key: "actions", label: "Actions", cellAlign: "center" },
 ];
 
-const activeFilters = ref({});
+const activeFilters = ref<any>({});
+
 const { response, refetch } = usePagination<IssueReport>({
   id: "issue-reports-list",
   url: "/issue-report",
-  params: computed(() => activeFilters.value),
+  params: computed(() => ({
+    ...activeFilters.value,
+  })),
 });
+
+const handleFilterChange = (filters: any) => {
+  activeFilters.value = filters;
+};
 
 const getSeverityClass = (severity?: string) => {
   const classes: Record<string, string> = {
@@ -136,7 +165,9 @@ const getSeverityClass = (severity?: string) => {
     HIGH: "bg-orange-100 text-orange-800",
     CRITICAL: "bg-red-600 text-white",
   };
-  return severity && classes[severity] ? classes[severity] : "bg-gray-100 text-gray-800";
+  return severity && classes[severity]
+    ? classes[severity]
+    : "bg-gray-100 text-gray-800";
 };
 
 const getStatusVariant = (status?: string) => {
