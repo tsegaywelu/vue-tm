@@ -16,19 +16,24 @@
 <script setup lang="ts">
 import { useRouter } from "vue-router";
 import OrderForm from "../components/OrderForm.vue";
-import { create_order } from "../api/orders.api";
+import { create_order, create_order_shipper } from "../api/orders.api";
 import { useToastStore } from "@/store/toastStore";
+import { useAuthStore } from "@/store/authStore";
 import SubmitButton from "@/components/form/SubmitButton.vue";
 import Button from "@/components/Button.vue";
 import { useMutation, useQueryClient } from "@tanstack/vue-query";
 const queryClient = useQueryClient();
 const mutation = useMutation({
-  mutationFn: (values: any) => create_order(values),
+  mutationFn: (values: any) =>
+    authStore.is_shipper ? create_order_shipper(values) : create_order(values),
 });
 const router = useRouter();
 const toast = useToastStore();
+const authStore = useAuthStore();
 
 const initialValues = {
+  shipper: "",
+  carrier: "",
   route: "",
   productType: "",
   agent: "",
@@ -55,7 +60,8 @@ const handleCreateOrder = async (values: any) => {
     toast.success("Order created successfully");
     // invalidate orders query
     queryClient.invalidateQueries({ queryKey: ["order-list"] });
-    router.push("/operation/orders");
+    const basePath = authStore.is_shipper ? "/shipper/orders" : "/operation/orders";
+    router.push(basePath);
   } else {
     toast.error(
       res.map((el) => el.error).join(", ") || "Failed to create order",

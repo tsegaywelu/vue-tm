@@ -18,7 +18,7 @@
     :columns="columns"
     :rows="response"
     :search_placeholder="dynamicSearchPlaceholder"
-    @row_click="(row) => $router.push(`/operation/shipments/${row._id}`)"
+    @row_click="(row) => $router.push(`${shipmentBasePath}/${row._id}`)"
   >
     <template #search-prefix>
       <div
@@ -145,9 +145,15 @@ import {
   dateFormatter,
   numberFormatter,
 } from "@/utils/utils";
+import { useAuthStore } from "@/store/authStore";
 const props = defineProps<{
   filters?: any;
 }>();
+
+const authStore = useAuthStore();
+const shipmentBasePath = computed(() =>
+  authStore.is_shipper ? "/shipper/shipments" : "/operation/shipments",
+);
 
 const emit = defineEmits(["action"]);
 

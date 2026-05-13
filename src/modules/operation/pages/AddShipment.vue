@@ -16,13 +16,19 @@
 <script setup lang="ts">
 import { useRouter } from "vue-router";
 import ShipmentForm from "../components/ShipmentForm.vue";
-import { create_shipment } from "../api/shipment.api";
+import { create_shipment, create_shipment_shipper } from "../api/shipment.api";
 import { useToastStore } from "@/store/toastStore";
+import { useAuthStore } from "@/store/authStore";
 import SubmitButton from "@/components/form/SubmitButton.vue";
 import Button from "@/components/Button.vue";
 import { useMutation } from "@tanstack/vue-query";
+
+const authStore = useAuthStore();
 const mutation = useMutation({
-  mutationFn: (values) => create_shipment(values),
+  mutationFn: (values: any) =>
+    authStore.is_shipper
+      ? create_shipment_shipper(values)
+      : create_shipment(values),
 });
 const router = useRouter();
 const toast = useToastStore();
@@ -102,7 +108,8 @@ const handleCreateShipment = async (values: any, context: any) => {
   const res = await mutation.mutateAsync(payload);
   if (res.success) {
     toast.success("Shipment created successfully");
-    router.push("/operation/shipments");
+    const basePath = authStore.is_shipper ? "/shipper/shipments" : "/operation/shipments";
+    router.push(basePath);
   } else {
     toast.error(res.error || "Failed to create shipment");
   }

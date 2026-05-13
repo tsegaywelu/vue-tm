@@ -1,11 +1,17 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, computed, onMounted, onUnmounted } from "vue";
 import { icons } from "@/utils/icons";
 import { raaz_icons } from "@/utils/raaz_icons";
 import NavButton from "@/components/NavButton.vue";
-import { navigationRegistry } from "@/router/navigation";
+import { getNavigationRegistry } from "@/router/navigation";
+import { useAuthStore } from "@/store/authStore";
 
 const all_icons = { ...icons, ...raaz_icons };
+const authStore = useAuthStore();
+
+const dynamicNavRegistry = computed(() =>
+  getNavigationRegistry(authStore.is_shipper)
+);
 
 const props = defineProps<{
   is_open: boolean;
@@ -96,7 +102,7 @@ const close_nav = () => {
           :class="is_open ? '' : 'items-center'"
         >
           <div
-            v-for="(group, gIdx) in navigationRegistry"
+            v-for="(group, gIdx) in dynamicNavRegistry"
             :key="gIdx"
             class="flex flex-col gap-3"
           >

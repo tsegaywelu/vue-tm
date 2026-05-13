@@ -284,10 +284,14 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
+import { useAuthStore } from "@/store/authStore";
 import { ShipmentStatus, type Shipment } from "../../operation.types";
 import InfoWrapper from "./InfoWrapper.vue";
 import ShipmentDataLabel from "./ShipmentDataLabel.vue";
 import { icons } from "@/utils/icons";
+
+const authStore = useAuthStore();
+const isShipper = computed(() => authStore.is_shipper);
 import {
   numberFormatter,
   currencyFormatter,

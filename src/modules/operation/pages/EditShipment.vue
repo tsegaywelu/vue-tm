@@ -69,7 +69,7 @@
 import { computed, ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import ShipmentForm from "../components/ShipmentForm.vue";
-import { fetch_shipment_details, update_shipment } from "../api/shipment.api";
+import { fetch_shipment_details, update_shipment, update_shipment_shipper } from "../api/shipment.api";
 import { useToastStore } from "@/store/toastStore";
 import SubmitButton from "@/components/form/SubmitButton.vue";
 import Button from "@/components/common/Button.vue";
@@ -82,8 +82,11 @@ import {
 import SelectInput from "@/components/form/SelectInput.vue";
 import Input from "@/components/form/Input.vue";
 import ToggleInput from "@/components/form/ToggleInput.vue";
+import { useAuthStore } from "@/store/authStore";
 import { required } from "@/utils/validations";
 import { openModal } from "@customizer/modal-x";
+
+const authStore = useAuthStore();
 
 const router = useRouter();
 const route = useRoute();
@@ -200,7 +203,10 @@ const labels = computed(() => {
 });
 
 const updateMutation = useMutation({
-  mutationFn: (values: any) => update_shipment(shipmentId, values),
+  mutationFn: (values: any) =>
+    authStore.is_shipper
+      ? update_shipment_shipper(shipmentId, values)
+      : update_shipment(shipmentId, values),
 });
 
 const handleUpdateShipment = async (values: any, context: any) => {
@@ -266,7 +272,8 @@ const handleUpdateShipment = async (values: any, context: any) => {
   if (res.success) {
     toast.success("Shipment updated successfully");
     queryClient.invalidateQueries({ queryKey: ["shipment", shipmentId] });
-    router.push(`/operation/shipments/${shipmentId}`);
+    const basePath = authStore.is_shipper ? "/shipper/shipments" : "/operation/shipments";
+    router.push(`${basePath}/${shipmentId}`);
   } else {
     toast.error(res.error || "Failed to update shipment");
   }

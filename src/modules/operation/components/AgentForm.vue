@@ -13,6 +13,7 @@
       >
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <SelectInput
+            v-if="!hideShipper"
             name="shipper"
             label="Shipper"
             url="/shipper"
@@ -116,40 +117,18 @@
           <Input
             name="email"
             label="Email"
+            :validation="{ email }"
             :attributes="{ placeholder: 'Enter contact email' }"
           />
         </div>
         <div class="border-t border-grey-100 pt-4 mt-6">
-          <div class="flex justify-between items-center mb-3">
-            <label class="text-sm font-bold text-grey-700">Phone Numbers</label>
-            <Button size="sm" variant="outline" @click="addPhone"
-              >+ Add Phone</Button
-            >
-          </div>
-          <div class="flex flex-col gap-3">
-            <div
-              v-for="(num, idx) in phoneNumbers"
-              :key="idx"
-              class="flex items-center gap-2"
-            >
-              <CommonInput
-                v-model="phoneNumbers[idx]"
-                placeholder="e.g. 911223344"
-                class="flex-1"
-                type="text"
-              />
-              <Button
-                size="sm"
-                variant="outline"
-                class="text-red-500!"
-                @click="removePhone(idx)"
-              >
-                Remove
-              </Button>
-            </div>
-          </div>
+          <MultiPhoneInput name="phoneNumbers" />
         </div>
       </Colapsable>
+
+      <div class="px-5">
+        <Checkbox name="isActive" label="Agent is active" />
+      </div>
 
       <!-- Form Logic Slot -->
       <slot name="form-logic" :form="form"></slot>
@@ -170,12 +149,15 @@ import CommonInput from "@/components/common/Input.vue";
 import SelectInput from "@/components/form/SelectInput.vue";
 import Colapsable from "@/components/common/Colapsable.vue";
 import Button from "@/components/common/Button.vue";
-import { required } from "@/utils/validations";
+import Checkbox from "@/components/form/Checkbox.vue";
+import MultiPhoneInput from "./inputs/MultiPhoneInput.vue";
+import { email, required } from "@/utils/validations";
 
 const props = defineProps<{
   formId: string;
   initialValues: Record<string, any>;
   onSubmit: (values: any) => Promise<void> | void;
+  hideShipper?: boolean;
 }>();
 
 const initialFormValues = computed(() => {
@@ -190,6 +172,11 @@ const initialFormValues = computed(() => {
     cargoType: props.initialValues?.cargoType || "",
     fullName: props.initialValues?.contact?.fullName || "",
     email: props.initialValues?.contact?.email || "",
+    isActive:
+      props.initialValues?.isActive !== undefined
+        ? props.initialValues.isActive
+        : true,
+    phoneNumbers: props.initialValues?.contact?.phoneNumbers || [],
   };
 });
 
@@ -222,19 +209,10 @@ const selectedLocation = ref({
   longitude: props.initialValues?.locationGPS?.longitude || null,
 });
 
-const phoneNumbers = ref<string[]>([]);
 const mapError = ref<string>("");
 
 let map: any = null;
 let marker: any = null;
-
-const addPhone = () => {
-  phoneNumbers.value.push("");
-};
-
-const removePhone = (idx: number) => {
-  phoneNumbers.value.splice(idx, 1);
-};
 
 const initLeaflet = async (): Promise<any> => {
   if (typeof (window as any).L !== "undefined") {
@@ -257,13 +235,6 @@ const initLeaflet = async (): Promise<any> => {
 };
 
 onMounted(async () => {
-  // Pre-fill phone numbers if editing
-  if (props.initialValues?.contact?.phoneNumbers) {
-    phoneNumbers.value = [...props.initialValues.contact.phoneNumbers].map(
-      (n: string) => n.replace(/^\+251/, ""),
-    );
-  }
-
   await nextTick();
   setTimeout(async () => {
     try {
@@ -337,7 +308,7 @@ const handleSubmit = async (values: any) => {
       latitude: selectedLocation.value.latitude,
       longitude: selectedLocation.value.longitude,
     },
-    isActive: true,
+    isActive: values.isActive,
   };
 
   if (values.cargoType) {
@@ -347,22 +318,16 @@ const handleSubmit = async (values: any) => {
   if (
     values.fullName ||
     values.email ||
-    (phoneNumbers.value.length && phoneNumbers.value.some((v) => v.trim()))
+    (values.phoneNumbers && values.phoneNumbers.length > 0)
   ) {
     payload.contact = {};
     if (values.fullName) payload.contact.fullName = values.fullName;
     if (values.email) payload.contact.email = values.email;
-    if (phoneNumbers.value.length) {
-      payload.contact.phoneNumbers = phoneNumbers.value
-        .filter((num) => num.trim() !== "")
-        .map((num) => (num.startsWith("+251") ? num : `+251${num}`));
+    if (values.phoneNumbers && values.phoneNumbers.length > 0) {
+      payload.contact.phoneNumbers = values.phoneNumbers;
     }
   }
 
   await props.onSubmit(payload);
 };
 </script>
-
-<style>
-@import "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
-</style>

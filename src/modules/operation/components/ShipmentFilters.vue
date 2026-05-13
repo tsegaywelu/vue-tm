@@ -24,7 +24,7 @@
     <VehicleOwnershipInput name="vehicleOwnership" size="xs" />
     <DamageInput name="damage" size="xs" />
     <DocumentedUploadsInput name="documentedUploads" size="xs" />
-    <ShipperInput name="shipper" size="xs" />
+    <ShipperInput v-if="!isShipper" name="shipper" size="xs" />
     <AgentInput name="agent" size="xs" />
   </Form>
 </template>
@@ -40,7 +40,12 @@ import VehicleOwnershipInput from "@/components/common/inputs/VehicleOwnershipIn
 import DamageInput from "@/components/common/inputs/DamageInput.vue";
 import DocumentedUploadsInput from "@/components/common/inputs/DocumentedUploadsInput.vue";
 import ShipperInput from "@/components/common/inputs/ShipperInput.vue";
+import { useAuthStore } from "@/store/authStore";
 import AgentInput from "@/components/common/inputs/AgentInput.vue";
+import { computed } from "vue";
+
+const authStore = useAuthStore();
+const isShipper = computed(() => authStore.is_shipper);
 
 const props = defineProps<{
   calendarType?: "english" | "ethiopian";

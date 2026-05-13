@@ -7,8 +7,7 @@ const router = useRouter();
 const auth_store = useAuthStore();
 
 const goHome = () => {
-  const homeRoute = auth_store.get_default_home_route();
-  router.push(homeRoute);
+  router.push("/");
 };
 
 const goBack = () => {

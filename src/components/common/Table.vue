@@ -340,6 +340,7 @@ export interface TableProps<T> {
   search_value?: string | null;
   table_class_name?: string;
   tabs?: boolean;
+  alignment?: "left" | "center" | "right";
 
   // Responsive row props
   row_alignment?: {
@@ -391,6 +392,7 @@ const props = withDefaults(defineProps<TableProps<T>>(), {
   tabs: false,
   show_labels_in_card: true,
   action_cell: "",
+  alignment: "center",
 });
 
 type CellSlots<T> = {
@@ -500,10 +502,11 @@ const getAlignmentClass = (
       : props.row_alignment?.[columnId];
   if (alignment && (alignmentStyles as any)[alignment])
     return (alignmentStyles as any)[alignment];
-  return (
-    (metaAlign && (alignmentStyles as any)[metaAlign]) ||
-    "justify-center text-center"
-  );
+
+  if (metaAlign && (alignmentStyles as any)[metaAlign])
+    return (alignmentStyles as any)[metaAlign];
+
+  return (alignmentStyles as any)[props.alignment] || "justify-center text-center";
 };
 
 watch(searchValue, (newVal) => {

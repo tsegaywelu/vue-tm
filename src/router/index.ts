@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import DashboardLayout from "@/layouts/DashboardLayout.vue";
 import RouteGuard from "@/components/RouteGuard.vue";
 import { operation_routes } from "@/modules/operation/operation.routes";
+import { shipper_routes } from "@/modules/shipper/shipper.routes";
 import { useAuthStore } from "@/store/authStore";
 
 const router = createRouter({
@@ -14,8 +15,7 @@ const router = createRouter({
         {
           path: "",
           component: DashboardLayout,
-          redirect: "/operation/dashboard",
-          children: [...operation_routes],
+          children: [...operation_routes, ...shipper_routes],
         },
       ],
     },

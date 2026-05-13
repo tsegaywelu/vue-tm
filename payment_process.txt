@@ -1,0 +1,8 @@
+	-payment process
+		- when the driver completes the shipping and uploades all the necessary documents 
+		- it goes to receivable and in here the user selects the sipments and generates invoices for them
+		- afte that the generated invoices go to invoice report
+		- in invoice report the user will approve the invoice
+		- after approval it goes to the shippers invoice and carriers paymentCollection
+		- in shipper the shipper can view the invoice and pay if he approves or reject
+		- in carrier sides paymentCollection the carrier can collect after payment

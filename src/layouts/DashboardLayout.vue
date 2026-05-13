@@ -1,15 +1,21 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, computed, onMounted, onUnmounted } from "vue";
 import Sidebar from "@/components/Sidebar.vue";
 import TopNavBar from "@/components/TopNavBar.vue";
 import Breadcrumb from "@/components/Breadcrumb.vue";
-import { navigationRegistry } from "@/router/navigation";
+import { getNavigationRegistry } from "@/router/navigation";
+import { useAuthStore } from "@/store/authStore";
 import type { Navs } from "@/types/navigation";
 import DashboardPage from "@/components/common/DashboardPage.vue";
 
-const allNavs = navigationRegistry.reduce((acc, group) => {
-  return acc.concat(group.items);
-}, [] as Navs[]);
+const authStore = useAuthStore();
+
+const allNavs = computed(() => {
+  const registry = getNavigationRegistry(authStore.is_shipper);
+  return registry.reduce((acc, group) => {
+    return acc.concat(group.items);
+  }, [] as Navs[]);
+});
 
 const is_open = ref(window.innerWidth > 1280);
 

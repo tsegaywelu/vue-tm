@@ -25,8 +25,9 @@
 import { computed } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import OrderForm from "../components/OrderForm.vue";
-import { fetch_order_by_id, update_order } from "../api/orders.api";
+import { fetch_order_by_id, update_order, update_order_shipper } from "../api/orders.api";
 import { useToastStore } from "@/store/toastStore";
+import { useAuthStore } from "@/store/authStore";
 import SubmitButton from "@/components/form/SubmitButton.vue";
 import Button from "@/components/Button.vue";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/vue-query";
@@ -36,6 +37,7 @@ const queryClient = useQueryClient();
 const router = useRouter();
 const route = useRoute();
 const toast = useToastStore();
+const authStore = useAuthStore();
 const orderId = route.params.id as string;
 
 const { data: order, isLoading } = useQuery({
@@ -65,6 +67,7 @@ const initialValues = computed(() => {
   const data = order.value;
   return {
     shipper: data.shipper?._id || "",
+    carrier: data.carrier?._id || "",
     route: data.route?._id || "",
     productType: data.productType || "",
     agent: data.agent?._id || "",
@@ -86,6 +89,7 @@ const labels = computed(() => {
   const data = order.value;
   return {
     shipper: data.shipper?.name || "",
+    carrier: data.carrier?.name || "",
     route: data.route?.routeName || "",
     agent: data.agent?.name || "",
     packaging: data.packaging?.name || "",
@@ -99,7 +103,10 @@ const labels = computed(() => {
 });
 
 const updateMutation = useMutation({
-  mutationFn: (values: any) => update_order(orderId, values),
+  mutationFn: (values: any) =>
+    authStore.is_shipper
+      ? update_order_shipper(orderId, values)
+      : update_order(orderId, values),
 });
 
 const handleUpdateOrder = async (values: any) => {
@@ -108,7 +115,8 @@ const handleUpdateOrder = async (values: any) => {
     toast.success("Order updated successfully");
     queryClient.invalidateQueries({ queryKey: ["order", orderId] });
     queryClient.invalidateQueries({ queryKey: ["order-list"] });
-    router.push("/operation/orders");
+    const basePath = authStore.is_shipper ? "/shipper/orders" : "/operation/orders";
+    router.push(basePath);
   } else {
     toast.error(res.error || "Failed to update order");
   }

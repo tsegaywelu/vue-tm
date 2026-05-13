@@ -1,16 +1,24 @@
+import { computed } from "vue";
 import { useRouter } from "vue-router";
 import { openModal } from "@customizer/modal-x";
 import type { Shipment } from "../operation.types";
 import { ShipmentStatus } from "@/utils/utils";
+import { useAuthStore } from "@/store/authStore";
 
 export const useShipmentActions = (onActionComplete?: () => void) => {
   const router = useRouter();
+  const authStore = useAuthStore();
+
+  // Resolve the base path based on user role
+  const basePath = computed(() =>
+    authStore.is_shipper ? "/shipper/shipments" : "/operation/shipments",
+  );
 
   const handleAction = (row: Shipment, action: string) => {
     if (action === "view") {
-      router.push(`/operation/shipments/${row._id}`);
+      router.push(`${basePath.value}/${row._id}`);
     } else if (action === "edit") {
-      router.push(`/operation/shipments/edit/${row._id}`);
+      router.push(`${basePath.value}/edit/${row._id}`);
     } else if (action === "create_advance") {
       openAddAdvanceModal(row);
     } else {
@@ -55,5 +63,7 @@ export const useShipmentActions = (onActionComplete?: () => void) => {
     openAddAdvanceModal,
     openStatusModal,
     openVouchersModal,
+    basePath,
   };
 };
+

@@ -8,18 +8,10 @@
       >
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <SelectInput
+            v-if="!isShipper"
             name="shipper"
             label="Shipper"
             searchable
-            :params="{
-              page: undefined,
-              limit: undefined,
-            }"
-            :attributes="{
-              placeholder: 'Select shipper',
-            }"
-            label_key="shipper.name"
-            value_key="shipper._id"
             url="/shipper/contractedShippers"
             :display_value="internalLabels.shipper"
             :validation="{
@@ -27,16 +19,40 @@
             }"
             @select="(opt) => handleShipperSelect(opt.item, form)"
           />
+          <SelectInput
+            v-if="isShipper"
+            name="carrier"
+            label="Carrier"
+            searchable
+            :params="{
+              page: undefined,
+              limit: undefined,
+            }"
+            :attributes="{
+              placeholder: 'Select carrier',
+            }"
+            label_key="carrier.name"
+            value_key="carrier._id"
+            url="/carrier/contractedCarriers"
+            :display_value="internalLabels.carrier"
+            :validation="{
+              required,
+            }"
+            @select="(opt) => handleCarrierSelect(opt.item, form)"
+          />
           <component
             :is="form.Subscribe"
-            :selector="(state: any) => [state.values.shipper]"
+            :selector="
+              (state: any) => [state.values.shipper, state.values.carrier]
+            "
           >
-            <template #default="[shipper]">
+            <template #default="[shipper, carrier]">
               <SelectInput
-                :key="shipper"
+                :key="`${shipper}-${carrier}`"
                 :params="{
                   page: undefined,
                   limit: undefined,
+                  carrier: isShipper ? carrier : undefined,
                 }"
                 name="route"
                 label="Route"
@@ -105,6 +121,7 @@
             value_key="_id"
             :options="routeCommodities"
             :pending="isRouteDetailsLoading"
+            :initial_labels="internalLabels.commodity"
             :validation="{
               required: (val: any) => required(val),
             }"
@@ -270,6 +287,13 @@ import Colapsable from "@/components/common/Colapsable.vue";
 import { required } from "@/utils/validations";
 import { fetch_contract_route_details } from "../api/orders.api";
 import { ProductType, TripType, VehicleTypeName } from "../operation.types";
+import { useAuthStore } from "@/store/authStore";
+
+const authStore = useAuthStore();
+const isShipper = computed(() => authStore.is_shipper);
+const currentUserShipperId = computed(
+  () => authStore.current_user?.user?.shipper?._id,
+);
 
 const props = withDefaults(
   defineProps<{
@@ -333,6 +357,10 @@ const handleShipperSelect = (shipper: any, form: any) => {
   internalLabels.value.shipper = shipper?.shipper?.name || shipper?.name || "";
 };
 
+const handleCarrierSelect = (carrier: any, form: any) => {
+  internalLabels.value.carrier = carrier?.carrier?.name || carrier?.name || "";
+};
+
 const routeCommodities = ref<any[]>([]);
 const routePackagings = ref<any[]>([]);
 const routeAgents = ref<any[]>([]);
@@ -363,16 +391,21 @@ const handleRouteSelect = async (route: any, form: any) => {
         routeAgents.value = res.data?.agents || [];
         contractProductTypes.value = res.data?.productType || [];
 
-        // Auto-select if there's exactly 1 option
-        if (routeCommodities.value.length === 1) {
+        // Auto-select if there's exactly 1 option and current value is empty
+        if (
+          routeCommodities.value.length === 1 &&
+          (!form.state.values.commodity ||
+            form.state.values.commodity.length === 0)
+        ) {
           form.setFieldValue("commodity", [
             (routeCommodities.value[0] as any)._id,
           ]);
-        } else {
-          form.setFieldValue("commodity", []);
         }
 
-        if (routePackagings.value.length === 1) {
+        if (
+          routePackagings.value.length === 1 &&
+          !form.state.values.packaging
+        ) {
           form.setFieldValue(
             "packaging",
             (routePackagings.value[0] as any)._id,
@@ -380,9 +413,6 @@ const handleRouteSelect = async (route: any, form: any) => {
           internalLabels.value.packaging = (
             routePackagings.value[0] as any
           ).name;
-        } else {
-          form.setFieldValue("packaging", "");
-          internalLabels.value.packaging = "";
         }
 
         // Auto-select product type if only one is available
@@ -390,13 +420,10 @@ const handleRouteSelect = async (route: any, form: any) => {
           form.setFieldValue("productType", contractProductTypes.value[0]);
         }
 
-        // Auto-select agent if only one is available
-        if (routeAgents.value.length === 1) {
+        // Auto-select agent if only one is available and current value is empty
+        if (routeAgents.value.length === 1 && !form.state.values.agent) {
           form.setFieldValue("agent", (routeAgents.value[0] as any)._id);
           internalLabels.value.agent = (routeAgents.value[0] as any).name;
-        } else {
-          form.setFieldValue("agent", "");
-          internalLabels.value.agent = "";
         }
       }
     } finally {
@@ -422,6 +449,9 @@ watch(
 );
 
 onMounted(async () => {
+  if (isShipper.value && currentUserShipperId.value) {
+    props.initialValues.shipper = currentUserShipperId.value;
+  }
   if (props.preloadedRouteDetails) {
     initializeRouteDetails(props.preloadedRouteDetails);
     return;

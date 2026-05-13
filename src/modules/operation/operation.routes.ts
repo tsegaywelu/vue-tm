@@ -1016,6 +1016,16 @@ export const operation_routes: RouteRecordRaw[] = [
         },
       },
       {
+        path: "generateInvoice/:id",
+        name: "operation_finance_generate_invoice",
+        component: () => import("./pages/finance/GenerateInvoice.vue"),
+        meta: {
+          permission: "REPORT",
+          title: "Generate Invoice",
+          description: "Generate and print shipment invoices.",
+        },
+      },
+      {
         path: "editPaymentRequest/:id",
         name: "operation_finance_edit_payment_request",
         component: () => import("./pages/finance/InvoiceReportEdit.vue"), // Shared component or similar logic

@@ -9,6 +9,12 @@ export const useAuthStore = defineStore("auth", () => {
 
   const is_authenticated = computed(() => !!token.value);
 
+  // Shipper detection: shipper users have a `shipper` object on their user profile
+  const is_shipper = computed(() => {
+    const user = current_user.value?.user || current_user.value;
+    return !!user?.shipper;
+  });
+
   const set_tokens = (accessToken: string, refreshToken?: string) => {
     token.value = accessToken;
     localStorage.setItem("token", accessToken);
@@ -74,6 +80,11 @@ export const useAuthStore = defineStore("auth", () => {
   };
 
   const get_default_home_route = () => {
+    if (!token.value) return "/login";
+
+    // Shipper users always go to the shipper dashboard
+    if (is_shipper.value) return "/shipper/dashboard";
+
     if (has_permission("REPORT", ["view"])) return "/operation/dashboard";
     if (has_permission("SHIPMENT", ["view"])) return "/operation/shipments";
     if (has_permission("ORDER", ["view"])) return "/operation/orders";
@@ -98,6 +109,7 @@ export const useAuthStore = defineStore("auth", () => {
     current_user,
     is_loading,
     is_authenticated,
+    is_shipper,
     set_tokens,
     set_user,
     logout,

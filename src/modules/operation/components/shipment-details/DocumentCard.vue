@@ -9,7 +9,7 @@
     >
 
     <div
-      v-if="filePath"
+      v-if="filePath && !readOnly"
       class="absolute top-2 right-2 flex items-center gap-1 bg-white/60 backdrop-blur-sm rounded-lg p-1 border border-gray-200/50 shadow-sm z-10"
     >
       <button
@@ -182,7 +182,7 @@
         />
       </div>
 
-      <div v-else class="flex items-center gap-2">
+      <div v-else-if="!readOnly" class="flex items-center gap-2">
         <Button
           size="sm"
           variant="secondary"
@@ -240,6 +240,12 @@
           </span>
         </Button>
       </div>
+
+      <div v-else class="flex items-center justify-center py-2 px-1">
+        <span class="text-xs italic text-gray-400 font-medium select-none"
+          >No document uploaded</span
+        >
+      </div>
     </div>
   </div>
 </template>
@@ -265,6 +271,7 @@ const props = defineProps<{
   fullUrl?: string;
   canReject?: boolean;
   allowMultiple?: boolean;
+  readOnly?: boolean;
   uploadFunction?: (id: string, data: FormData, config: any) => Promise<any>;
 }>();
 

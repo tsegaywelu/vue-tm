@@ -1,50 +1,19 @@
 <template>
   <FormModalParent
     :title="facility ? 'Edit Facility' : 'Add New Facility'"
-    :subtitle="facility ? 'Update facility details' : 'Add a new facility to a shipper'"
+    :subtitle="
+      facility ? 'Update facility details' : 'Add a new facility to a shipper'
+    "
     form-id="facility-form"
     :submit-handler="handleSubmit"
     modal-style="auto"
     :values="initialFormValues"
   >
-    <template #center="{ form }">
-      <div class="flex flex-col gap-4">
-        <div>
-          <SelectInput
-            name="shipper"
-            label="Shipper"
-            :options="shipperOptions"
-            :validation="{ required }"
-            :attributes="{ placeholder: 'Select shipper' }"
-          />
-        </div>
-        <div>
-          <Input
-            name="name"
-            label="Facility Name"
-            :validation="{ required }"
-            placeholder="e.g. Warehouse A"
-          />
-        </div>
-        <div class="grid grid-cols-2 gap-4">
-          <SelectInput
-            name="region"
-            label="Region"
-            :options="regionOptions"
-            :validation="{ required }"
-            :attributes="{ placeholder: 'Select region' }"
-          />
-          <Input
-            name="city"
-            label="City"
-            :validation="{ required }"
-            placeholder="e.g. Addis Ababa"
-          />
-        </div>
-      </div>
+    <template #center>
+      <FacilityForm :hideShipper="isShipper" />
     </template>
-    <template #bottom="{ form }">
-      <div class="flex justify-end gap-3">
+    <template #bottom>
+      <div class="flex justify-end gap-3 mt-4">
         <Button size="md" variant="outline" @click="closeModal(false)">
           Cancel
         </Button>
@@ -59,89 +28,70 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import FormModalParent from "@/components/modals/FormModalParent.vue";
-import Input from "@/components/form/Input.vue";
-import SelectInput from "@/components/form/SelectInput.vue";
-import { required } from "@/utils/validations";
-import { useToastStore } from "@/store/toastStore";
-import { closeModal } from "@customizer/modal-x";
+import FacilityForm from "../FacilityForm.vue";
 import Button from "@/components/common/Button.vue";
 import SubmitButton from "@/components/form/SubmitButton.vue";
-import { usePagination } from "@/composables/usePagination";
+import { closeModal } from "@customizer/modal-x";
+import { useToastStore } from "@/store/toastStore";
 import { add_facility, update_facility } from "../../api/operation.api";
-import { useMutation } from "@tanstack/vue-query";
+import { useMutation, useQueryClient } from "@tanstack/vue-query";
+import {
+  create_shipper_facility,
+  update_shipper_facility,
+} from "@/modules/shipper/api/shipper.api";
 
-const props = defineProps<{ data?: { facility?: any } }>();
+const props = defineProps<{
+  data?: { facility?: any; shipperId?: string; isShipper?: boolean };
+}>();
 
 const facility = computed(() => props.data?.facility);
+const isShipper = computed(
+  () => props.data?.isShipper || !!props.data?.shipperId,
+);
+const shipperId = computed(() => props.data?.shipperId);
 
 const initialFormValues = computed(() => {
-  if (facility.value) {
-    return {
-      shipper: facility.value.shipper?._id || facility.value.shipper || "",
-      name: facility.value.name || "",
-      region: facility.value.location?.region || "",
-      city: facility.value.location?.city || "",
-    };
-  }
+  const base = facility.value || {};
   return {
-    shipper: "",
-    name: "",
-    region: "",
-    city: "",
+    shipper: base.shipper?._id || base.shipper || shipperId.value || "",
+    name: base.name || "",
+    region: base.location?.region || base.region || "",
+    city: base.location?.city || base.city || "",
   };
 });
 
-const { response: shippersResponse } = usePagination({
-  id: "shippers-list-for-facility",
-  url: "/shipper",
-  limit: 100,
-});
+// Removed manual shipper options fetching as it's now handled by SelectInput in FacilityForm
 
-const shipperOptions = computed(() => {
-  if (!shippersResponse.value) return [];
-  return (shippersResponse.value || []).map((s: any) => ({
-    label: s.name,
-    value: s._id,
-  }));
-});
-
-const regionOptions = [
-  { label: "Addis Ababa", value: "Addis Ababa" },
-  { label: "Afar", value: "Afar" },
-  { label: "Amhara", value: "Amhara" },
-  { label: "Benishangul-Gumuz", value: "Benishangul-Gumuz" },
-  { label: "Dire Dawa", value: "Dire Dawa" },
-  { label: "Gambela", value: "Gambela" },
-  { label: "Harari", value: "Harari" },
-  { label: "Oromia", value: "Oromia" },
-  { label: "Sidama", value: "Sidama" },
-  { label: "Somali", value: "Somali" },
-  {
-    label: "Southern Nations, Nationalities, and Peoples' Region (SNNPR)",
-    value: "Southern Nations, Nationalities, and Peoples' Region (SNNPR)",
-  },
-  { label: "Tigray", value: "Tigray" },
-];
+// Removed redundant regionOptions as they are now in FacilityForm
 
 const toast = useToastStore();
+const queryClient = useQueryClient();
 
+// API mutations handling both shipper and admin (carrier-context) endpoints
 const createMutation = useMutation({
-  mutationFn: add_facility,
+  mutationFn: (data: any) =>
+    isShipper.value ? create_shipper_facility(data) : add_facility(data),
 });
 
 const updateMutation = useMutation({
-  mutationFn: ({ id, data }: { id: string; data: any }) => update_facility(id, data),
+  mutationFn: ({ id, data }: { id: string; data: any }) =>
+    isShipper.value
+      ? update_shipper_facility(id, data)
+      : update_facility(id, data),
 });
 
 const handleSubmit = async (values: any) => {
-  const payload = {
+  const payload: any = {
     name: values.name,
-    shipper: values.shipper,
     location: {
       region: values.region,
       city: values.city,
     },
   };
+
+  if (!isShipper.value && values.shipper) {
+    payload.shipper = values.shipper;
+  }
 
   if (facility.value) {
     const res = await updateMutation.mutateAsync({
@@ -150,6 +100,7 @@ const handleSubmit = async (values: any) => {
     });
     if (res.success || res.status === 200 || res.status === 201) {
       toast.success("Facility updated successfully!");
+      queryClient.invalidateQueries({ queryKey: ["shipper-facilities-list"] });
       closeModal(true);
     } else {
       toast.error(res.error || "Failed to update facility");
@@ -158,6 +109,7 @@ const handleSubmit = async (values: any) => {
     const res = await createMutation.mutateAsync(payload);
     if (res.success || res.status === 200 || res.status === 201) {
       toast.success("Facility created successfully!");
+      queryClient.invalidateQueries({ queryKey: ["shipper-facilities-list"] });
       closeModal(true);
     } else {
       toast.error(res.error || "Failed to create facility");

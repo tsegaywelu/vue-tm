@@ -58,8 +58,14 @@ onMounted(async () => {
           query: { redirect: router.currentRoute.value.fullPath },
         });
       } else {
-        // Validate permission for the requested route now that user is loaded
         const currentRoute = router.currentRoute.value;
+        // If we are at the root, redirect to the default home route
+        if (currentRoute.path === "/") {
+          router.push(authStore.get_default_home_route());
+          return;
+        }
+
+        // Validate permission for the requested route now that user is loaded
         if (currentRoute.meta.permission) {
           if (
             !authStore.has_permission(currentRoute.meta.permission as string, [

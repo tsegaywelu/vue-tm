@@ -518,15 +518,15 @@ export function collect_bonus(id: string) {
   return bonus_api.addAuthenticationHeader().post(`/admin/${id}/collect`, {});
 }
 
-export function fetch_shipment_status_count() {
-  return shipment_api.addAuthenticationHeader().get("/statusCount");
+export function fetch_shipment_status_count(params?: Record<string, any>) {
+  return shipment_api.addAuthenticationHeader().get("/statusCount", { params });
 }
 
 export function fetch_all_shipments_unpaginated(
   params?: Record<string, any>,
   config?: any,
 ) {
-  return shipment_api.addAuthenticationHeader().get("", config);
+  return shipment_api.addAuthenticationHeader().get("", { params, ...config });
 }
 
 export function add_insurance(data: any) {

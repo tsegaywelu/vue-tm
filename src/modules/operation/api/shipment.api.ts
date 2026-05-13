@@ -42,11 +42,19 @@ export function add_follow_up(id: string, data: any) {
 }
 
 export function create_shipment(data: any) {
-  return shipment_api.addAuthenticationHeader().post("", data);
+  return shipment_api.addAuthenticationHeader().post("/carrier", data);
+}
+
+export function create_shipment_shipper(data: any) {
+  return shipment_api.addAuthenticationHeader().post("/shipper", data);
 }
 
 export function update_shipment(id: string, data: any) {
-  return shipment_api.addAuthenticationHeader().patch(`/${id}`, data);
+  return shipment_api.addAuthenticationHeader().patch(`/${id}/carrier`, data);
+}
+
+export function update_shipment_shipper(id: string, data: any) {
+  return shipment_api.addAuthenticationHeader().patch(`/${id}/shipper`, data);
 }
 
 export function fetch_status_source_report(id: string) {

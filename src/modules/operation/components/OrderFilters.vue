@@ -19,7 +19,7 @@
     <OriginInput name="routeOrigin" multiple size="xs" />
     <DestinationInput name="routeDestination" multiple size="xs" />
     <OrderStatusInput name="status" size="xs" />
-    <ShipperInput name="shipper" size="xs" />
+    <ShipperInput v-if="!isShipper" name="shipper" size="xs" />
     <ProductTypeInput name="productType" size="xs" />
     <TripTypeInput name="tripType" size="xs" />
     <PriorityInput name="priority" size="xs" />
@@ -32,10 +32,14 @@ import OriginInput from "@/components/common/inputs/OriginInput.vue";
 import DestinationInput from "@/components/common/inputs/DestinationInput.vue";
 import OrderStatusInput from "@/components/common/inputs/OrderStatusInput.vue";
 import ShipperInput from "@/components/common/inputs/ShipperInput.vue";
-import AgentInput from "@/components/common/inputs/AgentInput.vue";
+import { useAuthStore } from "@/store/authStore";
 import ProductTypeInput from "@/components/common/inputs/ProductTypeInput.vue";
 import TripTypeInput from "@/components/common/inputs/TripTypeInput.vue";
 import PriorityInput from "@/components/common/inputs/PriorityInput.vue";
+import { computed } from "vue";
+
+const authStore = useAuthStore();
+const isShipper = computed(() => authStore.is_shipper);
 
 const emit = defineEmits(["change"]);
 </script>

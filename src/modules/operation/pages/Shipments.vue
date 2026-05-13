@@ -38,7 +38,10 @@
       </Dropdown>
 
       <!-- Add Shipment Button -->
-      <Button v-permission="'SHIPMENT:create'" @click="router.push('/operation/shipments/add')">
+      <Button
+        v-permission="'SHIPMENT:create'"
+        @click="router.push(`${basePath}/add`)"
+      >
         <template #leading>
           <div class="size-5" v-html="all_icons.plus"></div>
         </template>
@@ -57,7 +60,7 @@
     <StatsCards :stats="shipmentStats" :loading="isLoadingStats" />
   </Teleport>
 
-  <ShipmentTable @action="handleShipmentAction" />
+  <ShipmentTable :filters="shipperFilters" @action="handleShipmentAction" />
 </template>
 
 <script setup lang="ts">
@@ -75,16 +78,29 @@ import ShipmentDownloadToast from "../components/ShipmentDownloadToast.vue";
 import { fetch_shipment_status_count } from "../api/operation.api";
 import Dropdown from "@/components/common/Dropdown.vue";
 import DropDownItem from "@/components/common/DropDownItem.vue";
+import { useAuthStore } from "@/store/authStore";
 
 const all_icons = { ...icons, ...raaz_icons };
 const router = useRouter();
 const toast = useToastStore();
+const authStore = useAuthStore();
+
+const basePath = computed(() =>
+  authStore.is_shipper ? "/shipper/shipments" : "/operation/shipments",
+);
+
+// Shipper users see only their scoped shipments
+const shipperFilters = computed(() =>
+  authStore.is_shipper
+    ? { shipper: authStore.current_user?.user?.shipper?._id }
+    : undefined,
+);
 
 const isDropdownOpen = ref(false);
 
 const { data: statsResponse, isLoading: isLoadingStats } = useQuery({
-  queryKey: ["shipmentStatusCount"],
-  queryFn: () => fetch_shipment_status_count(),
+  queryKey: ["shipmentStatusCount", shipperFilters],
+  queryFn: () => fetch_shipment_status_count(shipperFilters.value),
 });
 
 const shipmentStats = computed(() => {
@@ -114,9 +130,9 @@ const handleShipmentAction = ({
   action: string;
 }) => {
   if (action === "view") {
-    router.push(`/operation/shipments/${row._id}`);
+    router.push(`${basePath.value}/${row._id}`);
   } else if (action === "edit") {
-    router.push(`/operation/shipments/edit/${row._id}`);
+    router.push(`${basePath.value}/edit/${row._id}`);
   } else if (action === "create_advance") {
     router.push(`/operation/advances?shipmentCode=${row.shipmentCode}`);
   } else {

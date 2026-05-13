@@ -15,6 +15,7 @@
             :file-path="shipment?.civ"
             :full-url="getStaticUrl(shipment?.civ)"
             :can-reject="canReject"
+            :read-only="isShipper"
             :upload-function="upload_civ"
           />
           <DocumentCard
@@ -24,6 +25,7 @@
             :file-path="shipment?.arv"
             :full-url="getStaticUrl(shipment?.arv)"
             :can-reject="canReject"
+            :read-only="isShipper"
             :upload-function="upload_arv"
           />
           <DocumentCard
@@ -33,6 +35,7 @@
             :file-path="shipment?.aiv"
             :full-url="getStaticUrl(shipment?.aiv)"
             :can-reject="canReject"
+            :read-only="isShipper"
             :upload-function="upload_aiv"
           />
           <DocumentCard
@@ -42,6 +45,7 @@
             :file-path="shipment?.crv"
             :full-url="getStaticUrl(shipment?.crv)"
             :can-reject="canReject"
+            :read-only="isShipper"
             :upload-function="upload_crv"
           />
           <DocumentCard
@@ -51,6 +55,7 @@
             :file-path="shipment?.odometerAtCompleteDocument"
             :full-url="getStaticUrl(shipment?.odometerAtCompleteDocument)"
             :can-reject="canReject"
+            :read-only="isShipper"
             :upload-function="upload_closing_documents"
           />
           <DocumentCard
@@ -60,6 +65,7 @@
             :file-path="shipment?.fuelReadingAtCompleteDocument"
             :full-url="getStaticUrl(shipment?.fuelReadingAtCompleteDocument)"
             :can-reject="canReject"
+            :read-only="isShipper"
             :upload-function="upload_closing_documents"
           />
         </div>
@@ -80,11 +86,13 @@
             :file-path="doc"
             :full-url="getStaticUrl(doc)"
             :can-reject="canReject"
+            :read-only="isShipper"
             :upload-function="upload_closing_documents"
           />
 
           <!-- Empty card for new uploads -->
           <DocumentCard
+            v-if="!isShipper"
             title="Upload Closing Document"
             document-type="closingDocuments"
             :shipment-id="shipment?._id"
@@ -111,11 +119,13 @@
             :file-path="doc"
             :full-url="getStaticUrl(doc)"
             :can-reject="canReject"
+            :read-only="isShipper"
             :upload-function="upload_closing_documents"
           />
 
           <!-- Empty card for new uploads -->
           <DocumentCard
+            v-if="!isShipper"
             title="Upload New Document"
             document-type="shipmentDocuments"
             :shipment-id="shipment?._id"
@@ -132,9 +142,13 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
+import { useAuthStore } from "@/store/authStore";
 import InfoWrapper from "./InfoWrapper.vue";
 import DocumentCard from "./DocumentCard.vue";
 import { getStaticUrl } from "@/utils/utils";
+
+const authStore = useAuthStore();
+const isShipper = computed(() => authStore.is_shipper);
 import {
   upload_aiv,
   upload_civ,

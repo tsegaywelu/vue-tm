@@ -47,9 +47,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted } from "vue";
+import { ref, watch, onMounted, computed } from "vue";
 import { useQuery } from "@tanstack/vue-query";
 import { useToastStore } from "@/store/toastStore";
+import { useAuthStore } from "@/store/authStore";
 import { fetch_all_shipments_unpaginated } from "../api/operation.api";
 import {
   exportToExcel,
@@ -65,9 +66,12 @@ const props = defineProps<{
 }>();
 
 const toastStore = useToastStore();
+const authStore = useAuthStore();
 const progress = ref(0);
 const statusText = ref("Fetching shipment dataset...");
 let hasExported = false;
+
+const shipperId = computed(() => authStore.current_user?.user?.shipper?._id);
 
 const closeToast = () => {
   toastStore.removeToast(props.toastId);
@@ -75,10 +79,10 @@ const closeToast = () => {
 
 // Use TanStack useQuery for caching and to pass progress config
 const { data: response, isError } = useQuery({
-  queryKey: ["unpaginated_shipments"],
+  queryKey: ["unpaginated_shipments", shipperId],
   queryFn: () =>
     fetch_all_shipments_unpaginated(
-      {},
+      shipperId.value ? { shipper: shipperId.value } : {},
       {
         onDownloadProgress: (progressEvent: any) => {
           if (progressEvent.total) {

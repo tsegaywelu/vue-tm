@@ -17,7 +17,7 @@
     id="order-list"
     :columns="columns"
     :rows="response"
-    @row_click="(row) => router.push(`/operation/orders/${row._id}`)"
+    @row_click="(row) => router.push(`${resolvedBasePath}/${row._id}`)"
   >
     <template #after-search>
       <div
@@ -108,12 +108,30 @@
             :icon="icons.eye"
             label="Details"
             @click.stop="
-              router.push(`/operation/orders/${row._id}`);
+              router.push(`${resolvedBasePath}/${row._id}`);
               close();
             "
           />
           <DropDownItem
-            v-if="row.status === 'approved'"
+            v-if="row.status === 'pending' && isShipper"
+            :icon="icons.check"
+            label="Approve"
+            @click.stop="
+              emitAction(row, 'approve');
+              close();
+            "
+          />
+          <DropDownItem
+            v-if="row.status === 'pending' && isShipper"
+            :icon="icons.close"
+            label="Cancel"
+            @click.stop="
+              emitAction(row, 'cancel');
+              close();
+            "
+          />
+          <DropDownItem
+            v-if="row.status === 'approved' && !isShipper"
             :icon="icons.truck"
             label="Ship"
             @click.stop="
@@ -121,7 +139,8 @@
               close();
             "
           />
-          <DropDownItem v-permission="'ORDER:update'"
+          <DropDownItem
+            v-permission="'ORDER:update'"
             :icon="icons.editIcon"
             label="Edit"
             @click.stop="
@@ -145,31 +164,53 @@ import Dropdown from "@/components/common/Dropdown.vue";
 import DropDownItem from "@/components/common/DropDownItem.vue";
 import OrderFilters from "./OrderFilters.vue";
 import { icons } from "@/utils/icons";
+import { useAuthStore } from "@/store/authStore";
 import { usePagination } from "@/composables/usePagination";
 import type { ShipmentFilterParams } from "../operation.types";
 
 const router = useRouter();
 const emit = defineEmits(["action"]);
 
-const columns: TableColumn[] = [
-  { key: "order", label: "Order", field: "route" },
-  { key: "details", label: "Details", field: "vehicleType" },
-  { key: "created", label: "Created", field: "createdAt" },
-  { key: "shipper", label: "Shipper", field: "shipper" },
-  { key: "carrier", label: "Carrier", field: "carrier" },
-  { key: "status", label: "Status", field: "status" },
-  { key: "actions", label: "Actions", field: "", cellAlign: "right" },
-];
+const props = defineProps<{
+  filters?: any;
+  basePath?: string;
+}>();
+
+const resolvedBasePath = computed(() => props.basePath || "/operation/orders");
+
+const authStore = useAuthStore();
+const isShipper = computed(() => authStore.is_shipper);
+
+const columns = computed(() => {
+  const cols: TableColumn[] = [
+    { key: "order", label: "Order", field: "route" },
+    { key: "details", label: "Details", field: "vehicleType" },
+    { key: "created", label: "Created", field: "createdAt" },
+  ];
+
+  if (!isShipper.value) {
+    cols.push({ key: "shipper", label: "Shipper", field: "shipper" });
+  }
+
+  cols.push(
+    { key: "carrier", label: "Carrier", field: "carrier" },
+    { key: "status", label: "Status", field: "status" },
+    { key: "actions", label: "Actions", field: "", cellAlign: "right" },
+  );
+
+  return cols;
+});
 
 const activeFilters = ref<ShipmentFilterParams>({});
 
 const { response, refetch } = usePagination({
-  queryKey: ["order-list"],
+  queryKey: ["order-list", isShipper.value],
   id: "order-list",
-  url: "/order",
+  url: isShipper.value ? "/order/shipper" : "/order",
   params: (state: any) => {
     return {
       orderCode: state.search || "",
+      ...props.filters,
       ...activeFilters.value,
       q: undefined,
     };

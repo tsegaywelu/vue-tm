@@ -13,25 +13,49 @@
     <StatsCards :stats="orderStats" :loading="isLoadingStats" />
   </Teleport>
 
-  <OrderTable @action="handleOrderAction" />
+  <OrderTable
+    :filters="shipperFilters"
+    :base-path="basePath"
+    @action="handleOrderAction"
+  />
 </template>
 
 <script setup lang="ts">
 import { computed } from "vue";
 import { useRouter } from "vue-router";
-import { useQuery } from "@tanstack/vue-query";
+import { useQuery, useQueryClient } from "@tanstack/vue-query";
 import OrderTable from "../components/OrderTable.vue";
 import StatsCards from "@/components/common/StatsCards.vue";
 import Button from "@/components/Button.vue";
 import { icons } from "@/utils/icons";
 import { raaz_icons } from "@/utils/raaz_icons";
 import { openModal } from "@customizer/modal-x";
-import { approve_order, cancel_order, fetch_order_status_count } from "../api/orders.api";
+import {
+  approve_order,
+  cancel_order,
+  cancel_order_shipper,
+  fetch_order_status_count,
+} from "../api/orders.api";
 import { useToastStore } from "@/store/toastStore";
+
+import { useAuthStore } from "@/store/authStore";
+import { update_order_status } from "../api/operation.api";
 
 const all_icons = { ...icons, ...raaz_icons };
 const router = useRouter();
 const toast = useToastStore();
+const authStore = useAuthStore();
+const queryClient = useQueryClient();
+
+const basePath = computed(() =>
+  authStore.is_shipper ? "/shipper/orders" : "/operation/orders",
+);
+
+const shipperFilters = computed(() =>
+  authStore.is_shipper
+    ? { shipper: authStore.current_user?.user?.shipper?._id }
+    : undefined,
+);
 
 const { data: statsResponse, isLoading: isLoadingStats } = useQuery({
   queryKey: ["orderStatusCount"],
@@ -51,10 +75,21 @@ const orderStats = computed(() => {
 });
 
 const navigateToAddOrder = () => {
-  router.push("/operation/orders/add");
+  router.push(`${basePath.value}/add`);
 };
 
-const handleOrderAction = ({ row, action }: { row: any; action: string }) => {
+const invalidateOrderQueries = () => {
+  queryClient.invalidateQueries({ queryKey: ["order-list"] });
+  queryClient.invalidateQueries({ queryKey: ["orderStatusCount"] });
+};
+
+const handleOrderAction = async ({
+  row,
+  action,
+}: {
+  row: any;
+  action: string;
+}) => {
   if (action === "approve") {
     openModal(
       "ConfirmationModal",
@@ -66,35 +101,42 @@ const handleOrderAction = ({ row, action }: { row: any; action: string }) => {
       },
       async (confirmed) => {
         if (confirmed) {
-          const res = await approve_order(row._id);
+          const res = authStore.is_shipper
+            ? await update_order_status(row._id, { status: "approved" })
+            : await approve_order(row._id);
           if (res.success) {
             toast.success("Order approved successfully");
+            invalidateOrderQueries();
           }
         }
       },
     );
   } else if (action === "cancel") {
-    openModal(
-      "ConfirmationModal",
-      {
-        title: "Cancel Order",
-        message: `Are you sure you want to cancel order ${row.orderCode}?`,
-        confirmText: "Cancel",
-        type: "danger",
-      },
-      async (confirmed) => {
-        if (confirmed) {
-          const res = await cancel_order(row._id);
-          if (res.success) {
-            toast.success("Order cancelled successfully");
-          }
-        }
-      },
-    );
+    const res = await openModal("ReasonModal", {
+      title: "Cancel Order",
+      message: `Are you sure you want to cancel order ${row.orderCode}?`,
+      confirmText: "Cancel Order",
+    });
+
+    if (res) {
+      const response = await cancel_order_shipper(row._id, {
+        cancelReason: res as string,
+        status: "cancelled",
+      });
+      if (response.success) {
+        toast.success("Order cancelled successfully");
+        invalidateOrderQueries();
+      } else {
+        toast.error(response.error);
+      }
+    }
   } else if (action === "ship") {
-    router.push(`/operation/shipments/add-from-order/${row._id}`);
+    const shipPath = authStore.is_shipper
+      ? "/shipper/shipments"
+      : "/operation/shipments";
+    router.push(`${shipPath}/add-from-order/${row._id}`);
   } else if (action === "edit") {
-    router.push(`/operation/orders/edit/${row._id}`);
+    router.push(`${basePath.value}/edit/${row._id}`);
   }
 };
 </script>
