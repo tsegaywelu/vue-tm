@@ -28,7 +28,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
+import { computed, ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import UserTable from "../../components/settings/UserTable.vue";
 import RoleTable from "../../components/settings/RoleTable.vue";
@@ -36,7 +36,6 @@ import Button from "@/components/Button.vue";
 import { icons } from "@/utils/icons";
 import { delete_user, delete_role } from "../../api/settings.api";
 import { useToastStore } from "@/store/toastStore";
-
 import { openModal } from "@customizer/modal-x";
 
 const router = useRouter();
@@ -46,18 +45,13 @@ const toast = useToastStore();
 const userTableRef = ref();
 const roleTableRef = ref();
 
-const currentTab = computed(() => {
-  const tab = (route.query.tab as string) || "user";
-  return tab;
-});
-
-watch(currentTab, (newTab) => {
-  router.replace({ query: { ...route.query, tab: newTab } });
-});
+const currentTab = computed(() => (route.query.tab as string) || "user");
 
 const handleAdd = () => {
   if (currentTab.value === "user") {
-    router.push("/setting/user-and-role/user/add");
+    openModal("CarrierUserModal", {}).then((res) => {
+      if (res) userTableRef.value?.refetch();
+    });
   } else {
     router.push("/setting/user-and-role/role/add");
   }
@@ -65,11 +59,12 @@ const handleAdd = () => {
 
 const handleAction = async ({ row, action }: any, type: "user" | "role") => {
   if (action === "edit") {
-    router.push(`/setting/user-and-role/${type}/edit/${row._id}`);
-  } else if (action === "reset" && type === "user") {
-    router.push(`/setting/user-and-role/user/reset-password/${row._id}`);
-  } else if (action === "delete") {
-    const name = type === "user" ? row.username : row.name;
+    if (type === "user") {
+      const res = await openModal("CarrierUserModal", { user: row });
+      if (res) userTableRef.value?.refetch();
+    } else {
+      router.push(`/setting/user-and-role/role/edit/${row._id}`);
+    }
   } else if (action === "reset" && type === "user") {
     openModal("UserResetPassword", {
       user: row,
@@ -77,16 +72,20 @@ const handleAction = async ({ row, action }: any, type: "user" | "role") => {
     });
   } else if (action === "delete") {
     const name = type === "user" ? row.username : row.name;
-    if (confirm(`Are you sure you want to delete ${type} "${name}"?`)) {
+    const confirmed = await openModal("ConfirmationModal", {
+      title: `Delete ${type === "user" ? "User" : "Role"}`,
+      message: `Are you sure you want to delete ${type} "${name}"?`,
+      confirmText: "Delete",
+      action: "delete",
+    });
+    if (confirmed) {
       try {
         const res =
           type === "user"
             ? await delete_user(row._id)
             : await delete_role(row._id);
         if (res.success) {
-          toast.success(
-            `${type.charAt(0).toUpperCase() + type.slice(1)} deleted successfully`,
-          );
+          toast.success(`${type === "user" ? "User" : "Role"} deleted successfully`);
           if (type === "user") userTableRef.value?.refetch();
           else roleTableRef.value?.refetch();
         } else {

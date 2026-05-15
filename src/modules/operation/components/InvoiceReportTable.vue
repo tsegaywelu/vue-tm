@@ -3,11 +3,20 @@
     id="invoice-report-list"
     :columns="columns"
     :rows="response"
-    search_placeholder="Search..."
+    search_placeholder="Search by reference..."
+    v-model:search_value="searchTerm"
     @row_click="handleAction($event, 'view')"
   >
+    <template #after-search>
+      <div
+        class="items-center gap-4 inline-flex border-l border-grey-100 overflow-x-auto px-3"
+      >
+        <i v-html="icons.filter" />
+        <InvoiceReportFilters @change="handleFilterChange" />
+      </div>
+    </template>
     <template #cell-reference="{ value }">
-      <span class="font-bold text-primary">{{ value || '-' }}</span>
+      <span class="font-bold text-primary">{{ value || "-" }}</span>
     </template>
 
     <template #cell-totalAmount="{ value }">
@@ -24,13 +33,13 @@
 
     <template #cell-paymentRequestedBy="{ row }">
       <span class="font-medium text-gray-700">
-        {{ row.paymentRequestedBy?.username || '-' }}
+        {{ row.paymentRequestedBy?.username || "-" }}
       </span>
     </template>
 
     <template #cell-status="{ value }">
       <Status :variant="value || 'pending'" type="wrapped">
-        {{ (value || 'Pending').replace(/_/g, " ") }}
+        {{ (value || "Pending").replace(/_/g, " ") }}
       </Status>
     </template>
 
@@ -46,7 +55,8 @@
                 close();
               "
             /> -->
-            <DropDownItem v-permission="'REPORT:approve'"
+            <DropDownItem
+              v-permission="'REPORT:approve'"
               :icon="icons.check"
               label="Approve"
               @click.stop="
@@ -54,7 +64,8 @@
                 close();
               "
             />
-            <DropDownItem v-permission="'REPORT:cancel'"
+            <DropDownItem
+              v-permission="'REPORT:cancel'"
               :icon="icons.close"
               label="Cancel"
               @click.stop="
@@ -62,7 +73,8 @@
                 close();
               "
             />
-            <DropDownItem v-permission="'REPORT:read'"
+            <DropDownItem
+              v-permission="'REPORT:read'"
               :icon="icons.eye"
               label="Details"
               @click.stop="
@@ -87,14 +99,23 @@ import { icons } from "@/utils/icons";
 import { usePagination } from "@/composables/usePagination";
 import type { TableColumn } from "@/components/common/Table.vue";
 import { currencyFormatter, dateFormatter } from "@/utils/utils";
+import InvoiceReportFilters from "./finance/InvoiceReportFilters.vue";
 
 const emit = defineEmits(["action"]);
 
 const columns: TableColumn<any>[] = [
   { key: "reference", label: "Reference", field: "reference" },
   { key: "totalAmount", label: "Total Amount", field: "totalAmount" },
-  { key: "paymentRequestedDate", label: "Request Date", field: "paymentRequestedDate" },
-  { key: "paymentRequestedBy", label: "Requested By", field: "paymentRequestedBy.username" },
+  {
+    key: "paymentRequestedDate",
+    label: "Request Date",
+    field: "paymentRequestedDate",
+  },
+  {
+    key: "paymentRequestedBy",
+    label: "Requested By",
+    field: "paymentRequestedBy.username",
+  },
   { key: "status", label: "Status", field: "status" },
   { key: "actions", label: "Actions", field: "", cellAlign: "right" },
 ];
@@ -106,14 +127,27 @@ const props = defineProps<{
   };
 }>();
 
+const searchTerm = ref("");
+const activeFilters = ref<{ shipper?: string }>({});
+
+const handleFilterChange = (values: { shipper?: string }) => {
+  activeFilters.value = values;
+};
+
 const { response, refetch } = usePagination<any>({
   id: "invoice-report-list",
   url: "/shipment/paymentRequestedInvoices",
-  params: computed(() => ({
-    ...props.filters,
-    ...(props.filters?.startDate && { "createdAt[gte]": props.filters.startDate }),
-    ...(props.filters?.endDate && { "createdAt[lte]": props.filters.endDate }),
-  })),
+  params: (state) => {
+    const params: any = {};
+    if (props.filters?.startDate)
+      params["createdAt[gte]"] = props.filters.startDate;
+    if (props.filters?.endDate)
+      params["createdAt[lte]"] = props.filters.endDate;
+    if (state.search) params["reference[regexAny]"] = state.search;
+    if (activeFilters.value.shipper)
+      params.shipper = activeFilters.value.shipper;
+    return { ...params, q: undefined };
+  },
 });
 
 const handleAction = (row: any, action: string) => {

@@ -42,7 +42,7 @@
 
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import Button from "@/components/common/Button.vue";
 import UsersTable from "../components/UserManagement/UsersTable.vue";
 import RolesTable from "../components/UserManagement/RolesTable.vue";
@@ -52,6 +52,7 @@ import { delete_user, delete_role } from "../api/shipper.api";
 import { useToastStore } from "@/store/toastStore";
 
 const route = useRoute();
+const router = useRouter();
 const toast = useToastStore();
 
 const activeTab = computed(() => (route.query.tab as string) || "users");
@@ -60,18 +61,17 @@ const usersTableRef = ref();
 const rolesTableRef = ref();
 
 const handleAddUser = async () => {
-  const res = await openModal("UserModal", {});
+  const res = await openModal("ShipperUserModal", {});
   if (res) usersTableRef.value?.refetch();
 };
 
 const handleAddRole = async () => {
-  const res = await openModal("RoleModal", {});
-  if (res) rolesTableRef.value?.refetch();
+  router.push("/shipper/users/role/add");
 };
 
 const handleUserAction = async ({ action, row }: any) => {
   if (action === "edit") {
-    const res = await openModal("UserModal", { user: row });
+    const res = await openModal("ShipperUserModal", { user: row });
     if (res) usersTableRef.value?.refetch();
   } else if (action === "delete") {
     const confirmed = await openModal("ConfirmationModal", {
@@ -99,8 +99,7 @@ const handleUserAction = async ({ action, row }: any) => {
 
 const handleRoleAction = async ({ action, row }: any) => {
   if (action === "edit") {
-    const res = await openModal("RoleModal", { role: row });
-    if (res) rolesTableRef.value?.refetch();
+    router.push(`/shipper/users/role/edit/${row._id}`);
   } else if (action === "delete") {
     const confirmed = await openModal("ConfirmationModal", {
       title: "Delete Role",

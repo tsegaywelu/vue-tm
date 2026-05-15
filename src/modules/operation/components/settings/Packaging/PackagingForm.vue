@@ -1,17 +1,6 @@
 <template>
-  <Colapsable
-    title="Packaging Information"
-    description="Provide details about the packaging type."
-  >
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <SelectInput
-        name="shipper"
-        label="Shipper"
-        url="/shipper"
-        label_key="name"
-        value_key="_id"
-        :validation="{ required }"
-      />
+  <div class="flex flex-col gap-6">
+    <div class="grid grid-cols-1 gap-6">
       <Input
         name="name"
         label="Name"
@@ -21,14 +10,11 @@
         }"
       />
     </div>
-  </Colapsable>
+  </div>
 </template>
 
 <script setup lang="ts">
-import Form from "@/components/form/Form.vue";
 import Input from "@/components/form/Input.vue";
-import SelectInput from "@/components/form/SelectInput.vue";
-import Colapsable from "@/components/common/Colapsable.vue";
 import { required } from "@/utils/validations";
 
 defineProps<{}>();

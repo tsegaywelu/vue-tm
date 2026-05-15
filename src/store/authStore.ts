@@ -15,6 +15,16 @@ export const useAuthStore = defineStore("auth", () => {
     return !!user?.shipper;
   });
 
+  const shipperId = computed(() => {
+    const user = current_user.value?.user || current_user.value;
+    return user?.shipper?._id || "";
+  });
+
+  const carrierId = computed(() => {
+    const user = current_user.value?.user || current_user.value;
+    return user?.carrier?._id || "";
+  });
+
   const set_tokens = (accessToken: string, refreshToken?: string) => {
     token.value = accessToken;
     localStorage.setItem("token", accessToken);
@@ -110,6 +120,8 @@ export const useAuthStore = defineStore("auth", () => {
     is_loading,
     is_authenticated,
     is_shipper,
+    shipperId,
+    carrierId,
     set_tokens,
     set_user,
     logout,

@@ -111,19 +111,16 @@
       </template>
 
       <template #cell-actions="{ row }">
-        <div class="flex items-center justify-end">
-          <Dropdown>
-            <template #default="{ close }">
-              <DropDownItem v-permission="'TRANSACTION:read'"
-                :icon="icons.eye"
-                label="Details"
-                @click.stop="
-                  handleAction(row, 'view');
-                  close();
-                "
-              />
-            </template>
-          </Dropdown>
+        <div class="flex items-center justify-center">
+          <button
+            type="button"
+            v-permission="'TRANSACTION:read'"
+            class="p-2 rounded-full hover:bg-gray-100 transition-colors text-gray-500 hover:text-primary"
+            @click.stop="handleAction(row, 'view')"
+            title="Details"
+          >
+            <i v-html="icons.eye"></i>
+          </button>
         </div>
       </template>
     </Table>
@@ -133,8 +130,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
 import Table from "@/components/common/Table.vue";
-import Dropdown from "@/components/common/Dropdown.vue";
-import DropDownItem from "@/components/common/DropDownItem.vue";
 import Status from "@/components/common/Status.vue";
 import { icons } from "@/utils/icons";
 import { usePagination } from "@/composables/usePagination";

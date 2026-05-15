@@ -1,24 +1,5 @@
 <template>
   <div class="flex flex-col h-full">
-    <!-- Tab Navigation -->
-    <div class="mb-4 px-2">
-      <nav class="flex space-x-8 border-b border-gray-200">
-        <button
-          v-for="tab in tabs"
-          :key="tab.id"
-          @click="currentTab = tab.id"
-          :class="[
-            currentTab === tab.id
-              ? 'border-primary text-primary'
-              : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
-            'whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors'
-          ]"
-        >
-          {{ tab.name }}
-        </button>
-      </nav>
-    </div>
-
     <!-- Page Actions (Teleported) -->
     <Teleport to="#page-actions" defer>
       <Button
@@ -64,7 +45,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from "vue";
+import { ref, computed } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import CarrierSettingTable from "../../components/settings/BaseConfiguration/CarrierSettingTable.vue";
 import RoadTypeTable from "../../components/settings/BaseConfiguration/RoadTypeTable.vue";
@@ -86,25 +67,13 @@ const router = useRouter();
 const route = useRoute();
 const toast = useToastStore();
 
-const tabs = [
-  { id: "settings", name: "Settings" },
-  { id: "roadType", name: "Road Type" },
-  { id: "terrainType", name: "Terrain Type" },
-  { id: "bank", name: "Bank" },
-  { id: "insurance", name: "Insurance Provider" },
-];
-
-const currentTab = ref((route.query.tab as string) || tabs[0].id);
-
-watch(currentTab, (newTab) => {
-  router.replace({ query: { ...route.query, tab: newTab } });
-});
+const currentTab = computed(() => (route.query.tab as string) || "settings");
 
 const activeTabLabel = computed(() => {
-  return tabs.find((t) => t.id === currentTab.value)?.name || "";
+  const tabs = (route.meta.tabs as { value: string; label: string }[]) || [];
+  return tabs.find((t) => t.value === currentTab.value)?.label || "";
 });
 
-// Table References for refetching
 const settingsTableRef = ref();
 const roadTypeTableRef = ref();
 const terrainTypeTableRef = ref();
@@ -147,7 +116,6 @@ const handleAction = async ({ row, action }: any, type: string) => {
 
         if (res?.success) {
           toast.success("Deleted successfully");
-          // Refetch appropriate table
           if (type === "settings") settingsTableRef.value?.refetch();
           else if (type === "roadType") roadTypeTableRef.value?.refetch();
           else if (type === "terrainType") terrainTypeTableRef.value?.refetch();

@@ -1,33 +1,38 @@
 <template>
-  <div v-if="isLoading" class="flex justify-center py-10">
-    <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
-  </div>
-  <UserForm
-    v-else-if="initialValues"
-    form-id="edit-user-form"
-    :initial-values="initialValues"
-    :on-submit="handleUpdate"
-    is-edit
-  >
-    <template #submit-btn>
-      <Button size="md" variant="outline" @click="router.back()">
-        Cancel
-      </Button>
-      <SubmitButton> Save Changes </SubmitButton>
-    </template>
-  </UserForm>
+  <DashboardPage title="Edit User" subtitle="Update user account details">
+    <div v-if="isLoading" class="flex justify-center py-10">
+      <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
+    </div>
+    <Form
+      v-else-if="initialValues"
+      id="edit-user-form"
+      :values="initialValues"
+      @submit="handleUpdate"
+    >
+      <div class="flex flex-col gap-6">
+        <CarrierUserForm is-edit :labels="labels" />
+        <div class="flex justify-end gap-3">
+          <Button size="md" variant="outline" @click="router.back()">
+            Cancel
+          </Button>
+          <SubmitButton :loading="mutation.isPending.value"> Save Changes </SubmitButton>
+        </div>
+      </div>
+    </Form>
+  </DashboardPage>
 </template>
 
 <script setup lang="ts">
 import { computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { useQuery, useMutation } from "@tanstack/vue-query";
-import UserForm from "../../components/settings/UserForm.vue";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/vue-query";
+import CarrierUserForm from "../../components/settings/CarrierUserForm.vue";
+import Form from "@/components/form/Form.vue";
+import DashboardPage from "@/components/common/DashboardPage.vue";
 import { fetch_user_details, update_user } from "../../api/settings.api";
 import { useToastStore } from "@/store/toastStore";
 import SubmitButton from "@/components/form/SubmitButton.vue";
 import Button from "@/components/Button.vue";
-import { useQueryClient } from "@tanstack/vue-query";
 
 const queryClient = useQueryClient();
 const route = useRoute();
@@ -37,7 +42,7 @@ const id = route.params.id as string;
 
 const { data: response, isLoading } = useQuery({
   queryKey: ["user", id],
-  queryFn: () => fetch_user_details(id), 
+  queryFn: () => fetch_user_details(id),
   enabled: !!id,
 });
 
@@ -48,6 +53,14 @@ const initialValues = computed(() => {
     username: data.username || "",
     role: data.role?._id || data.role || "",
     region: data.region?._id || data.region || "",
+  };
+});
+
+const labels = computed(() => {
+  const data = (response.value?.data as any)?.result || response.value?.data;
+  return {
+    role: data?.role?.name || "",
+    region: data?.region?.name || "",
   };
 });
 

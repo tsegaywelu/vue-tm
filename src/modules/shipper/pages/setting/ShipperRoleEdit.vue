@@ -10,7 +10,7 @@
       @submit="handleUpdate"
     >
       <div class="flex flex-col gap-6">
-        <RoleForm />
+        <ShipperRoleForm />
         <div class="flex justify-end gap-3">
           <Button size="md" variant="outline" @click="router.back()">
             Cancel
@@ -26,10 +26,10 @@
 import { computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/vue-query";
-import RoleForm from "../../components/settings/CarrierRoleForm.vue";
+import ShipperRoleForm from "../../components/UserManagement/ShipperRoleForm.vue";
 import Form from "@/components/form/Form.vue";
 import DashboardPage from "@/components/common/DashboardPage.vue";
-import { fetch_role_details, update_role } from "../../api/settings.api";
+import { fetch_shipper_role_details, update_role } from "../../api/shipper.api";
 import { useToastStore } from "@/store/toastStore";
 import SubmitButton from "@/components/form/SubmitButton.vue";
 import Button from "@/components/Button.vue";
@@ -41,8 +41,8 @@ const toast = useToastStore();
 const id = route.params.id as string;
 
 const { data: response, isLoading } = useQuery({
-  queryKey: ["role", id],
-  queryFn: () => fetch_role_details(id),
+  queryKey: ["shipper-role", id],
+  queryFn: () => fetch_shipper_role_details(id),
   enabled: !!id,
 });
 
@@ -62,17 +62,13 @@ const mutation = useMutation({
 });
 
 const handleUpdate = async (values: any) => {
-  try {
-    const res = await mutation.mutateAsync(values);
-    if (res.success) {
-      toast.success("Role updated successfully");
-      queryClient.invalidateQueries({ queryKey: ["roles-list"] });
-      router.push("/setting/user-and-role");
-    } else {
-      toast.error(res.error || "Failed to update role");
-    }
-  } catch (error: any) {
-    toast.error(error.message || "An unexpected error occurred");
+  const res = await mutation.mutateAsync(values);
+  if (res.success) {
+    toast.success("Role updated successfully");
+    queryClient.invalidateQueries({ queryKey: ["shipper-roles-list"] });
+    router.push("/shipper/users?tab=roles");
+  } else {
+    toast.error(res.error || "Failed to update role");
   }
 };
 </script>

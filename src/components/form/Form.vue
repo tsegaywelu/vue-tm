@@ -30,12 +30,14 @@ export interface FormProps {
   enable_unsaved_guard?: boolean;
   instance?: any;
   onSubmit?: (value: any, resetCb: () => void) => Promise<void> | void;
+  sanitize_bypass?: string[];
 }
 
 const props = withDefaults(defineProps<FormProps>(), {
   class_name: "",
   values: () => ({}),
   enable_unsaved_guard: true,
+  sanitize_bypass: () => [],
 });
 
 const emit = defineEmits<{
@@ -83,11 +85,37 @@ function stripFakeIds(val: any): any {
   return val;
 }
 
+/** Recursively remove empty/null/undefined fields and coerce numeric strings.
+ *  Keys listed in `bypass` are passed through as-is (top-level only). */
+function sanitizePayload(val: any, bypass: string[] = []): any {
+  if (val === "" || val === null || val === undefined) return undefined;
+  if (val instanceof File || val instanceof Date) return val;
+  if (Array.isArray(val)) {
+    return val.map((v) => sanitizePayload(v)).filter((v) => v !== undefined);
+  }
+  if (typeof val === "object") {
+    const result: Record<string, any> = {};
+    for (const key of Object.keys(val)) {
+      if (bypass.includes(key)) {
+        result[key] = val[key];
+      } else {
+        const cleaned = sanitizePayload(val[key]);
+        if (cleaned !== undefined) result[key] = cleaned;
+      }
+    }
+    return result;
+  }
+  if (typeof val === "string" && /^-?(\d+\.?\d*|\.\d+)$/.test(val)) {
+    return Number(val);
+  }
+  return val;
+}
+
 const localForm = !props.instance
   ? (useForm({
       defaultValues: props.values,
       onSubmit: async ({ value }) => {
-        const cleanValue = stripFakeIds(value);
+        const cleanValue = sanitizePayload(stripFakeIds(value), props.sanitize_bypass);
         if (props.onSubmit) {
           await props.onSubmit(cleanValue, () => form.value.reset());
         } else {

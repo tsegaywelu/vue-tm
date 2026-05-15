@@ -17,7 +17,7 @@ export function fetch_user_details(id: string) {
   return user_api.addAuthenticationHeader().get(`/${id}`)
 }
 
-export function create_user(data: any) {
+export function create_carrier_user(data: any) {
   return user_api2.addAuthenticationHeader().post('/register', data)
 }
 
@@ -57,11 +57,11 @@ export function delete_role(id: string) {
 }
 
 // ─── Base Configuration ───────────────────────────────────────
-const road_type_api = getApi('/roadType')
-const terrain_type_api = getApi('/terrainType')
+const road_type_api = getApi('/road-type')
+const terrain_type_api = getApi('/terrain-type')
 const bank_api = getApi('/bank')
-const insurance_api = getApi('/bankInsurance')
-const carrier_setting_api = getApi('/carrierSetting')
+const insurance_api = getApi('/insurance-provider')
+const carrier_setting_api = getApi('/carrier-settings')
 
 // Road Type
 export const fetch_road_types = (params: any) => road_type_api.addAuthenticationHeader().get('', { params })
@@ -91,6 +91,12 @@ export const fetch_contract_details = (id: string) => contract_api.addAuthentica
 export const create_contract = (data: any) => contract_api.addAuthenticationHeader().post('', data)
 export const update_contract = (id: string, data: any) => contract_api.addAuthenticationHeader().patch(`/${id}`, data)
 export const delete_contract = (id: string) => contract_api.addAuthenticationHeader().delete(`/${id}`)
+export const add_contract_route = (contractId: string, data: any) =>
+  contract_api.addAuthenticationHeader().patch(`/${contractId}/route`, data)
+export const update_contract_route = (contractId: string, routeId: string, data: any) =>
+  contract_api.addAuthenticationHeader().patch(`/${contractId}/route/${routeId}`, data)
+export const delete_contract_route = (contractId: string, routeId: string) =>
+  contract_api.addAuthenticationHeader().delete(`/${contractId}/route/${routeId}`)
 
 
 // ─── Carrier Management ───────────────────────────────────────

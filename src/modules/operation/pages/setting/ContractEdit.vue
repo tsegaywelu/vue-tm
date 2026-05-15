@@ -5,13 +5,11 @@
     </div>
 
     <Form v-else-if="initialValues" :id="formId" :values="initialValues" :onSubmit="handleSubmit">
-      <template #default="{ form }">
-        <ContractForm :form="form">
-          <template #actions="{ addedRoutes, carrierId }">
+      <template #default>
+        <ContractForm>
+          <template #actions="{ addedRoutes, shipperId }">
             <Button variant="outline" @click="router.back()">Discard Changes</Button>
-            <SubmitButton
-              :disabled="!carrierId || addedRoutes.length === 0"
-            >
+            <SubmitButton :disabled="!shipperId || addedRoutes.length === 0">
               Update Contract
             </SubmitButton>
           </template>
@@ -47,10 +45,15 @@ const { data: response, isLoading } = useQuery({
 
 const initialValues = computed(() => {
   if (!response.value?.data) return null;
-  const contract = response.value.data;
+  const contract = (response.value.data as any).result || response.value.data;
   return {
-    carrier: contract.carrier?._id,
+    shipper: contract.shipper?._id || '',
     routes: contract.routes || [],
+    tempRouteId: '',
+    tempCommodities: [],
+    tempPackagings: [],
+    tempAgents: [],
+    tempProductTypes: [],
   };
 });
 
@@ -59,21 +62,29 @@ const mutation = useMutation({
   onSuccess: () => {
     queryClient.invalidateQueries({ queryKey: ["contract-list"] });
     queryClient.invalidateQueries({ queryKey: ["contract", contractId] });
-  }
+  },
 });
 
 const handleSubmit = async (values: any) => {
   try {
-    const payload = {
-      carrier: values.carrier,
-      routes: values.routes,
-    };
-
-    if (!payload.routes || payload.routes.length === 0) {
+    if (!values.routes || values.routes.length === 0) {
       toast.error("Please add at least one route to the contract");
       return;
     }
-
+    const payload = {
+      shipper: values.shipper,
+      routes: values.routes.map((r: any) => ({
+        route: r.route,
+        waypoints: r.waypoints.map((wp: any) => ({
+          waypoint: wp.waypoint,
+          vehiclePricing: wp.vehiclePricing,
+        })),
+        commodities: r.commodities,
+        packagings: r.packagings,
+        agents: r.agents,
+        productType: r.productType,
+      })),
+    };
     const res = await mutation.mutateAsync(payload);
     if (res.success) {
       toast.success("Contract updated successfully");

@@ -14,40 +14,34 @@
       >
         <div class="flex flex-col gap-2 flex-1">
           <div class="flex items-center gap-4">
-            <div class="size-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+            <div
+              class="size-12 rounded-full bg-primary/10 flex items-center justify-center text-primary"
+            >
               <i class="mdi mdi-file-certificate-outline text-2xl"></i>
             </div>
             <div>
-              <h1 class="font-bold text-2xl leading-tight text-gray-900 uppercase">
+              <h1
+                class="font-bold text-2xl leading-tight text-gray-900 uppercase"
+              >
                 Contract Details
               </h1>
-              <div class="flex flex-col md:flex-row md:items-center gap-1 md:gap-4">
+              <div
+                class="flex flex-col md:flex-row md:items-center gap-1 md:gap-4"
+              >
                 <span class="text-sm text-gray-600">
                   Carrier:
                   <span class="font-bold text-black text-sm ml-1">
-                    {{ contract.carrier?.name || '-' }}
+                    {{ contract.carrier?.name || "-" }}
                   </span>
                 </span>
                 <span class="text-sm text-gray-600">
                   Shipper:
                   <span class="font-bold text-black text-sm ml-1">
-                    {{ contract.shipper?.name || '-' }}
+                    {{ contract.shipper?.name || "-" }}
                   </span>
                 </span>
               </div>
             </div>
-          </div>
-        </div>
-
-        <div class="flex flex-row items-center justify-between md:justify-end gap-3 md:gap-4">
-          <div class="flex gap-2">
-            <Button
-              variant="outline"
-              size="md"
-              @click="$router.push(`/setting/contract/edit/${contractId}`)"
-            >
-              Edit Contract
-            </Button>
           </div>
         </div>
       </div>
@@ -78,7 +72,10 @@ const contractId = route.params.id as string;
 
 const tabs = computed(() => (route.meta.tabs || []) as any[]);
 const activeTab = computed(
-  () => (route.query.tab as string) || (tabs.value?.[0]?.value as string) || "overview",
+  () =>
+    (route.query.tab as string) ||
+    (tabs.value?.[0]?.value as string) ||
+    "overview",
 );
 
 const { data: response, isLoading } = useQuery({

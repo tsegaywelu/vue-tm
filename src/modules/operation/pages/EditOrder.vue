@@ -4,7 +4,7 @@
       class="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"
     ></div>
   </div>
-  <OrderForm
+  <CarrierOrderForm
     v-else-if="initialValues"
     form-id="edit-order-form"
     :initial-values="initialValues"
@@ -18,13 +18,13 @@
       </Button>
       <SubmitButton> Save Changes </SubmitButton>
     </template>
-  </OrderForm>
+  </CarrierOrderForm>
 </template>
 
 <script setup lang="ts">
 import { computed } from "vue";
 import { useRouter, useRoute } from "vue-router";
-import OrderForm from "../components/OrderForm.vue";
+import CarrierOrderForm from "../components/CarrierOrderForm.vue";
 import { fetch_order_by_id, update_order, update_order_shipper } from "../api/orders.api";
 import { useToastStore } from "@/store/toastStore";
 import { useAuthStore } from "@/store/authStore";
@@ -103,10 +103,7 @@ const labels = computed(() => {
 });
 
 const updateMutation = useMutation({
-  mutationFn: (values: any) =>
-    authStore.is_shipper
-      ? update_order_shipper(orderId, values)
-      : update_order(orderId, values),
+  mutationFn: (values: any) => update_order(orderId, values),
 });
 
 const handleUpdateOrder = async (values: any) => {
@@ -115,8 +112,7 @@ const handleUpdateOrder = async (values: any) => {
     toast.success("Order updated successfully");
     queryClient.invalidateQueries({ queryKey: ["order", orderId] });
     queryClient.invalidateQueries({ queryKey: ["order-list"] });
-    const basePath = authStore.is_shipper ? "/shipper/orders" : "/operation/orders";
-    router.push(basePath);
+    router.push("/operation/orders");
   } else {
     toast.error(res.error || "Failed to update order");
   }

@@ -9,7 +9,7 @@
     @close="cancel"
   >
     <template #center>
-      <UserForm :isEdit="isEdit" />
+      <ShipperUserForm :isEdit="isEdit" :labels="labels" />
     </template>
     <template #bottom>
       <div class="flex justify-end gap-3 w-full">
@@ -37,8 +37,8 @@ import { useMutation } from "@tanstack/vue-query";
 import FormModalParent from "@/components/modals/FormModalParent.vue";
 import Button from "@/components/common/Button.vue";
 import SubmitButton from "@/components/form/SubmitButton.vue";
-import UserForm from "@/modules/operation/components/settings/UserForm.vue";
-import { create_user, update_user } from "../../api/shipper.api";
+import ShipperUserForm from "../UserManagement/ShipperUserForm.vue";
+import { create_shipper_user, update_user } from "../../api/shipper.api";
 import { useAuthStore } from "@/store/authStore";
 
 export type ReturnType = boolean;
@@ -52,6 +52,11 @@ const authStore = useAuthStore();
 const formId = "userForm";
 
 const isEdit = computed(() => !!props.data.user);
+
+const labels = computed(() => ({
+  role: props.data.user?.role?.name || "",
+  region: props.data.user?.region?.name || "",
+}));
 
 const initialValues = computed(() => {
   if (props.data.user) {
@@ -73,13 +78,11 @@ const initialValues = computed(() => {
 const mutation = useMutation({
   mutationFn: (values: any) => {
     if (isEdit.value) {
-      return update_user(props.data.user._id, values);
+      const { confirmPassword, ...payload } = values;
+      return update_user(props.data.user._id, payload);
     } else {
-      const payload = {
-        ...values,
-        shipper: authStore.shipperId,
-      };
-      return create_user(payload);
+      const { confirmPassword, ...payload } = values;
+      return create_shipper_user({ ...payload, shipper: authStore.shipperId });
     }
   },
   onSuccess: (res) => {

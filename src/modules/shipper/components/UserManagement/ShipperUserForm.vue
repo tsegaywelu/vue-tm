@@ -21,7 +21,7 @@
           />
           <button
             type="button"
-            @click="generatePassword"
+            @click="genPassword"
             class="text-[10px] text-primary font-bold hover:underline ml-1"
           >
             Generate Random
@@ -49,6 +49,7 @@
       label_key="name"
       value_key="_id"
       searchable
+      :display_value="labels?.role"
       :validation="{ required }"
     />
 
@@ -59,32 +60,30 @@
       label_key="name"
       value_key="_id"
       searchable
+      :display_value="labels?.region"
     />
   </div>
 </template>
 
 <script setup lang="ts">
 import { inject } from "vue";
-import Form from "@/components/form/Form.vue";
 import Input from "@/components/form/Input.vue";
 import SelectInput from "@/components/form/SelectInput.vue";
-import Colapsable from "@/components/common/Colapsable.vue";
 import { isEqualTo, password, required } from "@/utils/validations";
 import PasswordInput from "@/components/form/PasswordInput.vue";
+import { generatePassword } from "@/utils/utils";
 
 const props = defineProps<{
   isEdit?: boolean;
+  labels?: { role?: string; region?: string };
 }>();
 
 const formContext = inject("formContext") as any;
 
-const generatePassword = () => {
-  const charset = "0123456789";
-  const retVal = Array(8)
-    .fill(0)
-    .map(() => charset.charAt(Math.floor(Math.random() * charset.length)))
-    .join("");
-  formContext.form.setFieldValue("password", retVal);
-  formContext.form.setFieldValue("confirmPassword", retVal);
+const genPassword = () => {
+  generatePassword((val: string) => {
+    formContext.form.setFieldValue("password", val);
+    formContext.form.setFieldValue("confirmPassword", val);
+  });
 };
 </script>

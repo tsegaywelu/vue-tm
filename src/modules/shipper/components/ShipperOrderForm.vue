@@ -48,7 +48,7 @@
                 }"
                 label_key="routeName"
                 value_key="_id"
-                :url="`/route/shipper/${currentUserShipperId || ''}`"
+                :url="`/route/carrier/${carrier || ''}`"
                 :display_value="internalLabels.route"
                 :validation="{
                   required,

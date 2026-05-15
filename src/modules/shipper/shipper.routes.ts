@@ -230,6 +230,16 @@ export const shipper_routes: RouteRecordRaw[] = [
         },
       },
       {
+        path: "contracts/add",
+        name: "shipper_contract_add",
+        component: () => import("./pages/ShipperContractAdd.vue"),
+        meta: {
+          permission: "CONTRACT",
+          title: "Add Contract",
+          description: "Create a new contract.",
+        },
+      },
+      {
         path: "contracts/:id",
         name: "shipper_contract_details",
         component: () => import("./pages/ShipperContractDetail.vue"),
@@ -237,6 +247,8 @@ export const shipper_routes: RouteRecordRaw[] = [
           permission: "CONTRACT",
           title: "Contract Details",
           description: "View contract details.",
+          tabsTeleportTo: "#contract-details-tabs",
+          tabs: [{ label: "Overview", value: "overview" }],
         },
       },
       // ── Settings ──
@@ -333,6 +345,24 @@ export const shipper_routes: RouteRecordRaw[] = [
             { label: "Users", value: "users" },
             { label: "Roles", value: "roles" },
           ],
+        },
+      },
+      {
+        path: "users/role/add",
+        name: "shipper_role_add",
+        component: () => import("./pages/setting/ShipperRoleAdd.vue"),
+        meta: {
+          title: "Add Role",
+          description: "Create a new role with specific permissions.",
+        },
+      },
+      {
+        path: "users/role/edit/:id",
+        name: "shipper_role_edit",
+        component: () => import("./pages/setting/ShipperRoleEdit.vue"),
+        meta: {
+          title: "Edit Role",
+          description: "Modify an existing role.",
         },
       },
     ],

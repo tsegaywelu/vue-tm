@@ -6,7 +6,7 @@
       @submit="handleCreate"
     >
       <div class="flex flex-col gap-6">
-        <RoleForm />
+        <ShipperRoleForm />
         <div class="flex justify-end gap-3">
           <Button size="md" variant="outline" @click="router.back()">
             Discard
@@ -21,10 +21,10 @@
 <script setup lang="ts">
 import { useRouter } from "vue-router";
 import { useMutation, useQueryClient } from "@tanstack/vue-query";
-import RoleForm from "../../components/settings/CarrierRoleForm.vue";
+import ShipperRoleForm from "../../components/UserManagement/ShipperRoleForm.vue";
 import Form from "@/components/form/Form.vue";
 import DashboardPage from "@/components/common/DashboardPage.vue";
-import { create_role } from "../../api/settings.api";
+import { create_shipper_role } from "../../api/shipper.api";
 import { useToastStore } from "@/store/toastStore";
 import Button from "@/components/Button.vue";
 import SubmitButton from "@/components/form/SubmitButton.vue";
@@ -34,7 +34,7 @@ const router = useRouter();
 const toast = useToastStore();
 
 const mutation = useMutation({
-  mutationFn: (values: any) => create_role(values),
+  mutationFn: (values: any) => create_shipper_role(values),
 });
 
 const initialValues = {
@@ -45,17 +45,13 @@ const initialValues = {
 };
 
 const handleCreate = async (values: any) => {
-  try {
-    const res = await mutation.mutateAsync(values);
-    if (res.success) {
-      toast.success("Role created successfully");
-      queryClient.invalidateQueries({ queryKey: ["roles-list"] });
-      router.push("/setting/user-and-role");
-    } else {
-      toast.error(res.error || "Failed to create role");
-    }
-  } catch (error: any) {
-    toast.error(error.message || "An unexpected error occurred");
+  const res = await mutation.mutateAsync(values);
+  if (res.success) {
+    toast.success("Role created successfully");
+    queryClient.invalidateQueries({ queryKey: ["shipper-roles-list"] });
+    router.push("/shipper/users?tab=roles");
+  } else {
+    toast.error(res.error || "Failed to create role");
   }
 };
 </script>

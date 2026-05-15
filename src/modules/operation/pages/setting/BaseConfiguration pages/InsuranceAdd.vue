@@ -38,7 +38,7 @@ const handleCreate = async (values: any) => {
     if (res.success) {
       toast.success("Insurance provider created successfully");
       //invalidae query
-      queryClient.invalidateQueries({ queryKey: ["insurance-list"] });
+      queryClient.invalidateQueries({ queryKey: ["insurance-provider-list"] });
       router.push("/setting/base-configuration?tab=insurance");
     } else {
       toast.error(res.error || "Failed to create provider");

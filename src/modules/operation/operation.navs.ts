@@ -550,6 +550,13 @@ export const finance_navs: Navs[] = [
         name: "Receivable",
         path: "/finance/receivable",
         show: true,
+        children: [
+          {
+            path: "/finance/receivable/$id",
+            name: "Receivable Details",
+            show: false,
+          },
+        ],
       },
       {
         name: "Invoice Report",

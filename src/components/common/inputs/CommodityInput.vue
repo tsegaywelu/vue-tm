@@ -3,13 +3,20 @@
     v-bind="props"
     searchable
     :show_validation_status="show_validation_status ?? false"
-    :label="label || 'Agent'"
-    :value_key="value_key || '_id'"
-    :label_key="label_key || 'name'"
-    :url="url || '/agent/shipper/carrier'"
-    :params="params || { limit: 20 }"
+    :label="label || 'Commodity'"
+    value_key="_id"
+    label_key="name"
+    :url="url || '/commodity/contracted'"
+    :params="
+      params ||
+      ((state) => ({
+        limit: 20,
+        q: undefined,
+        name: { regex: state.search },
+      }))
+    "
     :attributes="{
-      placeholder: 'Search and Select Agent',
+      placeholder: 'Select Commodity',
       ...attributes,
     }"
   />
@@ -27,8 +34,6 @@ const props = defineProps<{
   options?: any[];
   validation?: any;
   on_change?: (val: any, form: any) => void;
-  value_key?: string;
-  label_key?: string | ((item: any) => string);
   size?: "xs" | "sm" | "md" | "lg";
   attributes?: any;
   parent_class_name?: string;

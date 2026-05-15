@@ -1,7 +1,7 @@
 <template>
   <Form :id="formId" :values="initialValues" :onSubmit="handleSubmit">
     <template #default>
-      <ContractForm>
+      <ContractForm mode="shipper">
         <template #actions="{ addedRoutes, counterpartyId }">
           <Button variant="outline" @click="router.back()">Discard</Button>
           <SubmitButton :disabled="!counterpartyId || addedRoutes.length === 0">
@@ -16,20 +16,20 @@
 <script setup lang="ts">
 import { useRouter } from "vue-router";
 import { useMutation, useQueryClient } from "@tanstack/vue-query";
-import ContractForm from "../../components/settings/Contract/ContractForm.vue";
+import ContractForm from "../../operation/components/settings/Contract/ContractForm.vue";
 import Button from "@/components/Button.vue";
 import Form from "@/components/form/Form.vue";
 import SubmitButton from "@/components/form/SubmitButton.vue";
-import { create_contract } from "../../api/settings.api";
+import { create_shipper_contract } from "../api/shipper.api";
 import { useToastStore } from "@/store/toastStore";
 
 const router = useRouter();
 const toast = useToastStore();
-const formId = "add-contract-form";
+const formId = "shipper-add-contract-form";
 const queryClient = useQueryClient();
 
 const initialValues = {
-  shipper: "",
+  carrier: "",
   routes: [],
   tempRouteId: "",
   tempCommodities: [],
@@ -39,9 +39,9 @@ const initialValues = {
 };
 
 const mutation = useMutation({
-  mutationFn: (data: any) => create_contract(data),
+  mutationFn: (data: any) => create_shipper_contract(data),
   onSuccess: () => {
-    queryClient.invalidateQueries({ queryKey: ["contract-list"] });
+    queryClient.invalidateQueries({ queryKey: ["shipper-contracts-list"] });
   },
 });
 
@@ -52,7 +52,7 @@ const handleSubmit = async (values: any) => {
       return;
     }
     const payload = {
-      shipper: values.shipper,
+      carrier: values.carrier,
       routes: values.routes.map((r: any) => ({
         route: r.route,
         waypoints: r.waypoints.map((wp: any) => ({
@@ -68,7 +68,7 @@ const handleSubmit = async (values: any) => {
     const res = await mutation.mutateAsync(payload);
     if (res.success) {
       toast.success("Contract created successfully");
-      router.push("/setting/contracts");
+      router.push("/shipper/contracts");
     } else {
       toast.error(res.error || "Failed to create contract");
     }

@@ -10,7 +10,7 @@ const all_icons = { ...icons, ...raaz_icons };
 const authStore = useAuthStore();
 
 const dynamicNavRegistry = computed(() =>
-  getNavigationRegistry(authStore.is_shipper)
+  getNavigationRegistry(authStore.is_shipper),
 );
 
 const props = defineProps<{
@@ -94,7 +94,7 @@ const close_nav = () => {
 
       <!-- Navigation Area -->
       <div
-        class="h-full overflow-y-auto no-scrollbar"
+        class="h-full overflow-y-auto"
         :class="is_open ? 'px-2 pb-4' : 'px-0 pb-4 flex flex-col items-center'"
       >
         <div

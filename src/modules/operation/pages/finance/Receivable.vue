@@ -193,7 +193,7 @@ const generateInvoiceMutation = useMutation({
   onSuccess: () => {
     toast.success("Invoice generated successfully! Waiting for Approval...");
     selectedRows.value = [];
-    tableRef.value?.refetch();
+    router.push("/finance/invoice-report");
   },
   onError: (error: any) => {
     toast.error(error.response?.data?.message || "Failed to generate invoice");
@@ -251,7 +251,7 @@ const handleAction = async ({ row, action }: any) => {
   
   if (action === 'view') {
     if (currentTab.value === 'shipment') {
-      router.push(`/operation/shipments/${id}`);
+      router.push(`/finance/receivable/${id}`);
     } else if (currentTab.value === 'settlement') {
       router.push(`/operation/advance-details/${id}`);
     } else if (currentTab.value === 'lease') {

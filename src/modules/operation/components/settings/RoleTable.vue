@@ -21,28 +21,16 @@
         >
           Immutable
         </span>
-        <Dropdown v-else>
-          <template #default="{ close }">
-            <DropDownItem v-permission="'ROLE:update'"
-              :icon="icons.edit"
-              label="Edit"
-              @click.stop="
-                handleAction(row, 'edit');
-                close();
-              "
-            />
-            <!-- Delete action commented out temporarily -->
-        <!-- <DropDownItem
-              :icon="icons.delete"
-              label="Delete"
-              class="text-error-600"
-              @click.stop="
-                handleAction(row, 'delete');
-                close();
-              "
-            /> -->
-          </template>
-        </Dropdown>
+        <button
+          v-else
+          type="button"
+          v-permission="'ROLE:update'"
+          class="p-2 rounded-full hover:bg-gray-100 transition-colors text-gray-500 hover:text-primary"
+          @click.stop="handleAction(row, 'edit')"
+          title="Edit"
+        >
+          <i v-html="icons.edit"></i>
+        </button>
       </div>
     </template>
   </Table>
@@ -50,8 +38,6 @@
 
 <script setup lang="ts">
 import Table from "@/components/common/Table.vue";
-import Dropdown from "@/components/common/Dropdown.vue";
-import DropDownItem from "@/components/common/DropDownItem.vue";
 import { usePagination } from "@/composables/usePagination";
 import { icons } from "@/utils/icons";
 import type { TableColumn } from "@/components/common/Table.vue";

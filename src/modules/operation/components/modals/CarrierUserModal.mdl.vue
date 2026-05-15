@@ -1,19 +1,15 @@
 <template>
   <FormModalParent
     modal-style="auto"
-    :title="isEdit ? 'Edit Role' : 'Add Role'"
-    :subtitle="
-      isEdit
-        ? 'Update role permissions and details'
-        : 'Create a new role with specific permissions'
-    "
+    :title="isEdit ? 'Edit User' : 'Add User'"
+    :subtitle="isEdit ? 'Update user account details' : 'Create a new user account'"
     :form-id="formId"
     :values="initialValues"
     :submit-handler="handleFormSubmit"
     @close="cancel"
   >
     <template #center>
-      <RoleForm />
+      <CarrierUserForm :isEdit="isEdit" :labels="labels" />
     </template>
     <template #bottom>
       <div class="flex justify-end gap-3 w-full">
@@ -26,7 +22,7 @@
           size="md"
           :form="formId"
         >
-          {{ isEdit ? "Update Role" : "Create Role" }}
+          {{ isEdit ? 'Update User' : 'Create User' }}
         </SubmitButton>
       </div>
     </template>
@@ -37,59 +33,66 @@
 import { computed } from "vue";
 import { closeModal } from "@customizer/modal-x";
 import { useToastStore } from "@/store/toastStore";
-import { useMutation } from "@tanstack/vue-query";
+import { useMutation, useQueryClient } from "@tanstack/vue-query";
 import FormModalParent from "@/components/modals/FormModalParent.vue";
 import Button from "@/components/common/Button.vue";
 import SubmitButton from "@/components/form/SubmitButton.vue";
-import RoleForm from "../UserManagement/ShipperRoleForm.vue";
-import { create_shipper_role, update_role } from "../../api/shipper.api";
+import CarrierUserForm from "../settings/CarrierUserForm.vue";
+import { create_carrier_user, update_user } from "../../api/settings.api";
+import { useAuthStore } from "@/store/authStore";
 
 export type ReturnType = boolean;
 export type Props = {
-  role?: any;
+  user?: any;
 };
 
 const props = defineProps<{ data: Props; close: (res: ReturnType) => void }>();
 const toast = useToastStore();
-const formId = "roleForm";
+const authStore = useAuthStore();
+const queryClient = useQueryClient();
+const formId = "carrierUserForm";
 
-const isEdit = computed(() => !!props.data.role);
+const isEdit = computed(() => !!props.data.user);
+
+const labels = computed(() => ({
+  role: props.data.user?.role?.name || "",
+  region: props.data.user?.region?.name || "",
+}));
 
 const initialValues = computed(() => {
-  if (props.data.role) {
+  if (props.data.user) {
     return {
-      name: props.data.role.name,
-      type: props.data.role.type,
-      description: props.data.role.description,
-      permissions: props.data.role.permissions || [],
+      username: props.data.user.username,
+      role: props.data.user.role?._id || props.data.user.role,
+      region: props.data.user.region?._id || props.data.user.region,
     };
   }
   return {
-    name: "",
-    type: "USER",
-    description: "",
-    permissions: [],
+    username: "",
+    password: "",
+    confirmPassword: "",
+    role: "",
+    region: "",
   };
 });
 
 const mutation = useMutation({
   mutationFn: (values: any) => {
     if (isEdit.value) {
-      return update_role(props.data.role._id, values);
+      const { confirmPassword, ...payload } = values;
+      return update_user(props.data.user._id, payload);
     } else {
-      return create_shipper_role(values);
+      const { confirmPassword, ...payload } = values;
+      return create_carrier_user({ ...payload, carrier: authStore.carrierId });
     }
   },
   onSuccess: (res) => {
     if (res.success) {
-      toast.success(
-        `Role ${isEdit.value ? "updated" : "created"} successfully!`,
-      );
+      toast.success(`User ${isEdit.value ? "updated" : "created"} successfully!`);
+      queryClient.invalidateQueries({ queryKey: ["users-list"] });
       props.close(true);
     } else {
-      toast.error(
-        res.error || `Failed to ${isEdit.value ? "update" : "create"} role`,
-      );
+      toast.error(res.error || `Failed to ${isEdit.value ? "update" : "create"} user`);
     }
   },
   onError: (error: any) => {

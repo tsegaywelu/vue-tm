@@ -4,6 +4,14 @@ import { openModal } from "@customizer/modal-x";
 import { useAuthStore } from "@/store/authStore";
 import ApiService from "@/api/ApiService";
 
+export const generatePassword = (cb: (password: string) => void) => {
+  const charset = "0123456789";
+  const retVal = Array.from({ length: 8 }, () =>
+    charset.charAt(Math.floor(Math.random() * charset.length)),
+  ).join("");
+  cb(retVal);
+};
+
 function* getId() {
   let id = 0;
 
@@ -495,14 +503,13 @@ export function currencyFormatter(
   }).format(amount || 0);
 }
 
-export function dateFormatter(date: string | Date, locale = "en-US") {
+export function dateFormatter(date: string | Date) {
   if (!date) return "";
   const d = typeof date === "string" ? new Date(date) : date;
-  return new Intl.DateTimeFormat(locale, {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  }).format(d);
+  const dd = String(d.getDate()).padStart(2, "0");
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const yyyy = d.getFullYear();
+  return `${dd}-${mm}-${yyyy}`;
 }
 
 export function dateTimeFormatter(date: string | Date, locale = "en-US") {

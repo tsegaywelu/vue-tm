@@ -8,7 +8,6 @@
       >
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <SelectInput
-            v-if="!isShipper"
             name="shipper"
             label="Shipper"
             searchable
@@ -17,13 +16,6 @@
             :validation="{
               required,
             }"
-            @select="(opt) => handleShipperSelect(opt.item, form)"
-          />
-          <SelectInput
-            v-if="isShipper"
-            name="carrier"
-            label="Carrier"
-            searchable
             :params="{
               page: undefined,
               limit: undefined,
@@ -31,28 +23,21 @@
             :attributes="{
               placeholder: 'Select carrier',
             }"
-            label_key="carrier.name"
-            value_key="carrier._id"
-            url="/carrier/contractedCarriers"
-            :display_value="internalLabels.carrier"
-            :validation="{
-              required,
-            }"
-            @select="(opt) => handleCarrierSelect(opt.item, form)"
+            label_key="shipper.name"
+            value_key="shipper._id"
+            @select="(opt) => handleShipperSelect(opt.item, form)"
           />
+
           <component
             :is="form.Subscribe"
-            :selector="
-              (state: any) => [state.values.shipper, state.values.carrier]
-            "
+            :selector="(state: any) => [state.values.shipper]"
           >
-            <template #default="[shipper, carrier]">
+            <template #default="[shipper]">
               <SelectInput
-                :key="`${shipper}-${carrier}`"
+                :key="shipper"
                 :params="{
                   page: undefined,
                   limit: undefined,
-                  carrier: isShipper ? carrier : undefined,
                 }"
                 name="route"
                 label="Route"
@@ -287,13 +272,6 @@ import Colapsable from "@/components/common/Colapsable.vue";
 import { required } from "@/utils/validations";
 import { fetch_contract_route_details } from "../api/orders.api";
 import { ProductType, TripType, VehicleTypeName } from "../operation.types";
-import { useAuthStore } from "@/store/authStore";
-
-const authStore = useAuthStore();
-const isShipper = computed(() => authStore.is_shipper);
-const currentUserShipperId = computed(
-  () => authStore.current_user?.user?.shipper?._id,
-);
 
 const props = withDefaults(
   defineProps<{
@@ -355,10 +333,6 @@ const uomOptions = [
 
 const handleShipperSelect = (shipper: any, form: any) => {
   internalLabels.value.shipper = shipper?.shipper?.name || shipper?.name || "";
-};
-
-const handleCarrierSelect = (carrier: any, form: any) => {
-  internalLabels.value.carrier = carrier?.carrier?.name || carrier?.name || "";
 };
 
 const routeCommodities = ref<any[]>([]);
@@ -449,9 +423,6 @@ watch(
 );
 
 onMounted(async () => {
-  if (isShipper.value && currentUserShipperId.value) {
-    props.initialValues.shipper = currentUserShipperId.value;
-  }
   if (props.preloadedRouteDetails) {
     initializeRouteDetails(props.preloadedRouteDetails);
     return;
@@ -484,6 +455,7 @@ onMounted(async () => {
 const handleSubmit = async (values: any) => {
   const payload = {
     ...values,
+    carrer: values.shipper,
     totalRequest: Number(values.totalRequest) || 0,
     numberOfVehicles: Number(values.numberOfVehicles) || 1,
   };

@@ -1,8 +1,31 @@
-	-payment process
-		- when the driver completes the shipping and uploades all the necessary documents 
-		- it goes to receivable and in here the user selects the sipments and generates invoices for them
-		- afte that the generated invoices go to invoice report
-		- in invoice report the user will approve the invoice
-		- after approval it goes to the shippers invoice and carriers paymentCollection
-		- in shipper the shipper can view the invoice and pay if he approves or reject
-		- in carrier sides paymentCollection the carrier can collect after payment
+-payment process
+	- when the driver completes the shipping and uploades all the necessary documents 
+	- it goes to receivable and in here the user selects the sipments and generates invoices for them
+	- afte that the generated invoices go to invoice report
+	- in invoice report the user will approve the invoice
+	- after approval it goes to the shippers invoice and carriers paymentCollection
+	- in shipper the shipper can view the invoice and pay if he approves or reject
+	- in carrier sides paymentCollection the carrier can collect after payment
+
+- create order for carrier is not workin, driver should be driver id not name [DONE]
+- add advanced payments should not be a step all are avilable one is the only thing Required, auot fill the amount as well [DONE]
+- add arrows to right and left horizontal scroll
+- on shipments document filter not working (name = areDocumentsUploaded) [DONE]
+- on finace make the breadcrumb based on the page [DONE]
+- after generate invoice reroute navigate to invoice report [DONE]
+- on the uploaded document remove the remove button on the single file uploades
+- on invoice report add a shipper filter and search with reference number [DONE]
+- on invoice report the report print is different based on in bound and out bound so configure that based on this and in the detaiareDocumentsUploadedl page show the printable tables in a common table 
+- auto open the sidebar instead of clicking on the menu other clics only open it update
+- is damaged can be true with out the fields being filled for the daamge form
+- add scrollbar to the side bar [DONE]
+- make the shipmets default search platenumber [DONE]
+- make the date fromat number based instead of name [DONE]
+- on create vehicle avilable should be sent by default so hide the input
+
+
+- ISSUES
+ -- newlly created order from the shipper are not showing on the first results of the table. sort by created at
+ -- when creating setting on base config i get this "description": "Duplicate field : carrier. Please use another value"
+ -- on add tarraiin i get this response "property code should not exist"
+ 

@@ -4,30 +4,27 @@
     :title="isEdit ? 'Edit Announcement' : 'Add Announcement'"
     :subtitle="isEdit ? 'Update announcement details' : 'Create a new announcement'"
     :form-id="formId"
+    :values="initialValues"
+    :submit-handler="handleFormSubmit"
     @close="cancel"
   >
     <template #center>
-      <AnnouncementForm
-        :formId="formId"
-        :initialValues="initialValues"
-        :onSubmit="handleFormSubmit"
-      >
-        <template #submit-btn="{ form }">
-          <div class="flex justify-end gap-3 w-full">
-            <Button type="button" variant="outline" size="md" @click="cancel">
-              Cancel
-            </Button>
-            <SubmitButton
-              :loading="mutation.isPending.value"
-              variant="primary"
-              size="md"
-              :form="formId"
-            >
-              {{ isEdit ? 'Update Announcement' : 'Create Announcement' }}
-            </SubmitButton>
-          </div>
-        </template>
-      </AnnouncementForm>
+      <AnnouncementForm />
+    </template>
+    <template #bottom>
+      <div class="flex justify-end gap-3 w-full">
+        <Button type="button" variant="outline" size="md" @click="cancel">
+          Cancel
+        </Button>
+        <SubmitButton
+          :loading="mutation.isPending.value"
+          variant="primary"
+          size="md"
+          :form="formId"
+        >
+          {{ isEdit ? 'Update Announcement' : 'Create Announcement' }}
+        </SubmitButton>
+      </div>
     </template>
   </FormModalParent>
 </template>

@@ -984,6 +984,24 @@ export const operation_routes: RouteRecordRaw[] = [
         },
       },
       {
+        path: "receivable/:id",
+        name: "operation_finance_receivable_detail",
+        component: () => import("./pages/finance/ReceivableDetail.vue"),
+        meta: {
+          permission: "TRANSACTION",
+          title: "Receivable Details",
+          description: "Detailed breakdown of a receivable shipment.",
+          tabsTeleportTo: "#shipment-details-tabs",
+          tabs: [
+            { label: "Overview", value: "overview" },
+            { label: "Document Uploads", value: "uploads" },
+            { label: "Pre-Trip Inspections", value: "pre-trip-inspections" },
+            { label: "Settlements", value: "settlements" },
+            { label: "Empty Return", value: "emptyReturn" },
+          ],
+        },
+      },
+      {
         path: "invoice-report",
         name: "operation_finance_invoice_report",
         component: () => import("./pages/finance/InvoiceReport.vue"),
@@ -1413,6 +1431,13 @@ export const operation_routes: RouteRecordRaw[] = [
         meta: {
           title: "Base Configuration",
           description: "Configure core system settings.",
+          tabs: [
+            { value: "settings", label: "Settings" },
+            { value: "roadType", label: "Road Type" },
+            { value: "terrainType", label: "Terrain Type" },
+            { value: "bank", label: "Bank" },
+            { value: "insurance", label: "Insurance Provider" },
+          ],
         },
       },
       // Road Type

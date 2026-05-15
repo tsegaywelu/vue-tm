@@ -23,7 +23,7 @@
     <TripTypeInput name="tripType" size="xs" />
     <VehicleOwnershipInput name="vehicleOwnership" size="xs" />
     <DamageInput name="damage" size="xs" />
-    <DocumentedUploadsInput name="documentedUploads" size="xs" />
+    <DocumentedUploadsInput name="areDocumentsUploaded" size="xs" />
     <ShipperInput v-if="!isShipper" name="shipper" size="xs" />
     <AgentInput name="agent" size="xs" />
   </Form>

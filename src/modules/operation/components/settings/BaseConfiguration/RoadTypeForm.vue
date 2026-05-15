@@ -1,5 +1,10 @@
 <template>
-  <Form :id="formId" :values="initialValues" :onSubmit="onSubmit">
+  <Form
+    :sanitize_bypass="['code']"
+    :id="formId"
+    :values="initialValues"
+    :onSubmit="onSubmit"
+  >
     <template #default="{ form }">
       <Colapsable
         title="Road Type Information"
@@ -10,18 +15,16 @@
             name="name"
             label="Name"
             :validation="{ required }"
-             :attributes="{
+            :attributes="{
               placeholder: 'Enter road type name',
-             
             }"
           />
           <Input
             name="code"
             label="Code"
             :validation="{ required }"
-             :attributes="{
+            :attributes="{
               placeholder: 'Enter road type code',
-             
             }"
           />
         </div>

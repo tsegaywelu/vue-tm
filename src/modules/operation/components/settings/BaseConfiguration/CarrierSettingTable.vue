@@ -21,28 +21,15 @@
     </template>
 
     <template #cell-actions="{ row }">
-      <div class="flex items-center justify-end gap-2">
-        <Dropdown>
-          <template #default="{ close }">
-            <DropDownItem
-              :icon="icons.edit"
-              label="Edit"
-              @click.stop="
-                handleAction(row, 'edit');
-                close();
-              "
-            />
-            <!-- <DropDownItem
-              :icon="icons.delete"
-              label="Delete"
-              class="text-error-600"
-              @click.stop="
-                handleAction(row, 'delete');
-                close();
-              "
-            /> -->
-          </template>
-        </Dropdown>
+      <div class="flex items-center justify-center">
+        <button
+          type="button"
+          class="p-2 rounded-full hover:bg-gray-100 transition-colors text-gray-500 hover:text-primary"
+          @click.stop="handleAction(row, 'edit')"
+          title="Edit"
+        >
+          <i v-html="icons.edit"></i>
+        </button>
       </div>
     </template>
   </Table>
@@ -50,8 +37,6 @@
 
 <script setup lang="ts">
 import Table from "@/components/common/Table.vue";
-import Dropdown from "@/components/common/Dropdown.vue";
-import DropDownItem from "@/components/common/DropDownItem.vue";
 import { usePagination } from "@/composables/usePagination";
 import { icons } from "@/utils/icons";
 import type { TableColumn } from "@/components/common/Table.vue";
@@ -64,11 +49,11 @@ const { response, refetch } = usePagination<any>({
 });
 
 const columns: TableColumn<any>[] = [
-  { key: "movementAlertStartHour", label: "Start Hour", field: "movementAlertStartHour" },
-  { key: "movementAlertEndHour", label: "End Hour", field: "movementAlertEndHour" },
-  { key: "speedAlertThreshold", label: "Speed Threshold", field: "speedAlertThreshold" },
+  { key: "movementAlertStartHour", label: "Movement Alert Start Hour", field: "movementAlertStartHour" },
+  { key: "movementAlertEndHour", label: "Movement Alert End Hour", field: "movementAlertEndHour" },
+  { key: "speedAlertThreshold", label: "Speed Alert Threshold", field: "speedAlertThreshold" },
   { key: "createdAt", label: "Created At", field: "createdAt" },
-  { key: "actions", label: "Action", field: "",  },
+  { key: "actions", label: "Action", field: "" },
 ];
 
 const handleAction = (row: any, action: string) => {

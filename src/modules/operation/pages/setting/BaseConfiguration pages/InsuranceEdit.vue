@@ -57,7 +57,7 @@ const handleUpdate = async (values: any) => {
   try {
     const res = await mutation.mutateAsync(values);
     if (res.success) {
-      queryClient.invalidateQueries({ queryKey: ["insurance-list"] });
+      queryClient.invalidateQueries({ queryKey: ["insurance-provider-list"] });
       toast.success("Insurance provider updated successfully");
       router.push("/setting/base-configuration?tab=insurance");
     } else {

@@ -1,5 +1,10 @@
 <template>
-  <Form :id="formId" :values="initialValues" :onSubmit="onSubmit">
+  <Form
+    :sanitize_bypass="['code']"
+    :id="formId"
+    :values="initialValues"
+    :onSubmit="onSubmit"
+  >
     <template #default="{ form }">
       <Colapsable
         title="Terrain Type Information"
@@ -14,14 +19,14 @@
               placeholder: 'Enter terrain type name',
             }"
           />
-          <Input
+          <!-- <Input
             name="code"
             label="Code"
             :validation="{ required }"
             :attributes="{
               placeholder: 'Enter terrain type code',
             }"
-          />
+          /> -->
         </div>
       </Colapsable>
 

@@ -55,10 +55,22 @@ export const fetch_shipper_contacts = (params: Record<string, any> = {}) =>
 
 // ── Contracts ──
 export const fetch_shipper_contracts = (params: Record<string, any> = {}) =>
-  api.addAuthenticationHeader().get("/contract", { params });
+  api.addAuthenticationHeader().get("/contract/shipper", { params });
 
 export const fetch_shipper_contract_by_id = (id: string) =>
   api.addAuthenticationHeader().get(`/contract/${id}`);
+
+export const create_shipper_contract = (data: any) =>
+  api.addAuthenticationHeader().post("/contract", data);
+
+export const add_shipper_contract_route = (contractId: string, data: any) =>
+  api.addAuthenticationHeader().patch(`/contract/${contractId}/route`, data);
+
+export const update_shipper_contract_route = (contractId: string, routeId: string, data: any) =>
+  api.addAuthenticationHeader().patch(`/contract/${contractId}/route/${routeId}`, data);
+
+export const delete_shipper_contract_route = (contractId: string, routeId: string) =>
+  api.addAuthenticationHeader().delete(`/contract/${contractId}/route/${routeId}`);
 
 // ── Finance / Invoices ──
 export const fetch_shipper_invoices = (params: Record<string, any> = {}) =>
@@ -77,20 +89,23 @@ export const reject_shipper_invoice = (id: string) =>
 export const fetch_shipper_users = (params: Record<string, any> = {}) =>
   api.addAuthenticationHeader().get("/auth/users", { params });
 
-export const create_user = (data: any) =>
-  api.addAuthenticationHeader().post("/auth/register", data);
+export const create_shipper_user = (data: any) =>
+  api.addAuthenticationHeader().post('/auth/register', data);
 
 export const update_user = (id: string, data: any) =>
-  api.addAuthenticationHeader().patch(`/auth/user/${id}`, data);
+  api.addAuthenticationHeader().patch(`/user/${id}`, data);
 
 export const delete_user = (id: string) =>
-  api.addAuthenticationHeader().delete(`/auth/user/${id}`);
+  api.addAuthenticationHeader().delete(`/user/${id}`);
 
 export const fetch_shipper_roles = (params: Record<string, any> = {}) =>
   api.addAuthenticationHeader().get("/role", { params });
 
-export const create_role = (data: any) =>
-  api.addAuthenticationHeader().post("/role", data);
+export const fetch_shipper_role_details = (id: string) =>
+  api.addAuthenticationHeader().get(`/role/${id}`);
+
+export const create_shipper_role = (data: any) =>
+  api.addAuthenticationHeader().post("/role/shipper", data);
 
 export const update_role = (id: string, data: any) =>
   api.addAuthenticationHeader().patch(`/role/${id}`, data);

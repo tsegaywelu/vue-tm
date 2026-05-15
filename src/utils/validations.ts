@@ -255,8 +255,8 @@ export function email(value: string): [boolean, string] {
 export function password(value: string): [boolean, string[]] {
   let errors = [];
   if (!value) errors.push(t("validation.password_required"));
-  if (value.length < 6) errors.push(t("validations.password_min_length"));
-  if (value.length > 6) errors.push(t("validations.password_max_length"));
+  if (value.length < 8) errors.push(t("validations.password_min_length"));
+  if (value.length > 8) errors.push(t("validations.password_max_length"));
   // if (!/[A-Za-z]/.test(value) || !/[0-9]/.test(value)) errors.push(t("validation.password_alphanumeric"));
   // if (!/[A-Z]/.test(value)) errors.push(t("validation.password_uppercase"));
   // if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>/?]/.test(value)) errors.push(t("validation.password_special_char"));
@@ -436,7 +436,10 @@ export const validateArrayItems = (
 
     for (const [field, validators] of Object.entries(rules)) {
       const value = row[field];
-      const error = validateAll(validators, value, { allValues: values, index: i });
+      const error = validateAll(validators, value, {
+        allValues: values,
+        index: i,
+      });
       if (error) {
         errors[`${field}_${id}`] = error;
         if (!firstError) firstError = error;

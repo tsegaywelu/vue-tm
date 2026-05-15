@@ -1,34 +1,42 @@
 <template>
-  <UserForm
-    form-id="add-user-form"
-    :initial-values="initialValues"
-    :on-submit="handleCreate"
-  >
-    <template #submit-btn>
-      <Button size="md" variant="outline" @click="router.back()">
-        Discard
-      </Button>
-      <SubmitButton> Register User </SubmitButton>
-    </template>
-  </UserForm>
+  <DashboardPage title="Register User" subtitle="Create a new user account">
+    <Form
+      id="add-user-form"
+      :values="initialValues"
+      @submit="handleCreate"
+    >
+      <div class="flex flex-col gap-6">
+        <CarrierUserForm />
+        <div class="flex justify-end gap-3">
+          <Button size="md" variant="outline" @click="router.back()">
+            Discard
+          </Button>
+          <SubmitButton :loading="mutation.isPending.value"> Register User </SubmitButton>
+        </div>
+      </div>
+    </Form>
+  </DashboardPage>
 </template>
 
 <script setup lang="ts">
 import { useRouter } from "vue-router";
-import { useMutation } from "@tanstack/vue-query";
-import UserForm from "../../components/settings/UserForm.vue";
-import { create_user } from "../../api/settings.api";
+import { useMutation, useQueryClient } from "@tanstack/vue-query";
+import CarrierUserForm from "../../components/settings/CarrierUserForm.vue";
+import Form from "@/components/form/Form.vue";
+import DashboardPage from "@/components/common/DashboardPage.vue";
+import { create_carrier_user } from "../../api/settings.api";
 import { useToastStore } from "@/store/toastStore";
 import Button from "@/components/Button.vue";
 import SubmitButton from "@/components/form/SubmitButton.vue";
-import { useQueryClient } from "@tanstack/vue-query";
+import { useAuthStore } from "@/store/authStore";
 
 const queryClient = useQueryClient();
 const router = useRouter();
 const toast = useToastStore();
+const authStore = useAuthStore();
 
 const mutation = useMutation({
-  mutationFn: (values: any) => create_user(values),
+  mutationFn: (values: any) => create_carrier_user({ ...values, carrier: authStore.carrierId }),
 });
 
 const initialValues = {
@@ -41,10 +49,6 @@ const initialValues = {
 
 const handleCreate = async (values: any) => {
   const { confirmPassword, ...payload } = values;
-  if (values.password !== confirmPassword) {
-    toast.error("Passwords do not match");
-    return;
-  }
   try {
     const res = await mutation.mutateAsync(payload);
     if (res.success) {

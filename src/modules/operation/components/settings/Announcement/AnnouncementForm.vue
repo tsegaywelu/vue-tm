@@ -1,8 +1,5 @@
 <template>
-  <Colapsable
-    title="Announcement Details"
-    description="Fill in the information for the announcement."
-  >
+  <div class="flex flex-col gap-6">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <Input
         name="title"
@@ -36,14 +33,12 @@
         />
       </div>
     </div>
-  </Colapsable>
+  </div>
 </template>
 
 <script setup lang="ts">
-import Form from "@/components/form/Form.vue";
 import Input from "@/components/form/Input.vue";
 import SelectInput from "@/components/form/SelectInput.vue";
-import Colapsable from "@/components/common/Colapsable.vue";
 import { required } from "@/utils/validations";
 import TextareaInput from "@/components/form/TextareaInput.vue";
 

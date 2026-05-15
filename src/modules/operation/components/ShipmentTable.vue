@@ -159,19 +159,20 @@ const emit = defineEmits(["action"]);
 
 const getTimeDifference = (shipment: any) => {
   if (!shipment || !shipment.status || !shipment.statusTime) return null;
-  
-  const camelCase = (str: string) => str.replace(/_([a-z])/g, (g) => g[1].toUpperCase());
+
+  const camelCase = (str: string) =>
+    str.replace(/_([a-z])/g, (g) => g[1].toUpperCase());
   const timeProp = `${camelCase(shipment.status)}Time`;
   const timeString = shipment.statusTime[timeProp];
-  
+
   if (!timeString) return null;
-  
+
   const timeToCompare = new Date(timeString);
   if (isNaN(timeToCompare.getTime())) return null;
 
   const currentTime = new Date();
   const diffMs = Math.abs(currentTime.getTime() - timeToCompare.getTime());
-  
+
   const totalMinutes = Math.floor(diffMs / (1000 * 60));
   const totalHours = Math.floor(totalMinutes / 60);
   const totalDays = Math.floor(totalHours / 24);
@@ -184,7 +185,9 @@ const getTimeDifference = (shipment: any) => {
   if (totalYears > 0) {
     formattedTime.push(`${totalYears} year${totalYears > 1 ? "s" : ""}`);
     if (totalMonths % 12 > 0) {
-      formattedTime.push(`${totalMonths % 12} month${totalMonths % 12 > 1 ? "s" : ""}`);
+      formattedTime.push(
+        `${totalMonths % 12} month${totalMonths % 12 > 1 ? "s" : ""}`,
+      );
     }
   } else if (totalWeeks > 0) {
     formattedTime.push(`${totalWeeks} week${totalWeeks > 1 ? "s" : ""}`);
@@ -194,12 +197,16 @@ const getTimeDifference = (shipment: any) => {
   } else if (totalDays > 0) {
     formattedTime.push(`${totalDays} day${totalDays > 1 ? "s" : ""}`);
     if (totalHours % 24 > 0) {
-      formattedTime.push(`${totalHours % 24} hour${totalHours % 24 > 1 ? "s" : ""}`);
+      formattedTime.push(
+        `${totalHours % 24} hour${totalHours % 24 > 1 ? "s" : ""}`,
+      );
     }
   } else if (totalHours > 0) {
     formattedTime.push(`${totalHours} hour${totalHours > 1 ? "s" : ""}`);
     if (totalMinutes % 60 > 0) {
-      formattedTime.push(`${totalMinutes % 60} minute${totalMinutes % 60 > 1 ? "s" : ""}`);
+      formattedTime.push(
+        `${totalMinutes % 60} minute${totalMinutes % 60 > 1 ? "s" : ""}`,
+      );
     }
   } else if (totalMinutes > 0) {
     formattedTime.push(`${totalMinutes} minute${totalMinutes > 1 ? "s" : ""}`);
@@ -230,7 +237,7 @@ const columns: TableColumn<Shipment>[] = [
   { key: "status", label: "Status", field: "status" },
   { key: "actions", label: "Actions", field: "", cellAlign: "right" },
 ];
-const selectedSearchField = ref("shipmentCode");
+const selectedSearchField = ref("platenumber");
 
 const activeFilters = ref<ShipmentFilterParams>({});
 const { response, refetch } = usePagination<Shipment>({

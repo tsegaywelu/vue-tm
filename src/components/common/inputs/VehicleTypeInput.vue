@@ -2,11 +2,12 @@
   <SelectInput
     v-bind="props"
     searchable
-    :show_validation_status="false"
+    :show_validation_status="show_validation_status ?? false"
     :label="label || 'Vehicle Type'"
     value_key="_id"
     label_key="name"
-    url="/vehicle-type"
+    :url="url || '/vehicle-type'"
+    :params="params || { limit: 20 }"
     :attributes="{
       placeholder: 'Select Vehicle Type',
       ...attributes,
@@ -21,9 +22,14 @@ const props = defineProps<{
   name: string;
   label?: string;
   multiple?: boolean;
-  size?: "xs" | "sm" | "md" | "lg";
+  url?: string;
   params?: any;
+  options?: any[];
+  validation?: any;
+  on_change?: (val: any, form: any) => void;
+  size?: "xs" | "sm" | "md" | "lg";
   attributes?: any;
   parent_class_name?: string;
+  show_validation_status?: boolean;
 }>();
 </script>

@@ -1,262 +1,356 @@
+<script setup lang="ts">
+import { inject, onMounted, ref, reactive, watch, computed } from "vue";
+import { genId } from "@/utils/utils";
+import SelectInput from "@/components/form/SelectInput.vue";
+import InputParent from "@/components/form/InputParent.vue";
+import Colapsable from "@/components/common/Colapsable.vue";
+import Button from "@/components/Button.vue";
+import ContractWaypointInput from "./ContractWaypointInput.vue";
+import { getApi } from "@/utils/getApi";
+import { required, number, validateArrayItems } from "@/utils/validations";
+import { useAuthStore } from "@/store/authStore";
+
+const props = defineProps<{
+  mode?: "carrier" | "shipper";
+}>();
+
+const authStore = useAuthStore();
+const authCarrierId = authStore.carrierId;
+
+const formContext = inject<any>("formContext");
+const form = formContext?.form;
+
+type PricingRow = {
+  fakeId: string;
+  vehicleType: string;
+  type: string;
+  productType: string;
+  pricePerUnit: number | string;
+};
+
+type TempWaypoint = {
+  waypoint: string;
+  name: string;
+  vehiclePricing: PricingRow[];
+};
+
+// In carrier mode: counterpartyId = selectedShipperId (used to enable/disable fields)
+// In shipper mode: counterpartyId = selectedCarrierId (also drives the route URL)
+const counterpartyId = ref("");
+
+// Route URL: carrier mode = auth carrier ID; shipper mode = selected carrier ID
+const routeCarrierId = computed(() =>
+  props.mode === "shipper" ? counterpartyId.value : authCarrierId
+);
+
+const counterpartyFieldName = computed(() =>
+  props.mode === "shipper" ? "carrier" : "shipper"
+);
+
+const selectedRouteData = ref<any>(null);
+const routeLoading = ref(false);
+const addedRoutes = ref<any[]>([]);
+const tempWaypoints = ref<TempWaypoint[]>([]);
+const pricingErrors = reactive<Record<string, string>>({});
+const addRouteError = ref("");
+
+const pricingRules = {
+  vehicleType: { required },
+  type: { required },
+  productType: { required },
+  pricePerUnit: { required, number },
+};
+
+const routeApi = getApi("/route");
+
+function newEmptyPricing(): PricingRow {
+  return {
+    fakeId: genId.next().value as string,
+    vehicleType: "",
+    type: "",
+    productType: "",
+    pricePerUnit: "",
+  };
+}
+
+function resetStaging(clearRoutes = false) {
+  selectedRouteData.value = null;
+  routeLoading.value = false;
+  tempWaypoints.value = [];
+  addRouteError.value = "";
+  form?.setFieldValue("tempRouteId", "");
+  form?.setFieldValue("tempCommodities", []);
+  form?.setFieldValue("tempPackagings", []);
+  form?.setFieldValue("tempAgents", []);
+  form?.setFieldValue("tempProductTypes", []);
+  if (clearRoutes) addedRoutes.value = [];
+}
+
+onMounted(() => {
+  const existingCounterparty = form?.getFieldValue(counterpartyFieldName.value);
+  if (existingCounterparty) counterpartyId.value = existingCounterparty;
+
+  const existingRoutes = form?.getFieldValue("routes");
+  if (existingRoutes?.length) {
+    addedRoutes.value = existingRoutes.map((r: any) => ({
+      ...r,
+      fakeId: genId.next().value as string,
+    }));
+  }
+});
+
+watch(
+  addedRoutes,
+  () => {
+    form?.setFieldValue("routes", addedRoutes.value);
+  },
+  { deep: true },
+);
+
+const onCounterpartyChange = (val: string) => {
+  counterpartyId.value = val;
+  resetStaging(true);
+};
+
+const onRouteChange = async (routeId: string) => {
+  selectedRouteData.value = null;
+  tempWaypoints.value = [];
+  for (const key of Object.keys(pricingErrors)) delete pricingErrors[key];
+  addRouteError.value = "";
+  if (!routeId) return;
+
+  routeLoading.value = true;
+  try {
+    const res = await routeApi.addAuthenticationHeader().get(`/${routeId}`);
+    if (res.success) {
+      const data = (res.data as any).result ?? res.data;
+      selectedRouteData.value = data;
+      tempWaypoints.value = data.waypoints.map((wp: any) => ({
+        waypoint: wp._id,
+        name: wp.name,
+        vehiclePricing: [newEmptyPricing()],
+      }));
+    }
+  } finally {
+    routeLoading.value = false;
+  }
+};
+
+function addPricing(wpIndex: number) {
+  const allPricing = tempWaypoints.value.flatMap((wp) => wp.vehiclePricing);
+  const err = validateArrayItems(allPricing, pricingErrors, pricingRules);
+  if (err) return;
+  tempWaypoints.value[wpIndex].vehiclePricing.push(newEmptyPricing());
+}
+
+function removePricing(wpIndex: number, pIndex: number) {
+  tempWaypoints.value[wpIndex].vehiclePricing.splice(pIndex, 1);
+}
+
+function addRouteToContract() {
+  const routeId = form?.getFieldValue("tempRouteId");
+  if (!selectedRouteData.value || !routeId) {
+    addRouteError.value = "Please select a route first";
+    return;
+  }
+
+  if (addedRoutes.value.find((r) => r.route === routeId)) {
+    addRouteError.value = "This route has already been added to the contract";
+    return;
+  }
+
+  const allPricing = tempWaypoints.value.flatMap((wp) => wp.vehiclePricing);
+  const err = validateArrayItems(allPricing, pricingErrors, pricingRules);
+  if (err) return;
+
+  addRouteError.value = "";
+  addedRoutes.value.push({
+    fakeId: genId.next().value as string,
+    route: routeId,
+    routeName: selectedRouteData.value.routeName,
+    waypoints: tempWaypoints.value.map((wp) => ({
+      waypoint: wp.waypoint,
+      name: wp.name,
+      vehiclePricing: wp.vehiclePricing.map(({ fakeId: _id, ...p }) => ({
+        ...p,
+      })),
+    })),
+    commodities: form?.getFieldValue("tempCommodities") || [],
+    packagings: form?.getFieldValue("tempPackagings") || [],
+    agents: form?.getFieldValue("tempAgents") || [],
+    productType: form?.getFieldValue("tempProductTypes") || [],
+  });
+
+  resetStaging(false);
+}
+
+function removeRouteFromContract(idx: number) {
+  addedRoutes.value.splice(idx, 1);
+}
+</script>
+
 <template>
-  <div class="space-y-6">
-    <!-- Carrier Selection -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+  <!-- Route Configuration Box -->
+  <Colapsable
+    title="Route Configuration"
+    description="Select a route and configure pricing per waypoint."
+    :open="false"
+  >
+    <div class="grid grid-cols-2 md:grid-cols-2 gap-6 mb-6">
+      <!-- Counterparty select: Shipper (carrier mode) or Carrier (shipper mode) -->
       <SelectInput
-        name="carrier"
-        label="Carrier"
-        url="/carrier"
+        :name="counterpartyFieldName"
+        :label="mode === 'shipper' ? 'Carrier' : 'Shipper'"
+        :url="mode === 'shipper' ? '/carrier' : '/shipper'"
         label_key="name"
         value_key="_id"
+        searchable
         :validation="{ required }"
+        :on_change="onCounterpartyChange"
+      />
+      <!-- Route select: remounts when routeCarrierId changes (shipper mode) -->
+      <SelectInput
+        :key="`route-${routeCarrierId}`"
+        name="tempRouteId"
+        label="Route"
+        :url="routeCarrierId ? `/route/carrierAllRoutes/${routeCarrierId}` : ''"
+        label_key="routeName"
+        value_key="_id"
+        searchable
+        :show_validation_status="false"
+        :attributes="{ disabled: !routeCarrierId }"
+        :on_change="onRouteChange"
       />
     </div>
-
-    <!-- Route Selection and Waypoints Box -->
-    <div class="border border-gray-200 rounded-lg p-6 bg-gray-50 space-y-6">
-      <div class="relative">
+    <div class="space-y-6">
+      <!-- Commodity / Packaging / Agents / Product Types -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <SelectInput
-          name="tempRouteId"
-          label="Route"
-          url="/route"
-          label_key="routeName"
+          name="tempCommodities"
+          label="Commodities"
+          url="/commodity/contracted"
+          label_key="name"
           value_key="_id"
-          searchable
-          :disabled="!carrierId"
-          placeholder="Search routes..."
+          multiple
+          :show_validation_status="false"
+          :attributes="{ disabled: !counterpartyId }"
+        />
+        <SelectInput
+          name="tempPackagings"
+          label="Packagings"
+          url="/packaging/contracted"
+          label_key="name"
+          value_key="_id"
+          multiple
+          :show_validation_status="false"
+          :attributes="{ disabled: !counterpartyId }"
+        />
+        <SelectInput
+          name="tempAgents"
+          label="Agents"
+          url="/agent/shipper/carrier"
+          :label_key="(item: any) => `${item.name} - ${item?.location?.city ?? ''}`"
+          value_key="_id"
+          multiple
+          :show_validation_status="false"
+          :attributes="{ disabled: !counterpartyId }"
+        />
+        <SelectInput
+          name="tempProductTypes"
+          label="Product Types"
+          :options="[
+            { label: 'In Bound', value: 'IN_BOUND' },
+            { label: 'Out Bound', value: 'OUT_BOUND' },
+            { label: 'Site Transfer', value: 'SITE_TRANSFER' },
+          ]"
+          multiple
+          :show_validation_status="false"
+          :attributes="{ disabled: !counterpartyId }"
         />
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
-        <div class="relative">
-          <SelectInput
-            name="tempCommodities"
-            label="Commodities"
-            url="/commodity/contracted"
-            label_key="name"
-            value_key="_id"
-            multiple
-            :disabled="!carrierId"
-          />
-        </div>
-
-        <div class="relative">
-          <SelectInput
-            name="tempPackagings"
-            label="Packagings"
-            url="/packaging/contracted"
-            label_key="name"
-            value_key="_id"
-            multiple
-            :disabled="!carrierId"
-          />
-        </div>
-
-        <div class="relative">
-          <SelectInput
-            name="tempAgents"
-            label="Agents"
-            url="/agent/shipper/carrier"
-            :label_key="(item: any) => `${item.name} - ${item?.location?.city ?? ''}`"
-            value_key="_id"
-            multiple
-            :disabled="!carrierId"
-          />
-        </div>
-
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Product Types</label>
-          <div class="flex flex-wrap gap-4">
-            <label v-for="type in productTypeOptions" :key="type" class="flex items-center gap-2 text-sm text-gray-600">
-              <input 
-                type="checkbox" 
-                :value="type" 
-                v-model="tempConfig.productTypes" 
-                class="rounded border-gray-300 text-primary focus:ring-primary"
-              >
-              {{ type.replace('_', ' ') }}
-            </label>
-          </div>
-        </div>
-      </div>
-
-      <!-- Waypoints and Pricing (only if route is selected) -->
-      <div v-if="selectedRouteData" class="space-y-6 pt-4 border-t border-gray-200">
-        <div v-for="(wp, index) in tempConfig.waypoints" :key="wp.waypoint" class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
-          <h3 class="text-sm font-semibold text-gray-800 mb-4">
-            Waypoint {{ index + 1 }}: {{ wp.name }}
-          </h3>
-          
-          <div v-for="(pricing, pIndex) in wp.vehiclePricing" :key="pIndex" class="p-4 border rounded-lg bg-gray-50 mb-4 space-y-4">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <SelectInput
-                :name="`pricing-${index}-${pIndex}-ptype`"
-                label="Product Type"
-                :options="[{label: 'Inbound', value: 'IN_BOUND'}, {label: 'Outbound', value: 'OUT_BOUND'}, {label: 'Site Transfer', value: 'SITE_TRANSFER'}]"
-                v-model="pricing.productType"
-                :validation="{ required }"
-              />
-              <SelectInput
-                :name="`pricing-${index}-${pIndex}-vtype`"
-                label="Vehicle Type"
-                :url="`/vehicle-type/carrier/${carrierId}`"
-                label_key="name"
-                value_key="_id"
-                v-model="pricing.vehicleType"
-                :validation="{ required }"
-              />
-              <SelectInput
-                :name="`pricing-${index}-${pIndex}-type`"
-                label="Type"
-                :options="[{label: 'Per Kilometer', value: 'per_kilometer'}, {label: 'Per Quintal', value: 'per_quintal'}, {label: 'Per Truck', value: 'per_truck'}]"
-                v-model="pricing.type"
-                :validation="{ required }"
-              />
-            </div>
-            
-            <div class="flex items-end gap-4">
-              <div class="flex-1">
-                <label class="block text-xs font-medium text-gray-500 mb-1">Amount</label>
-                <input 
-                  type="number" 
-                  v-model="pricing.pricePerUnit" 
-                  class="w-full h-10 px-3 border border-gray-300 rounded focus:ring-2 focus:ring-primary outline-none text-sm transition-all"
-                  placeholder="Enter amount"
-                >
-              </div>
-              <Button variant="ghost" size="sm" @click="removePricing(Number(index), Number(pIndex))" class="text-error-600 h-10">
-                Remove
-              </Button>
-            </div>
-          </div>
-          
-          <Button variant="primary" size="sm" @click="addPricing(Number(index))" class="bg-blue-600 hover:bg-blue-700 text-white">
-            + Add Pricing
-          </Button>
-        </div>
-
-        <Button 
-            variant="primary" 
-            class="w-full bg-blue-900 hover:bg-blue-800 text-white py-3 font-semibold rounded-md"
-            @click="addRouteToContract"
+      <!-- Waypoints area -->
+      <div class="pt-4 border-t border-gray-200">
+        <div
+          v-if="routeLoading"
+          class="flex items-center justify-center gap-3 py-8 text-sm text-gray-400"
         >
-            Add Route
-        </Button>
-      </div>
-    </div>
-
-    <!-- Added Routes Preview -->
-    <div v-if="addedRoutes.length > 0" class="mt-6 bg-gray-50 p-6 rounded-lg border border-gray-200">
-      <h3 class="text-sm font-semibold text-gray-800 mb-4">Added Routes</h3>
-      <div v-for="(r, idx) in addedRoutes" :key="idx" class="mb-4 p-4 bg-white rounded-lg border border-gray-100 flex justify-between items-center shadow-sm">
-        <div class="space-y-1">
-          <p class="font-medium text-sm text-gray-900">Route Name: {{ r.routeName }}</p>
-          <div class="text-xs text-gray-500 line-clamp-1">
-            {{ r.waypoints.map((wp: any) => wp.name).join(' → ') }}
-          </div>
+          <i class="mdi mdi-loading mdi-spin text-xl"></i>
+          Loading route details...
         </div>
-        <Button variant="ghost" @click="removeRouteFromContract(idx)" class="text-error-600 text-xs underline font-medium">
+
+        <div v-else-if="selectedRouteData" class="space-y-4">
+          <ContractWaypointInput
+            v-for="(wp, wpIndex) in tempWaypoints"
+            :key="wp.waypoint"
+            :waypoint="wp"
+            :waypoint-index="wpIndex"
+            :carrier-id="routeCarrierId"
+            :errors="pricingErrors"
+            @add-pricing="addPricing(wpIndex)"
+            @remove-pricing="(pIndex) => removePricing(wpIndex, pIndex)"
+          />
+        </div>
+
+        <p v-else class="text-xs text-gray-400 italic py-2">
+          Select a route above to configure waypoint pricing.
+        </p>
+      </div>
+
+      <p v-if="addRouteError" class="text-xs text-red-500">
+        {{ addRouteError }}
+      </p>
+
+      <Button
+        variant="primary"
+        class="w-full"
+        :disabled="!selectedRouteData"
+        @click="addRouteToContract"
+      >
+        + Add Route to Contract
+      </Button>
+    </div>
+  </Colapsable>
+
+  <!-- Routes field — registers the form field and validates at least one route -->
+  <InputParent
+    name="routes"
+    :validation="{
+      hasRoutes(val: any[]) {
+        return val?.length
+          ? [true, '']
+          : [false, 'At least one route is required'];
+      },
+    }"
+  >
+    <div
+      v-if="addedRoutes.length > 0"
+      class="bg-gray-50 p-6 rounded-lg border border-gray-200"
+    >
+      <h3 class="text-sm font-semibold text-gray-800 mb-4">Added Routes</h3>
+      <div
+        v-for="(r, idx) in addedRoutes"
+        :key="r.fakeId"
+        class="mb-4 p-4 bg-white rounded-lg border border-gray-100 flex justify-between items-center shadow-sm"
+      >
+        <div class="space-y-1">
+          <p class="font-medium text-sm text-gray-900">{{ r.routeName }}</p>
+          <p class="text-xs text-gray-500">
+            {{ r.waypoints.map((wp: any) => wp.name).join(" → ") }}
+          </p>
+        </div>
+        <Button
+          variant="ghost"
+          class="text-error-600 text-xs underline"
+          @click="removeRouteFromContract(idx)"
+        >
           Remove
         </Button>
       </div>
     </div>
+  </InputParent>
 
-    <div class="flex justify-end pt-4 gap-4">
-      <slot name="actions" :addedRoutes="addedRoutes" :carrierId="carrierId"></slot>
-    </div>
+  <div class="flex justify-end pt-4 gap-4">
+    <slot name="actions" :addedRoutes="addedRoutes" :counterpartyId="counterpartyId" />
   </div>
 </template>
-
-<script setup lang="ts">
-import { ref, watch, reactive, computed } from 'vue';
-import SelectInput from "@/components/form/SelectInput.vue";
-import Button from "@/components/Button.vue";
-import { getApi } from "@/utils/getApi";
-import { required } from "@/utils/validations";
-
-const props = defineProps<{
-  form: any;
-}>();
-
-const carrierId = computed(() => props.form.state.values.carrier);
-const selectedRouteId = computed(() => props.form.state.values.tempRouteId);
-const selectedRouteData = ref<any>(null);
-const addedRoutes = ref<any[]>(props.form.state.values.routes || []);
-
-const productTypeOptions = ["IN_BOUND", "OUT_BOUND", "SITE_TRANSFER"];
-
-const tempConfig = reactive({
-  productTypes: [],
-  waypoints: [] as any[]
-});
-
-const routeApi = getApi('/route');
-
-watch(selectedRouteId, async (newId) => {
-  if (newId) {
-    const res = await routeApi.addAuthenticationHeader().get(`/${newId}`);
-    if (res.success) {
-      selectedRouteData.value = res.data;
-      tempConfig.waypoints = (res.data as any).waypoints.map((wp: any) => ({
-        waypoint: wp._id,
-        name: wp.name,
-        vehiclePricing: [{ vehicleType: '', pricePerUnit: 0, type: '', productType: '' }]
-      }));
-    }
-  } else {
-    selectedRouteData.value = null;
-  }
-});
-
-const addPricing = (wpIndex: number) => {
-  tempConfig.waypoints[wpIndex].vehiclePricing.push({ vehicleType: '', pricePerUnit: 0, type: '', productType: '' });
-};
-
-const removePricing = (wpIndex: number, pIndex: number) => {
-  if (tempConfig.waypoints[wpIndex].vehiclePricing.length > 1) {
-    tempConfig.waypoints[wpIndex].vehiclePricing.splice(pIndex, 1);
-  }
-};
-
-const addRouteToContract = () => {
-  if (!selectedRouteId.value) return;
-  
-  addedRoutes.value.push({
-    route: selectedRouteId.value,
-    routeName: selectedRouteData.value.routeName,
-    waypoints: tempConfig.waypoints.map(wp => ({
-      waypoint: wp.waypoint,
-      name: wp.name,
-      vehiclePricing: [...wp.vehiclePricing]
-    })),
-    commodities: props.form.state.values.tempCommodities || [],
-    packagings: props.form.state.values.tempPackagings || [],
-    agents: props.form.state.values.tempAgents || [],
-    productType: [...tempConfig.productTypes]
-  });
-
-  // Reset current route config in form
-  props.form.setFieldValue('tempRouteId', '');
-  props.form.setFieldValue('tempCommodities', []);
-  props.form.setFieldValue('tempPackagings', []);
-  props.form.setFieldValue('tempAgents', []);
-  tempConfig.productTypes = [];
-  tempConfig.waypoints = [];
-};
-
-const removeRouteFromContract = (index: number) => {
-  addedRoutes.value.splice(index, 1);
-};
-
-// Sync addedRoutes with form state
-watch(addedRoutes, (newVal) => {
-  props.form.setFieldValue('routes', newVal);
-}, { deep: true });
-
-// Reset everything if carrier changes
-watch(carrierId, () => {
-  addedRoutes.value = [];
-  props.form.setFieldValue('tempRouteId', '');
-  props.form.setFieldValue('routes', []);
-});
-</script>
