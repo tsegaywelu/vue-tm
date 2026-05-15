@@ -67,7 +67,7 @@ const columns: TableColumn<BonusMultiplier>[] = [
   { key: "multiplier", label: "Multiplier", field: "multiplier" },
   { key: "description", label: "Description", field: "description" },
   { key: "createdAt", label: "Created At", field: "createdAt" },
-  { key: "actions", label: "Action", field: "" },
+  { key: "actions", label: "Action", field: "", cellAlign: "center" },
 ];
 
 const formatMetric = (metric: string) => {

@@ -1,52 +1,62 @@
 <template>
   <div v-if="isLoading" class="flex justify-center p-12">
-    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+    <i class="mdi mdi-loading mdi-spin text-4xl text-primary"></i>
   </div>
-  <AnnouncementForm
+
+  <Form
     v-else-if="initialValues"
-    form-id="edit-announcement-form"
-    :initial-values="initialValues"
-    :on-submit="handleEdit"
+    id="edit-announcement-form"
+    :values="initialValues"
+    :onSubmit="handleEdit"
   >
-    <template #submit-btn="{ form }">
-      <Button size="md" variant="outline" @click="router.back()">
-        Discard
-      </Button>
-      <SubmitButton> Update Announcement </SubmitButton>
+    <template #default>
+      <Colapsable
+        title="Announcement Details"
+        description="Update the title, target audience, and message."
+      >
+        <AnnouncementForm />
+      </Colapsable>
+
+      <div class="pt-10 flex justify-end gap-4">
+        <Button type="button" variant="outline" @click="router.back()">
+          Discard
+        </Button>
+        <SubmitButton>Update Announcement</SubmitButton>
+      </div>
     </template>
-  </AnnouncementForm>
+  </Form>
 </template>
 
 <script setup lang="ts">
 import { computed } from "vue";
 import { useRouter, useRoute } from "vue-router";
-import AnnouncementForm from "../../components/settings/Announcement/AnnouncementForm.vue";
-import { fetch_announcements, update_announcement } from "../../api/announcement.api";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/vue-query";
+import {
+  fetch_announcement_by_id,
+  update_announcement,
+} from "../../api/announcement.api";
 import { useToastStore } from "@/store/toastStore";
+import Form from "@/components/form/Form.vue";
 import SubmitButton from "@/components/form/SubmitButton.vue";
 import Button from "@/components/Button.vue";
-import { useMutation, useQuery } from "@tanstack/vue-query";
+import Colapsable from "@/components/common/Colapsable.vue";
+import AnnouncementForm from "../../components/settings/Announcement/AnnouncementForm.vue";
 
 const router = useRouter();
 const route = useRoute();
 const toast = useToastStore();
+const queryClient = useQueryClient();
 const id = route.params.id as string;
 
-// Note: fetch_announcements doesn't have a detail endpoint shown in api file, 
-// but usually it's /{id}. If it fails, we can find it in the list.
 const { data: response, isLoading } = useQuery({
   queryKey: ["announcement", id],
-  queryFn: () => fetch_announcements(), // Fetching all and finding by id as a fallback
-  select: (data) => {
-    const list = data?.data?.results || data?.data || [];
-    return list.find((a: any) => a._id === id);
-  },
+  queryFn: () => fetch_announcement_by_id(id),
   enabled: !!id,
 });
 
 const initialValues = computed(() => {
-  if (!response.value) return null;
-  const data = response.value;
+  const data = response.value?.data;
+  if (!data) return null;
   return {
     title: data.title || "",
     message: data.message || "",
@@ -59,16 +69,13 @@ const mutation = useMutation({
 });
 
 const handleEdit = async (values: any) => {
-  try {
-    const res = await mutation.mutateAsync(values);
-    if (res.success) {
-      toast.success("Announcement updated successfully");
-      router.push("/setting/announcements");
-    } else {
-      toast.error(res.error || "Failed to update announcement");
-    }
-  } catch (err: any) {
-    toast.error(err.message || "An unexpected error occurred");
+  const res = await mutation.mutateAsync(values);
+  if (res.success) {
+    toast.success("Announcement updated successfully");
+    queryClient.invalidateQueries({ queryKey: ["announcement-list"] });
+    router.push("/setting/announcements");
+  } else {
+    toast.error(res.error || "Failed to update announcement");
   }
 };
 </script>

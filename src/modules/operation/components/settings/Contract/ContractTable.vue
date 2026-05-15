@@ -51,7 +51,7 @@ const columns: TableColumn<any>[] = [
   { key: "shipper", label: "Shipper", field: "shipper.name" },
   { key: "carrier", label: "Carrier", field: "carrier.name" },
   { key: "createdAt", label: "Date Created", field: "createdAt" },
-  { key: "actions", label: "Action", field: "", cellAlign: "right" },
+  { key: "actions", label: "Action", field: "", cellAlign: "center" },
 ];
 
 const handleAction = (row: any, action: string) => {

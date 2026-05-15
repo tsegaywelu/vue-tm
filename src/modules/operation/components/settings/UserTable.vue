@@ -101,7 +101,7 @@ const columns: TableColumn<any>[] = [
   { key: "roleName", label: "Role Name", field: "role.name" },
   { key: "roleType", label: "Role Type", field: "role.type" },
   { key: "region", label: "Region", field: "region.name" },
-  { key: "actions", label: "Action", field: "", cellAlign: "right" },
+  { key: "actions", label: "Action", field: "", cellAlign: "center" },
 ];
 
 const handleAction = (row: any, action: string) => {

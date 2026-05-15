@@ -52,7 +52,7 @@ const columns: TableColumn<any>[] = [
   { key: "typicalPrice", label: "Typical Price", field: "typicalPrice" },
   { key: "description", label: "Description", field: "description" },
   { key: "createdAt", label: "Created At", field: "createdAt" },
-  { key: "actions", label: "Actions", field: "", cellAlign: "right" },
+  { key: "actions", label: "Actions", field: "", cellAlign: "center" },
 ];
 
 const { response, refetch } = usePagination<any>({

@@ -113,19 +113,19 @@
               :name="`fuel_${index}_fuelPrice`"
               label="Fuel Price"
               type="number"
-              :attributes="{ placeholder: '0.00', step: '0.01' }"
+              :attributes="{ placeholder: '0.00', step: '0.01', onInput: () => setFuelAmount(form, index) }"
             />
             <Input
               :name="`fuel_${index}_refueledAmount`"
               label="Fuel Liters"
               type="number"
-              :attributes="{ placeholder: '0.00', step: '0.01' }"
+              :attributes="{ placeholder: '0.00', step: '0.01', onInput: () => setFuelAmount(form, index) }"
             />
             <Input
               :name="`fuel_${index}_amount`"
               label="Cash Amount"
               type="number"
-              :attributes="{ placeholder: '0.00', step: '0.01' }"
+              :attributes="{ placeholder: '0.00', step: '0.01', readonly: true, class: 'bg-gray-50 cursor-default' }"
             />
           </div>
           <Input
@@ -247,7 +247,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, nextTick } from "vue";
 import { closeModal } from "@customizer/modal-x";
 import FormModalParent from "@/components/modals/FormModalParent.vue";
 import Input from "@/components/form/Input.vue";
@@ -281,6 +281,14 @@ function formatStepName(step: string) {
 const fuelAdvancesList = ref([0]);
 const perDiemExpensesList = ref([0]);
 const otherExpensesList = ref([0]);
+
+async function setFuelAmount(form: any, index: number) {
+  await nextTick();
+  const vals = form?.state?.values;
+  const price = Number(vals?.[`fuel_${index}_fuelPrice`]) || 0;
+  const liters = Number(vals?.[`fuel_${index}_refueledAmount`]) || 0;
+  form?.setFieldValue(`fuel_${index}_amount`, price * liters);
+}
 
 function addFuelList() { fuelAdvancesList.value.push(fuelAdvancesList.value.length); }
 function removeFuelList(i: number) { fuelAdvancesList.value.splice(i, 1); }

@@ -27,8 +27,16 @@
               :options="statusOptions"
               :attributes="{ placeholder: 'Select status' }"
             />
-            <Input name="crv" label="CRV" :attributes="{ placeholder: 'CRV' }" />
-            <Input name="csi" label="CSI" :attributes="{ placeholder: 'CSI' }" />
+            <Input
+              name="crv"
+              label="CRV"
+              :attributes="{ placeholder: 'CRV' }"
+            />
+            <Input
+              name="csi"
+              label="CSI"
+              :attributes="{ placeholder: 'CSI' }"
+            />
           </div>
         </Colapsable>
 
@@ -40,10 +48,10 @@
         </Colapsable>
 
         <div class="pt-10 flex justify-end gap-4">
-          <Button type="button" variant="outline" @click="router.back()">Cancel</Button>
-          <SubmitButton variant="primary" :loading="updateMutation.isPending.value">
-            Save Changes
-          </SubmitButton>
+          <Button type="button" variant="outline" @click="router.back()"
+            >Cancel</Button
+          >
+          <SubmitButton> Save Changes </SubmitButton>
         </div>
       </template>
     </Form>
@@ -54,7 +62,10 @@
 import { computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/vue-query";
-import { fetch_invoice_details, update_payment_request } from "../../api/invoice.api";
+import {
+  fetch_invoice_details,
+  update_payment_request,
+} from "../../api/invoice.api";
 import Form from "@/components/form/Form.vue";
 import Input from "@/components/form/Input.vue";
 import SelectInput from "@/components/form/SelectInput.vue";
@@ -63,6 +74,7 @@ import Colapsable from "@/components/common/Colapsable.vue";
 import Button from "@/components/Button.vue";
 import ShipmentsInput from "../../components/finance/ShipmentsInput.vue";
 import { useToastStore } from "@/store/toastStore";
+import { openModal } from "@customizer/modal-x";
 
 const route = useRoute();
 const router = useRouter();
@@ -98,23 +110,23 @@ const initialValues = computed(() => {
 
 const updateMutation = useMutation({
   mutationFn: (data: any) => update_payment_request(invoiceId, data),
-  onSuccess: () => {
-    toast.success("Collection updated successfully");
-    queryClient.invalidateQueries({ queryKey: ["payment-collection", invoiceId] });
-    router.back();
-  },
-  onError: (error: any) => {
-    toast.error(error.response?.data?.description || "Failed to update collection");
-  },
 });
 
 const handleFormSubmit = async (values: Record<string, any>) => {
+  const confirmed = await openModal("ConfirmationModal", {
+    title: "Save Changes",
+    message:
+      "Are you sure you want to save changes to this payment collection?",
+    confirmText: "Save",
+  });
+  if (!confirmed) return;
+
   const shipmentIds = (values.shipments || []).map((s: any) => s._id);
   const totalAmount = (values.shipments || []).reduce(
     (sum: number, s: any) => sum + (s.totalPrice || 0),
     0,
   );
-  updateMutation.mutate({
+  const res = await updateMutation.mutateAsync({
     reference: values.reference,
     status: values.status,
     crv: values.crv,
@@ -122,5 +134,14 @@ const handleFormSubmit = async (values: Record<string, any>) => {
     totalAmount,
     shipments: shipmentIds,
   });
+
+  if (res.success) {
+    toast.success("Collection updated successfully");
+    queryClient.invalidateQueries({
+      queryKey: ["payment-collection", invoiceId],
+    });
+  } else {
+    toast.error(res.error || "Failed to update collection");
+  }
 };
 </script>

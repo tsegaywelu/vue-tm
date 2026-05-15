@@ -7,6 +7,10 @@ export function fetch_announcements(params?: Record<string, any>) {
   return api.addAuthenticationHeader().get<any>('', { params })
 }
 
+export function fetch_announcement_by_id(id: string) {
+  return api.addAuthenticationHeader().get<any>(`/${id}`)
+}
+
 export function create_announcement(data: any) {
   return api2.addAuthenticationHeader().post('', data)
 }
@@ -21,6 +25,7 @@ export function delete_announcement(id: string) {
 
 export default {
   fetch_announcements,
+  fetch_announcement_by_id,
   create_announcement,
   update_announcement,
   delete_announcement,

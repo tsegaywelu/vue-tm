@@ -53,7 +53,7 @@ const columns: TableColumn<any>[] = [
   { key: "movementAlertEndHour", label: "Movement Alert End Hour", field: "movementAlertEndHour" },
   { key: "speedAlertThreshold", label: "Speed Alert Threshold", field: "speedAlertThreshold" },
   { key: "createdAt", label: "Created At", field: "createdAt" },
-  { key: "actions", label: "Action", field: "" },
+  { key: "actions", label: "Action", field: "", cellAlign: "center" },
 ];
 
 const handleAction = (row: any, action: string) => {

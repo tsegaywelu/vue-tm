@@ -39,9 +39,14 @@ import DatePicker from "@/components/DatePicker.vue";
 import Dropdown from "@/components/common/Dropdown.vue";
 import ExpenseTable from "../../components/ExpenseTable.vue";
 
+const now = new Date();
+const firstOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+const lastOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+const toISO = (d: Date) => d.toISOString().split("T")[0];
+
 const dateRange = ref({
-  start: "",
-  end: "",
+  start: toISO(firstOfMonth),
+  end: toISO(lastOfMonth),
 });
 
 const handleDateSelect = (val: any) => {

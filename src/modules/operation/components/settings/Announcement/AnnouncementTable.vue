@@ -67,7 +67,7 @@ const columns: TableColumn<Announcement>[] = [
   { key: "message", label: "Message", field: "message" },
   { key: "targetAudience", label: "Target Audience", field: "targetAudience" },
   { key: "createdAt", label: "Created At", field: "createdAt" },
-  { key: "actions", label: "Action", field: "", cellAlign: "right" },
+  { key: "actions", label: "Action", field: "", cellAlign: "center" },
 ];
 
 const handleAction = (row: Announcement, action: string) => {

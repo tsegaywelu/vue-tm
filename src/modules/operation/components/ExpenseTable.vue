@@ -8,7 +8,7 @@
     @row_click="handleAction($event, 'view')"
   >
     <template #cell-plateNumber="{ value }">
-      <span class="font-bold">{{ value || '-' }}</span>
+      <span class="font-bold">{{ value || "-" }}</span>
     </template>
 
     <template #cell-totalFuelCost="{ value }">
@@ -28,7 +28,9 @@
     </template>
 
     <template #cell-totalExpenses="{ value }">
-      <span class="font-bold text-gray-900">{{ currencyFormatter(value || 0) }}</span>
+      <span class="font-bold text-gray-900">{{
+        currencyFormatter(value || 0)
+      }}</span>
     </template>
 
     <!-- <template #cell-actions="{ row }">
@@ -47,7 +49,6 @@
         </Dropdown> 
       </div>
     </template> -->
-  
   </Table>
 </template>
 
@@ -57,7 +58,6 @@ import Table from "@/components/common/Table.vue";
 import { usePagination } from "@/composables/usePagination";
 import type { TableColumn } from "@/components/common/Table.vue";
 import { currencyFormatter } from "@/utils/utils";
-
 
 const props = defineProps<{
   filters?: {
@@ -71,9 +71,17 @@ const emit = defineEmits(["action"]);
 const columns: TableColumn<any>[] = [
   { key: "plateNumber", label: "Vehicle", field: "plateNumber" },
   { key: "totalFuelCost", label: "Fuel Cost", field: "totalFuelCost" },
-  { key: "totalMaintenanceCost", label: "Maintenance Cost", field: "totalMaintenanceCost" },
+  {
+    key: "totalMaintenanceCost",
+    label: "Maintenance Cost",
+    field: "totalMaintenanceCost",
+  },
   { key: "totalTyreCost", label: "Tyre Cost", field: "totalTyreCost" },
-  { key: "totalInsuranceCost", label: "Insurance Cost", field: "totalInsuranceCost" },
+  {
+    key: "totalInsuranceCost",
+    label: "Insurance Cost",
+    field: "totalInsuranceCost",
+  },
   { key: "totalExpenses", label: "Total Cost", field: "totalExpenses" },
 ];
 
@@ -83,20 +91,16 @@ const { response, refetch } = usePagination<any>({
   id: "expense-list",
   url: "/expense",
   method: "POST",
-  paginate: false,
+  config: () => {
+    return props.filters;
+  },
   params: computed(() => {
     const params: any = {};
-    if (props.filters?.startDate) {
-      params["createdAt[gte]"] = props.filters.startDate;
-    }
-    if (props.filters?.endDate) {
-      params["createdAt[lte]"] = props.filters.endDate;
-    }
     if (searchTerm.value) {
       params.plateNumber = searchTerm.value;
       params.q = undefined;
     }
-    return params;
+    return { ...params, page: undefined, limit: undefined };
   }),
 });
 

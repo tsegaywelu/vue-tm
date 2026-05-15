@@ -48,7 +48,8 @@ interface UsePaginationOptions {
   queryKey?: string[];
   api?: ApiService;
   withAuth?: boolean;
-  method?: "GET" | "POST";
+  method?: "GET" | "POST" | "PUT" | "PATCH";
+  config?: Record<string, any> | Ref<any> | ((state: TableState) => any);
   paginate?: boolean;
   searchKey?: string | Ref<string>;
 }
@@ -113,6 +114,7 @@ export function usePagination<T = any>({
   api: apiInstance = rootApi,
   withAuth = true,
   method = "GET",
+  config,
   paginate = true,
   searchKey = "q",
 }: UsePaginationOptions): TablePaginationContext<T> {
@@ -151,6 +153,14 @@ export function usePagination<T = any>({
     },
     { deep: true },
   );
+
+  const resolved_config = computed(() => {
+    if (typeof config === "function") {
+      const stateProxy = { ...state.value, search: debounced_search.value };
+      return config(stateProxy);
+    }
+    return isRef(config) ? config.value : config;
+  });
 
   const resolved_params = computed(() => {
     if (typeof params === "function") {
@@ -228,8 +238,16 @@ export function usePagination<T = any>({
         ? apiInstance.addAuthenticationHeader()
         : apiInstance;
 
+      const body = resolved_config.value ?? request_params;
+
       if (method === "POST") {
-        return await caller.post<any>(url, request_params, { signal });
+        return await caller.post<any>(url, body, { params: resolved_config.value ? request_params : undefined, signal });
+      }
+      if (method === "PUT") {
+        return await caller.put<any>(url, body, { params: resolved_config.value ? request_params : undefined, signal });
+      }
+      if (method === "PATCH") {
+        return await caller.patch<any>(url, body, { params: resolved_config.value ? request_params : undefined, signal });
       }
       return await caller.get<any>(url, { params: request_params, signal });
     },

@@ -55,7 +55,7 @@ const { response, refetch } = usePagination<any>({
 const columns: TableColumn<any>[] = [
   { key: "name", label: "Name", field: "name" },
   { key: "createdAt", label: "Created At", field: "createdAt" },
-  { key: "actions", label: "Action", field: "", cellAlign: "right" },
+  { key: "actions", label: "Action", field: "", cellAlign: "center" },
 ];
 
 const handleAction = (row: any, action: string) => {

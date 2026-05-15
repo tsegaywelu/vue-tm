@@ -57,7 +57,7 @@ const columns: TableColumn<BonusRoute>[] = [
   { key: "amount", label: "Amount (ETB)", field: "amount" },
   { key: "description", label: "Description", field: "description" },
   { key: "createdAt", label: "Created At", field: "createdAt" },
-  { key: "actions", label: "Action", field: "", cellAlign: "right" },
+  { key: "actions", label: "Action", field: "", cellAlign: "center" },
 ];
 
 const handleAction = (row: BonusRoute, action: string) => {
