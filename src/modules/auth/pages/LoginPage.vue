@@ -64,7 +64,7 @@ async function submitLogin(values: any) {
   }
 
   toast_store.success("Welcome back! Login successful.");
-  
+
   const redirectPath = router.currentRoute.value.query.redirect as string;
   router.push(redirectPath || auth_store.get_default_home_route());
 }
@@ -137,6 +137,7 @@ async function submitLogin(values: any) {
 
         <!-- Login Form -->
         <Form
+          :sanitize_bypass="['password']"
           :onSubmit="submitLogin"
           :values="initivalue"
           id="login-form"

@@ -64,16 +64,11 @@
               </template>
               Export
             </Button>
-            <Button
-              variant="outline"
-              size="md"
-              @click="handlePrint"
-            >
-              <template #leading>
-                <i class="mdi mdi-printer text-lg"></i>
-              </template>
+            <!-- Print button hidden until print layout is configured -->
+            <!-- <Button variant="outline" size="md" @click="handlePrint">
+              <template #leading><i class="mdi mdi-printer text-lg"></i></template>
               Print
-            </Button>
+            </Button> -->
           </div>
         </div>
       </div>
@@ -135,8 +130,7 @@ import { fetch_invoice_details, collect_invoice } from "../../api/invoice.api";
 import Status from "@/components/common/Status.vue";
 import Button from "@/components/Button.vue";
 import ModalWrapper from "@/components/modals/ModalWrapper.vue";
-import { dateFormatter } from "@/utils/utils";
-import { exportToExcel, mapShipmentsForExcel } from "@/utils/excel";
+import { exportInvoiceToExcel } from "@/utils/excel";
 import { useToastStore } from "@/store/toastStore";
 import { useAuthStore } from "@/store/authStore";
 
@@ -198,17 +192,12 @@ const handleCollect = () => {
   }
   collectMutation.mutate({
     ...collectForm,
-    paymentCollectedBy: auth.user?._id,
+    paymentCollectedBy: auth.current_user?.user?._id,
   });
 };
 
-const handlePrint = () => {
-  window.print();
-};
-
 const handleExport = () => {
-  if (!invoice.value?.shipments) return;
-  const data = mapShipmentsForExcel(invoice.value.shipments);
-  exportToExcel(data, `Collection_${invoice.value.reference || 'Details'}`, "Shipments");
+  if (!invoice.value) return;
+  exportInvoiceToExcel(invoice.value);
 };
 </script>
