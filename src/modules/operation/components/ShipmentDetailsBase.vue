@@ -47,7 +47,10 @@
             </span>
           </span>
         </div>
-        <div class="flex-1 md:flex-none justify-end flex">
+        <div
+          v-role="UserRoles.CARRIER"
+          class="flex-1 md:flex-none justify-end flex"
+        >
           <ShipmentDropdown
             :filters="dropdownFilters"
             v-if="shipment"
@@ -88,6 +91,7 @@ import ShipmentUploadsTab from "./shipment-details/ShipmentUploadsTab.vue";
 import ShipmentPreTripInspectionsTab from "./shipment-details/ShipmentPreTripInspectionsTab.vue";
 import ShipmentSettlementsTab from "./shipment-details/ShipmentSettlementsTab.vue";
 import ShipmentEmptyReturnTab from "./shipment-details/ShipmentEmptyReturnTab.vue";
+import { UserRoles } from "../operation.types";
 
 const props = defineProps<{
   tabs?: any[];

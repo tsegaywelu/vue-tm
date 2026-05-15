@@ -31,9 +31,13 @@ const { data: receivableData, isLoading: receivableLoading } = useQuery({
   queryFn: () => fetch_receivable_shipments(),
 });
 
-const receivableShipments = computed<any[]>(
-  () => receivableData.value?.data?.results || receivableData.value?.data || [],
-);
+const receivableShipments = computed<any[]>(() => {
+  const raw = receivableData.value?.data as any;
+  if (!raw) return [];
+  const d = raw?.result || raw;
+  if (Array.isArray(d)) return d;
+  return d?.documents || d?.results || [];
+});
 
 const filteredReceivable = computed(() => {
   const currentIds = shipments.value.map((s) => s._id);

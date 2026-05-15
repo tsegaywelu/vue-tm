@@ -3,6 +3,14 @@ export const PricingType = {
   PerQuintal: "per_quintal",
 } as const;
 
+export enum UserRoles {
+  CARRIER = "carrier",
+  SHIPPER = "shipper",
+  ADMIN = "admin",
+  DISPATCHER = "dispatcher",
+  OWNER = "owner",
+}
+
 export type PricingType = (typeof PricingType)[keyof typeof PricingType];
 
 export const ShipmentStatus = {

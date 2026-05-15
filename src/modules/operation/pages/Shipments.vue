@@ -39,6 +39,7 @@
 
       <!-- Add Shipment Button -->
       <Button
+        v-role="UserRoles.CARRIER"
         v-permission="'SHIPMENT:create'"
         @click="router.push(`${basePath}/add`)"
       >
@@ -70,7 +71,7 @@ import { useQuery } from "@tanstack/vue-query";
 import ShipmentTable from "../components/ShipmentTable.vue";
 import StatsCards from "@/components/common/StatsCards.vue";
 import Button from "@/components/Button.vue";
-import { type Shipment } from "../operation.types";
+import { UserRoles, type Shipment } from "../operation.types";
 import { icons } from "@/utils/icons";
 import { raaz_icons } from "@/utils/raaz_icons";
 import { useToastStore } from "@/store/toastStore";
