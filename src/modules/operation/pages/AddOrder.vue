@@ -51,7 +51,7 @@ const handleCreateOrder = async (values: any) => {
   const req = Array(values.numberOfVehicles)
     .fill(0)
     .map((el) => {
-      return mutation.mutateAsync(values);
+      return mutation.mutateAsync({ ...values, carrer: undefined });
     });
   const res = await Promise.all(req);
   if (res.some((el) => el.success)) {
