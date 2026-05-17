@@ -77,7 +77,7 @@
     <template #after-search>
       <div class="items-center gap-4 inline-flex border-l border-grey-100 overflow-x-auto px-3">
         <i v-html="icons.filter" />
-        <ReceivableSettlementFilters @change="handleFilterChange" />
+        <ReceivableSettlementFilters @change="handleFilterChange" pagination-id="receivable-settlement-list" />
       </div>
     </template>
 

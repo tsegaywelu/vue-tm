@@ -25,10 +25,7 @@ import { useMutation } from "@tanstack/vue-query";
 
 const authStore = useAuthStore();
 const mutation = useMutation({
-  mutationFn: (values: any) =>
-    authStore.is_shipper
-      ? create_shipment_shipper(values)
-      : create_shipment(values),
+  mutationFn: (values: any) => create_shipment(values),
 });
 const router = useRouter();
 const toast = useToastStore();
@@ -93,13 +90,15 @@ const handleCreateShipment = async (values: any, context: any) => {
     payload.CKRFCode = values.CKRFCode;
   }
 
-  const isVehicleOwned = selectedVehicle 
-    ? selectedVehicle.ownership === "Owned" 
+  const isVehicleOwned = selectedVehicle
+    ? selectedVehicle.ownership === "Owned"
     : false;
 
   if (!isVehicleOwned) {
     payload.transporter = transporterId;
-    payload.transporterPrice = values.transporterPrice ? Number(values.transporterPrice) : undefined;
+    payload.transporterPrice = values.transporterPrice
+      ? Number(values.transporterPrice)
+      : undefined;
   } else {
     payload.transporter = null;
     payload.transporterPrice = null;
@@ -108,7 +107,9 @@ const handleCreateShipment = async (values: any, context: any) => {
   const res = await mutation.mutateAsync(payload);
   if (res.success) {
     toast.success("Shipment created successfully");
-    const basePath = authStore.is_shipper ? "/shipper/shipments" : "/operation/shipments";
+    const basePath = authStore.is_shipper
+      ? "/shipper/shipments"
+      : "/operation/shipments";
     router.push(basePath);
   } else {
     toast.error(res.error || "Failed to create shipment");

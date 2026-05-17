@@ -2,6 +2,7 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import { VueQueryPlugin, QueryClient } from '@tanstack/vue-query'
 import modal from "@customizer/modal-x";
+import VueApexCharts from 'vue3-apexcharts'
 import './style.css'
 import App from './App.vue'
 import router from './router'
@@ -16,6 +17,7 @@ app.use(pinia)
 app.use(router)
 app.use(VueQueryPlugin, { queryClient: query_client })
 app.use(modal)
+app.use(VueApexCharts)
 app.directive('role', roleDirective)
 app.directive('permission', permissionDirective)
 

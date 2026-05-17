@@ -2,11 +2,14 @@ import {
   watch,
   ref,
   computed,
+  onMounted,
+  nextTick,
   type Ref,
   isRef,
   provide,
   type ComputedRef,
 } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import { useQuery } from "@tanstack/vue-query";
 import {
   useTablePaginationStore,
@@ -97,6 +100,7 @@ export function useTablePagination(
       store.setTotalPages(id, total_pages),
     setPending: (pending: boolean) => store.setPending(id, pending),
     setIsDirty: (is_dirty: boolean) => store.setIsDirty(id, is_dirty),
+    setParams: (p: Record<string, any>) => store.setParams(id, p),
     reset: () => store.reset(id, default_state),
   };
 }
@@ -120,6 +124,8 @@ export function usePagination<T = any>({
 }: UsePaginationOptions): TablePaginationContext<T> {
   const id = prop_id || query_key_base[0] || url;
 
+  const store = useTablePaginationStore();
+
   const {
     state,
     setPage,
@@ -129,6 +135,7 @@ export function usePagination<T = any>({
     setTotalPages,
     setPending,
     setIsDirty,
+    setParams,
     reset,
   } = useTablePagination(id, sort_by, sort_direction, per_page, autofetch);
 
@@ -143,6 +150,29 @@ export function usePagination<T = any>({
       update_debounced_search(new_val);
     },
   );
+
+  // ── URL sync (page / limit / search only) ───────────────────────────────────
+  const route  = useRoute();
+  const router = useRouter();
+
+  const URL_PAGE   = `${id}_page`;
+  const URL_LIMIT  = `${id}_limit`;
+  const URL_SEARCH = `${id}_q`;
+
+  // Restore page / limit / search from URL on first load
+  // (Pinia already preserves these across navigation, but URL acts as a
+  //  fallback for hard refreshes and shareable links)
+  const urlPage   = parseInt(route.query[URL_PAGE]   as string);
+  const urlLimit  = parseInt(route.query[URL_LIMIT]  as string);
+  const urlSearch = (route.query[URL_SEARCH] as string) ?? "";
+
+  if (!isNaN(urlPage)  && urlPage  > 0 && urlPage  !== state.value.page)  setPage(urlPage);
+  if (!isNaN(urlLimit) && urlLimit > 0 && urlLimit !== state.value.limit) setLimit(urlLimit);
+  if (urlSearch && urlSearch !== state.value.search) {
+    setSearch(urlSearch);
+    debounced_search.value = urlSearch;
+  }
+  // ────────────────────────────────────────────────────────────────────────────
 
   // Watch for reset triggers
   watch(
@@ -173,12 +203,63 @@ export function usePagination<T = any>({
     return isRef(params) ? params.value : params;
   });
 
-  // Automatically reset to page 1 when query params change
-  let prevParamsStr = JSON.stringify(resolved_params.value);
+  // Push page/limit/search to URL (back-button + shareable links)
   watch(
-    resolved_params,
+    [() => state.value.page, () => state.value.limit, debounced_search],
+    () => {
+      router.replace({
+        query: {
+          ...route.query,
+          [URL_PAGE]:   state.value.page  !== 1        ? String(state.value.page)  : undefined,
+          [URL_LIMIT]:  state.value.limit !== per_page  ? String(state.value.limit) : undefined,
+          [URL_SEARCH]: debounced_search.value          || undefined,
+        },
+      });
+    },
+    { flush: "post" },
+  );
+
+  // ── Post-mount guard + param persistence ────────────────────────────────────
+  // Problem: callers mutate their reactive filter state synchronously right
+  // after usePagination returns (e.g. ShipmentTable line 269 sets
+  // activeFilters.value.searchField). That change triggers resolved_params,
+  // which—without a guard—would overwrite saved params and reset page to 1.
+  //
+  // Vue watch callbacks flush as microtasks BEFORE onMounted fires, so
+  // post_mount is still false when those init-time callbacks run.
+  let post_mount = false;
+  // nextTick alone is a microtask — it resolves BEFORE any setTimeout(0)
+  // macrotasks (including Form.vue's `setTimeout(() => emit("change"), 0)`).
+  // Wrapping in another setTimeout ensures post_mount flips AFTER those emits.
+  onMounted(() => nextTick(() => setTimeout(() => { post_mount = true; }, 0)));
+
+  // effective_params drives the query. On navigation-back it uses the Pinia-
+  // saved params so the TanStack Query cache key matches the previous visit
+  // and the cached data is served instantly instead of triggering a new fetch.
+  const had_saved_params = !!store.tableParams[id];
+  const effective_params = computed(() =>
+    store.tableParams[id] ?? resolved_params.value
+  );
+
+  // Seed Pinia on first visit so the next remount finds saved params.
+  if (!had_saved_params) {
+    setParams(resolved_params.value ?? {});
+  }
+
+  // Save live params to Pinia after initialization. The post_mount guard
+  // prevents init-time reactive noise from overwriting the saved state.
+  watch(resolved_params, (p) => {
+    if (post_mount) setParams(p ?? {});
+  }, { deep: true });
+
+  // Reset to page 1 when effective params change — but only post-mount so
+  // navigation-back never resets the preserved page number.
+  let prevParamsStr = JSON.stringify(effective_params.value);
+  watch(
+    effective_params,
     (newVal) => {
       const currentStr = JSON.stringify(newVal);
+      if (!post_mount) { prevParamsStr = currentStr; return; }
       if (currentStr !== prevParamsStr) {
         prevParamsStr = currentStr;
         if (state.value.page !== 1) setPage(1);
@@ -186,9 +267,10 @@ export function usePagination<T = any>({
     },
     { deep: true },
   );
+  // ────────────────────────────────────────────────────────────────────────────
 
   const queryKey = computed(() => [
-    id, // Ensure the query ID is part of the key for easy invalidation
+    id,
     ...query_key_base,
     url,
     state.value.page,
@@ -196,7 +278,7 @@ export function usePagination<T = any>({
     debounced_search.value,
     isRef(searchKey) ? searchKey.value : searchKey,
     state.value.sorting,
-    resolved_params.value,
+    effective_params.value,
   ]);
 
   const { data, isLoading, isFetching, error, refetch } = useQuery<
@@ -204,7 +286,7 @@ export function usePagination<T = any>({
   >({
     queryKey,
     queryFn: async ({ signal }) => {
-      const p = resolved_params.value;
+      const p = effective_params.value;
 
       const request_params: Record<string, any> = {
         ...(paginate
@@ -368,4 +450,23 @@ export function usePagination<T = any>({
   provide("table-pagination-context", pagination);
 
   return pagination;
+}
+
+/**
+ * Returns a computed ref of the last params saved for a given pagination id.
+ * Use this in filter components to restore the previously applied filter state.
+ */
+export function useTableLastParams(id: string): ComputedRef<Record<string, any>> {
+  const store = useTablePaginationStore();
+  return computed(() => (store.tableParams[id] ?? {}) as Record<string, any>);
+}
+
+/**
+ * Returns a computed ref of the label map saved for a given pagination id.
+ * Structure: { fieldName: { value: label } } — used to pass initial_labels
+ * to URL-based SelectInputs when restoring filter state after navigation.
+ */
+export function useTableLastLabels(id: string): ComputedRef<Record<string, Record<string, string>>> {
+  const store = useTablePaginationStore();
+  return computed(() => (store.tableLabels[id] ?? {}) as Record<string, Record<string, string>>);
 }

@@ -33,7 +33,7 @@
         class="items-center gap-4 inline-flex border-l border-grey-100 overflow-x-auto px-3"
       >
         <i v-html="icons.filter" />
-        <AdvanceFilters @change="handleFilterChange" />
+        <AdvanceFilters @change="handleFilterChange" :pagination-id="props.paginationId" />
       </div>
     </template>
 

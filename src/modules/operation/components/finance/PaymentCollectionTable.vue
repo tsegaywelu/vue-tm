@@ -61,7 +61,7 @@
   
 
     <template #after-search>
-      <PaymentCollectionFilters @change="handleFilterChange" />
+      <PaymentCollectionFilters @change="handleFilterChange" pagination-id="payment-collection-list" />
     </template>
 
     <template #cell-actions="{ row }">

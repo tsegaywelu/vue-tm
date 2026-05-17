@@ -20,6 +20,7 @@
             { label: 'Out Bound', value: 'OUT_BOUND' },
             { label: 'Site Transfer', value: 'SITE_TRANSFER' },
           ]"
+          pagination-id="/productivity/vehicles"
           @change="(val) => Object.assign(filters, val)"
         />
       </template>

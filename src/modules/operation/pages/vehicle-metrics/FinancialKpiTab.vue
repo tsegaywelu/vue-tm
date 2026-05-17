@@ -19,6 +19,7 @@
             { label: 'Internal Use', value: 'INHOUSE' },
             { label: 'Lease Out', value: 'LEASE_OUT' },
           ]"
+          pagination-id="/financial-kpi"
           @change="(val) => Object.assign(filters, val)"
         />
       </template>

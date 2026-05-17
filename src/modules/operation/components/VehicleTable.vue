@@ -34,7 +34,7 @@
         class="items-center gap-4 inline-flex border-l border-grey-100 overflow-x-auto px-3"
       >
         <i v-html="icons.filter" />
-        <VehicleFilters @change="handleFilterChange" />
+        <VehicleFilters @change="handleFilterChange" pagination-id="vehicle-list" />
       </div>
     </template>
 

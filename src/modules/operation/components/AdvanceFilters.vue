@@ -1,6 +1,8 @@
 <template>
   <Form
     id="advance-filter"
+    :enable_unsaved_guard="false"
+    :values="formValues"
     @change="
       (values) => {
         emit('change', {
@@ -45,6 +47,8 @@
       :attributes="{
         placeholder: 'Search Origin',
       }"
+      :initial_labels="fieldLabels['routeOrigin']"
+      @select="(opt) => captureLabel('routeOrigin', opt, 'destination', 'routeName')"
     />
     <SelectInput
       :show_validation_status="false"
@@ -75,6 +79,8 @@
       :attributes="{
         placeholder: 'Search Destination',
       }"
+      :initial_labels="fieldLabels['routeDestination']"
+      @select="(opt) => captureLabel('routeDestination', opt, 'destination', 'routeName')"
     />
     <SelectInput
       :show_validation_status="false"
@@ -91,11 +97,61 @@
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted } from "vue";
 import SelectInput from "@/components/form/SelectInput.vue";
 import Form from "@/components/form/Form.vue";
-import { TransactionStatus } from "../operation.types";
+import { useTableLastParams, useTableLastLabels } from "@/composables/usePagination";
+import { useTablePaginationStore } from "@/store/tablePaginationStore";
+
+const props = defineProps<{
+  paginationId?: string;
+}>();
 
 const emit = defineEmits(["change"]);
+
+const store = useTablePaginationStore();
+const lastParams = useTableLastParams(props.paginationId ?? "");
+const lastLabels = useTableLastLabels(props.paginationId ?? "");
+
+const fieldLabels = ref<Record<string, Record<string, string>>>({});
+
+function getNestedValue(obj: any, path: string): string {
+  return path.split(".").reduce((acc: any, key) => acc?.[key], obj) ?? "";
+}
+
+function captureLabel(field: string, opt: any, valueKey: string, labelKey: string) {
+  const value = String(getNestedValue(opt, valueKey));
+  const label = getNestedValue(opt, labelKey);
+  if (!fieldLabels.value[field]) fieldLabels.value[field] = {};
+  fieldLabels.value[field][value] = label;
+  store.setLabels(props.paginationId ?? "", { ...fieldLabels.value });
+}
+
+const FORM_FILTER_FIELDS = ["routeOrigin", "routeDestination", "status"];
+
+const formValues = ref<Record<string, any> | undefined>(undefined);
+
+onMounted(() => {
+  const saved = lastParams.value;
+  if (Object.keys(lastLabels.value).length > 0) {
+    fieldLabels.value = { ...lastLabels.value };
+  }
+  const filterOnly: Record<string, any> = {};
+  for (const field of FORM_FILTER_FIELDS) {
+    if (field in saved && saved[field] !== undefined) {
+      filterOnly[field] = saved[field];
+    }
+  }
+  if (typeof filterOnly.routeOrigin === "string") {
+    filterOnly.routeOrigin = filterOnly.routeOrigin.split(",").filter(Boolean);
+  }
+  if (typeof filterOnly.routeDestination === "string") {
+    filterOnly.routeDestination = filterOnly.routeDestination.split(",").filter(Boolean);
+  }
+  if (Object.keys(filterOnly).length > 0) {
+    formValues.value = filterOnly;
+  }
+});
 
 const AdvanceStatusOptions = [
   { label: "Pending", value: "PENDING" },

@@ -24,7 +24,7 @@
         class="items-center gap-4 inline-flex border-l border-grey-100 overflow-x-auto px-3"
       >
         <i v-html="icons.filter" />
-        <OrderFilters @change="handleFilterChange" />
+        <OrderFilters @change="handleFilterChange" pagination-id="order-list" />
       </div>
     </template>
 

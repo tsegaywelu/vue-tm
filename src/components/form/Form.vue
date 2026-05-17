@@ -88,6 +88,7 @@ function stripFakeIds(val: any): any {
 /** Recursively remove empty/null/undefined fields and coerce numeric strings.
  *  Keys listed in `bypass` are passed through as-is (top-level only). */
 function sanitizePayload(val: any, bypass: string[] = []): any {
+  return val;
   if (val === "" || val === null || val === undefined) return undefined;
   if (val instanceof File || val instanceof Date) return val;
   if (Array.isArray(val)) {
@@ -115,7 +116,10 @@ const localForm = !props.instance
   ? (useForm({
       defaultValues: props.values,
       onSubmit: async ({ value }) => {
-        const cleanValue = sanitizePayload(stripFakeIds(value), props.sanitize_bypass);
+        const cleanValue = sanitizePayload(
+          stripFakeIds(value),
+          props.sanitize_bypass,
+        );
         if (props.onSubmit) {
           await props.onSubmit(cleanValue, () => form.value.reset());
         } else {

@@ -19,7 +19,7 @@
       v-model:search_value="state.search"
     >
       <template #after-search>
-        <VehicleMetricsFilter @change="(val) => Object.assign(filters, val)" />
+        <VehicleMetricsFilter pagination-id="/goal-achievement" @change="(val) => Object.assign(filters, val)" />
       </template>
 
       <template #cell-plateNumber="{ row }">

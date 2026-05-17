@@ -1,6 +1,8 @@
 <template>
   <Form
     id="receivable-shipment-filter"
+    :enable_unsaved_guard="false"
+    :values="formValues"
     @change="handleChange"
     class="[&_.input-focus]:bg-grey-25 flex-1 flex flex-wrap max-h-32 min-h-16 px-2 gap-2 overflow-auto"
   >
@@ -63,6 +65,8 @@
         value_key="_id"
         url="/shipper"
         :attributes="{ placeholder: 'Choose Shipper' }"
+        :initial_labels="fieldLabels['shipper']"
+        @select="(opt: any) => captureLabel('shipper', opt, '_id', 'name')"
       />
 
       <SelectInput
@@ -77,6 +81,8 @@
         label_key="origin"
         url="/route"
         :attributes="{ placeholder: 'Select Origin' }"
+        :initial_labels="fieldLabels['routeOrigin']"
+        @select="(opt: any) => captureLabel('routeOrigin', opt, 'origin', 'origin')"
       />
 
       <SelectInput
@@ -91,6 +97,8 @@
         label_key="destination"
         url="/route"
         :attributes="{ placeholder: 'Select Destination' }"
+        :initial_labels="fieldLabels['routeDestination']"
+        @select="(opt: any) => captureLabel('routeDestination', opt, 'destination', 'destination')"
       />
 
       <SelectInput
@@ -126,14 +134,62 @@
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted } from "vue";
 import SelectInput from "@/components/form/SelectInput.vue";
 import Form from "@/components/form/Form.vue";
+import { useTableLastParams, useTableLastLabels } from "@/composables/usePagination";
+import { useTablePaginationStore } from "@/store/tablePaginationStore";
+
+const props = defineProps<{
+  paginationId?: string;
+}>();
 
 const emit = defineEmits(["change"]);
 
+const store = useTablePaginationStore();
+const lastParams = useTableLastParams(props.paginationId ?? "");
+const lastLabels = useTableLastLabels(props.paginationId ?? "");
+
+const fieldLabels = ref<Record<string, Record<string, string>>>({});
+
+function getNestedValue(obj: any, path: string): string {
+  return path.split(".").reduce((acc: any, key) => acc?.[key], obj) ?? "";
+}
+
+function captureLabel(field: string, opt: any, valueKey: string, labelKey: string) {
+  const value = String(getNestedValue(opt, valueKey));
+  const label = getNestedValue(opt, labelKey);
+  if (!fieldLabels.value[field]) fieldLabels.value[field] = {};
+  fieldLabels.value[field][value] = label;
+  store.setLabels(props.paginationId ?? "", { ...fieldLabels.value });
+}
+
+const FORM_FILTER_FIELDS = [
+  "activeFilters", "tripType", "productType", "shipper",
+  "routeOrigin", "routeDestination", "vehicleOwnership", "documentUploaded",
+];
+
+const formValues = ref<Record<string, any> | undefined>(undefined);
+
+onMounted(() => {
+  const saved = lastParams.value;
+  if (Object.keys(lastLabels.value).length > 0) {
+    fieldLabels.value = { ...lastLabels.value };
+  }
+  const filterOnly: Record<string, any> = {};
+  for (const field of FORM_FILTER_FIELDS) {
+    if (field in saved && saved[field] !== undefined) {
+      filterOnly[field] = saved[field];
+    }
+  }
+  if (Object.keys(filterOnly).length > 0) {
+    formValues.value = filterOnly;
+  }
+});
+
 const handleChange = (values: any) => {
   const filters: any = { ...values };
-  
+
   // Clean up values that are not in the active filters list
   const active = values.activeFilters || [];
   if (!active.includes('tripType')) delete filters.tripType;
@@ -143,9 +199,9 @@ const handleChange = (values: any) => {
   if (!active.includes('destination')) delete filters.routeDestination;
   if (!active.includes('vehicleOwnership')) delete filters.vehicleOwnership;
   if (!active.includes('documentUploaded')) delete filters.documentUploaded;
-  
+
   delete filters.activeFilters;
-  
+
   emit('change', filters);
 };
 </script>

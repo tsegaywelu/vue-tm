@@ -103,6 +103,7 @@
       >
         <i v-html="icons.filter" />
         <ShipmentFilters
+          pagination-id="shipment-list"
           @change="handleFilterChange"
           calendar-type="english"
           output-calendar-type="english"

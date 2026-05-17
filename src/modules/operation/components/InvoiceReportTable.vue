@@ -12,7 +12,7 @@
         class="items-center gap-4 inline-flex border-l border-grey-100 overflow-x-auto px-3"
       >
         <i v-html="icons.filter" />
-        <InvoiceReportFilters @change="handleFilterChange" />
+        <InvoiceReportFilters @change="handleFilterChange" pagination-id="invoice-report-list" />
       </div>
     </template>
     <template #cell-reference="{ value }">

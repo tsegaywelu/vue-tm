@@ -42,7 +42,7 @@ export function add_follow_up(id: string, data: any) {
 }
 
 export function create_shipment(data: any) {
-  return shipment_api.addAuthenticationHeader().post("/carrier", data);
+  return shipment_api.addAuthenticationHeader().post("", data);
 }
 
 export function create_shipment_shipper(data: any) {
