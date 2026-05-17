@@ -50,7 +50,7 @@ export function create_shipment_shipper(data: any) {
 }
 
 export function update_shipment(id: string, data: any) {
-  return shipment_api.addAuthenticationHeader().patch(`/${id}/carrier`, data);
+  return shipment_api.addAuthenticationHeader().patch(`/${id}`, data);
 }
 
 export function update_shipment_shipper(id: string, data: any) {
