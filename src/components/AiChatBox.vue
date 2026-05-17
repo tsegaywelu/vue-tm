@@ -1,18 +1,19 @@
 <script setup lang="ts">
-import { ref, nextTick, watch } from "vue";
-import {
-  sendMessage,
-  deleteConversation,
-  type ChatMessage,
-} from "@/api/aiChat.api";
+import { ref, nextTick, watch, onMounted, computed } from "vue";
+import { sendMessage, deleteConversation } from "@/api/aiChat.api";
+import { useChatStore } from "@/store/chatStore";
 
 const emit = defineEmits<{ (e: "close"): void }>();
 
-const messages = ref<ChatMessage[]>([]);
+const chatStore = useChatStore();
+const messages = computed(() => chatStore.messages);
 const inputText = ref("");
-const conversationId = ref<string | null>(null);
 const isSending = ref(false);
 const messagesEl = ref<HTMLElement | null>(null);
+
+onMounted(() => {
+  chatStore.init();
+});
 
 watch(
   messages,
@@ -29,17 +30,17 @@ async function send() {
   const text = inputText.value.trim();
   if (!text || isSending.value) return;
 
-  messages.value.push({ role: "user", content: text });
+  chatStore.addMessage({ role: "user", content: text });
   inputText.value = "";
   isSending.value = true;
 
-  const res = await sendMessage(text, conversationId.value ?? undefined);
+  const res = await sendMessage(text, chatStore.conversationId ?? undefined);
 
   if (res.success && res.data) {
-    conversationId.value = res.data.conversationId;
-    messages.value.push({ role: "assistant", content: res.data.reply });
+    chatStore.setConversationId(res.data.conversationId);
+    chatStore.addMessage({ role: "assistant", content: res.data.reply });
   } else {
-    messages.value.push({
+    chatStore.addMessage({
       role: "assistant",
       content: "Something went wrong. Please try again.",
     });
@@ -49,9 +50,8 @@ async function send() {
 }
 
 async function clearChat() {
-  if (conversationId.value) await deleteConversation(conversationId.value);
-  conversationId.value = null;
-  messages.value = [];
+  if (chatStore.conversationId) await deleteConversation(chatStore.conversationId);
+  chatStore.clear();
 }
 
 function onKeydown(e: KeyboardEvent) {
@@ -142,7 +142,17 @@ function onKeydown(e: KeyboardEvent) {
       class="flex-1 overflow-y-auto p-4 flex flex-col gap-3"
     >
       <div
-        v-if="messages.length === 0"
+        v-if="chatStore.isLoadingHistory"
+        class="flex-1 flex items-center justify-center h-full py-12"
+      >
+        <div class="flex flex-col items-center gap-2 text-gray-400">
+          <span class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style="animation-delay:0ms"></span>
+          <span class="text-xs">Loading history...</span>
+        </div>
+      </div>
+
+      <div
+        v-else-if="messages.length === 0"
         class="flex-1 flex flex-col items-center justify-center text-center text-gray-400 gap-3 h-full py-12"
       >
         <div

@@ -39,6 +39,8 @@ onUnmounted(() => {
 const close_nav = () => {
   if (!is_desktop.value) {
     emit("close");
+  } else if (!props.is_open) {
+    emit("toggle");
   }
 };
 </script>
