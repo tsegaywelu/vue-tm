@@ -5,7 +5,11 @@ const api = getApi("/v1/ai-chat");
 export interface ChatMessage {
   role: "user" | "assistant" | "tool";
   content: string | null;
-  tool_calls?: { id: string; type: string; function: { name: string; arguments: string } }[];
+  tool_calls?: {
+    id: string;
+    type: string;
+    function: { name: string; arguments: string };
+  }[];
   tool_call_id?: string;
 }
 
@@ -21,7 +25,7 @@ export interface GetConversationResponse {
 
 export function sendMessage(message: string, conversationId?: string) {
   api.addAuthenticationHeader();
-  return api.post<SendMessageResponse>("/", { message, conversationId });
+  return api.post<SendMessageResponse>("", { message, conversationId });
 }
 
 export function getConversation(conversationId: string) {
