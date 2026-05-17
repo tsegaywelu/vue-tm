@@ -7,6 +7,7 @@ import { getNavigationRegistry } from "@/router/navigation";
 import { useAuthStore } from "@/store/authStore";
 import type { Navs } from "@/types/navigation";
 import DashboardPage from "@/components/common/DashboardPage.vue";
+import AiChatBox from "@/components/AiChatBox.vue";
 
 const authStore = useAuthStore();
 
@@ -98,7 +99,7 @@ onUnmounted(() => {
         </main>
       </div>
     </div>
-    <!-- Chatbox -->
+    <!-- <AiChatBox /> -->
   </div>
 </template>
 
