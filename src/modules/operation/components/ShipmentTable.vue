@@ -245,7 +245,7 @@ const columns: TableColumn<Shipment>[] = [
   { key: "status", label: "Status", field: "status" },
   { key: "actions", label: "Actions", field: "", cellAlign: "right" },
 ];
-const selectedSearchField = ref("platenumber");
+const selectedSearchField = ref("vehiclePlateNumber");
 
 const activeFilters = ref<ShipmentFilterParams>({});
 const { response, refetch } = usePagination<Shipment>({
