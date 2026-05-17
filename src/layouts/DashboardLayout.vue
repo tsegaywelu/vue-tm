@@ -110,12 +110,15 @@ onUnmounted(() => {
           <slot name="header-actions"></slot>
           <button
             :title="is_chat_open ? 'Close AI Assistant' : 'Open AI Assistant'"
-            class="grid place-items-center p-0 size-9 rounded-xl transition-colors hover:bg-gray-100"
+            class="flex items-center tracking-wider gap-2 p-2 font-bold text-xs rounded-xl transition-colors"
             :class="
-              is_chat_open ? 'text-primary bg-primary/10' : 'text-gray-500'
+              is_chat_open
+                ? 'text-primary bg-primary/10 hover:bg-primary/20'
+                : 'text-gray-500 bg-gray-100 hover:bg-gray-200'
             "
             @click="toggle_chat"
           >
+            AI
             <svg
               xmlns="http://www.w3.org/2000/svg"
               class="size-5"
