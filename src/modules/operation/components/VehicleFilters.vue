@@ -3,11 +3,7 @@
     id="vehicle-filter"
     :enable_unsaved_guard="false"
     :values="formValues"
-    @change="
-      (values) => {
-        emit('change', values);
-      }
-    "
+    @change="handleChange"
     class="[&_.input-focus]:bg-grey-25 flex-1 flex max-h-16 h-16 min-h-16 *:w-[220px] *:shrink-0 px-2 gap-2 overflow-auto"
   >
     <SelectInput
@@ -51,9 +47,13 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import SelectInput from "@/components/form/SelectInput.vue";
+import Input from "@/components/form/Input.vue";
 import Form from "@/components/form/Form.vue";
 import { VehicleOwnership } from "../operation.types";
-import { useTableLastParams, useTableLastLabels } from "@/composables/usePagination";
+import {
+  useTableLastParams,
+  useTableLastLabels,
+} from "@/composables/usePagination";
 import { useTablePaginationStore } from "@/store/tablePaginationStore";
 
 const props = defineProps<{
@@ -72,7 +72,12 @@ function getNestedValue(obj: any, path: string): string {
   return path.split(".").reduce((acc: any, key) => acc?.[key], obj) ?? "";
 }
 
-function captureLabel(field: string, opt: any, valueKey: string, labelKey: string) {
+function captureLabel(
+  field: string,
+  opt: any,
+  valueKey: string,
+  labelKey: string,
+) {
   const value = String(getNestedValue(opt, valueKey));
   const label = getNestedValue(opt, labelKey);
   if (!fieldLabels.value[field]) fieldLabels.value[field] = {};
@@ -80,7 +85,32 @@ function captureLabel(field: string, opt: any, valueKey: string, labelKey: strin
   store.setLabels(props.paginationId ?? "", { ...fieldLabels.value });
 }
 
-const FORM_FILTER_FIELDS = ["ownership", "vehicleType", "status"];
+const filterFieldOptions = [
+  { label: "Plate Number", value: "vehiclePlateNumber" },
+  { label: "First Name", value: "driverFirstName" },
+  { label: "Middle Name", value: "driverMiddleName" },
+  { label: "Last Name", value: "driverLastName" },
+];
+
+function handleChange(values: any) {
+  const selectedOpt = filterFieldOptions.find(
+    (o) => o.value === values.filterField,
+  );
+  emit("change", {
+    ownership: values.ownership,
+    vehicleType: values.vehicleType,
+    status: values.status,
+    searchQuery: values.searchQuery || undefined,
+    selectedFilterOption: selectedOpt ?? undefined,
+  });
+}
+
+const FORM_FILTER_FIELDS = [
+  "ownership",
+  "vehicleType",
+  "status",
+  "searchQuery",
+];
 
 const formValues = ref<Record<string, any> | undefined>(undefined);
 
@@ -94,6 +124,9 @@ onMounted(() => {
     if (field in saved && saved[field] !== undefined) {
       filterOnly[field] = saved[field];
     }
+  }
+  if (saved.selectedFilterOption?.value) {
+    filterOnly.filterField = saved.selectedFilterOption.value;
   }
   if (Object.keys(filterOnly).length > 0) {
     formValues.value = filterOnly;

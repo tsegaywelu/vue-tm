@@ -29,12 +29,30 @@
     :rows="response"
     @row_click="(row) => $router.push(`/vehicles/${row._id}`)"
   >
+    <template #search-prefix>
+      <div
+        class="h-full flex items-center border-r border-gray-200 pr-2 mr-2 w-48"
+      >
+        <Select
+          v-model="selectedSearchField"
+          class="[&_.input-focus]:shadow-none! [&_.input-focus]:border-none [&_.input-focus]:min-h-full min-w-48"
+          :options="filterFieldOptions"
+          label_key="label"
+          value_key="value"
+          :clearable="false"
+        />
+      </div>
+    </template>
+
     <template #after-search>
       <div
         class="items-center gap-4 inline-flex border-l border-grey-100 overflow-x-auto px-3"
       >
         <i v-html="icons.filter" />
-        <VehicleFilters @change="handleFilterChange" pagination-id="vehicle-list" />
+        <VehicleFilters
+          @change="handleFilterChange"
+          pagination-id="vehicle-list"
+        />
       </div>
     </template>
 
@@ -108,7 +126,8 @@
     <template #cell-actions="{ row }">
       <Dropdown>
         <template #default="{ close }">
-          <DropDownItem v-permission="'VEHICLE:read'"
+          <DropDownItem
+            v-permission="'VEHICLE:read'"
             :icon="icons.eye"
             label="View Details"
             @click.stop="
@@ -116,7 +135,8 @@
               close();
             "
           />
-          <DropDownItem v-permission="'VEHICLE:update'"
+          <DropDownItem
+            v-permission="'VEHICLE:update'"
             :icon="icons.editIcon"
             label="Edit Details"
             @click.stop="
@@ -124,7 +144,8 @@
               close();
             "
           />
-          <DropDownItem v-permission="'VEHICLE:update'"
+          <DropDownItem
+            v-permission="'VEHICLE:update'"
             :icon="icons.shield"
             label="Change Status"
             @click.stop="
@@ -156,12 +177,20 @@ import DropDownItem from "@/components/common/DropDownItem.vue";
 import VehicleFilters from "./VehicleFilters.vue";
 import { icons } from "@/utils/icons";
 import { usePagination } from "@/composables/usePagination";
+import Select from "@/components/common/Select.vue";
 
+const filterFieldOptions = [
+  { label: "Plate Number", value: "vehiclePlateNumber" },
+  { label: "First Name", value: "driverFirstName" },
+  { label: "Middle Name", value: "driverMiddleName" },
+  { label: "Last Name", value: "driverLastName" },
+];
 const props = defineProps<{
   filters?: any;
 }>();
 
 const emit = defineEmits(["action"]);
+const selectedSearchField = ref("vehiclePlateNumber");
 
 const columns: TableColumn[] = [
   { key: "plateNumber", label: "Plate Number", field: "plateNumber" },
@@ -190,7 +219,12 @@ const activeFilters = ref<any>({});
 const { response, refetch } = usePagination({
   id: "vehicle-list",
   url: "/vehicle",
-  params: computed(() => ({ ...props.filters, ...activeFilters.value })),
+  params: (state) => ({
+    ...props.filters,
+    [selectedSearchField.value]: state.search,
+    ...activeFilters.value,
+    q: undefined,
+  }),
 });
 
 const emitAction = (row: any, action: string) => {
