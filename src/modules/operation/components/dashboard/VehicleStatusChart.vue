@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+  <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 @container">
     <div class="flex items-center justify-between mb-4">
       <h3 class="font-semibold text-gray-800">Vehicle Status</h3>
       <button @click="refetch()" class="text-gray-400 hover:text-gray-600 transition-colors">
@@ -16,7 +16,7 @@
       <div class="flex justify-center -mb-6">
         <apexchart
           type="donut"
-          width="280"
+          width="240"
           :options="chartOptions"
           :series="series"
         />

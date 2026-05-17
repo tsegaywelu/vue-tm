@@ -32,7 +32,6 @@
 
       <!-- Status Time (hidden for custom) -->
       <DateInput
-        :validation="{ required }"
         v-if="currentStatus !== 'custom'"
         name="statusTime"
         label="Time"
@@ -180,7 +179,9 @@ async function handleFormSubmit(values: any) {
 
   try {
     if (values.status === "custom") {
-      const res = await add_follow_up(id, { followUp: [values.followUp.trim()] });
+      const res = await add_follow_up(id, {
+        followUp: [values.followUp.trim()],
+      });
       if (res.status === 200 || res.status === 201) {
         toast.success("Status updated successfully!");
         closeModal(true);

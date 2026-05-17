@@ -46,18 +46,23 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from "vue";
+import { ref, computed, onMounted, onUnmounted, h } from "vue";
 import { useQuery } from "@tanstack/vue-query";
 import { fetchDestinationDowntime } from "../../api/dashboard.api";
 
 const CountdownUnit = {
   props: ["value", "label"],
-  template: `
-    <div class="flex flex-col items-center">
-      <span class="text-xs font-bold text-red-500 bg-red-50 border border-red-100 rounded px-1.5 py-0.5 min-w-[28px] text-center">{{ String(value).padStart(2, '0') }}</span>
-      <span class="text-[9px] text-gray-400 mt-0.5">{{ label }}</span>
-    </div>
-  `,
+  setup(props: any) {
+    return () =>
+      h("div", { class: "flex flex-col items-center" }, [
+        h(
+          "span",
+          { class: "text-xs font-bold text-red-500 bg-red-50 border border-red-100 rounded px-1.5 py-0.5 min-w-[28px] text-center" },
+          String(props.value).padStart(2, "0"),
+        ),
+        h("span", { class: "text-[9px] text-gray-400 mt-0.5" }, props.label),
+      ]);
+  },
 };
 
 const { data, isLoading, isFetching, refetch } = useQuery({

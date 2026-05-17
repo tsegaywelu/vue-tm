@@ -29,11 +29,12 @@ import { fetch_order_by_id } from "../api/orders.api";
 import { useToastStore } from "@/store/toastStore";
 import SubmitButton from "@/components/form/SubmitButton.vue";
 import Button from "@/components/Button.vue";
-import { useMutation, useQuery } from "@tanstack/vue-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/vue-query";
 
 const router = useRouter();
 const route = useRoute();
 const toast = useToastStore();
+const queryClient = useQueryClient();
 const orderId = route.params.orderId as string;
 
 const mutation = useMutation({
@@ -89,10 +90,41 @@ const labels = computed(() => {
   };
 });
 
-const handleCreateShipment = async (values: any) => {
-  const res = await mutation.mutateAsync(values);
+const handleCreateShipment = async (values: any, context?: any) => {
+  const { selectedOrder, filteredPricingType } = context || {};
+
+  const payload: any = {
+    order: values.order,
+    orderCode: values.orderCode,
+    shipper: values.shipper,
+    driver: values.driver,
+    vehicleType: values.vehicleType,
+    route: values.route,
+    productType: values.productType,
+    tripType: values.tripType,
+    packaging: values.packaging,
+    vehicle: values.vehicle,
+    waypoint: values.waypoint,
+    freightOrder: values.freightOrder,
+    dispatchWeight: Number(values.dispatchWeight) || 0,
+    odometerAtDispatch: Number(values.odometerAtDispatch) || 0,
+    fuelReadingAtDispatch: Number(values.fuelReadingAtDispatch) || 0,
+    deadHole: Math.max(0, Number(values.deadHole) || 0),
+    dispatchDate: values.dispatchDate,
+    remark: values.remark,
+    totalPrice: Number(values.totalPrice) || 0,
+    CKRF: !!values.CKRF,
+    commodity: selectedOrder?.commodity || values.commodity,
+    pricingType: {
+      type: filteredPricingType?.type || "per_kilometer",
+      amount: filteredPricingType?.pricePerUnit || 0,
+    },
+  };
+
+  const res = await mutation.mutateAsync(payload);
   if (res.success) {
     toast.success("Shipment created successfully");
+    queryClient.invalidateQueries({ queryKey: ["shipment-list"] });
     router.push("/operation/shipments");
   } else {
     toast.error(res.error || "Failed to create shipment");

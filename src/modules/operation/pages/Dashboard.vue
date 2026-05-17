@@ -4,14 +4,14 @@
     <StatCardsRow />
 
     <!-- Row 2: Driver status | Vehicle status | Destination downtime -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+    <div class="grid grid-cols-1 @[560px]:grid-cols-2 @[900px]:grid-cols-3 gap-4">
       <DriverStatusChart />
       <VehicleStatusChart />
       <DestinationDownTime />
     </div>
 
     <!-- Row 3: Shipment flow | Route volume -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+    <div class="grid grid-cols-1 @[560px]:grid-cols-2 gap-4">
       <ShipmentStatusFlow />
       <RouteVolumeTable />
     </div>

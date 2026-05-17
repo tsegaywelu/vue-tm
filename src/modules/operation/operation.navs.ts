@@ -176,6 +176,11 @@ export const fleet_navs: Navs[] = [
         name: "Vehicle Standards",
         show: true,
       },
+      {
+        path: "/vehicles/$id",
+        name: "Vehicle Details",
+        show: false,
+      },
     ],
   },
   {
@@ -376,7 +381,7 @@ export const maintenance_navs: Navs[] = [
             name: "Edit Mechanic",
             show: false,
           },
-        ]
+        ],
       },
 
       {
@@ -394,7 +399,7 @@ export const maintenance_navs: Navs[] = [
             name: "Edit Inspection",
             show: false,
           },
-        ]
+        ],
       },
 
       {
@@ -412,9 +417,8 @@ export const maintenance_navs: Navs[] = [
             name: "Edit Service Record",
             show: false,
           },
-        ]
+        ],
       },
-
 
       {
         name: "Service Reminder",
@@ -431,7 +435,7 @@ export const maintenance_navs: Navs[] = [
             name: "Edit Service Reminder",
             show: false,
           },
-        ]
+        ],
       },
 
       {
@@ -449,7 +453,7 @@ export const maintenance_navs: Navs[] = [
             name: "Edit Service Task",
             show: false,
           },
-        ]
+        ],
       },
 
       {
@@ -467,10 +471,8 @@ export const maintenance_navs: Navs[] = [
             name: "Edit Service Type",
             show: false,
           },
-        ]
-
+        ],
       },
-
 
       {
         name: "Work Order",
@@ -484,7 +486,7 @@ export const maintenance_navs: Navs[] = [
           },
           {
             // path: "/maintenance/work-order/edit/:id",
-            path: 'maintenance/work-order/edit/$id',
+            path: "maintenance/work-order/edit/$id",
             name: "Edit Work Order",
             show: false,
           },
@@ -493,9 +495,8 @@ export const maintenance_navs: Navs[] = [
             name: "Work Order Details",
             show: false,
           },
-        ]
+        ],
       },
-
 
       {
         name: "Workshop",
@@ -617,7 +618,7 @@ export const finance_navs: Navs[] = [
             path: "/finance/expense-types/edit/$id",
             show: false,
           },
-        ]
+        ],
       },
 
       {
@@ -655,7 +656,7 @@ export const inventory_navs: Navs[] = [
             path: "/inventory/categories/edit/$id",
             show: false,
           },
-        ]
+        ],
       },
 
       {
@@ -673,7 +674,7 @@ export const inventory_navs: Navs[] = [
             path: "/inventory/item-groups/edit/$id",
             show: false,
           },
-        ]
+        ],
       },
 
       {
@@ -691,7 +692,7 @@ export const inventory_navs: Navs[] = [
             path: "/inventory/vendor/edit/$id",
             show: false,
           },
-        ]
+        ],
       },
 
       {
@@ -709,7 +710,7 @@ export const inventory_navs: Navs[] = [
             path: "/inventory/items/edit/$id",
             show: false,
           },
-        ]
+        ],
       },
 
       {
@@ -732,7 +733,7 @@ export const inventory_navs: Navs[] = [
             path: "/inventory/store-requisition/$id",
             show: false,
           },
-        ]
+        ],
       },
 
       {
@@ -755,7 +756,7 @@ export const inventory_navs: Navs[] = [
             path: "/inventory/purchase-requisition/$id",
             show: false,
           },
-        ]
+        ],
       },
 
       {
@@ -778,7 +779,7 @@ export const inventory_navs: Navs[] = [
             path: "/inventory/purchase-order/$id",
             show: false,
           },
-        ]
+        ],
       },
 
       {
@@ -801,9 +802,8 @@ export const inventory_navs: Navs[] = [
             path: "/inventory/good-transfer/$id",
             show: false,
           },
-        ]
+        ],
       },
-
     ],
   },
 ];
@@ -839,7 +839,7 @@ export const setting_navs: Navs[] = [
             path: "/setting/user-and-role/role/edit/$id",
             show: false,
           },
-        ]
+        ],
       },
 
       {
@@ -850,58 +850,54 @@ export const setting_navs: Navs[] = [
           {
             name: "Add Setting",
             path: "/setting/base-configuration/settings/add",
-            show: false
+            show: false,
           },
           {
             name: "Edit Setting",
             path: "setting/base-configuration/settings/edit/$id",
-            show: false
+            show: false,
           },
           {
             name: "Add Road Type",
             path: "setting/base-configuration/road-type/add",
-            show: false
+            show: false,
           },
           {
             name: "Edit Road Type",
-            path: 'setting/base-configuration/road-type/edit/$id',
-            show: false
-
+            path: "setting/base-configuration/road-type/edit/$id",
+            show: false,
           },
           {
             name: "Add Terrain Type",
             path: "/setting/base-configuration/terrain-type/add",
-            show: false
+            show: false,
           },
           {
-            name: 'Edit Terrain Type',
+            name: "Edit Terrain Type",
             path: "/setting/base-configuration/terrain-type/edit/$id",
-            show: false
+            show: false,
           },
           {
             name: "Add Bank",
             path: "/setting/base-configuration/bank/add",
-            show: false
+            show: false,
           },
           {
             name: "Edit Bank",
             path: "/setting/base-configuration/bank/edit/$id",
-            show: false
+            show: false,
           },
           {
             name: "Add Insurance Provider",
             path: "setting/base-configuration/insurance/add",
-            show: false
+            show: false,
           },
           {
             name: "Edit Insurance Provider",
             path: "setting/base-configuration/insurance/edit/$id",
-            show: false
+            show: false,
           },
-
-
-        ]
-
+        ],
       },
       {
         name: "Contract",
@@ -911,19 +907,19 @@ export const setting_navs: Navs[] = [
           {
             name: "Add Contract",
             path: "/setting/contract/add",
-            show: false
+            show: false,
           },
           {
             name: "Edit Contract",
             path: "/setting/contract/edit/$id",
-            show: false
+            show: false,
           },
           {
             name: "Contract Details",
             path: "/setting/contract/view/$id",
-            show: false
+            show: false,
           },
-        ]
+        ],
       },
       {
         name: "Commodity",
@@ -933,14 +929,14 @@ export const setting_navs: Navs[] = [
           {
             name: "Add Commodity",
             path: "/setting/commodity/add",
-            show: false
+            show: false,
           },
           {
             name: "Edit Commodity",
             path: "/setting/commodity/edit/$id",
-            show: false
+            show: false,
           },
-        ]
+        ],
       },
       {
         name: "Packaging",
@@ -950,14 +946,14 @@ export const setting_navs: Navs[] = [
           {
             name: "Add Packaging",
             path: "/setting/packaging/add",
-            show: false
+            show: false,
           },
           {
             name: "Edit Packaging",
             path: "/setting/packaging/edit/$id",
-            show: false
+            show: false,
           },
-        ]
+        ],
       },
       {
         name: "Route Requests",
@@ -972,14 +968,14 @@ export const setting_navs: Navs[] = [
           {
             name: "Add Region",
             path: "/setting/region/add",
-            show: false
+            show: false,
           },
           {
             name: "Edit Region",
             path: "/setting/region/edit/$id",
-            show: false
+            show: false,
           },
-        ]
+        ],
       },
       {
         name: "Bonus Multipliers",
@@ -989,14 +985,14 @@ export const setting_navs: Navs[] = [
           {
             name: "Add Multiplier",
             path: "/setting/bonus-multipliers/add",
-            show: false
+            show: false,
           },
           {
             name: "Edit Multiplier",
             path: "/setting/bonus-multipliers/edit/$id",
-            show: false
+            show: false,
           },
-        ]
+        ],
       },
       {
         name: "Bonus Routes",
@@ -1006,14 +1002,14 @@ export const setting_navs: Navs[] = [
           {
             name: "Add Bonus Route",
             path: "/setting/bonus-routes/add",
-            show: false
+            show: false,
           },
           {
             name: "Edit Bonus Route",
             path: "/setting/bonus-routes/edit/$id",
-            show: false
+            show: false,
           },
-        ]
+        ],
       },
       {
         name: "Announcements",

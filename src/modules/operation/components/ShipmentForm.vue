@@ -604,7 +604,8 @@ const handleVehicleSelect = (vehicle: any, form: any) => {
     driverName = vehicle.driverName;
   }
 
-  form.setFieldValue("driver", driverName);
+  const driverId = vehicle.driver?._id || "";
+  form.setFieldValue("driver", driverId);
   internalLabels.value.driver = driverName;
 
   let transporterName = "";

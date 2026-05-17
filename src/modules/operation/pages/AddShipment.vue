@@ -21,9 +21,10 @@ import { useToastStore } from "@/store/toastStore";
 import { useAuthStore } from "@/store/authStore";
 import SubmitButton from "@/components/form/SubmitButton.vue";
 import Button from "@/components/Button.vue";
-import { useMutation } from "@tanstack/vue-query";
+import { useMutation, useQueryClient } from "@tanstack/vue-query";
 
 const authStore = useAuthStore();
+const queryClient = useQueryClient();
 const mutation = useMutation({
   mutationFn: (values: any) => create_shipment(values),
 });
@@ -107,6 +108,7 @@ const handleCreateShipment = async (values: any, context: any) => {
   const res = await mutation.mutateAsync(payload);
   if (res.success) {
     toast.success("Shipment created successfully");
+    queryClient.invalidateQueries({ queryKey: ["shipment-list"] });
     const basePath = authStore.is_shipper
       ? "/shipper/shipments"
       : "/operation/shipments";

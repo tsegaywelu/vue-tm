@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+  <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 @container">
     <div class="flex items-center justify-between mb-4">
       <h3 class="font-semibold text-gray-800">Driver Status</h3>
       <button @click="refetch()" class="text-gray-400 hover:text-gray-600 transition-colors">
@@ -11,19 +11,19 @@
       <span class="mdi mdi-loading mdi-spin text-2xl text-indigo-400" />
     </div>
 
-    <div v-else class="flex items-center gap-4">
+    <div v-else class="flex flex-col @[380px]:flex-row items-center gap-4">
       <!-- donut -->
-      <div class="shrink-0">
+      <div class="shrink-0 flex justify-center">
         <apexchart
           type="donut"
-          width="260"
+          width="220"
           :options="chartOptions"
           :series="series"
         />
       </div>
 
       <!-- custom legend -->
-      <div class="flex flex-col gap-1.5 flex-1 min-w-0">
+      <div class="flex flex-col gap-1.5 flex-1 min-w-0 w-full @[380px]:w-auto">
         <button
           v-for="(item, i) in legendItems"
           :key="item.label"

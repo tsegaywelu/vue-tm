@@ -65,8 +65,8 @@
       </div>
     </template>
 
-    <template #cell-shipperIssueVoucher="{ value }">
-      <div class="flex items-center gap-2">
+    <template #cell-shipperIssueVoucher="{ value, row }">
+      <div @click.stop="openVouchersModal(row)" class="flex items-center gap-2">
         <span class="font-medium text-gray-500">{{
           value || "No Voucher"
         }}</span>
@@ -111,8 +111,12 @@
       </div>
     </template>
 
-    <template #cell-status="{ value }">
-      <Status :variant="value" type="wrapped">
+    <template #cell-status="{ value, row }">
+      <Status
+        @click.stop="openStatusModal(row)"
+        :variant="value"
+        type="wrapped"
+      >
         {{ value?.replace(/_/g, " ") }}
       </Status>
     </template>
@@ -147,10 +151,13 @@ import {
   numberFormatter,
 } from "@/utils/utils";
 import { useAuthStore } from "@/store/authStore";
+import { useShipmentActions } from "../composables/useShipmentActions";
 const props = defineProps<{
   filters?: any;
 }>();
 
+const { handleAction, openStatusModal, openVouchersModal } =
+  useShipmentActions();
 const authStore = useAuthStore();
 const shipmentBasePath = computed(() =>
   authStore.is_shipper ? "/shipper/shipments" : "/operation/shipments",
