@@ -15,6 +15,7 @@ import {
 type Item = {
   fakeId: string;
   item: string;
+  _itemLabel?: string;
   uom: string;
   unitPrice: string;
   quantity: number | string;
@@ -113,6 +114,7 @@ function remove(id: string) {
                 limit: undefined,
               }"
               :url="`/commodity/carrier/${props.shipperId}`"
+              :display_value="item._itemLabel || ''"
               label_key="name"
               value_key="_id"
               searchable

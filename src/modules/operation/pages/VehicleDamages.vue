@@ -114,6 +114,12 @@
     <template #cell-actions="{ row }">
       <Dropdown>
         <DropDownItem @click="handleRowClick(row)">View Details</DropDownItem>
+        <DropDownItem
+          v-if="row.payableStatus === 'PENDING'"
+          @click="openEditDamageModal(row)"
+        >
+          Edit
+        </DropDownItem>
 
         <!-- Payable Actions -->
         <template v-if="activeTab === 'payable' || activeTab === 'list'">
@@ -230,7 +236,7 @@ const {
   refetch,
 } = usePagination({
   url: "/vehicle-damages",
-  params: (state) => ({
+  params: () => ({
     ...queryParams.value,
   }),
   queryKey: ["vehicle-damages", activeTab.value],
@@ -247,6 +253,16 @@ const columns: TableColumn[] = [
 
 const openAddDamageModal = () => {
   openModal("AddVehicleDamageModal", {
+    onSuccess: () => {
+      refetch();
+    },
+  });
+};
+
+const openEditDamageModal = (row: any) => {
+  openModal("AddVehicleDamageModal", {
+    damageId: row._id,
+    initialData: row,
     onSuccess: () => {
       refetch();
     },

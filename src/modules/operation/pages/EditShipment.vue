@@ -46,12 +46,37 @@
             </template>
           </component>
         </div>
-        <div class="flex flex-col gap-4">
-          <ToggleInput
-            name="isDamaged"
-            label="Is Damaged"
-            :on_change="(val) => handleDamageToggle(val, form)"
-          />
+        <div class="flex items-center gap-4">
+          <ToggleInput name="isDamaged" label="Is Damaged" />
+          <component
+            :is="form.Subscribe"
+            :selector="(state: any) => state.values.isDamaged"
+          >
+            <template #default="isDamaged">
+              <button
+                v-if="isDamaged"
+                type="button"
+                class="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-semibold text-orange-600 bg-orange-50 border border-orange-200 rounded-lg hover:bg-orange-100 transition-colors w-fit"
+                @click="openDamageReport"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="w-3.5 h-3.5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z"
+                  />
+                </svg>
+                Damage Report
+              </button>
+            </template>
+          </component>
         </div>
       </div>
     </template>
@@ -66,10 +91,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import ShipmentForm from "../components/ShipmentForm.vue";
-import { fetch_shipment_details, update_shipment, update_shipment_shipper } from "../api/shipment.api";
+import {
+  fetch_shipment_details,
+  update_shipment,
+  update_shipment_shipper,
+} from "../api/shipment.api";
 import { useToastStore } from "@/store/toastStore";
 import SubmitButton from "@/components/form/SubmitButton.vue";
 import Button from "@/components/common/Button.vue";
@@ -99,32 +128,14 @@ const statusOptions = Object.entries(ShipmentStatus).map(([key, value]) => ({
   value,
 }));
 
-const isProcessingDamage = ref(false);
-async function handleDamageToggle(val: any, form: any) {
-  // If toggling OFF or already processing, do nothing.
-  // The form state is already updated by the UI toggle itself.
-  if (!val || isProcessingDamage.value) return;
-
-  isProcessingDamage.value = true;
-  try {
-    const success = await openModal("DamageReportModal", {
-      shipmentId,
-      shipperId: shipment.value?.shipper?._id || "",
-      carrierId: shipment.value?.carrier?._id || "",
-    });
-
-    if (!success) {
-      form.setFieldValue("isDamaged", false);
-    } else {
-      // It's already true in the UI toggle, but we ensure form state is synced
-      if (form.getFieldValue("isDamaged") !== true) {
-        form.setFieldValue("isDamaged", true);
-      }
-    }
-  } finally {
-    isProcessingDamage.value = false;
-  }
+async function openDamageReport() {
+  await openModal("DamageReportModal", {
+    shipmentId,
+    shipperId: shipment.value?.shipper?._id || "",
+    carrierId: shipment.value?.carrier?._id || "",
+  });
 }
+
 
 const { data: shipment, isLoading } = useQuery({
   queryKey: ["shipment", shipmentId],
@@ -256,13 +267,15 @@ const handleUpdateShipment = async (values: any, context: any) => {
     payload.agent = values.agent;
   }
 
-  const isVehicleOwned = selectedVehicle 
-    ? selectedVehicle.ownership === "Owned" 
+  const isVehicleOwned = selectedVehicle
+    ? selectedVehicle.ownership === "Owned"
     : false;
 
   if (!isVehicleOwned) {
     payload.transporter = transporterId;
-    payload.transporterPrice = values.transporterPrice ? Number(values.transporterPrice) : undefined;
+    payload.transporterPrice = values.transporterPrice
+      ? Number(values.transporterPrice)
+      : undefined;
   } else {
     payload.transporter = null;
     payload.transporterPrice = null;
@@ -272,7 +285,9 @@ const handleUpdateShipment = async (values: any, context: any) => {
   if (res.success) {
     toast.success("Shipment updated successfully");
     queryClient.invalidateQueries({ queryKey: ["shipment", shipmentId] });
-    const basePath = authStore.is_shipper ? "/shipper/shipments" : "/operation/shipments";
+    const basePath = authStore.is_shipper
+      ? "/shipper/shipments"
+      : "/operation/shipments";
     router.push(`${basePath}/${shipmentId}`);
   } else {
     toast.error(res.error || "Failed to update shipment");

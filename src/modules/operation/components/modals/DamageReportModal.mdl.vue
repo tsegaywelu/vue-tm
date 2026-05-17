@@ -1,6 +1,8 @@
 <template>
   <FormModalParent
-    title="Add Shipment Damage"
+    :title="
+      props.data?.damageId ? 'Edit Shipment Damage' : 'Add Shipment Damage'
+    "
     subtitle="Record details of damaged items in this shipment."
     form-id="damageReportForm"
     :values="formValues"
@@ -9,13 +11,14 @@
     <template #center="{ form }">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <SelectInput
-          v-if="!props.data?.shipmentId"
+          v-if="!props.data?.shipmentId && !props.data?.damageId"
           name="shipment"
           label="Select Shipment"
           url="/shipment"
           label_key="shipmentCode"
           value_key="_id"
           :validation="{ required }"
+          @select="(opt) => (selectedShipperId = opt?.item?.shipper?._id)"
         />
         <DateInput
           name="damageDate"
@@ -45,16 +48,17 @@
       </div>
 
       <DamageInput
+        :key="selectedShipperId"
         name="items"
         :shipper-id="selectedShipperId || props.data?.shipperId || ''"
       />
 
-      <div class="mt-8 border-t border-gray-100 pt-6">
+      <!-- <div class="mt-8 border-t border-gray-100 pt-6">
         <h3 class="text-lg font-bold text-gray-900 mb-4">
           Vehicle Parts & Prices (Optional)
         </h3>
         <VehiclePartsInput name="vehiclePartsAndPrices" />
-      </div>
+      </div> -->
 
       <!-- Totals Section -->
       <component
@@ -64,18 +68,12 @@
             state.values.items,
             state.values.vehiclePartsAndPrices,
             state.values.vatInclusive,
-            state.values.shipment,
           ]
         "
       >
         <template
-          #default="[items, vehicleParts, vatInclusive, selectedShipment]"
+          #default="[items, vehicleParts, vatInclusive]"
         >
-          <!-- Hidden tracking of selected shipment to fetch shipper dynamically if needed -->
-          <span class="hidden">{{
-            updateSelectedShipment(selectedShipment)
-          }}</span>
-
           <div
             class="mt-8 flex flex-col items-end gap-2 bg-gray-50 p-6 rounded-2xl"
           >
@@ -152,7 +150,11 @@
     <template #bottom>
       <div class="flex justify-end gap-3">
         <SubmitButton form="damageReportForm">
-          Submit Damage Report
+          {{
+            props.data?.damageId
+              ? "Update Damage Report"
+              : "Submit Damage Report"
+          }}
         </SubmitButton>
       </div>
     </template>
@@ -160,7 +162,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { closeModal } from "@customizer/modal-x";
 import { useMutation, useQueryClient } from "@tanstack/vue-query";
 import FormModalParent from "@/components/modals/FormModalParent.vue";
@@ -172,7 +174,10 @@ import TextareaInput from "@/components/form/TextareaInput.vue";
 import SubmitButton from "@/components/form/SubmitButton.vue";
 import { lessThanToday, required } from "@/utils/validations";
 import { currencyFormatter } from "@/utils/utils";
-import { add_shipment_damage } from "../../api/operation.api";
+import {
+  add_shipment_damage,
+  update_shipment_damage,
+} from "../../api/operation.api";
 import { useToastStore } from "@/store/toastStore";
 import { getApi } from "@/utils/getApi";
 import DamageInput from "../inputs/DamageInput.vue";
@@ -183,6 +188,8 @@ export type Props = {
   carrierId?: string;
   shipperId?: string;
   onSuccess?: () => void;
+  damageId?: string;
+  initialData?: any;
 };
 
 export type ReturnType = boolean;
@@ -192,21 +199,53 @@ const props = defineProps<{ data?: Props; close: (res: any) => void }>();
 const toast = useToastStore();
 const queryClient = useQueryClient();
 
-const selectedShipperId = ref<string | undefined>(props.data?.shipperId);
+const isEditMode = !!props.data?.damageId;
+const initial = props.data?.initialData;
+
+// shipper is at root level of the damage record
+const selectedShipperId = ref<string | undefined>(
+  props.data?.shipperId || initial?.shipper?._id,
+);
 
 const mutation = useMutation({
-  mutationFn: (payload: any) => add_shipment_damage(payload),
+  mutationFn: (payload: any) =>
+    isEditMode
+      ? update_shipment_damage(props.data!.damageId!, payload)
+      : add_shipment_damage(payload),
+});
+
+const shipmentId = props.data?.shipmentId || initial?.shipment?._id || "";
+
+onMounted(async () => {
+  if (isEditMode && shipmentId && !selectedShipperId.value) {
+    try {
+      const res = await getApi("/shipment")
+        .addAuthenticationHeader()
+        .get(`/${shipmentId}`);
+      const data = res.data as any;
+      if (data?.shipper?._id) {
+        selectedShipperId.value = data.shipper._id;
+      }
+    } catch (e) {}
+  }
 });
 
 const formValues = {
-  shipment: props.data?.shipmentId || "",
-  damageDate: new Date().toISOString().split("T")[0],
-  location: "",
-  paymentToBeReceivedFrom: "DRIVER",
-  items: [],
-  vehiclePartsAndPrices: [],
-  vatInclusive: false,
-  remark: "",
+  shipment: shipmentId,
+  damageDate: initial?.damageDate
+    ? new Date(initial.damageDate).toISOString().split("T")[0]
+    : new Date().toISOString().split("T")[0],
+  location: initial?.location || "",
+  paymentToBeReceivedFrom: initial?.paymentToBeReceivedFrom || "DRIVER",
+  // normalize item from populated object { _id, name } to plain _id; keep name as _itemLabel for display
+  items: (initial?.items || []).map((i: any) => ({
+    ...i,
+    item: i.item?._id ?? i.item,
+    _itemLabel: i.item?.name ?? "",
+  })),
+  vehiclePartsAndPrices: initial?.vehiclePartsAndPrices || [],
+  vatInclusive: initial?.vatInclusive || false,
+  remark: initial?.remark || "",
 };
 
 function getVehiclePartsTotal(parts: any[]) {
@@ -225,26 +264,6 @@ function getSubtotal(items: any[]) {
   );
 }
 
-// Function to fetch shipper ID if a shipment is selected and we don't already have it
-const updateSelectedShipment = (shipmentId: string) => {
-  if (
-    shipmentId &&
-    !props.data?.shipperId &&
-    shipmentId !== formValues.shipment
-  ) {
-    getApi("/shipment")
-      .addAuthenticationHeader()
-      .get(`/${shipmentId}`)
-      .then((res) => {
-        if (res.data?.shipper?._id) {
-          selectedShipperId.value = res.data.shipper._id;
-        }
-      })
-      .catch(console.error);
-    formValues.shipment = shipmentId;
-  }
-  return "";
-};
 
 async function handleSubmit(values: any) {
   const itemsSubtotal = getSubtotal(values.items);
@@ -266,18 +285,22 @@ async function handleSubmit(values: any) {
       quantity: Number(i.quantity || 0),
       totalPrice: Number(i.unitPrice || 0) * Number(i.quantity || 0),
     })),
-    vehiclePartsAndPrices: (values.vehiclePartsAndPrices || [])
-      .filter((p: any) => p.vehiclePart)
-      .map((p: any) => ({
-        vehiclePart: p.vehiclePart,
-        price: Number(p.price || 0),
-        isRepair: !!p.isRepair,
-      })),
+    // vehiclePartsAndPrices: (values.vehiclePartsAndPrices || [])
+    //   .filter((p: any) => p.vehiclePart)
+    //   .map((p: any) => ({
+    //     vehiclePart: p.vehiclePart,
+    //     price: Number(p.price || 0),
+    //     isRepair: !!p.isRepair,
+    //   })),
   };
 
   const res = await mutation.mutateAsync(payload);
   if (res.success) {
-    toast.success("Damage report submitted successfully");
+    toast.success(
+      isEditMode
+        ? "Damage report updated successfully"
+        : "Damage report submitted successfully",
+    );
     if (props.data?.onSuccess) {
       props.data.onSuccess();
     }

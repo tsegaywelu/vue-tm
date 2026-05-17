@@ -308,8 +308,15 @@ export const maintenance_navs: Navs[] = [
     children: [
       {
         path: "/shipment-damages",
-        name: "Shipment Damages",
+        name: "ShipmentDamages",
         show: true,
+        children: [
+          {
+            path: "/shipment-damages/$id",
+            name: "Shipment Damage Details",
+            show: false,
+          },
+        ],
       },
       {
         path: "/vehicle-damages",

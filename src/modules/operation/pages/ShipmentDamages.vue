@@ -1,6 +1,11 @@
 <template>
   <Teleport defer to="#page-actions">
-    <Button v-permission="'SHIPMENT_DAMAGE:create'" variant="primary" size="md" @click="openAddDamageModal">
+    <Button
+      v-permission="'SHIPMENT_DAMAGE:create'"
+      variant="primary"
+      size="md"
+      @click="openAddDamageModal"
+    >
       <template #leftIcon>
         <i class="mdi mdi-plus text-lg"></i>
       </template>
@@ -42,21 +47,20 @@
     @row_click="handleRowClick"
     :row_alignment="{ amount: 'right', actions: 'right' }"
     :head_alignment="{ amount: 'right', actions: 'right' }"
+    :search_placeholder="dynamicSearchPlaceholder"
   >
-    <!-- Search / Filter actions -->
-    <template #table-actions>
-      <div class="flex items-center gap-4 flex-1">
-        <div class="relative w-64">
-          <i
-            class="mdi mdi-magnify absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xl"
-          ></i>
-          <input
-            v-model="searchQuery"
-            type="text"
-            class="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm transition-shadow"
-            placeholder="Search damages..."
-          />
-        </div>
+    <template #search-prefix>
+      <div
+        class="h-full flex items-center border-r border-gray-200 pr-2 mr-2 w-48"
+      >
+        <Select
+          class="[&_.input-focus]:shadow-none! [&_.input-focus]:border-none [&_.input-focus]:min-h-full min-w-48"
+          v-model="selectedSearchField"
+          :options="searchFieldOptions"
+          label_key="label"
+          value_key="value"
+          :clearable="false"
+        />
       </div>
     </template>
 
@@ -125,6 +129,12 @@
     <template #cell-actions="{ row }">
       <Dropdown>
         <DropDownItem @click="handleRowClick(row)">View Details</DropDownItem>
+        <DropDownItem
+          v-if="row.payableStatus === 'PENDING'"
+          @click="openEditDamageModal(row)"
+        >
+          Edit
+        </DropDownItem>
 
         <!-- Payable Actions -->
         <template v-if="activeTab === 'payable' || activeTab === 'list'">
@@ -201,12 +211,12 @@ import { useRouter, useRoute } from "vue-router";
 import { usePagination } from "@/composables/usePagination";
 import { useMutation } from "@tanstack/vue-query";
 import Table from "@/components/common/Table.vue";
+import Select from "@/components/common/Select.vue";
 import Button from "@/components/common/Button.vue";
 import type { TableColumn } from "@/components/common/Table.vue";
 import Status from "@/components/common/Status.vue";
 import Dropdown from "@/components/common/Dropdown.vue";
 import DropDownItem from "@/components/common/DropDownItem.vue";
-import TablePerPageSelect from "@/components/common/TablePerPageSelect.vue";
 import { openModal } from "@customizer/modal-x";
 import { useToastStore } from "@/store/toastStore";
 import { currencyFormatter, dateFormatter } from "@/utils/utils";
@@ -220,23 +230,32 @@ const router = useRouter();
 const route = useRoute();
 const toast = useToastStore();
 
-const searchQuery = ref("");
-const paginationParams = ref({ limit: 10 });
+const selectedSearchField = ref("shipmentCode");
+
+const searchFieldOptions = [
+  { label: "Shipment Code", value: "shipmentCode" },
+  { label: "Plate Number", value: "vehiclePlateNumber" },
+  { label: "Driver Name", value: "driverName" },
+  { label: "Damage Remark", value: "damageRemark" },
+  { label: "Item Remark", value: "itemRemark" },
+];
+
+const dynamicSearchPlaceholder = computed(() => {
+  const option = searchFieldOptions.find(
+    (o) => o.value === selectedSearchField.value,
+  );
+  return option ? `Search by ${option.label}...` : "Search damages...";
+});
 
 const activeTab = computed(() => (route.query.tab as string) || "list");
 
-const queryParams = computed(() => {
-  const p: any = {
-    name: searchQuery.value || undefined,
-    limit: paginationParams.value.limit,
-  };
-
+const tabFilters = computed(() => {
+  const p: any = {};
   if (activeTab.value === "payable") {
     p.payableStatus = JSON.stringify(["PENDING", "AUTHORIZED"]);
   } else if (activeTab.value === "receivable") {
     p.receivableStatus = JSON.stringify(["PENDING", "AUTHORIZED"]);
   }
-
   return p;
 });
 
@@ -247,7 +266,16 @@ const {
 } = usePagination({
   url: "/shipment-damages",
   params: (state) => ({
-    ...queryParams.value,
+    ...tabFilters.value,
+    ...(state.search
+      ? {
+          name: {
+            regex: state.search,
+          },
+        }
+      : {}),
+    searchBy: selectedSearchField.value,
+    q: undefined,
   }),
   queryKey: ["shipment-damages", activeTab.value],
 });
@@ -263,6 +291,17 @@ const columns: TableColumn[] = [
 
 const openAddDamageModal = () => {
   openModal("DamageReportModal", {
+    onSuccess: () => {
+      refetch();
+    },
+  });
+};
+
+const openEditDamageModal = (row: any) => {
+  openModal("DamageReportModal", {
+    shipperId: row.shipper._id,
+    damageId: row._id,
+    initialData: row,
     onSuccess: () => {
       refetch();
     },

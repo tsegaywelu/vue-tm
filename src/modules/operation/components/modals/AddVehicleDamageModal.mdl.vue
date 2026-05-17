@@ -1,6 +1,6 @@
 <template>
   <FormModalParent
-    title="Add Vehicle Damage"
+    :title="props.data?.damageId ? 'Edit Vehicle Damage' : 'Add Vehicle Damage'"
     subtitle="Record details of vehicle damages, parts, and costs."
     form-id="vehicleDamageForm"
     :values="formValues"
@@ -18,10 +18,11 @@
         <VehicleInput
           name="vehicle"
           :validation="{ required }"
+          :options="initial?.vehicle?._id ? [{ _id: initial.vehicle._id, plateNumber: initial.vehicle.plateNumber }] : []"
         />
         <SelectInput
           name="shipment"
-          label="Shipment (Optional)"
+          label="Shipment"
           url="/shipment"
           label_key="shipmentCode"
           value_key="_id"
@@ -72,70 +73,7 @@
           />
         </div>
 
-        <component
-          :is="form.Subscribe"
-          :selector="
-            (state: any) => [
-              state.values.vehiclePartsAndPrices,
-              state.values.laborCost,
-              state.values.excess,
-              state.values.partsContribution,
-            ]
-          "
-        >
-          <template #default="[parts, laborCost, excess, partsContribution]">
-            <div class="bg-gray-50 p-6 rounded-2xl space-y-4 mb-8">
-              <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
-                <div class="flex flex-col gap-1">
-                  <span class="text-gray-500 font-medium">Parts Total</span>
-                  <span class="text-lg font-bold text-gray-900">{{
-                    currencyFormatter(getPartsTotal(parts))
-                  }}</span>
-                </div>
-                <div class="flex flex-col gap-1">
-                  <span class="text-gray-500 font-medium">Labor Cost</span>
-                  <span class="text-lg font-bold text-gray-900">{{
-                    currencyFormatter(Number(laborCost || 0))
-                  }}</span>
-                </div>
-                <div
-                  class="flex flex-col gap-1 p-3 bg-white rounded-xl border border-gray-100 shadow-sm"
-                >
-                  <span
-                    class="text-primary font-bold uppercase tracking-wider text-[10px]"
-                    >Estimated Total</span
-                  >
-                  <span class="text-xl font-black text-primary">{{
-                    currencyFormatter(
-                      getPartsTotal(parts) + Number(laborCost || 0),
-                    )
-                  }}</span>
-                </div>
-              </div>
-            </div>
-          </template>
-        </component>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Input
-            name="tax"
-            label="Tax (3%)"
-            type="number"
-            :attributes="{ placeholder: 'Enter tax amount' }"
-          />
-          <Input
-            name="vat"
-            label="VAT (15%)"
-            type="number"
-            :attributes="{ placeholder: 'Enter VAT amount' }"
-          />
-
-          <Input
-            name="actualRepairCost"
-            label="Actual Repair Cost"
-            type="number"
-            :attributes="{ placeholder: 'Enter actual repair cost' }"
-          />
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           <Input
             name="excess"
             label="Excess"
@@ -148,13 +86,106 @@
             type="number"
             :attributes="{ placeholder: 'Enter parts contribution' }"
           />
-          <Input
-            name="amountToReceiveFromInsurance"
-            label="Amount To Receive (Insurance)"
-            type="number"
-            :attributes="{ placeholder: 'Enter amount to receive' }"
-          />
         </div>
+
+        <component
+          :is="form.Subscribe"
+          :selector="
+            (state: any) => [
+              state.values.vehiclePartsAndPrices,
+              state.values.laborCost,
+              state.values.excess,
+              state.values.partsContribution,
+            ]
+          "
+        >
+          <template #default="[parts, laborCost, excess, partsContribution]">
+            <div class="bg-gray-50 p-6 rounded-2xl space-y-3">
+              <div
+                class="grid grid-cols-2 md:grid-cols-4 gap-4 pb-3 border-b border-gray-200"
+              >
+                <div class="flex flex-col gap-0.5">
+                  <span
+                    class="text-gray-400 text-xs uppercase font-semibold tracking-wide"
+                    >Parts Total</span
+                  >
+                  <span class="text-base font-bold text-gray-900">{{
+                    currencyFormatter(getPartsTotal(parts))
+                  }}</span>
+                </div>
+                <div class="flex flex-col gap-0.5">
+                  <span
+                    class="text-gray-400 text-xs uppercase font-semibold tracking-wide"
+                    >Labor Cost</span
+                  >
+                  <span class="text-base font-bold text-gray-900">{{
+                    currencyFormatter(Number(laborCost || 0))
+                  }}</span>
+                </div>
+                <div class="flex flex-col gap-0.5">
+                  <span
+                    class="text-gray-400 text-xs uppercase font-semibold tracking-wide"
+                    >Tax (3%)</span
+                  >
+                  <span class="text-base font-bold text-gray-900">{{
+                    currencyFormatter(calcTax(parts, laborCost))
+                  }}</span>
+                </div>
+                <div class="flex flex-col gap-0.5">
+                  <span
+                    class="text-gray-400 text-xs uppercase font-semibold tracking-wide"
+                    >VAT (15%)</span
+                  >
+                  <span class="text-base font-bold text-gray-900">{{
+                    currencyFormatter(calcVat(parts, laborCost))
+                  }}</span>
+                </div>
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
+                <div
+                  class="flex flex-col gap-0.5 p-3 bg-white rounded-xl border border-gray-100"
+                >
+                  <span
+                    class="text-gray-400 text-xs uppercase font-semibold tracking-wide"
+                    >Actual Repair Cost</span
+                  >
+                  <span class="text-lg font-black text-gray-900">
+                    {{
+                      currencyFormatter(
+                        calcActualRepairCost(
+                          parts,
+                          laborCost,
+                          excess,
+                          partsContribution,
+                        ),
+                      )
+                    }}
+                  </span>
+                </div>
+                <div
+                  class="flex flex-col gap-0.5 p-3 bg-white rounded-xl border border-primary/20 shadow-sm"
+                >
+                  <span
+                    class="text-primary text-xs uppercase font-bold tracking-wider"
+                    >Amount To Be Received From Insurance</span
+                  >
+                  <span class="text-xl font-black text-primary">
+                    {{
+                      currencyFormatter(
+                        calcInsuranceAmount(
+                          parts,
+                          laborCost,
+                          excess,
+                          partsContribution,
+                        ),
+                      )
+                    }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </template>
+        </component>
       </div>
 
       <div class="mt-6 border-t border-gray-100 pt-6">
@@ -175,7 +206,7 @@
     <template #bottom>
       <div class="flex justify-end gap-3">
         <SubmitButton form="vehicleDamageForm">
-          Submit Vehicle Damage
+          {{ props.data?.damageId ? "Update Vehicle Damage" : "Submit Vehicle Damage" }}
         </SubmitButton>
       </div>
     </template>
@@ -195,13 +226,15 @@ import VehicleInput from "@/components/common/inputs/VehicleInput.vue";
 import SubmitButton from "@/components/form/SubmitButton.vue";
 import { lessThanToday, required } from "@/utils/validations";
 import { currencyFormatter } from "@/utils/utils";
-import { add_vehicle_damage } from "../../api/operation.api";
+import { add_vehicle_damage, update_vehicle_damage } from "../../api/operation.api";
 import { useToastStore } from "@/store/toastStore";
 import VehiclePartsInput from "../inputs/VehiclePartsInput.vue";
 import { ref } from "vue";
 
 export type Props = {
   onSuccess?: () => void;
+  damageId?: string;
+  initialData?: any;
 };
 
 const props = defineProps<{ data?: Props; close: (res: any) => void }>();
@@ -209,34 +242,95 @@ const props = defineProps<{ data?: Props; close: (res: any) => void }>();
 const toast = useToastStore();
 const queryClient = useQueryClient();
 
+const isEditMode = !!props.data?.damageId;
+const initial = props.data?.initialData;
+
 const mutation = useMutation({
-  mutationFn: (payload: FormData) => add_vehicle_damage(payload),
+  mutationFn: (payload: FormData) =>
+    isEditMode
+      ? update_vehicle_damage(props.data!.damageId!, payload)
+      : add_vehicle_damage(payload),
 });
 
 const formValues = {
-  damageDate: new Date().toISOString().split("T")[0],
-  vehicle: "",
-  shipment: "",
-  severity: "",
-  location: "",
-  vehiclePartsAndPrices: [],
-  laborCost: 0,
-  tax: 0,
-  vat: 0,
-  estimatedRepairCost: 0,
-  actualRepairCost: 0,
-  excess: 0,
-  partsContribution: 0,
-  amountToReceiveFromInsurance: 0,
-  description: "",
+  damageDate: initial?.damageDate
+    ? new Date(initial.damageDate).toISOString().split("T")[0]
+    : new Date().toISOString().split("T")[0],
+  vehicle: initial?.vehicle?._id ?? initial?.vehicle ?? "",
+  shipment: initial?.shipment?._id ?? initial?.shipment ?? "",
+  severity: initial?.severity ?? "",
+  location: initial?.location ?? "",
+  vehiclePartsAndPrices: initial?.vehiclePartsAndPrices?.length
+    ? initial.vehiclePartsAndPrices.map((p: any) => ({
+        vehiclePart: p.vehiclePart ?? "",
+        price: Number(p.price ?? 0),
+        isRepair: !!p.isRepair,
+      }))
+    : [{ vehiclePart: "", price: 0, isRepair: false }],
+  laborCost: Number(initial?.laborCost ?? 0),
+  tax: Number(initial?.tax ?? 0),
+  vat: Number(initial?.vat ?? 0),
+  estimatedRepairCost: Number(initial?.estimatedRepairCost ?? 0),
+  actualRepairCost: Number(initial?.actualRepairCost ?? 0),
+  excess: Number(initial?.excess ?? 0),
+  partsContribution: Number(initial?.partsContribution ?? 0),
+  amountToReceiveFromInsurance: Number(initial?.amountToReceiveFromInsurance ?? 0),
+  description: initial?.description ?? "",
   documents: [],
 };
 
-const getPartsTotal = (parts: any[]) => {
-  return parts?.reduce((sum, p) => sum + Number(p.price || 0), 0) || 0;
+const getPartsTotal = (parts: any[]) =>
+  parts?.reduce((sum, p) => sum + Number(p.price || 0), 0) || 0;
+
+const calcTax = (parts: any[], laborCost: any) =>
+  (getPartsTotal(parts) + Number(laborCost || 0)) * 0.03;
+
+const calcVat = (parts: any[], laborCost: any) =>
+  (getPartsTotal(parts) + Number(laborCost || 0)) * 0.15;
+
+const calcActualRepairCost = (
+  parts: any[],
+  laborCost: any,
+  excess: any,
+  partsContribution: any,
+) => {
+  const subtotal = getPartsTotal(parts) + Number(laborCost || 0);
+  return (
+    subtotal +
+    calcVat(parts, laborCost) -
+    Number(excess || 0) -
+    Number(partsContribution || 0)
+  );
 };
 
+const calcInsuranceAmount = (
+  parts: any[],
+  laborCost: any,
+  excess: any,
+  partsContribution: any,
+) =>
+  Math.max(
+    0,
+    calcActualRepairCost(parts, laborCost, excess, partsContribution),
+  );
+
 async function handleSubmit(values: any) {
+  const parts = values.vehiclePartsAndPrices || [];
+  const tax = calcTax(parts, values.laborCost);
+  const vat = calcVat(parts, values.laborCost);
+  const actualRepairCost = calcActualRepairCost(
+    parts,
+    values.laborCost,
+    values.excess,
+    values.partsContribution,
+  );
+  const amountToReceiveFromInsurance = calcInsuranceAmount(
+    parts,
+    values.laborCost,
+    values.excess,
+    values.partsContribution,
+  );
+
   // Construct FormData because of file uploads and nested arrays
   const formData = new FormData();
 
@@ -247,22 +341,21 @@ async function handleSubmit(values: any) {
   formData.append("location", values.location);
   formData.append("description", values.description || "");
 
-  // Numeric fields
-  const numericFields = [
-    "laborCost",
+  // Numeric fields — tax/vat/actualRepairCost/amountToReceiveFromInsurance are auto-computed
+  formData.append("laborCost", String(values.laborCost || 0));
+  formData.append(
     "estimatedRepairCost",
-    "actualRepairCost",
-    "tax",
-    "vat",
-    "excess",
-    "partsContribution",
+    String(values.estimatedRepairCost || 0),
+  );
+  formData.append("excess", String(values.excess || 0));
+  formData.append("partsContribution", String(values.partsContribution || 0));
+  formData.append("tax", String(tax.toFixed(2)));
+  formData.append("vat", String(vat.toFixed(2)));
+  formData.append("actualRepairCost", String(actualRepairCost.toFixed(2)));
+  formData.append(
     "amountToReceiveFromInsurance",
-  ];
-  for (const field of numericFields) {
-    if (values[field] !== undefined && values[field] !== null) {
-      formData.append(field, String(values[field]));
-    }
-  }
+    String(amountToReceiveFromInsurance.toFixed(2)),
+  );
 
   // Array of parts
   if (values.vehiclePartsAndPrices && values.vehiclePartsAndPrices.length > 0) {
