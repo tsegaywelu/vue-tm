@@ -100,13 +100,21 @@ const close_nav = () => {
           class="flex items-center justify-center transition-all duration-300"
           :class="is_open ? 'h-10' : 'h-10 w-full'"
         >
+          <!-- Expanded: wide wordmark -->
           <img
+            v-if="is_open"
             src="@/assets/rlogo.png"
-            class="transition-all duration-300 object-contain"
-            :class="is_open ? 'h-full w-40' : 'h-8 w-8'"
+            class="h-full w-40 object-contain transition-all duration-300"
             alt="TMS Logo"
             style="filter: brightness(0)"
           />
+          <!-- Collapsed: same icon as login page -->
+          <div v-else class="p-1 bg-primary/10 rounded-lg">
+            <i
+              class="*:h-10 *:w-10 block text-primary"
+              v-html="all_icons['raaz-logo']"
+            ></i>
+          </div>
         </div>
 
         <button

@@ -98,8 +98,11 @@ async function submitLogin(values: any) {
       <div class="w-full max-w-md space-y-10">
         <!-- Logo & Header -->
         <div class="text-center">
-          <div class="inline-block p-4 bg-white rounded-3xl shadow-soft mb-6">
-            <i class="h-12 w-auto block" v-html="icons['raaz-logo']"></i>
+          <div class="flex flex-col items-center gap-3 mb-6">
+            <div class="p-4 bg-white rounded-3xl shadow-soft">
+              <i class="h-12 w-auto block" v-html="icons['raaz-logo']"></i>
+            </div>
+            <span class="text-lg font-extrabold text-grey-800 tracking-tight">ChiNet TMS</span>
           </div>
           <h2 class="text-4xl font-extrabold text-grey-900 tracking-tight">
             Welcome Back
