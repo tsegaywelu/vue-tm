@@ -5,6 +5,7 @@ import { raaz_icons } from "@/utils/raaz_icons";
 import NavButton from "@/components/NavButton.vue";
 import { getNavigationRegistry } from "@/router/navigation";
 import { useAuthStore } from "@/store/authStore";
+import { openModal } from "@customizer/modal-x";
 
 const all_icons = { ...icons, ...raaz_icons };
 const authStore = useAuthStore();
@@ -35,6 +36,36 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener("resize", update_media);
 });
+
+const user = computed(
+  () => authStore.current_user?.user ?? authStore.current_user ?? {},
+);
+
+const userInitials = computed(() => {
+  const f = user.value?.firstName?.[0] ?? "";
+  const l = user.value?.lastName?.[0] ?? "";
+  return (f + l).toUpperCase() || "U";
+});
+
+const userName = computed(
+  () =>
+    [user.value?.firstName, user.value?.lastName].filter(Boolean).join(" ") ||
+    "User",
+);
+
+const userRole = computed(
+  () => user.value?.role?.name || user.value?.type || "",
+);
+
+async function handleLogout() {
+  const confirmed = await openModal("ConfirmationModal", {
+    title: "Logout",
+    message: "Are you sure you want to logout?",
+    confirmText: "Logout",
+    action: "logout",
+  });
+  if (confirmed) authStore.logout();
+}
 
 const close_nav = () => {
   if (!is_desktop.value) {
@@ -96,8 +127,8 @@ const close_nav = () => {
 
       <!-- Navigation Area -->
       <div
-        class="h-full overflow-y-auto"
-        :class="is_open ? 'px-2 pb-4' : 'px-0 pb-4 flex flex-col items-center'"
+        class="flex-1 overflow-y-auto"
+        :class="is_open ? 'px-2' : 'px-0 flex flex-col items-center'"
       >
         <div
           class="flex flex-col gap-4 mt-2"
@@ -131,6 +162,47 @@ const close_nav = () => {
           </div>
           <slot name="nav"></slot>
         </div>
+      </div>
+
+      <!-- Sticky profile -->
+      <div class="shrink-0 border-t border-grey-100 p-3">
+        <button
+          class="w-full flex items-center gap-3 rounded-2xl p-2 hover:bg-grey-50 transition-colors"
+          :class="is_open ? '' : 'justify-center'"
+          @click="handleLogout"
+        >
+          <div
+            class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-xs font-bold shrink-0 select-none"
+          >
+            {{ userInitials }}
+          </div>
+          <div
+            v-if="is_open"
+            class="flex flex-col items-start leading-tight min-w-0 flex-1"
+          >
+            <span class="text-sm font-semibold text-gray-800 truncate">{{
+              userName
+            }}</span>
+            <span v-if="userRole" class="text-[10px] text-gray-400 truncate">{{
+              userRole
+            }}</span>
+          </div>
+          <svg
+            v-if="is_open"
+            xmlns="http://www.w3.org/2000/svg"
+            class="w-4 h-4 text-gray-400 shrink-0"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75"
+            />
+          </svg>
+        </button>
       </div>
     </div>
   </div>
