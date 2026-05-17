@@ -98,6 +98,7 @@ onUnmounted(() => {
         </main>
       </div>
     </div>
+    <!-- Chatbox -->
   </div>
 </template>
 
