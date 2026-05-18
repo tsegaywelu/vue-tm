@@ -157,7 +157,7 @@ const props = defineProps<{
 }>();
 
 const { handleAction, openStatusModal, openVouchersModal } =
-  useShipmentActions();
+  useShipmentActions(() => refetch());
 const authStore = useAuthStore();
 const shipmentBasePath = computed(() =>
   authStore.is_shipper ? "/shipper/shipments" : "/operation/shipments",

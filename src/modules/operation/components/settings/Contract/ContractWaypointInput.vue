@@ -96,7 +96,8 @@ function getVehicleTypeLabel(id: string): string {
 
         <Input
           size="xs"
-          v-model="pricing.pricePerUnit"
+          :modelValue="pricing.pricePerUnit"
+          @update:modelValue="pricing.pricePerUnit = Number($event)"
           label="Amount"
           type="number"
           :error="errors[`pricePerUnit_${pricing.fakeId}`]"

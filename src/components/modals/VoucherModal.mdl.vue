@@ -9,27 +9,12 @@
     <template #center>
       <!-- Single trip — completed/offloading states -->
       <template v-if="isSingleTripComplete">
-        <Input
-          name="shipperIssueVoucher"
-          label="Issue Voucher"
-        />
-        <Input
-          name="agentReceiveVoucher"
-          label="Receiving Voucher"
-        />
+        <Input name="shipperIssueVoucher" label="Issue Voucher" />
+        <Input name="agentReceiveVoucher" label="Receiving Voucher" />
         <template v-if="isOwnedOrLeased">
-          <Input
-            type="number"
-            name="odometerAtComplete"
-            label="Odometer at Complete"
-          />
-          <Input
-            type="number"
-            name="fuelReadingAtComplete"
-            label="Fuel Reading at Complete"
-          />
+          <Input type="number" name="odometerAtComplete" label="Odometer at Complete" />
+          <Input type="number" name="fuelReadingAtComplete" label="Fuel Reading at Complete" />
         </template>
-        <StarRating v-model="driverRating" />
       </template>
 
       <!-- Round trip — completed/offloading states -->
@@ -48,54 +33,48 @@
             ></div>
           </label>
         </div>
-        
-        <Input
-          name="shipperIssueVoucher"
-          label="FPIV"
-        />
-        <Input
-          name="agentReceiveVoucher"
-          label="Agent Receive Voucher"
-        />
+        <Input name="shipperIssueVoucher" label="FPIV" />
+        <Input name="agentReceiveVoucher" label="Agent Receive Voucher" />
         <template v-if="!ckrf">
-          <Input
-            name="agentIssueVoucher"
-            label="Agent Issue Voucher"
-          />
-          <Input
-            name="shipperReceiveVoucher"
-            label="Customer Receive Voucher"
-          />
+          <Input name="agentIssueVoucher" label="Agent Issue Voucher" />
+          <Input name="shipperReceiveVoucher" label="Customer Receive Voucher" />
+          <div class="flex items-center gap-2 my-4">
+            <span class="text-sm font-semibold text-gray-700">Rate this driver:</span>
+            <div class="flex items-center gap-1">
+              <button
+                v-for="star in 5"
+                :key="star"
+                type="button"
+                @click="driverRating = star"
+                class="p-0.5 focus:outline-none"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="currentColor"
+                  :class="['w-7 h-7 transition-all duration-150', driverRating >= star ? 'text-orange-400 scale-110' : 'text-gray-300 hover:text-orange-300']"
+                  viewBox="0 0 24 24"
+                >
+                  <path pointer-events="none" d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.548 8.278L12 18.896l-7.484 4.516 1.548-8.278L0 9.306l8.332-1.151z"/>
+                </svg>
+              </button>
+              <span v-if="driverRating > 0" class="ml-1 text-sm text-gray-500">({{ driverRating }}/5)</span>
+            </div>
+          </div>
         </template>
         <template v-if="isOwnedOrLeased">
-          <Input
-            type="number"
-            name="odometerAtComplete"
-            label="Odometer at Complete"
-          />
-          <Input
-            type="number"
-            name="fuelReadingAtComplete"
-            label="Fuel Reading at Complete"
-          />
+          <Input type="number" name="odometerAtComplete" label="Odometer at Complete" />
+          <Input type="number" name="fuelReadingAtComplete" label="Fuel Reading at Complete" />
         </template>
-        <StarRating v-model="driverRating" />
       </template>
 
       <!-- Single trip — issue voucher only -->
       <template v-else-if="tripType === 'single_trip'">
-        <Input
-          name="shipperIssueVoucher"
-          label="Issue Voucher"
-        />
+        <Input name="shipperIssueVoucher" label="Issue Voucher" />
       </template>
 
       <!-- Round trip — FPIV only -->
       <template v-else-if="tripType === 'round_trip'">
-        <Input
-          name="shipperIssueVoucher"
-          label="FPIV"
-        />
+        <Input name="shipperIssueVoucher" label="FPIV" />
       </template>
     </template>
 
@@ -133,25 +112,6 @@ import Button from "@/components/common/Button.vue";
 import SubmitButton from "@/components/form/SubmitButton.vue";
 import { add_other_voucher, add_issue_voucher } from "@/modules/operation/api/shipment.api";
 
-// Inline star rating
-const StarRating = {
-  props: { modelValue: { type: Number, default: 0 } },
-  emits: ["update:modelValue"],
-  template: `
-    <div class="flex items-center gap-2 my-4">
-      <span class="text-sm font-semibold text-gray-700">Rate this driver:</span>
-      <div class="flex items-center gap-1">
-        <svg v-for="star in 5" :key="star" @click="$emit('update:modelValue', star)"
-          xmlns="http://www.w3.org/2000/svg" fill="currentColor"
-          :class="['w-6 h-6 cursor-pointer transition-transform duration-150', modelValue >= star ? 'text-yellow-500 scale-110' : 'text-gray-300 hover:text-yellow-400']"
-          viewBox="0 0 24 24">
-          <path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.548 8.278L12 18.896l-7.484 4.516 1.548-8.278L0 9.306l8.332-1.151z"/>
-        </svg>
-        <span v-if="modelValue > 0" class="ml-1 text-sm text-gray-600">({{ modelValue }}/5)</span>
-      </div>
-    </div>
-  `,
-};
 
 export type Props = {
   shipment: any;
@@ -228,7 +188,8 @@ async function confirm(values: any) {
   }
 }
 
-async function voucherConfirm(values: any) {
+async function voucherConfirm(rawValues: any) {
+  const values = JSON.parse(JSON.stringify(rawValues));
   let payload: any = {};
 
   if (tripType.value === "single_trip") {
@@ -293,7 +254,8 @@ async function voucherConfirm(values: any) {
   }
 }
 
-async function issueVoucherConfirm(values: any) {
+async function issueVoucherConfirm(rawValues: any) {
+  const values = JSON.parse(JSON.stringify(rawValues));
   if (!values.shipperIssueVoucher) {
     toast.error("Issue Voucher is required");
     return;
@@ -301,6 +263,7 @@ async function issueVoucherConfirm(values: any) {
   try {
     const res = await add_issue_voucher(s.value._id, {
       shipperIssueVoucher: String(values.shipperIssueVoucher),
+      driverRating: driverRating.value,
     });
     if (res.status === 200 || res.status === 201) {
       toast.success("Vouchers added successfully!");

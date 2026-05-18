@@ -7,9 +7,9 @@
     <Form v-else-if="initialValues" :id="formId" :values="initialValues" :onSubmit="handleSubmit">
       <template #default>
         <ContractForm>
-          <template #actions="{ addedRoutes, shipperId }">
+          <template #actions="{ addedRoutes, counterpartyId }">
             <Button variant="outline" @click="router.back()">Discard Changes</Button>
-            <SubmitButton :disabled="!shipperId || addedRoutes.length === 0">
+            <SubmitButton :disabled="!counterpartyId || addedRoutes.length === 0">
               Update Contract
             </SubmitButton>
           </template>
@@ -77,7 +77,10 @@ const handleSubmit = async (values: any) => {
         route: r.route,
         waypoints: r.waypoints.map((wp: any) => ({
           waypoint: wp.waypoint,
-          vehiclePricing: wp.vehiclePricing,
+          vehiclePricing: wp.vehiclePricing.map((vp: any) => ({
+            ...vp,
+            pricePerUnit: Number(vp.pricePerUnit),
+          })),
         })),
         commodities: r.commodities,
         packagings: r.packagings,

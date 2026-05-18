@@ -57,7 +57,10 @@ const handleSubmit = async (values: any) => {
         route: r.route,
         waypoints: r.waypoints.map((wp: any) => ({
           waypoint: wp.waypoint,
-          vehiclePricing: wp.vehiclePricing,
+          vehiclePricing: wp.vehiclePricing.map((vp: any) => ({
+            ...vp,
+            pricePerUnit: Number(vp.pricePerUnit),
+          })),
         })),
         commodities: r.commodities,
         packagings: r.packagings,

@@ -173,6 +173,7 @@ function addRouteToContract() {
       name: wp.name,
       vehiclePricing: wp.vehiclePricing.map(({ fakeId: _id, ...p }) => ({
         ...p,
+        pricePerUnit: Number(p.pricePerUnit),
       })),
     })),
     commodities: form?.getFieldValue("tempCommodities") || [],

@@ -179,20 +179,50 @@
                     placeholder="e.g. johndoe"
                   />
                 </div>
-                <div>
+                <div class="space-y-1">
                   <Input
                     name="password"
                     label="Password"
-                    type="password"
+                    :attributes="{ type: showPassword ? 'text' : 'password' }"
                     :validation="{ required }"
                     placeholder="Min 6 characters"
-                  />
+                  >
+                    <template #right_component>
+                      <div class="flex items-center gap-1 pr-1">
+                        <button
+                          type="button"
+                          class="size-7 grid place-items-center text-gray-400 hover:text-primary rounded-full transition-colors"
+                          @click="copyPassword(form)"
+                          title="Copy password"
+                        >
+                          <i class="mdi mdi-content-copy text-base"></i>
+                        </button>
+                        <button
+                          type="button"
+                          class="size-7 grid place-items-center text-gray-400 hover:text-primary rounded-full transition-colors"
+                          @click="showPassword = !showPassword"
+                          title="Toggle visibility"
+                        >
+                          <i class="size-5 block" v-html="showPassword ? icons.eye : icons.eyeClose"></i>
+                        </button>
+                      </div>
+                    </template>
+                  </Input>
+                  <button
+                    type="button"
+                    @click="generatePassword(form)"
+                    class="text-[10px] text-primary font-bold hover:underline ml-1"
+                  >
+                    Generate Random
+                  </button>
                 </div>
                 <div v-if="group === 'OTHER'" class="col-span-2">
                   <SelectInput
                     name="role"
                     label="Role"
-                    :options="roleOptions"
+                    url="/role"
+                    label_key="name"
+                    value_key="_id"
                     :validation="{ required }"
                     :attributes="{ placeholder: 'Select role' }"
                   />
@@ -218,19 +248,19 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, onMounted } from "vue";
+import { computed, ref } from "vue";
 import FormModalParent from "@/components/modals/FormModalParent.vue";
 import Input from "@/components/form/Input.vue";
 import SelectInput from "@/components/form/SelectInput.vue";
 import { required } from "@/utils/validations";
+import { icons } from "@/utils/icons";
 import { useToastStore } from "@/store/toastStore";
 import { closeModal } from "@customizer/modal-x";
 import Button from "@/components/common/Button.vue";
 import FileInput from "@/components/form/FileInput.vue";
 import SubmitButton from "@/components/form/SubmitButton.vue";
 import { add_contact, update_contact } from "../../api/operation.api";
-import { fetch_roles } from "../../api/settings.api";
-import { useMutation, useQuery } from "@tanstack/vue-query";
+import { useMutation } from "@tanstack/vue-query";
 
 const props = defineProps<{ data?: { contact?: any } }>();
 
@@ -238,22 +268,21 @@ const contact = computed(() => props.data?.contact);
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-const triggerFileInput = () => {
-  // Logic handled by component
-};
+const showPassword = ref(false);
 
-const { data: rolesResponse } = useQuery({
-  queryKey: ["roles"],
-  queryFn: () => fetch_roles({ limit: 100 }),
-});
+function copyPassword(form: any) {
+  const password = form.getFieldValue("password");
+  if (password) navigator.clipboard.writeText(password);
+}
 
-const roleOptions = computed(() => {
-  const rawRoles =
-    rolesResponse.value?.data?.result || rolesResponse.value?.data || [];
-  return Array.isArray(rawRoles)
-    ? rawRoles.map((r: any) => ({ label: r.name, value: r._id }))
-    : [];
-});
+function generatePassword(form: any) {
+  const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  const password = Array(10)
+    .fill(0)
+    .map(() => charset.charAt(Math.floor(Math.random() * charset.length)))
+    .join("");
+  form.setFieldValue("password", password);
+}
 
 const initialFormValues = computed(() => {
   if (contact.value) {

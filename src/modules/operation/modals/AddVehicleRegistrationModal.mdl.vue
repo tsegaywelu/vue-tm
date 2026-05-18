@@ -123,6 +123,7 @@
         />
       </div>
 
+      <!-- Insurance step temporarily disabled
       <div v-if="currentStep === 'insurance'" class="flex flex-col gap-6">
         <SelectInput
           name="insurance.insurer"
@@ -154,34 +155,13 @@
           />
         </div>
         <div class="grid grid-cols-2 gap-4">
-          <Input
-            name="insurance.JV"
-            label="JV"
-            :attributes="{ placeholder: 'Enter JV' }"
-            :validation="{ required }"
-          />
-          <Input
-            name="insurance.CPV"
-            label="CPV"
-            :attributes="{ placeholder: 'Enter CPV' }"
-            :validation="{ required }"
-          />
-          <Input
-            name="insurance.withHoldTax"
-            label="Withhold Tax"
-            type="number"
-            :attributes="{ placeholder: 'Enter Withhold Tax', step: '0.01' }"
-            :validation="{ required, number }"
-          />
-          <Input
-            name="insurance.total"
-            label="Total"
-            type="number"
-            :attributes="{ placeholder: 'Enter Total', step: '0.01' }"
-            :validation="{ required, number }"
-          />
+          <Input name="insurance.JV" label="JV" :attributes="{ placeholder: 'Enter JV' }" :validation="{ required }" />
+          <Input name="insurance.CPV" label="CPV" :attributes="{ placeholder: 'Enter CPV' }" :validation="{ required }" />
+          <Input name="insurance.withHoldTax" label="Withhold Tax" type="number" :attributes="{ placeholder: 'Enter Withhold Tax', step: '0.01' }" :validation="{ required, number }" />
+          <Input name="insurance.total" label="Total" type="number" :attributes="{ placeholder: 'Enter Total', step: '0.01' }" :validation="{ required, number }" />
         </div>
       </div>
+      -->
     </template>
 
     <template #bottom="{ form }">
@@ -196,7 +176,7 @@
         </Button>
         <SubmitButton :loading="isLoading">
           {{
-            currentStep === "insurance" ? "Complete Registration" : "Next Step"
+            currentStep === "vehicle" ? "Complete Registration" : "Next Step"
           }}
         </SubmitButton>
       </div>
@@ -210,59 +190,36 @@ import { closeModal } from "@customizer/modal-x";
 import FormModalParent from "@/components/modals/FormModalParent.vue";
 import Input from "@/components/form/Input.vue";
 import SelectInput from "@/components/form/SelectInput.vue";
-import DateInput from "@/components/form/DateInput.vue";
+// import DateInput from "@/components/form/DateInput.vue";
 import Button from "@/components/common/Button.vue";
 import SubmitButton from "@/components/form/SubmitButton.vue";
-import {
-  dateGreaterThanOrEqalToToday,
-  phone,
-  required,
-  number,
-} from "@/utils/validations";
+import { phone, required } from "@/utils/validations";
 import { useToastStore } from "@/store/toastStore";
 import * as api from "../api/registration.api";
 import { useMutation } from "@tanstack/vue-query";
-import type {
-  Driver,
-  Insurance,
-  Trasporter,
-  Vehicle,
-} from "../operation.types";
+import type { Driver, Trasporter, Vehicle } from "../operation.types";
 
 // [MODAL-X] AUTO-GENERATED INSTANCE
 // [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
-const props = defineProps<{ data: any; close: (res: ReturnType) => void }>();
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
 
 
 export type ReturnType = {
   transporter: Trasporter;
   driver: Driver;
   vehicle: Vehicle;
-  insurance: Insurance;
+  // insurance: Insurance; // temporarily disabled
 } | null;
 
 const toast = useToastStore();
 const isLoading = ref(false);
 
-const validateStartDate = (value: any, msg: any, form: any) => {
-  const endDateStr = form?.state?.values?.insurance?.prePaymentMatureDate;
-  if (value && endDateStr) {
-    const start = new Date(value);
-    const end = new Date(endDateStr);
-    if (start > end) return [false, "Start Date must be before Mature Date"];
-  }
-  return [true, ""];
-};
-
-const validateMatureDate = (value: any, msg: any, form: any) => {
-  const startDateStr = form?.state?.values?.insurance?.prePaymentDate;
-  if (value && startDateStr) {
-    const start = new Date(startDateStr);
-    const end = new Date(value);
-    if (end < start) return [false, "Mature Date must be after Start Date"];
-  }
-  return [true, ""];
-};
+// const validateStartDate = (value: any, msg: any, form: any) => { ... }; // insurance step disabled
+// const validateMatureDate = (value: any, msg: any, form: any) => { ... }; // insurance step disabled
 
 const trasporterMutation = useMutation({
   mutationKey: ["trasporter"],
@@ -279,12 +236,12 @@ const vehicleMutation = useMutation({
   mutationFn: (payload: any) => api.add_vehicle(payload),
 });
 
-const insuranceMutation = useMutation({
-  mutationKey: ["insurance"],
-  mutationFn: (payload: any) => api.add_insurance(payload),
-});
+// const insuranceMutation = useMutation({
+//   mutationKey: ["insurance"],
+//   mutationFn: (payload: any) => api.add_insurance(payload),
+// });
 
-const stepOrder = ["transporter", "driver", "vehicle", "insurance"] as const;
+const stepOrder = ["transporter", "driver", "vehicle"] as const;
 const currentStep = ref<(typeof stepOrder)[number]>("transporter");
 const currentIndex = computed(() => stepOrder.indexOf(currentStep.value));
 
@@ -307,15 +264,7 @@ const emptyFields = {
     trailerPlate: "",
     vehicleType: "",
   },
-  insurance: {
-    insurer: "",
-    prePaymentDate: "",
-    prePaymentMatureDate: "",
-    JV: "",
-    CPV: "",
-    withHoldTax: "",
-    total: "",
-  },
+  // insurance: { ... }, // temporarily disabled
 };
 
 const stepFields = ref(emptyFields);
@@ -337,7 +286,7 @@ function goBack(form: any) {
 async function handleFinalSubmit(values: any) {
   stepFields.value = JSON.parse(JSON.stringify(values));
 
-  if (currentStep.value !== "insurance") {
+  if (currentStep.value !== "vehicle") {
     currentStep.value = stepOrder[currentIndex.value + 1];
     return;
   }
@@ -372,21 +321,11 @@ async function handleFinalSubmit(values: any) {
     const vehicleRes = await vehicleMutation.mutateAsync(vehiclePayload);
     if (!vehicleRes.success) return toast.error(vehicleRes.error);
 
-    const insurancePayload = {
-      ...stepFields.value.insurance,
-      vehicle: vehicleRes.data?._id,
-      withHoldTax: Number(stepFields.value.insurance.withHoldTax),
-      total: Number(stepFields.value.insurance.total),
-    };
-    const insuranceRes = await insuranceMutation.mutateAsync(insurancePayload);
-    if (!insuranceRes.success) return toast.error(insuranceRes.error);
-
     toast.success("All data registered successfully!");
     closeModal({
       transporter: transRes.data,
       driver: driverRes.data,
       vehicle: vehicleRes.data,
-      insurance: insuranceRes.data,
     });
   } finally {
     isLoading.value = false;
