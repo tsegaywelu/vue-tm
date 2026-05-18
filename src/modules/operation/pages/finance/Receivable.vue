@@ -79,9 +79,6 @@
           <span v-if="authStore.has_permission('REPORT', ['view'])" class="text-xl font-black text-gray-900 tracking-tight">
             {{ stat.value }}
           </span>
-          <span v-else class="text-xl font-black text-gray-300 tracking-widest">
-            ••••••
-          </span>
         </div>
       </div>
     </div>

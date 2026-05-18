@@ -26,9 +26,9 @@ const is_dashboard = computed(
 );
 
 const is_open = ref(window.innerWidth > 1280);
-const is_chat_open = ref(true);
+const is_chat_open = ref(false);
 // Delayed — keeps the grid column alive during the leave transition
-const chat_col_active = ref(true);
+const chat_col_active = ref(false);
 
 function toggle_chat() {
   if (is_chat_open.value) {

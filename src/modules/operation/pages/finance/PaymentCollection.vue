@@ -46,9 +46,6 @@
           <span v-if="authStore.has_permission('REPORT', ['view'])" class="text-xl font-black text-gray-900 tracking-tight">
             {{ stat.amount }}
           </span>
-          <span v-else class="text-xl font-black text-gray-300 tracking-widest">
-            ••••••
-          </span>
           <span class="text-sm font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
             ({{ stat.count }} Invoices)
           </span>

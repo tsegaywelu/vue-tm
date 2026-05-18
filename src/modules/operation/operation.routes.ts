@@ -1010,7 +1010,7 @@ export const operation_routes: RouteRecordRaw[] = [
         name: "operation_finance_invoice_report",
         component: () => import("./pages/finance/InvoiceReport.vue"),
         meta: {
-          permission: "REPORT",
+          permission: [{ subject: "SHIPMENT", actions: ["generate_invoice"] }],
           title: "Invoice Report",
           description: "View invoice reports.",
         },
