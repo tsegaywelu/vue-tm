@@ -19,7 +19,7 @@
           close();
         "
       />
-      <DropDownItem v-permission="'SHIPMENT:manage'"
+      <DropDownItem v-permission="[{ subject: 'ADVANCE_PAYMENT', actions: ['create'] }, { subject: 'TRANSACTION', actions: ['create'] }]"
         v-if="shouldShow('create_advance')"
         :icon="icons.plusIcon"
         label="Create Advance"

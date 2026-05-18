@@ -3,25 +3,25 @@ import type { Directive, DirectiveBinding } from "vue";
 
 function checkPermission(el: HTMLElement, binding: DirectiveBinding) {
   const authStore = useAuthStore();
-  let subject: string = "";
-  let actions: string[] = [];
 
-  if (typeof binding.value === "string") {
-    const [s, a] = binding.value.split(":");
-    subject = s;
-    actions = a ? a.split(",") : ["read"];
-  } else if (typeof binding.value === "object") {
-    subject = binding.value.subject;
-    actions = Array.isArray(binding.value.actions)
-      ? binding.value.actions
-      : [binding.value.actions];
-  }
+  const check = (value: any): boolean => {
+    if (typeof value === "string") {
+      const [s, a] = value.split(":");
+      return authStore.has_permission(s, a ? a.split(",") : ["read"]);
+    }
+    if (Array.isArray(value)) {
+      return value.some((p) => authStore.has_permission(p.subject, p.actions));
+    }
+    if (typeof value === "object" && value !== null) {
+      return authStore.has_permission(
+        value.subject,
+        Array.isArray(value.actions) ? value.actions : [value.actions],
+      );
+    }
+    return false;
+  };
 
-  if (!authStore.has_permission(subject, actions)) {
-    el.style.display = "none";
-  } else {
-    el.style.display = "";
-  }
+  el.style.display = check(binding.value) ? "" : "none";
 }
 
 export const permissionDirective: Directive = {
