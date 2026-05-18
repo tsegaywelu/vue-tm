@@ -27,7 +27,7 @@
   </Teleport>
 
   <Teleport to="#extra-page-data" defer>
-    <StatsCards v-permission="'REPORT:read'" :stats="invoiceStats" :loading="statsLoading">
+    <StatsCards v-permission="'REPORT:view'" :stats="invoiceStats" :loading="statsLoading">
       <template #value-total-amount="{ stat }">
         <span class="font-extrabold text-grey-800">
           {{ currencyFormatter(stat.value as any ) }}

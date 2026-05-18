@@ -42,9 +42,15 @@
             {{ stat.label }}
           </span>
         </div>
-        <div class="mt-1">
-          <span class="text-xl font-black text-gray-900 tracking-tight">
-            {{ stat.value }}
+        <div class="mt-1 flex items-center gap-2 flex-wrap">
+          <span v-if="authStore.has_permission('REPORT', ['view'])" class="text-xl font-black text-gray-900 tracking-tight">
+            {{ stat.amount }}
+          </span>
+          <span v-else class="text-xl font-black text-gray-300 tracking-widest">
+            ••••••
+          </span>
+          <span class="text-sm font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
+            ({{ stat.count }} Invoices)
           </span>
         </div>
       </div>
@@ -61,6 +67,7 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
+import { useAuthStore } from "@/store/authStore";
 import { useQuery } from "@tanstack/vue-query";
 import { openModal } from "@customizer/modal-x";
 import PaymentCollectionTable from "../../components/finance/PaymentCollectionTable.vue";
@@ -72,6 +79,7 @@ import DatePicker from "@/components/DatePicker.vue";
 import Dropdown from "@/components/common/Dropdown.vue";
 
 const router = useRouter();
+const authStore = useAuthStore();
 const tableRef = ref<any>(null);
 
 const dateRange = ref({
@@ -93,20 +101,23 @@ const { data: statsResponse, isLoading: statsLoading, refetch: refetchStats } = 
 const collectionStats = computed(() => {
   const data = (statsResponse.value?.data || {}) as any;
   return [
-    { 
-      label: "Total Invoices", 
-      value: `${currencyFormatter(data.completeTotal || 0)} (${data.completeTotalCount || 0} Invoices)`,
-      icon: "mdi-file-document-multiple"
+    {
+      label: "Total Invoices",
+      amount: currencyFormatter(data.completeTotal || 0),
+      count: data.completeTotalCount || 0,
+      icon: "mdi-file-document-multiple",
     },
-    { 
-      label: "Collected Invoices", 
-      value: `${currencyFormatter(data.totalCollected || 0)} (${data.totalCollectedCount || 0} Invoices)`,
-      icon: "mdi-cash-check"
+    {
+      label: "Collected Invoices",
+      amount: currencyFormatter(data.totalCollected || 0),
+      count: data.totalCollectedCount || 0,
+      icon: "mdi-cash-check",
     },
-    { 
-      label: "Remaining Invoices", 
-      value: `${currencyFormatter(data.totalApproved || 0)} (${data.totalApprovedCount || 0} Invoices)`,
-      icon: "mdi-cash-clock"
+    {
+      label: "Remaining Invoices",
+      amount: currencyFormatter(data.totalApproved || 0),
+      count: data.totalApprovedCount || 0,
+      icon: "mdi-cash-clock",
     },
   ];
 });
