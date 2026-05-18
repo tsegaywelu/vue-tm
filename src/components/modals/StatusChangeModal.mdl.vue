@@ -112,32 +112,76 @@ provide("formContext", {
   is_dirty: computed(() => form.state.isDirty),
 });
 
+const ROUND_TRIP_ONLY_STATUSES = [
+  "waiting_to_load_at_destination",
+  "loading_started_at_destination",
+  "loaded_at_destination",
+  "en_route_to_origin",
+  "arrived_at_origin",
+  "waiting_to_offload_at_origin",
+  "offloading_started_at_origin",
+  "offloaded_at_origin",
+];
+
+const ALWAYS_VISIBLE = ["cancelled", "custom", "delayed", "terminated"];
+
 const statusOptions = computed(() => {
+  const isSingleTrip = shipment.value.tripType === "single_trip";
   const isSingleOrCKRF =
-    shipment.value.tripType === "single_trip" ||
+    isSingleTrip ||
     (shipment.value.tripType === "round_trip" && shipment.value.CKRF === true);
 
   const rawList = props.data.statusListRaw ?? ShipmentStatus;
   const list = props.data.statusList ?? ShipmentStatus;
+  const current = shipment.value.status;
 
   if (isSingleOrCKRF) {
-    return rawList.map((s: any) => ({
-      ...s,
-      disabled: !isStatusSelectable(s.value),
-    }));
+    const filteredByTrip = isSingleTrip
+      ? rawList.filter((s: any) => !ROUND_TRIP_ONLY_STATUSES.includes(s.value))
+      : rawList;
+
+    // ordered list mirrors isStatusSelectable
+    const ordered = [
+      "vehicle_assigned",
+      "accepted",
+      "waiting_to_load_at_origin",
+      "loading_started_at_origin",
+      "loaded_at_origin",
+      "departed",
+      "en_route_to_destination",
+      "arrived_at_destination",
+      "waiting_to_offload_at_destination",
+      "offloading_started_at_destination",
+      "offloaded_at_destination",
+      "completed",
+    ];
+    const currentOrderedIdx = ordered.indexOf(current);
+
+    return filteredByTrip
+      .filter((s: any) => {
+        if (ALWAYS_VISIBLE.includes(s.value)) return true;
+        const idx = ordered.indexOf(s.value);
+        return idx === -1 || idx >= currentOrderedIdx;
+      })
+      .map((s: any) => ({
+        ...s,
+        disabled: !isStatusSelectable(s.value),
+      }));
   }
 
-  const currentIndex = list.findIndex(
-    (s: any) => s.value === shipment.value.status,
-  );
-  return list.map((status: any, index: number) => {
-    const alwaysEnabled = ["cancelled", "custom", "delayed", "terminated"];
-    return {
-      ...status,
-      disabled:
-        !alwaysEnabled.includes(status.value) && index > currentIndex + 1,
-    };
-  });
+  const currentIndex = list.findIndex((s: any) => s.value === current);
+  return list
+    .filter((status: any, index: number) =>
+      ALWAYS_VISIBLE.includes(status.value) || index >= currentIndex,
+    )
+    .map((status: any) => {
+      const originalIndex = list.findIndex((s: any) => s.value === status.value);
+      return {
+        ...status,
+        disabled:
+          !ALWAYS_VISIBLE.includes(status.value) && originalIndex > currentIndex + 1,
+      };
+    });
 });
 
 function isStatusSelectable(statusValue: string) {
