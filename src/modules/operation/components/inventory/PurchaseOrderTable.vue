@@ -71,22 +71,27 @@
               v-if="row.status === 'PENDING'"
               :icon="icons.edit"
               label="Edit"
-              @click.stop="
-                handleAction(row, 'edit');
-                close();
-              "
+              @click.stop="handleAction(row, 'edit'); close();"
             />
-            <!-- Delete action commented out temporarily -->
-        <!-- <DropDownItem
+            <DropDownItem v-permission="'PURCHASE_ORDER:update'"
               v-if="row.status === 'PENDING'"
-              :icon="icons.delete"
-              label="Delete"
+              :icon="icons.approveIcon"
+              label="Approve"
+              @click.stop="handleAction(row, 'approve'); close();"
+            />
+            <DropDownItem v-permission="'PURCHASE_ORDER:update'"
+              v-if="row.status === 'APPROVED'"
+              :icon="icons.check"
+              label="Authorize"
+              @click.stop="handleAction(row, 'authorize'); close();"
+            />
+            <DropDownItem v-permission="'PURCHASE_ORDER:update'"
+              v-if="!['CANCELLED', 'AUTHORIZED'].includes(row.status)"
+              :icon="icons.close"
+              label="Cancel"
               class="text-error-600"
-              @click.stop="
-                handleAction(row, 'delete');
-                close();
-              "
-            /> -->
+              @click.stop="handleAction(row, 'cancel'); close();"
+            />
           </template>
         </Dropdown>
       </div>

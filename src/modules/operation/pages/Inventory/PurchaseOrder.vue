@@ -21,7 +21,7 @@ import { useRouter } from "vue-router";
 import PurchaseOrderTable from "../../components/inventory/PurchaseOrderTable.vue";
 import Button from "@/components/Button.vue";
 import { icons } from "@/utils/icons";
-import { delete_purchase_order } from "../../api/inventory.api";
+import { delete_purchase_order, update_purchase_order_status } from "../../api/inventory.api";
 import { useToastStore } from "@/store/toastStore";
 import { openModal } from "@customizer/modal-x";
 
@@ -43,12 +43,46 @@ const handleOrderAction = async ({ row, action }: any) => {
     });
   } else if (action === "view") {
     router.push(`/inventory/purchase-order/${row._id}`);
+  } else if (action === "approve") {
+    try {
+      const res = await update_purchase_order_status(row._id, "approve");
+      if (res.success) {
+        toast.success("Purchase order approved");
+        tableRef.value?.refetch();
+      } else {
+        toast.error(res.error || "Failed to approve purchase order");
+      }
+    } catch (error: any) {
+      toast.error(error.message || "An unexpected error occurred");
+    }
+  } else if (action === "authorize") {
+    try {
+      const res = await update_purchase_order_status(row._id, "authorize");
+      if (res.success) {
+        toast.success("Purchase order authorized");
+        tableRef.value?.refetch();
+      } else {
+        toast.error(res.error || "Failed to authorize purchase order");
+      }
+    } catch (error: any) {
+      toast.error(error.message || "An unexpected error occurred");
+    }
+  } else if (action === "cancel") {
+    if (confirm(`Are you sure you want to cancel purchase order "${row.referenceNumber}"?`)) {
+      try {
+        const res = await update_purchase_order_status(row._id, "cancel");
+        if (res.success) {
+          toast.success("Purchase order cancelled");
+          tableRef.value?.refetch();
+        } else {
+          toast.error(res.error || "Failed to cancel purchase order");
+        }
+      } catch (error: any) {
+        toast.error(error.message || "An unexpected error occurred");
+      }
+    }
   } else if (action === "delete") {
-    if (
-      confirm(
-        `Are you sure you want to delete purchase order "${row.referenceNumber}"?`,
-      )
-    ) {
+    if (confirm(`Are you sure you want to delete purchase order "${row.referenceNumber}"?`)) {
       try {
         const res = await delete_purchase_order(row._id);
         if (res.success) {
