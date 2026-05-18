@@ -38,7 +38,16 @@ const approvalMutation = useMutation({
     action: ApprovalAction;
     amount?: number;
   }) => {
-    return await update_transaction_status(row._id, action);
+    switch (row.payableType) {
+      case "advancePayment":
+        return await update_advance_status(row._id, action, amount ? { amount } : {});
+      case "prePayments":
+        return await update_prepayment_status(row._id, action);
+      case "vehicleLeaseAgreement":
+        return await update_lease_status(row._id, action);
+      default:
+        return await update_transaction_status(row._id, action);
+    }
   },
   onSuccess: (response, variables) => {
     if (response.success) {
