@@ -3,16 +3,22 @@ import { ref, computed, onMounted, onUnmounted } from "vue";
 import { icons } from "@/utils/icons";
 import { raaz_icons } from "@/utils/raaz_icons";
 import NavButton from "@/components/NavButton.vue";
-import { getNavigationRegistry } from "@/router/navigation";
+import { getNavigationRegistry, filterNavsByPermission } from "@/router/navigation";
 import { useAuthStore } from "@/store/authStore";
 import { openModal } from "@customizer/modal-x";
 
 const all_icons = { ...icons, ...raaz_icons };
 const authStore = useAuthStore();
 
-const dynamicNavRegistry = computed(() =>
-  getNavigationRegistry(authStore.is_shipper),
-);
+const dynamicNavRegistry = computed(() => {
+  const registry = getNavigationRegistry(authStore.is_shipper);
+  return registry
+    .map((group) => ({
+      ...group,
+      items: filterNavsByPermission(group.items, authStore.has_permission),
+    }))
+    .filter((group) => group.items.some((item) => item.show !== false));
+});
 
 const props = defineProps<{
   is_open: boolean;

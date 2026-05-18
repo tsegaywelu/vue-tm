@@ -16,6 +16,7 @@ export const core_operations_navs: Navs[] = [
         name: "Shipments",
         path: "/operation/shipments",
         show: true,
+        permission: { subject: "SHIPMENT", actions: ["view"] },
         children: [
           {
             path: "/operation/shipments/add",
@@ -38,11 +39,13 @@ export const core_operations_navs: Navs[] = [
         name: "Shipment Adjustment",
         path: "/operation/shipment-adjustment",
         show: true,
+        permission: { subject: "SHIPMENT", actions: ["view"] },
       },
       {
         name: "Orders",
         path: "/operation/orders",
         show: true,
+        permission: { subject: "ORDER", actions: ["view"] },
         children: [
           {
             path: "/operation/shipments/add-from-order/$id",
@@ -70,6 +73,7 @@ export const core_operations_navs: Navs[] = [
         name: "Routes",
         path: "/operation/routes",
         show: true,
+        permission: { subject: "ROUTE", actions: ["view"] },
         children: [
           {
             path: "/operation/routes/add",
@@ -92,6 +96,7 @@ export const core_operations_navs: Navs[] = [
         name: "Advances",
         path: "/operation/advances",
         show: true,
+        permission: { subject: "ADVANCE_PAYMENT", actions: ["view"] },
         children: [
           {
             path: "/operation/advance-details/$id",
@@ -114,16 +119,23 @@ export const core_operations_navs: Navs[] = [
         name: "Approval Request",
         path: "/operation/approvals",
         show: true,
+        permission: [
+          { subject: "ADVANCE_PAYMENT", actions: ["approve"] },
+          { subject: "TRANSACTION", actions: ["approve"] },
+          { subject: "PRE_PAYMENT", actions: ["approve"] },
+        ],
       },
       {
         name: "Settlements",
         path: "/operation/settlements",
         show: true,
+        permission: { subject: "TRANSACTION", actions: ["view"] },
       },
       {
         name: "Aggregated Advances",
         path: "/operation/aggregated-advances",
         show: true,
+        permission: { subject: "ADVANCE_PAYMENT", actions: ["view"] },
       },
     ],
   },
@@ -135,6 +147,7 @@ export const fleet_navs: Navs[] = [
     icon: "shipment",
     show: true,
     path: "/vehicles",
+    permission: { subject: "VEHICLE", actions: ["view"] },
     children: [
       {
         path: "/vehicles/add",
@@ -188,6 +201,7 @@ export const fleet_navs: Navs[] = [
     icon: "driver",
     path: "/drivers",
     show: true,
+    permission: { subject: "DRIVER", actions: ["view"] },
     children: [
       {
         path: "/drivers/add",
@@ -208,6 +222,7 @@ export const fleet_navs: Navs[] = [
         name: "Infractions",
         path: "/infractions",
         show: true,
+        permission: { subject: "INFRACTION", actions: ["view"] },
         children: [
           {
             path: "/infractions/$id",
@@ -230,6 +245,7 @@ export const fleet_navs: Navs[] = [
         name: "Infraction Types",
         path: "/infractions?tab=types",
         show: true,
+        permission: { subject: "INFRACTION", actions: ["view"] },
       },
     ],
   },
@@ -238,6 +254,7 @@ export const fleet_navs: Navs[] = [
     icon: "trasporter",
     path: "/transporters",
     show: true,
+    permission: { subject: "TRANSPORTER", actions: ["view"] },
     children: [
       {
         path: "/transporters/$id",
@@ -254,6 +271,7 @@ export const stakeholders_navs: Navs[] = [
     icon: "customers",
     path: "/customers",
     show: true,
+    permission: { subject: "CONTACT", actions: ["view"] },
     children: [
       {
         path: "/customers/$id",
@@ -264,6 +282,7 @@ export const stakeholders_navs: Navs[] = [
         path: "/agents",
         name: "Agents",
         show: true,
+        permission: { subject: "AGENT", actions: ["view"] },
         children: [
           {
             path: "/agents/add",
@@ -281,6 +300,7 @@ export const stakeholders_navs: Navs[] = [
         path: "/facilities",
         name: "Facilities",
         show: true,
+        permission: { subject: "FACILITY", actions: ["view"] },
       },
     ],
   },
@@ -289,6 +309,7 @@ export const stakeholders_navs: Navs[] = [
     icon: "contacts",
     path: "/contacts",
     show: true,
+    permission: { subject: "CONTACT", actions: ["view"] },
     children: [
       {
         path: "/contacts/$id",
@@ -305,11 +326,13 @@ export const maintenance_navs: Navs[] = [
     icon: "insurance",
     path: "/insurances",
     show: true,
+    permission: { subject: "INSURANCE", actions: ["view"] },
     children: [
       {
         path: "/shipment-damages",
         name: "ShipmentDamages",
         show: true,
+        permission: { subject: "INSURANCE", actions: ["view"] },
         children: [
           {
             path: "/shipment-damages/$id",
@@ -322,6 +345,7 @@ export const maintenance_navs: Navs[] = [
         path: "/vehicle-damages",
         name: "Vehicle Damages",
         show: true,
+        permission: { subject: "INSURANCE", actions: ["view"] },
       },
       {
         path: "/insurances/$id",
@@ -345,6 +369,7 @@ export const maintenance_navs: Navs[] = [
     icon: "tyre",
     path: "/vehicle-tyres",
     show: true,
+    permission: { subject: "TYRE", actions: ["view"] },
     children: [
       {
         path: "/vehicle-tyres/add",
@@ -377,6 +402,7 @@ export const maintenance_navs: Navs[] = [
         name: "Mechanic",
         path: "/maintenance/mechanic",
         show: true,
+        permission: { subject: "MECHANIC", actions: ["view"] },
         children: [
           {
             path: "/maintenance/mechanic/add",
@@ -395,6 +421,7 @@ export const maintenance_navs: Navs[] = [
         name: "Inspection",
         path: "/maintenance/inspection",
         show: true,
+        permission: { subject: "INSPECTION", actions: ["view"] },
         children: [
           {
             path: "/maintenance/inspection/add",
@@ -413,6 +440,7 @@ export const maintenance_navs: Navs[] = [
         name: "Service Record",
         path: "/maintenance/service-record",
         show: true,
+        permission: { subject: "SERVICE_RECORD", actions: ["view"] },
         children: [
           {
             path: "/maintenance/service-record/add",
@@ -431,6 +459,7 @@ export const maintenance_navs: Navs[] = [
         name: "Service Reminder",
         path: "/maintenance/service-reminder",
         show: true,
+        permission: { subject: "SERVICE_REMINDER", actions: ["view"] },
         children: [
           {
             path: "/maintenance/service-reminder/add",
@@ -449,6 +478,7 @@ export const maintenance_navs: Navs[] = [
         name: "Service Task",
         path: "/maintenance/service-task",
         show: true,
+        permission: { subject: "SERVICE_TASK", actions: ["view"] },
         children: [
           {
             path: "/maintenance/service-task/add",
@@ -467,6 +497,7 @@ export const maintenance_navs: Navs[] = [
         name: "Service Type",
         path: "/maintenance/service-type",
         show: true,
+        permission: { subject: "SERVICE_TYPE", actions: ["view"] },
         children: [
           {
             name: "Add Service Type",
@@ -485,6 +516,7 @@ export const maintenance_navs: Navs[] = [
         name: "Work Order",
         path: "/maintenance/work-order",
         show: true,
+        permission: { subject: "WORK_ORDER", actions: ["view"] },
         children: [
           {
             name: "Add Work Order",
@@ -492,7 +524,6 @@ export const maintenance_navs: Navs[] = [
             show: false,
           },
           {
-            // path: "/maintenance/work-order/edit/:id",
             path: "maintenance/work-order/edit/$id",
             name: "Edit Work Order",
             show: false,
@@ -509,6 +540,7 @@ export const maintenance_navs: Navs[] = [
         name: "Workshop",
         path: "/maintenance/workshop",
         show: true,
+        permission: { subject: "WORKSHOP", actions: ["view"] },
         children: [
           {
             path: "/maintenance/workshop/add",
@@ -526,11 +558,13 @@ export const maintenance_navs: Navs[] = [
         name: "Issue Report",
         path: "/maintenance/issue-report",
         show: true,
+        permission: { subject: "ISSUE_REPORT", actions: ["view"] },
       },
       {
         name: "Tyre Handoffs",
         path: "/maintenance/tyre-handoffs",
         show: true,
+        permission: { subject: "TYRE_HANDOFF", actions: ["view"] },
         children: [
           {
             path: "/maintenance/tyre-handoffs/$id",
@@ -553,11 +587,21 @@ export const finance_navs: Navs[] = [
         name: "Payable",
         path: "/finance/payable",
         show: true,
+        permission: [
+          { subject: "ADVANCE_PAYMENT", actions: ["pay", "authorize", "cancel"] },
+          { subject: "TRANSACTION", actions: ["pay", "authorize", "cancel"] },
+          { subject: "SHIPMENT", actions: ["pay", "authorize", "cancel"] },
+          { subject: "PRE_PAYMENT", actions: ["pay", "authorize", "cancel"] },
+        ],
       },
       {
         name: "Receivable",
         path: "/finance/receivable",
         show: true,
+        permission: [
+          { subject: "SHIPMENT", actions: ["generate_invoice"] },
+          { subject: "TRANSACTION", actions: ["pay", "authorize", "cancel"] },
+        ],
         children: [
           {
             path: "/finance/receivable/$id",
@@ -570,6 +614,7 @@ export const finance_navs: Navs[] = [
         name: "Invoice Report",
         path: "/finance/invoice-report",
         show: true,
+        permission: { subject: "SHIPMENT", actions: ["generate_invoice"] },
         children: [
           {
             path: "/finance/invoice-report/$id",
@@ -587,6 +632,7 @@ export const finance_navs: Navs[] = [
         name: "Payment Collection",
         path: "/finance/payment-collection",
         show: true,
+        permission: { subject: "SHIPMENT", actions: ["generate_invoice"] },
         children: [
           {
             path: "/finance/payment-collection/$id",
@@ -604,16 +650,19 @@ export const finance_navs: Navs[] = [
         name: "Expense",
         path: "/finance/expense",
         show: true,
+        permission: { subject: "EXPENSE", actions: ["view"] },
       },
       {
         name: "Paid Sub-Contracts",
         path: "/finance/paid-sub-contracts",
         show: true,
+        permission: { subject: "SHIPMENT", actions: ["pay", "authorize"] },
       },
       {
         name: "Expense Types",
         path: "/finance/expense-types",
         show: true,
+        permission: { subject: "EXPENSE_TYPE", actions: ["view"] },
         children: [
           {
             name: "Add Expense Type",
@@ -632,11 +681,13 @@ export const finance_navs: Navs[] = [
         name: "Fuel Transactions",
         path: "/finance/fuel-transactions",
         show: true,
+        permission: { subject: "TRANSACTION", actions: ["view"] },
       },
       {
         name: "Driver Bonuses",
         path: "/finance/driver-bonuses",
         show: true,
+        permission: { subject: "DRIVER_BONUS", actions: ["view"] },
       },
     ],
   },
@@ -652,6 +703,7 @@ export const inventory_navs: Navs[] = [
         name: "Categories",
         path: "/inventory/categories",
         show: true,
+        permission: { subject: "CATEGORY", actions: ["view"] },
         children: [
           {
             name: "Add Category",
@@ -670,6 +722,7 @@ export const inventory_navs: Navs[] = [
         name: "Item Groups",
         path: "/inventory/item-groups",
         show: true,
+        permission: { subject: "ITEM_GROUP", actions: ["view"] },
         children: [
           {
             name: "Add Item Group",
@@ -688,6 +741,7 @@ export const inventory_navs: Navs[] = [
         name: "Vendor",
         path: "/inventory/vendor",
         show: true,
+        permission: { subject: "SUPPLIER", actions: ["view"] },
         children: [
           {
             name: "Add Vendor",
@@ -706,6 +760,7 @@ export const inventory_navs: Navs[] = [
         name: "Items",
         path: "/inventory/items",
         show: true,
+        permission: { subject: "INVENTORY_ITEM", actions: ["view"] },
         children: [
           {
             name: "Add Inventory Item",
@@ -724,6 +779,7 @@ export const inventory_navs: Navs[] = [
         name: "Store Requisition",
         path: "/inventory/store-requisition",
         show: true,
+        permission: { subject: "STORE_REQUISITION_VOUCHER", actions: ["view"] },
         children: [
           {
             name: "Add Store Requisition",
@@ -747,6 +803,7 @@ export const inventory_navs: Navs[] = [
         name: "Purchase Requisition",
         path: "/inventory/purchase-requisition",
         show: true,
+        permission: { subject: "PURCHASE_REQUISITION", actions: ["view"] },
         children: [
           {
             name: "Add Purchase Requisition",
@@ -770,6 +827,7 @@ export const inventory_navs: Navs[] = [
         name: "Purchase Order",
         path: "/inventory/purchase-order",
         show: true,
+        permission: { subject: "PURCHASE_ORDER", actions: ["view"] },
         children: [
           {
             name: "Add Purchase Order",
@@ -793,6 +851,7 @@ export const inventory_navs: Navs[] = [
         name: "Issue / Receive",
         path: "/inventory/good-transfer",
         show: true,
+        permission: { subject: "GOOD_TRANSFER_VOUCHER", actions: ["view"] },
         children: [
           {
             name: "Add Transfer Voucher",
@@ -825,6 +884,7 @@ export const setting_navs: Navs[] = [
         name: "User and Role",
         path: "/setting/user-and-role",
         show: true,
+        permission: { subject: "USER", actions: ["view"] },
         children: [
           {
             name: "Add User",
@@ -910,6 +970,7 @@ export const setting_navs: Navs[] = [
         name: "Contract",
         path: "/setting/contract",
         show: true,
+        permission: { subject: "CONTRACT", actions: ["view"] },
         children: [
           {
             name: "Add Contract",
@@ -932,6 +993,7 @@ export const setting_navs: Navs[] = [
         name: "Commodity",
         path: "/setting/commodity",
         show: true,
+        permission: { subject: "COMMODITY", actions: ["view"] },
         children: [
           {
             name: "Add Commodity",
@@ -949,6 +1011,7 @@ export const setting_navs: Navs[] = [
         name: "Packaging",
         path: "/setting/packaging",
         show: true,
+        permission: { subject: "COMMODITY", actions: ["view"] },
         children: [
           {
             name: "Add Packaging",
@@ -966,6 +1029,7 @@ export const setting_navs: Navs[] = [
         name: "Route Requests",
         path: "/setting/route-request",
         show: true,
+        permission: { subject: "ROUTE", actions: ["view"] },
       },
       {
         name: "Region",
@@ -988,6 +1052,7 @@ export const setting_navs: Navs[] = [
         name: "Bonus Multipliers",
         path: "/setting/bonus-multipliers",
         show: true,
+        permission: { subject: "DRIVER_BONUS", actions: ["view"] },
         children: [
           {
             name: "Add Multiplier",
@@ -1005,6 +1070,7 @@ export const setting_navs: Navs[] = [
         name: "Bonus Routes",
         path: "/setting/bonus-routes",
         show: true,
+        permission: { subject: "DRIVER_BONUS", actions: ["view"] },
         children: [
           {
             name: "Add Bonus Route",
@@ -1022,6 +1088,7 @@ export const setting_navs: Navs[] = [
         name: "Announcements",
         path: "/setting/announcements",
         show: true,
+        permission: { subject: "ANNOUNCEMENT", actions: ["view"] },
         children: [
           {
             name: "Add Announcement",

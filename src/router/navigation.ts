@@ -87,3 +87,38 @@ export function getNavigationRegistry(isShipper: boolean): NavGroup[] {
 
 // Keep backward compatibility — default to carrier
 export const navigationRegistry = carrierNavigationRegistry
+
+export function filterNavsByPermission(
+  navs: Navs[],
+  hasPermFn: (subject: string, actions: string[]) => boolean,
+): Navs[] {
+  const result: Navs[] = [];
+  for (const nav of navs) {
+    if (nav.show === false) {
+      result.push(nav);
+      continue;
+    }
+
+    const filteredChildren = nav.children
+      ? filterNavsByPermission(nav.children, hasPermFn)
+      : undefined;
+
+    if (nav.permission) {
+      const perms = Array.isArray(nav.permission) ? nav.permission : [nav.permission];
+      if (perms.some((p) => hasPermFn(p.subject, p.actions))) {
+        result.push({ ...nav, children: filteredChildren });
+      }
+      continue;
+    }
+
+    // Container items (no path): hide if all visible children were filtered out
+    if (!nav.path && filteredChildren) {
+      const hadVisible = (nav.children ?? []).some((c) => c.show !== false);
+      const hasVisible = filteredChildren.some((c) => c.show !== false);
+      if (hadVisible && !hasVisible) continue;
+    }
+
+    result.push({ ...nav, children: filteredChildren });
+  }
+  return result;
+}
