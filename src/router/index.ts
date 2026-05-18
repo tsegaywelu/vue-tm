@@ -48,15 +48,14 @@ router.beforeEach(async (to, from, next) => {
         return next();
       }
 
-      // Check if user has 'view', 'read' or 'manage' permission for the subject
-      if (
-        !auth_store.has_permission(to.meta.permission as string, [
-          "view",
-          "read",
-          "manage",
-        ])
-      ) {
-        // If they don't have permission, redirect to unauthorized
+      const perm = to.meta.permission;
+      const allowed = Array.isArray(perm)
+        ? (perm as { subject: string; actions: string[] }[]).some((p) =>
+            auth_store.has_permission(p.subject, p.actions),
+          )
+        : auth_store.has_permission(perm as string, ["view", "read", "manage"]);
+
+      if (!allowed) {
         if (from.path && from.path !== "/") {
           return next(false); // cancel navigation
         }

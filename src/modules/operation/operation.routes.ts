@@ -25,7 +25,11 @@ export const operation_routes: RouteRecordRaw[] = [
         name: "operation_approvals",
         component: () => import("./pages/ApprovalRequests.vue"),
         meta: {
-          permission: "PAYMENT_REQUEST",
+          permission: [
+            { subject: "ADVANCE_PAYMENT", actions: ["approve"] },
+            { subject: "TRANSACTION", actions: ["approve"] },
+            { subject: "PRE_PAYMENT", actions: ["approve"] },
+          ],
           title: "Approval Requests",
           description:
             "Manage and process operational payment approvals from one central hub.",
