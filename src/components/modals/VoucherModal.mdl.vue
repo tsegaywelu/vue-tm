@@ -15,6 +15,28 @@
           <Input type="number" name="odometerAtComplete" label="Odometer at Complete" />
           <Input type="number" name="fuelReadingAtComplete" label="Fuel Reading at Complete" />
         </template>
+        <div v-if="['completed', 'offloaded_at_destination'].includes(status)" class="flex items-center gap-2 my-4">
+          <span class="text-sm font-semibold text-gray-700">Rate this driver:</span>
+          <div class="flex items-center gap-1">
+            <button
+              v-for="star in 5"
+              :key="star"
+              type="button"
+              @click="driverRating = star"
+              class="p-0.5 focus:outline-none"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="currentColor"
+                :class="['w-7 h-7 transition-all duration-150', driverRating >= star ? 'text-orange-400 scale-110' : 'text-gray-300 hover:text-orange-300']"
+                viewBox="0 0 24 24"
+              >
+                <path pointer-events="none" d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.548 8.278L12 18.896l-7.484 4.516 1.548-8.278L0 9.306l8.332-1.151z"/>
+              </svg>
+            </button>
+            <span v-if="driverRating > 0" class="ml-1 text-sm text-gray-500">({{ driverRating }}/5)</span>
+          </div>
+        </div>
       </template>
 
       <!-- Round trip — completed/offloading states -->

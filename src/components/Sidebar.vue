@@ -47,17 +47,24 @@ const user = computed(
   () => authStore.current_user?.user ?? authStore.current_user ?? {},
 );
 
-const userInitials = computed(() => {
-  const f = user.value?.firstName?.[0] ?? "";
-  const l = user.value?.lastName?.[0] ?? "";
-  return (f + l).toUpperCase() || "U";
-});
-
 const userName = computed(
   () =>
     [user.value?.firstName, user.value?.lastName].filter(Boolean).join(" ") ||
+    user.value?.name ||
+    user.value?.username ||
     "User",
 );
+
+const userInitials = computed(() => {
+  const name = userName.value;
+  if (!name || name === "User") return "U";
+  const parts = name.trim().split(" ");
+  return (
+    parts.length >= 2
+      ? (parts[0][0] ?? "") + (parts[parts.length - 1][0] ?? "")
+      : (parts[0][0] ?? "") + (parts[0][1] ?? "")
+  ).toUpperCase();
+});
 
 const userRole = computed(
   () => user.value?.role?.name || user.value?.type || "",

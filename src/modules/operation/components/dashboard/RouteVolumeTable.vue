@@ -15,7 +15,7 @@
       No data for selected period
     </div>
 
-    <div v-else class="overflow-auto flex-1">
+    <div v-else class="overflow-y-auto flex-1 max-h-80">
       <table class="w-full text-sm">
         <thead>
           <tr class="border-b border-gray-100">

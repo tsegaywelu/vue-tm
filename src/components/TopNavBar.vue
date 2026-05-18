@@ -19,17 +19,26 @@ const user = computed(
   () => authStore.current_user?.user ?? authStore.current_user ?? {},
 );
 
-const userInitials = computed(() => {
-  const first = user.value?.firstName || "";
-  const last = user.value?.lastName || "";
-  if (first || last) return `${first[0] ?? ""}${last[0] ?? ""}`.toUpperCase();
-  return "U";
-});
-
 const userName = computed(() => {
   const first = user.value?.firstName || "";
   const last = user.value?.lastName || "";
-  return [first, last].filter(Boolean).join(" ") || "User";
+  return (
+    [first, last].filter(Boolean).join(" ") ||
+    user.value?.name ||
+    user.value?.username ||
+    "User"
+  );
+});
+
+const userInitials = computed(() => {
+  const name = userName.value;
+  if (!name || name === "User") return "U";
+  const parts = name.trim().split(" ");
+  return (
+    parts.length >= 2
+      ? (parts[0][0] ?? "") + (parts[parts.length - 1][0] ?? "")
+      : (parts[0][0] ?? "") + (parts[0][1] ?? "")
+  ).toUpperCase();
 });
 
 const userRole = computed(
