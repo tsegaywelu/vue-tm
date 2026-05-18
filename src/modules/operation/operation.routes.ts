@@ -14,7 +14,6 @@ export const operation_routes: RouteRecordRaw[] = [
         name: "operation_dashboard",
         component: () => import("./pages/Dashboard.vue"),
         meta: {
-          permission: "REPORT",
           title: "Operation Dashboard",
           description:
             "Overview of your fleet operations and key performance metrics.",
