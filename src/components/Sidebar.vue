@@ -3,7 +3,10 @@ import { ref, computed, onMounted, onUnmounted } from "vue";
 import { icons } from "@/utils/icons";
 import { raaz_icons } from "@/utils/raaz_icons";
 import NavButton from "@/components/NavButton.vue";
-import { getNavigationRegistry, filterNavsByPermission } from "@/router/navigation";
+import {
+  getNavigationRegistry,
+  filterNavsByPermission,
+} from "@/router/navigation";
 import { useAuthStore } from "@/store/authStore";
 import { openModal } from "@customizer/modal-x";
 

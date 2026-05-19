@@ -61,7 +61,11 @@
     <StatsCards :stats="shipmentStats" :loading="isLoadingStats" />
   </Teleport>
 
-  <ShipmentTable ref="shipmentTableRef" :filters="shipperFilters" @action="handleShipmentAction" />
+  <ShipmentTable
+    ref="shipmentTableRef"
+    :filters="shipperFilters"
+    @action="handleShipmentAction"
+  />
 </template>
 
 <script setup lang="ts">
@@ -148,7 +152,7 @@ const handleDownload = (type: string) => {
     ...shipperFilters.value,
     ...shipmentTableRef.value?.activeFilters,
   };
-  toast.addCustomToast(ShipmentDownloadToast, { type, filters });
+  toast.addCustomToast(ShipmentDownloadToast, { type });
 };
 </script>
 

@@ -453,7 +453,7 @@ export const operation_routes: RouteRecordRaw[] = [
     name: "operation_vehicle_metrics",
     component: () => import("./pages/VehicleMetrics.vue"),
     meta: {
-      permission: "REPORT",
+      permission: [{ subject: "SHIPMENT", actions: ["generate_invoice"] }],
       title: "Vehicle Metrics",
       description: "Global monitoring of vehicle performance and KPIs.",
       tabs: [
@@ -1019,7 +1019,7 @@ export const operation_routes: RouteRecordRaw[] = [
         name: "operation_finance_invoice_report_details",
         component: () => import("./pages/finance/InvoiceReportDetail.vue"),
         meta: {
-          permission: "REPORT",
+          permission: [{ subject: "SHIPMENT", actions: ["generate_invoice"] }],
           title: "Invoice Report Details",
           description: "Detailed breakdown of the invoice report.",
           tabsTeleportTo: "#invoice-report-details-tabs",
@@ -1031,7 +1031,7 @@ export const operation_routes: RouteRecordRaw[] = [
         name: "operation_finance_invoice_report_edit",
         component: () => import("./pages/finance/InvoiceReportEdit.vue"),
         meta: {
-          permission: "REPORT",
+          permission: [{ subject: "SHIPMENT", actions: ["generate_invoice"] }],
           title: "Edit Invoice Report",
           description: "Update existing invoice report details.",
         },
@@ -1041,7 +1041,7 @@ export const operation_routes: RouteRecordRaw[] = [
         name: "operation_finance_generate_invoice",
         component: () => import("./pages/finance/GenerateInvoice.vue"),
         meta: {
-          permission: "REPORT",
+          permission: [{ subject: "SHIPMENT", actions: ["generate_invoice"] }],
           title: "Generate Invoice",
           description: "Generate and print shipment invoices.",
         },
@@ -1051,7 +1051,7 @@ export const operation_routes: RouteRecordRaw[] = [
         name: "operation_finance_edit_payment_request",
         component: () => import("./pages/finance/InvoiceReportEdit.vue"), // Shared component or similar logic
         meta: {
-          permission: "REPORT",
+          permission: [{ subject: "PAYMENT_REQUEST", actions: ["update"] }],
           title: "Edit Payment Request",
           description: "Update existing payment request details.",
         },
@@ -1071,7 +1071,7 @@ export const operation_routes: RouteRecordRaw[] = [
         name: "operation_finance_payment_collection_details",
         component: () => import("./pages/finance/PaymentCollectionDetail.vue"),
         meta: {
-          permission: "TRANSACTION",
+          permission: [{ subject: "SHIPMENT", actions: ["generate_invoice"] }],
           title: "Payment Collection Details",
           description: "Detailed breakdown of the payment collection.",
           tabsTeleportTo: "#payment-collection-details-tabs",
@@ -1766,7 +1766,7 @@ export const operation_routes: RouteRecordRaw[] = [
     name: "operation_reports",
     component: () => import("./pages/Reports.vue"),
     meta: {
-      permission: "REPORT",
+      permission: [{ subject: "SHIPMENT", actions: ["generate_invoice"] }],
       title: "Reports",
       description: "Comprehensive operational and financial reports.",
     },

@@ -20,14 +20,23 @@ export const formatType = (val: string) => {
 };
 
 export const getPaidTo = (row: any) => {
+  console.log(row.payableType);
   if (row.payableType === "shipment" || row.payableType === "shipments") {
     return row.transporter?.tradeName || row.transporter?.name || "-";
-  } else if (row.payableType === "purchaseOrders" || row.payableType === "purchaseOrder") {
-    return row.supplier?.name || row.supplier?.tradeName || "-";
-  } else if (row.driver) {
-    return `${row.driver?.firstName || ""} ${row.driver?.lastName || ""}`.trim() || "-";
+  } else if (
+    row.payableType === "purchaseOrders" ||
+    row.payableType === "purchaseOrder"
+  ) {
+    return row.supplier || row.supplier?.tradeName || "-";
+  } else if (["advancePayment", "transactions"].includes(row.payableType)) {
+    return (
+      `${row.driver?.firstName || ""} ${row.driver?.lastName || ""}`.trim() ||
+      "-"
+    );
   } else if (row.supplier) {
     return row.supplier?.name || "-";
+  } else if (row.payableType === "vehicleLeaseAgreement") {
+    return row.transporter?.name || "asd";
   }
-  return "-";
+  return "f-";
 };

@@ -76,11 +76,10 @@
       </div>
     </template>
 
-    <template #cell-driver="{ row }">
+    <template #cell-paidTo="{ row }">
       <div class="flex flex-col text-sm">
         <span class="font-semibold text-gray-900" v-if="row.driver">
-          {{ row.driver.firstName }} {{ row.driver.middleName }}
-          {{ row.driver.lastName || "" }}
+          {{ getPaidTo(row) }}
         </span>
         <span v-else class="text-gray-400 italic">-</span>
       </div>
@@ -214,6 +213,7 @@ import { icons } from "@/utils/icons";
 import { openModal } from "@customizer/modal-x";
 import type { ApprovalRequest } from "../operation.types";
 import type { TableColumn } from "@/components/common/Table.vue";
+import { getPaidTo } from "./finance/payableUtils";
 
 const props = defineProps<{}>();
 const router = useRouter();
@@ -272,7 +272,7 @@ const activeFilters = computed(() => ({
 const columns: TableColumn<ApprovalRequest>[] = [
   { key: "advanceNumber", label: "Ref. Number", field: "advanceNumber" },
   { key: "payableType", label: "Type of Payment", field: "payableType" },
-  { key: "driver", label: "Driver", field: "driver" },
+  { key: "paidTo", label: "Paid To", field: "driver" },
   { key: "createdAt", label: "Date", field: "createdAt" },
   { key: "shipmentCode", label: "Shipment", field: "shipmentCode" },
   { key: "route", label: "Route", field: "route" },

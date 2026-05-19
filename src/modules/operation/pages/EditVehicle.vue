@@ -80,7 +80,7 @@ const mutation = useMutation({
   onSuccess: (res: any) => {
     if (res.success) {
       toast.success("Vehicle updated successfully");
-      router.push("/operation/vehicles");
+      router.push("/vehicles");
     } else {
       toast.error(res.error || "Failed to update vehicle");
     }

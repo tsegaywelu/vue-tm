@@ -5,11 +5,7 @@
     form-id="addLeaseForm"
     :submit-handler="handleSubmit"
     modal-style="auto"
-    :values="{
-      leaseDirection: 'INWARD',
-      coversMaintenance: true,
-      coversAdvance: true,
-    }"
+    :values="{}"
   >
     <template #center="{ form }">
       <div class="flex flex-col gap-4">
@@ -22,9 +18,6 @@
               name="vehicle"
               @select="(opt: any) => (selectedVehicle = opt.item)"
               :validation="{ required }"
-              :params="{
-                ownership: leaseDirection === 'OUTWARD' ? 'Owned' : 'Leased',
-              }"
               :key="leaseDirection"
             />
           </template>
@@ -95,7 +88,7 @@
           "
           >Cancel</Button
         >
-        <SubmitButton :loading="addMutation.isPending">Submit</SubmitButton>
+        <SubmitButton>Submit</SubmitButton>
       </div>
     </template>
   </FormModalParent>
@@ -120,7 +113,19 @@ import DateInput from "@/components/form/DateInput.vue";
 // [MODAL-X] AUTO-GENERATED INSTANCE
 // [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
 // [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
-
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
 
 const toast = useToastStore();
 const api = new ApiService();

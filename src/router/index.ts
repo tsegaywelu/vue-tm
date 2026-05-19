@@ -53,7 +53,7 @@ router.beforeEach(async (to, from, next) => {
         ? (perm as { subject: string; actions: string[] }[]).some((p) =>
             auth_store.has_permission(p.subject, p.actions),
           )
-        : auth_store.has_permission(perm as string, ["view", "read", "manage"]);
+        : auth_store.has_permission(perm as string, ["view", "manage"]);
 
       if (!allowed) {
         if (from.path && from.path !== "/") {

@@ -13,5 +13,7 @@ export interface Navs {
   requiresAuth?: boolean;
   titleKey?: string;
   subtitleKey?: string;
-  permission?: { subject: string; actions: string[] } | { subject: string; actions: string[] }[];
+  permission?:
+    | { subject: string; actions: string[] }
+    | { subject: string; actions: string[] }[];
 }

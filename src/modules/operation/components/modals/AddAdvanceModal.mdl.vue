@@ -29,7 +29,9 @@
           </div>
           <span
             class="text-[11px] font-bold uppercase tracking-wider transition-colors duration-200"
-            :class="currentStep === stepName ? 'text-gray-900' : 'text-gray-400'"
+            :class="
+              currentStep === stepName ? 'text-gray-900' : 'text-gray-400'
+            "
           >
             {{ formatStepName(stepName) }}
           </span>
@@ -67,10 +69,26 @@
         </component>
 
         <div class="grid grid-cols-2 gap-4 bg-gray-50 p-4 rounded-lg">
-          <Input name="shipmentCode" label="Shipment" :attributes="{ disabled: true }" />
-          <Input name="routeName" label="Route" :attributes="{ disabled: true }" />
-          <Input name="driverName" label="Driver" :attributes="{ disabled: true }" />
-          <Input name="vehiclePlate" label="Vehicle" :attributes="{ disabled: true }" />
+          <Input
+            name="shipmentCode"
+            label="Shipment"
+            :attributes="{ disabled: true }"
+          />
+          <Input
+            name="routeName"
+            label="Route"
+            :attributes="{ disabled: true }"
+          />
+          <Input
+            name="driverName"
+            label="Driver"
+            :attributes="{ disabled: true }"
+          />
+          <Input
+            name="vehiclePlate"
+            label="Vehicle"
+            :attributes="{ disabled: true }"
+          />
         </div>
       </div>
 
@@ -78,7 +96,9 @@
       <div v-show="currentStep === 'fuel'" class="flex flex-col gap-6">
         <div class="flex justify-between items-center">
           <h3 class="font-semibold text-gray-700">Fuel Advances</h3>
-          <Button variant="outline" size="sm" @click="addFuelList">+ Add Another</Button>
+          <Button variant="outline" size="sm" @click="addFuelList"
+            >+ Add Another</Button
+          >
         </div>
 
         <div
@@ -103,6 +123,9 @@
                 { label: 'Telebirr', value: 'TELEBIRR' },
                 { label: 'Voucher', value: 'VOUCHER' },
               ]"
+              :validation="{
+                required,
+              }"
             />
             <Input
               :name="`fuel_${index}_fuelStation`"
@@ -113,19 +136,32 @@
               :name="`fuel_${index}_fuelPrice`"
               label="Fuel Price"
               type="number"
-              :attributes="{ placeholder: '0.00', step: '0.01', onInput: () => setFuelAmount(form, index) }"
+              :attributes="{
+                placeholder: '0.00',
+                step: '0.01',
+                onInput: () => setFuelAmount(form, index),
+              }"
             />
             <Input
               :name="`fuel_${index}_refueledAmount`"
               label="Fuel Liters"
               type="number"
-              :attributes="{ placeholder: '0.00', step: '0.01', onInput: () => setFuelAmount(form, index) }"
+              :attributes="{
+                placeholder: '0.00',
+                step: '0.01',
+                onInput: () => setFuelAmount(form, index),
+              }"
             />
             <Input
               :name="`fuel_${index}_amount`"
               label="Cash Amount"
               type="number"
-              :attributes="{ placeholder: '0.00', step: '0.01', readonly: true, class: 'bg-gray-50 cursor-default' }"
+              :attributes="{
+                placeholder: '0.00',
+                step: '0.01',
+                readonly: true,
+                class: 'bg-gray-50 cursor-default',
+              }"
             />
           </div>
           <Input
@@ -140,7 +176,9 @@
       <div v-show="currentStep === 'per_diem'" class="flex flex-col gap-6">
         <div class="flex justify-between items-center">
           <h3 class="font-semibold text-gray-700">Per Diem Expenses</h3>
-          <Button variant="outline" size="sm" @click="addPerDiemList">+ Add Another</Button>
+          <Button variant="outline" size="sm" @click="addPerDiemList"
+            >+ Add Another</Button
+          >
         </div>
 
         <div
@@ -196,7 +234,9 @@
       <div v-show="currentStep === 'other'" class="flex flex-col gap-6">
         <div class="flex justify-between items-center">
           <h3 class="font-semibold text-gray-700">Other Expenses</h3>
-          <Button variant="outline" size="sm" @click="addOtherList">+ Add Another</Button>
+          <Button variant="outline" size="sm" @click="addOtherList"
+            >+ Add Another</Button
+          >
         </div>
 
         <div
@@ -290,12 +330,24 @@ async function setFuelAmount(form: any, index: number) {
   form?.setFieldValue(`fuel_${index}_amount`, price * liters);
 }
 
-function addFuelList() { fuelAdvancesList.value.push(fuelAdvancesList.value.length); }
-function removeFuelList(i: number) { fuelAdvancesList.value.splice(i, 1); }
-function addPerDiemList() { perDiemExpensesList.value.push(perDiemExpensesList.value.length); }
-function removePerDiemList(i: number) { perDiemExpensesList.value.splice(i, 1); }
-function addOtherList() { otherExpensesList.value.push(otherExpensesList.value.length); }
-function removeOtherList(i: number) { otherExpensesList.value.splice(i, 1); }
+function addFuelList() {
+  fuelAdvancesList.value.push(fuelAdvancesList.value.length);
+}
+function removeFuelList(i: number) {
+  fuelAdvancesList.value.splice(i, 1);
+}
+function addPerDiemList() {
+  perDiemExpensesList.value.push(perDiemExpensesList.value.length);
+}
+function removePerDiemList(i: number) {
+  perDiemExpensesList.value.splice(i, 1);
+}
+function addOtherList() {
+  otherExpensesList.value.push(otherExpensesList.value.length);
+}
+function removeOtherList(i: number) {
+  otherExpensesList.value.splice(i, 1);
+}
 
 const initialValues = {
   advanceType: "ALL",
@@ -338,7 +390,11 @@ async function handleFinalSubmit(values: Record<string, any>) {
     }))
     .filter((o) => o.amount > 0);
 
-  if (!fuelAdvances.length && !perDiemExpenses.length && !otherExpenses.length) {
+  if (
+    !fuelAdvances.length &&
+    !perDiemExpenses.length &&
+    !otherExpenses.length
+  ) {
     toast.error("Fill at least one section (Fuel, Per Diem, or Other)");
     return;
   }
@@ -378,7 +434,9 @@ async function handleFinalSubmit(values: Record<string, any>) {
       }
     }
   } catch (error: any) {
-    toast.error(error.response?.data?.description || "An unexpected error occurred.");
+    toast.error(
+      error.response?.data?.description || "An unexpected error occurred.",
+    );
   } finally {
     isLoading.value = false;
   }

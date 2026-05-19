@@ -8,7 +8,9 @@
     @row_click="handleAction($event, 'view')"
   >
     <template #search-prefix>
-      <div class="h-full flex items-center border-r border-gray-200 pr-2 mr-2 w-48">
+      <div
+        class="h-full flex items-center border-r border-gray-200 pr-2 mr-2 w-48"
+      >
         <Select
           class="[&_.input-focus]:shadow-none! [&_.input-focus]:border-none [&_.input-focus]:min-h-full min-w-48"
           v-model="selectedSearchField"
@@ -20,12 +22,12 @@
       </div>
     </template>
     <template #cell-advanceNumber="{ value }">
-      <span class="font-bold">{{ value || '-' }}</span>
+      <span class="font-bold">{{ value || "-" }}</span>
     </template>
 
     <template #cell-payableType="{ value }">
       <div
-        class="px-3 py-1 rounded-full text-[10px] font-bold  tracking-wider w-fit"
+        class="px-3 py-1 rounded-full text-[10px] font-bold tracking-wider w-fit"
         :class="typeClasses[value] || 'bg-gray-100 text-gray-500'"
       >
         {{ formatType(value) }}
@@ -39,17 +41,17 @@
     </template>
 
     <template #cell-plateNumber="{ value }">
-      <span class="text-sm text-gray-600">{{ value || '-' }}</span>
+      <span class="text-sm text-gray-600">{{ value || "-" }}</span>
     </template>
 
     <template #cell-route="{ row }">
       <span class="font-medium text-gray-700">
-        {{ row.route?.name || '-' }}
+        {{ row.route?.name || "-" }}
       </span>
     </template>
 
     <template #cell-shipmentCode="{ value }">
-      <span class="text-sm text-gray-600">{{ value || '-' }}</span>
+      <span class="text-sm text-gray-600">{{ value || "-" }}</span>
     </template>
 
     <template #cell-total="{ value }">
@@ -63,25 +65,35 @@
         {{ value?.replace(/_/g, " ") }}
       </Status>
     </template>
-    
+
     <template #cell-totalFuelAdvances="{ value }">
-      <span class="text-sm text-gray-600">{{ currencyFormatter(value || 0) }}</span>
+      <span class="text-sm text-gray-600">{{
+        currencyFormatter(value || 0)
+      }}</span>
     </template>
 
     <template #cell-totalPerDiemExpenses="{ value }">
-      <span class="text-sm text-gray-600">{{ currencyFormatter(value || 0) }}</span>
+      <span class="text-sm text-gray-600">{{
+        currencyFormatter(value || 0)
+      }}</span>
     </template>
 
     <template #cell-totalOtherExpenses="{ value }">
-      <span class="text-sm text-gray-600">{{ currencyFormatter(value || 0) }}</span>
+      <span class="text-sm text-gray-600">{{
+        currencyFormatter(value || 0)
+      }}</span>
     </template>
 
     <template #cell-transporterPrice="{ value }">
-      <span class="text-sm text-gray-600">{{ currencyFormatter(value || 0) }}</span>
+      <span class="text-sm text-gray-600">{{
+        currencyFormatter(value || 0)
+      }}</span>
     </template>
 
     <template #cell-purchaseCost="{ row }">
-      <span class="text-sm text-gray-600">{{ currencyFormatter(row.payableType === 'purchaseOrder' ? row.total : 0) }}</span>
+      <span class="text-sm text-gray-600">{{
+        currencyFormatter(row.payableType === "purchaseOrder" ? row.total : 0)
+      }}</span>
     </template>
 
     <template #cell-createdAt="{ value }">
@@ -91,9 +103,14 @@
     </template>
 
     <template #after-search>
-      <div class="items-center gap-4 inline-flex border-l border-grey-100 overflow-x-auto px-3">
+      <div
+        class="items-center gap-4 inline-flex border-l border-grey-100 overflow-x-auto px-3"
+      >
         <i v-html="icons.filter" />
-        <PayableFilters @change="handleFilterChange" pagination-id="payable-list" />
+        <PayableFilters
+          @change="handleFilterChange"
+          pagination-id="payable-list"
+        />
       </div>
     </template>
 
@@ -101,7 +118,6 @@
       <div class="flex items-center justify-end">
         <Dropdown>
           <template #default="{ close }">
-           
             <!-- <DropDownItem
               v-if="canAction(row, 'reject')"
               :icon="icons.x"
@@ -112,7 +128,8 @@
                 close();
               "
             /> -->
-               <DropDownItem v-permission="'TRANSACTION:read'"
+            <DropDownItem
+              v-permission="'TRANSACTION:read'"
               :icon="icons.eye"
               label="Details"
               @click.stop="
@@ -151,7 +168,6 @@
                 close();
               "
             />
-         
           </template>
         </Dropdown>
       </div>
@@ -188,10 +204,26 @@ const columns: TableColumn<any>[] = [
   { key: "shipmentCode", label: "Shipment", field: "shipmentCode" },
   { key: "route", label: "Route", field: "route" },
   { key: "plateNumber", label: "Vehicle", field: "plateNumber" },
-  { key: "totalFuelAdvances", label: "Fuel Advance", field: "totalFuelAdvances" },
-  { key: "totalPerDiemExpenses", label: "Perdiem Advance", field: "totalPerDiemExpenses" },
-  { key: "totalOtherExpenses", label: "Other Advance", field: "totalOtherExpenses" },
-  { key: "transporterPrice", label: "Transporter Price", field: "transporterPrice" },
+  {
+    key: "totalFuelAdvances",
+    label: "Fuel Advance",
+    field: "totalFuelAdvances",
+  },
+  {
+    key: "totalPerDiemExpenses",
+    label: "Perdiem Advance",
+    field: "totalPerDiemExpenses",
+  },
+  {
+    key: "totalOtherExpenses",
+    label: "Other Advance",
+    field: "totalOtherExpenses",
+  },
+  {
+    key: "transporterPrice",
+    label: "Transporter Price",
+    field: "transporterPrice",
+  },
   { key: "purchaseCost", label: "Purchase Cost", field: "purchaseCost" },
   { key: "total", label: "Total", field: "total" },
   { key: "status", label: "Status", field: "status" },
@@ -268,7 +300,8 @@ const canAction = (row: any, action: string) => {
 
 const handleAction = async (row: any, action: string) => {
   if (["authorize", "cancel", "pay", "approve"].includes(action)) {
-    const displayId = row.advanceNumber || row.shipmentCode || row._id || "this item";
+    const displayId =
+      row.advanceNumber || row.shipmentCode || row._id || "this item";
     const confirmed = await openModal("ConfirmationModal", {
       title: `${action.charAt(0).toUpperCase() + action.slice(1)} Payable`,
       message: `Are you sure you want to ${action} this payable (${displayId})?`,
@@ -297,7 +330,6 @@ const typeClasses: Record<string, string> = {
   shipments: "bg-green-50 text-green-600",
   purchaseOrder: "bg-indigo-50 text-indigo-600",
 };
-
 
 defineExpose({ refetch, fullResponse, response });
 </script>

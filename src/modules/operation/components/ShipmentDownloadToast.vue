@@ -75,7 +75,7 @@ const closeToast = () => {
 };
 
 // Use TanStack useQuery for caching and to pass progress config
-const { data: response, isError } = useQuery({
+const { data: response, isError, isFetching } = useQuery({
   queryKey: ["unpaginated_shipments", props.filters],
   queryFn: () =>
     fetch_all_shipments_unpaginated(
@@ -84,11 +84,11 @@ const { data: response, isError } = useQuery({
         onDownloadProgress: (progressEvent: any) => {
           if (progressEvent.total) {
             progress.value = Math.min(
-              100,
+              99,
               Math.round((progressEvent.loaded * 100) / progressEvent.total),
             );
           } else {
-            progress.value = Math.min(95, progress.value + 5);
+            progress.value = Math.min(94, progress.value + 5);
           }
         },
       },
@@ -140,15 +140,16 @@ onMounted(() => {
   }, 100);
 });
 
-// Watch data fetch completion to start progress
+// isFetching → false is the most reliable "fetch done" signal;
+// onDownloadProgress won't always fire at exactly 100% before Axios resolves.
 watch(
-  () => response.value,
-  () => {
-    if (getShipments()) {
-      if (progress.value < 100) {
-        progress.value = 100;
+  () => isFetching.value,
+  (fetching) => {
+    if (!fetching) {
+      progress.value = 100;
+      if (getShipments()) {
+        statusText.value = "Dataset retrieved successfully!";
       }
-      statusText.value = "Dataset retrieved successfully!";
       tryExport();
     }
   },
