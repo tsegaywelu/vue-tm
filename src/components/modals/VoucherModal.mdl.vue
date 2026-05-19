@@ -285,7 +285,6 @@ async function issueVoucherConfirm(rawValues: any) {
   try {
     const res = await add_issue_voucher(s.value._id, {
       shipperIssueVoucher: String(values.shipperIssueVoucher),
-      driverRating: driverRating.value,
     });
     if (res.status === 200 || res.status === 201) {
       toast.success("Vouchers added successfully!");
