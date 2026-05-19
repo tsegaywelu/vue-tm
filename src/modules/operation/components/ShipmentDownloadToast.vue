@@ -47,10 +47,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted, computed } from "vue";
+import { ref, watch, onMounted } from "vue";
 import { useQuery } from "@tanstack/vue-query";
 import { useToastStore } from "@/store/toastStore";
-import { useAuthStore } from "@/store/authStore";
 import { fetch_all_shipments_unpaginated } from "../api/operation.api";
 import {
   exportToExcel,
@@ -63,15 +62,13 @@ import { icons } from "@/utils/icons";
 const props = defineProps<{
   type: string;
   toastId: string;
+  filters?: Record<string, any>;
 }>();
 
 const toastStore = useToastStore();
-const authStore = useAuthStore();
 const progress = ref(0);
 const statusText = ref("Fetching shipment dataset...");
 let hasExported = false;
-
-const shipperId = computed(() => authStore.current_user?.user?.shipper?._id);
 
 const closeToast = () => {
   toastStore.removeToast(props.toastId);
@@ -79,10 +76,10 @@ const closeToast = () => {
 
 // Use TanStack useQuery for caching and to pass progress config
 const { data: response, isError } = useQuery({
-  queryKey: ["unpaginated_shipments", shipperId],
+  queryKey: ["unpaginated_shipments", props.filters],
   queryFn: () =>
     fetch_all_shipments_unpaginated(
-      shipperId.value ? { shipper: shipperId.value } : {},
+      props.filters ?? {},
       {
         onDownloadProgress: (progressEvent: any) => {
           if (progressEvent.total) {
@@ -96,7 +93,7 @@ const { data: response, isError } = useQuery({
         },
       },
     ),
-  staleTime: 5 * 60 * 1000, // Caches for 5 minutes
+  staleTime: 0,
 });
 
 function getShipments(): any[] | null {

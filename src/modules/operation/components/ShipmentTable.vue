@@ -292,5 +292,5 @@ const handleFilterChange = (newFilters: ShipmentFilterParams) => {
   };
 };
 
-defineExpose({ refetch });
+defineExpose({ refetch, activeFilters });
 </script>

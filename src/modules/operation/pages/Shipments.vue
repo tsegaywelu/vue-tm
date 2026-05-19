@@ -61,11 +61,11 @@
     <StatsCards :stats="shipmentStats" :loading="isLoadingStats" />
   </Teleport>
 
-  <ShipmentTable :filters="shipperFilters" @action="handleShipmentAction" />
+  <ShipmentTable ref="shipmentTableRef" :filters="shipperFilters" @action="handleShipmentAction" />
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, type ComponentPublicInstance } from "vue";
 import { useRouter } from "vue-router";
 import { useQuery } from "@tanstack/vue-query";
 import ShipmentTable from "../components/ShipmentTable.vue";
@@ -98,6 +98,7 @@ const shipperFilters = computed(() =>
 );
 
 const isDropdownOpen = ref(false);
+const shipmentTableRef = ref<any>(null);
 
 const { data: statsResponse, isLoading: isLoadingStats } = useQuery({
   queryKey: ["shipmentStatusCount", shipperFilters],
@@ -143,7 +144,11 @@ const handleShipmentAction = ({
 
 const handleDownload = (type: string) => {
   isDropdownOpen.value = false;
-  toast.addCustomToast(ShipmentDownloadToast, { type });
+  const filters = {
+    ...shipperFilters.value,
+    ...shipmentTableRef.value?.activeFilters,
+  };
+  toast.addCustomToast(ShipmentDownloadToast, { type, filters });
 };
 </script>
 
