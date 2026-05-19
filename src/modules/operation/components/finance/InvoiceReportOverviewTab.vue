@@ -1441,6 +1441,8 @@ const filteredShipments = computed(() => {
     const fpiv = (s.shipperIssueVoucher || "").toLowerCase();
     const ckrf = (s.CKRFCode || "").toLowerCase();
     const remark = (s.remark || "").toLowerCase();
+    // Match what the user sees in the table (e.g. "May 19") so "May" finds all May rows
+    const date = formatDate(s.dispatchDate).toLowerCase();
     return (
       plate.includes(q) ||
       trailer.includes(q) ||
@@ -1451,7 +1453,8 @@ const filteredShipments = computed(() => {
       grn.includes(q) ||
       fpiv.includes(q) ||
       ckrf.includes(q) ||
-      remark.includes(q)
+      remark.includes(q) ||
+      date.includes(q)
     );
   });
 });

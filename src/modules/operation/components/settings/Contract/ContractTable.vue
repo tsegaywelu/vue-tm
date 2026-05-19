@@ -5,6 +5,7 @@
     :columns="columns"
     :rows="response"
     search_placeholder="Search contracts..."
+    @row_click="(row) => handleAction(row, 'view')"
   >
     <template #cell-shipper="{ row }">
       {{ row.shipper?.name || "-" }}
@@ -19,7 +20,7 @@
     </template>
 
     <template #cell-actions="{ row }">
-      <div class="flex items-center justify-center">
+      <div class="flex w-full items-center justify-start">
         <button
           type="button"
           v-permission="'CONTRACT:read'"
