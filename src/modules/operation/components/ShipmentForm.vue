@@ -286,7 +286,7 @@
           />
 
           <Input
-            v-if="selectedVehicleOwnership === VehicleOwnership.Owned"
+            v-if="selectedVehicleOwnership === VehicleOwnership.Rental"
             name="transporterPrice"
             label="Transporter Price"
             :attributes="{
