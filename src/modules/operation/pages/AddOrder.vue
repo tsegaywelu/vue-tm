@@ -58,6 +58,7 @@ const handleCreateOrder = async (values: any) => {
     toast.success("Order created successfully");
     // invalidate orders query
     queryClient.invalidateQueries({ queryKey: ["order-list"] });
+    queryClient.invalidateQueries({ queryKey: ["shipment-list"] });
     router.push("/operation/orders");
   } else {
     toast.error(

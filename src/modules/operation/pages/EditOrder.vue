@@ -112,6 +112,7 @@ const handleUpdateOrder = async (values: any) => {
     toast.success("Order updated successfully");
     queryClient.invalidateQueries({ queryKey: ["order", orderId] });
     queryClient.invalidateQueries({ queryKey: ["order-list"] });
+    queryClient.invalidateQueries({ queryKey: ["shipment-list"] });
     router.push("/operation/orders");
   } else {
     toast.error(res.error || "Failed to update order");

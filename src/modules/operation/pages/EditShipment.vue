@@ -39,7 +39,8 @@
             <template #default="[CKRF]">
               <Input
                 v-if="CKRF"
-                name="CKRFCode"hey 
+                name="CKRFCode"
+                hey
                 label="CKRF Code"
                 :validation="{ required }"
               />
@@ -183,10 +184,10 @@ const initialValues = computed(() => {
         }
       : {}),
     transporter:
-      data.vehicle?.ownership == VehicleOwnership.Owned
+      data.vehicle?.ownership !== VehicleOwnership.Owned
         ? data.transporter?._id
         : null,
-  transporterPrice: data.transporterPrice,
+    transporterPrice: data.transporterPrice,
   };
 });
 
@@ -210,8 +211,14 @@ const labels = computed(() => {
     route: data.route?.routeName || "",
     vehicleType: data.vehicleType?.name || "",
     packaging: data.packaging?.name || "",
-    tripType: data.tripType?.replace(/_/g, " ").replace(/\b\w/g, (l: string) => l.toUpperCase()) || "",
-    productType: data.productType?.replace(/_/g, " ").replace(/\b\w/g, (l: string) => l.toUpperCase()) || "",
+    tripType:
+      data.tripType
+        ?.replace(/_/g, " ")
+        .replace(/\b\w/g, (l: string) => l.toUpperCase()) || "",
+    productType:
+      data.productType
+        ?.replace(/_/g, " ")
+        .replace(/\b\w/g, (l: string) => l.toUpperCase()) || "",
   };
 });
 
@@ -287,10 +294,12 @@ const handleUpdateShipment = async (values: any, context: any) => {
   if (res.success) {
     toast.success("Shipment updated successfully");
     queryClient.invalidateQueries({ queryKey: ["shipment", shipmentId] });
+    queryClient.invalidateQueries({ queryKey: ["shipment-list"] });
+    queryClient.invalidateQueries({ queryKey: ["order-list"] });
     const basePath = authStore.is_shipper
       ? "/shipper/shipments"
       : "/operation/shipments";
-    router.push(`${basePath}/${shipmentId}`);
+    // router.push(`${basePath}/${shipmentId}`);
   } else {
     toast.error(res.error || "Failed to update shipment");
   }
