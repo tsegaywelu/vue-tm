@@ -4,10 +4,7 @@
     :columns="columns"
     :rows="response"
     search_placeholder="Search by Ref. Number..."
-    @row_click="
-      (row) =>
-        $router.push(`/operation/advance-details/${row.advancePaymentId}`)
-    "
+    @row_click="(row) => $router.push(`/operation/advance-details/${row._id}`)"
   >
     <template #search-prefix>
       <div

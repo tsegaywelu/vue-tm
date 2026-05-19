@@ -28,18 +28,27 @@
             name="startDate"
             label="Start Date"
             :validation="{ required }"
+            :attributes="{
+              placeholder: 'Select Start Date',
+            }"
           />
           <DateInput
             name="endDate"
             label="End Date"
             :validation="{ required }"
+            :attributes="{
+              placeholder: 'Select End Date',
+            }"
           />
         </div>
         <Input
           type="number"
           name="amount"
           label="Amount"
-          :validation="{ required }"
+          :validation="{ required, price }"
+          :attributes="{
+            placeholder: 'Enter Amount',
+          }"
         />
         <SelectInput
           label="Lease Direction"
@@ -102,7 +111,7 @@ import Input from "@/components/form/Input.vue";
 import SelectInput from "@/components/form/SelectInput.vue";
 import ToggleInput from "@/components/form/ToggleInput.vue";
 import VehicleInput from "@/components/common/inputs/VehicleInput.vue";
-import { required } from "@/utils/validations";
+import { price, required } from "@/utils/validations";
 import { useToastStore } from "@/store/toastStore";
 import { closeModal } from "@customizer/modal-x";
 import ApiService from "@/api/ApiService";
@@ -111,6 +120,15 @@ import SubmitButton from "@/components/form/SubmitButton.vue";
 import DateInput from "@/components/form/DateInput.vue";
 
 // [MODAL-X] AUTO-GENERATED INSTANCE
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
 // [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
 // [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
 // [MODAL-X] Managed Props: This block is auto-generated for strict type safety.

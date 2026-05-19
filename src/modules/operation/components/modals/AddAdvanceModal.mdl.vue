@@ -430,7 +430,7 @@ async function handleFinalSubmit(values: Record<string, any>) {
         toast.success("Advance added successfully!");
         closeModal(true);
       } else {
-        toast.error("Failed to add advance");
+        toast.error(res.error || "Failed to add advance");
       }
     }
   } catch (error: any) {

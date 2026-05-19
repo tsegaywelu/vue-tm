@@ -13,7 +13,9 @@
           :parent_class_name="parent_class_name"
           :size="size"
           :label="label"
-          :error="field.state.meta.errors.length ? field.state.meta.errors : undefined"
+          :error="
+            field.state.meta.errors.length ? field.state.meta.errors : undefined
+          "
           :validations="validation"
           :left_component="left_component"
           :input_style="input_style"
@@ -35,9 +37,12 @@
           />
 
           <template #right_component>
-            <div class="grid place-items-center cursor-pointer" @click="togglePicker">
+            <div
+              class="grid place-items-center cursor-pointer"
+              @click="togglePicker"
+            >
               <slot name="right_component">
-                <i class="mdi mdi-clock-outline text-gray-600 text-xl"></i>
+                <i v-html="icons.clock" />
               </slot>
             </div>
           </template>
@@ -65,9 +70,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted, onBeforeUnmount, nextTick, type InputHTMLAttributes } from 'vue';
+import { ref, watch, onMounted, onBeforeUnmount, nextTick } from "vue";
+import InputParent from "./InputParent.vue";
+import InputLayout from "./InputLayout.vue";
 import { type InputProps } from "./Input.vue";
 import TimePicker from "@/components/TimePicker.vue";
+import { icons } from "@/utils/icons";
 
 export interface TimeInputProps extends InputProps {
   is_range?: boolean;
@@ -83,7 +91,7 @@ const props = withDefaults(defineProps<TimeInputProps>(), {
   is_range: false,
   is_24_hour: false,
   use_object_value: false,
-  
+
   show_validation_status: true,
   parent_class_name: "",
   size: "sm",
@@ -101,12 +109,29 @@ const containerRef = ref<HTMLElement | null>(null);
 const dropdownRef = ref<HTMLElement | null>(null);
 const dropdownStyle = ref({});
 
-function formattedTime(val: any) {
+function formatSingle(raw: string): string {
+  if (!raw) return "";
+  const [h, m] = raw.split(":").map(Number);
+  if (isNaN(h) || isNaN(m)) return raw;
+  if (props.is_24_hour)
+    return `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}`;
+  const p = h >= 12 ? "PM" : "AM";
+  const dh = h % 12 || 12;
+  return `${dh.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")} ${p}`;
+}
+
+function formattedTime(val: any): string {
   if (!val) return "";
-  if (props.is_range && props.use_object_value && typeof val === 'object') {
-    return `${val.startTime || '00:00'} - ${val.endTime || '00:00'}`;
+  if (props.is_range) {
+    if (typeof val === "string" && val.includes("-")) {
+      const [s, e] = val.split("-");
+      return `${formatSingle(s)} - ${formatSingle(e)}`;
+    }
+    if (typeof val === "object" && val !== null) {
+      return `${formatSingle(val.startTime || "")} - ${formatSingle(val.endTime || "")}`;
+    }
   }
-  return String(val);
+  return formatSingle(typeof val === "string" ? val : "");
 }
 
 function togglePicker() {
@@ -119,11 +144,13 @@ function updatePosition() {
     const dropdownHeight = 250;
     const spaceBelow = window.innerHeight - rect.bottom;
     const openUp = spaceBelow < dropdownHeight && rect.top > spaceBelow;
-    
+
     dropdownStyle.value = {
       top: `${(openUp ? rect.top : rect.bottom) + window.scrollY}px`,
       left: `${rect.left + window.scrollX}px`,
-      transform: openUp ? 'translateY(-100%) translateY(-8px)' : 'translateY(8px)'
+      transform: openUp
+        ? "translateY(-100%) translateY(-8px)"
+        : "translateY(8px)",
     };
   }
 }
@@ -131,22 +158,29 @@ function updatePosition() {
 watch(isOpen, (open) => {
   if (open) {
     nextTick(updatePosition);
-    window.addEventListener('scroll', updatePosition, { capture: true });
-    window.addEventListener('resize', updatePosition);
+    window.addEventListener("scroll", updatePosition, { capture: true });
+    window.addEventListener("resize", updatePosition);
   } else {
-    window.removeEventListener('scroll', updatePosition, { capture: true });
-    window.removeEventListener('resize', updatePosition);
+    window.removeEventListener("scroll", updatePosition, { capture: true });
+    window.removeEventListener("resize", updatePosition);
   }
 });
 
 function handleOutsideClick(e: MouseEvent) {
-  if (!containerRef.value?.contains(e.target as Node) && !dropdownRef.value?.contains(e.target as Node)) {
+  if (
+    !containerRef.value?.contains(e.target as Node) &&
+    !dropdownRef.value?.contains(e.target as Node)
+  ) {
     isOpen.value = false;
   }
 }
 
-onMounted(() => { window.addEventListener('mousedown', handleOutsideClick); });
-onBeforeUnmount(() => { window.removeEventListener('mousedown', handleOutsideClick); });
+onMounted(() => {
+  window.addEventListener("mousedown", handleOutsideClick);
+});
+onBeforeUnmount(() => {
+  window.removeEventListener("mousedown", handleOutsideClick);
+});
 
 function onSelect(val: any, field: any) {
   field.handleChange(val);

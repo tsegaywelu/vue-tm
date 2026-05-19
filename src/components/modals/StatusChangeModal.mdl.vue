@@ -31,14 +31,24 @@
       />
 
       <!-- Status Time (hidden for custom) -->
-      <DateInput
-        v-if="currentStatus !== 'custom'"
-        name="statusTime"
-        label="Time"
-        :attributes="{
-          placeholder: 'Select time',
-        }"
-      />
+      <div class="grid grid-cols-[1fr_15rem] gap-4">
+        <DateInput
+          v-if="currentStatus !== 'custom'"
+          name="statusTime"
+          label="Date"
+          :attributes="{
+            placeholder: 'Select time',
+          }"
+        />
+        <TimeInput
+          is_24_hour
+          name="time"
+          label="Time"
+          :attributes="{
+            placeholder: 'Select time',
+          }"
+        />
+      </div>
     </template>
 
     <template #bottom>
@@ -76,6 +86,7 @@ import {
   add_follow_up,
 } from "@/modules/operation/api/shipment.api";
 import { ShipmentStatus } from "@/utils/utils";
+import TimeInput from "../form/TimeInput.vue";
 
 export type ReturnType = boolean;
 export type Props = {
@@ -96,6 +107,7 @@ const formValues = computed(() => ({
   status: shipment.value.status ?? "",
   followUp: "",
   statusTime: "",
+  time: "",
 }));
 
 const form = useForm({
@@ -171,15 +183,19 @@ const statusOptions = computed(() => {
 
   const currentIndex = list.findIndex((s: any) => s.value === current);
   return list
-    .filter((status: any, index: number) =>
-      ALWAYS_VISIBLE.includes(status.value) || index >= currentIndex,
+    .filter(
+      (status: any, index: number) =>
+        ALWAYS_VISIBLE.includes(status.value) || index >= currentIndex,
     )
     .map((status: any) => {
-      const originalIndex = list.findIndex((s: any) => s.value === status.value);
+      const originalIndex = list.findIndex(
+        (s: any) => s.value === status.value,
+      );
       return {
         ...status,
         disabled:
-          !ALWAYS_VISIBLE.includes(status.value) && originalIndex > currentIndex + 1,
+          !ALWAYS_VISIBLE.includes(status.value) &&
+          originalIndex > currentIndex + 1,
       };
     });
 });
@@ -234,14 +250,20 @@ async function handleFormSubmit(values: any) {
       }
     } else {
       const statusData: any = { status: values.status };
-      if (values.statusTime) statusData.statusTime = values.statusTime;
+      if (values.statusTime) {
+        const combined =
+          values.time
+            ? `${values.statusTime}T${values.time}:00`
+            : values.statusTime;
+        statusData.statusTime = combined;
+      }
 
       const res = await update_shipment_status(id, statusData);
       if (res.status === 200 || res.status === 201) {
         toast.success("Status updated successfully!");
         closeModal(true);
       } else {
-        toast.error("Failed to update status");
+        toast.error(res.error || "Failed to update status");
       }
     }
   } catch (error: any) {

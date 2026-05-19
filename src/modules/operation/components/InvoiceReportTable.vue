@@ -12,7 +12,10 @@
         class="items-center gap-4 inline-flex border-l border-grey-100 overflow-x-auto px-3"
       >
         <i v-html="icons.filter" />
-        <InvoiceReportFilters @change="handleFilterChange" pagination-id="invoice-report-list" />
+        <InvoiceReportFilters
+          @change="handleFilterChange"
+          pagination-id="invoice-report-list"
+        />
       </div>
     </template>
     <template #cell-reference="{ value }">
@@ -44,7 +47,7 @@
     </template>
 
     <template #cell-actions="{ row }">
-      <div class="flex items-center justify-end">
+      <div class="flex items-center justify-center w-full">
         <Dropdown>
           <template #default="{ close }">
             <!-- <DropDownItem v-permission="'REPORT:update'"
