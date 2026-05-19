@@ -136,7 +136,6 @@ async function openDamageReport() {
   });
 }
 
-
 const { data: shipment, isLoading } = useQuery({
   queryKey: ["shipment", shipmentId],
   queryFn: async () => {
@@ -175,7 +174,7 @@ const initialValues = computed(() => {
     driver: data.driver?._id,
     isDamaged: data.isDamaged,
     CKRF: data.CKRF,
-    CKRFCode: data.CKRFCode || "", 
+    CKRFCode: data.CKRFCode || "",
     status: data.status,
     pricingType: data.pricingType?._id,
     ...(data.productType !== ProductType["Site Transfer"]
@@ -187,10 +186,7 @@ const initialValues = computed(() => {
       data.vehicle?.ownership == VehicleOwnership.Owned
         ? data.transporter?._id
         : null,
-    transporterPrice:
-      data.vehicle?.ownership == VehicleOwnership.Owned
-        ? data.transporterPrice
-        : null,
+    transporterPrice: data.transporterPrice,
   };
 });
 

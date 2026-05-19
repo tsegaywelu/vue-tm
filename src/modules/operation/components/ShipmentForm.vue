@@ -285,7 +285,6 @@
             label="Transporter Price"
             :attributes="{
               placeholder: '0.00',
-              type: 'number',
             }"
             :validation="{
               required,
