@@ -99,25 +99,33 @@ const { data: response, isError } = useQuery({
   staleTime: 5 * 60 * 1000, // Caches for 5 minutes
 });
 
+function getShipments(): any[] | null {
+  const raw = response.value?.data;
+  if (!raw) return null;
+  const list = raw.result || raw.data || raw;
+  return Array.isArray(list) ? list : null;
+}
+
 function tryExport() {
   if (hasExported) return;
-  if (progress.value === 100 && response.value?.data?.result) {
+  const shipments = getShipments();
+  if (progress.value === 100 && shipments) {
     hasExported = true;
     if (props.type === "Raw Material") {
-      exportToExcel(response.value.data.result);
+      exportToExcel(shipments);
     } else if (props.type === "Full Product") {
-      exportToExcelFullProduct(response.value.data.result);
+      exportToExcelFullProduct(shipments);
     } else if (props.type === "All") {
-      exportToExcelAll(response.value.data.result);
+      exportToExcelAll(shipments);
     } else if (props.type === "Report") {
-      exportToExcelReport(response.value.data.result);
+      exportToExcelReport(shipments);
     }
     statusText.value = "Excel file generated!";
   }
 }
 
 onMounted(() => {
-  if (response.value?.data?.result) {
+  if (getShipments()) {
     progress.value = 100;
     statusText.value = "Dataset retrieved successfully!";
     tryExport();
@@ -126,9 +134,9 @@ onMounted(() => {
 
   // Smooth initial loading steps
   const interval = setInterval(() => {
-    if (progress.value < 100 && response.value?.data?.result) {
+    if (progress.value < 100 && getShipments()) {
       progress.value = Math.min(100, progress.value + 20);
-    } else if (response.value?.data?.result && progress.value >= 100) {
+    } else if (getShipments() && progress.value >= 100) {
       clearInterval(interval);
       tryExport();
     }
@@ -138,8 +146,8 @@ onMounted(() => {
 // Watch data fetch completion to start progress
 watch(
   () => response.value,
-  (res) => {
-    if (res && res.data?.result) {
+  () => {
+    if (getShipments()) {
       if (progress.value < 100) {
         progress.value = 100;
       }
