@@ -157,7 +157,7 @@ function getPreviewUrl(file: any) {
             @click.stop="field.handleChange(undefined)"
             class="absolute -top-2 -right-2 size-6 bg-red-500 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-red-600 transition-colors z-10"
           >
-            <i class="mdi mdi-close text-xs"></i>
+            <i v-html="icons.close"></i>
           </button>
         </div>
 

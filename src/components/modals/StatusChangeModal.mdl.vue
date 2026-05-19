@@ -39,6 +39,9 @@
           :attributes="{
             placeholder: 'Select time',
           }"
+          :validation="{
+            dateLessThanOrEqalToToday,
+          }"
         />
         <TimeInput
           is_24_hour
@@ -80,7 +83,7 @@ import SelectInput from "@/components/form/SelectInput.vue";
 import TextareaInput from "@/components/form/TextareaInput.vue";
 import SubmitButton from "@/components/form/SubmitButton.vue";
 import DateInput from "@/components/form/DateInput.vue";
-import { required } from "@/utils/validations";
+import { dateLessThanOrEqalToToday, required } from "@/utils/validations";
 import {
   update_shipment_status,
   add_follow_up,
@@ -251,10 +254,9 @@ async function handleFormSubmit(values: any) {
     } else {
       const statusData: any = { status: values.status };
       if (values.statusTime) {
-        const combined =
-          values.time
-            ? `${values.statusTime}T${values.time}:00`
-            : values.statusTime;
+        const combined = values.time
+          ? `${values.statusTime}T${values.time}:00`
+          : values.statusTime;
         statusData.statusTime = combined;
       }
 

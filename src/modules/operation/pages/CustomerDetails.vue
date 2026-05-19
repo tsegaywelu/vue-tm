@@ -10,7 +10,7 @@
     >
       <div class="flex items-center gap-8">
         <div
-          class="size-24 md:size-32 rounded-full bg-white flex items-center justify-center shadow-lg border border-grey-100 p-4 overflow-hidden"
+          class="size-24 md:size-32 rounded-full bg-white flex items-center justify-center shadow-lg border border-grey-100 overflow-hidden"
         >
           <img
             v-if="customer.logo"
@@ -281,7 +281,7 @@ import ApiService from "@/api/ApiService";
 import { dateFormatter } from "@/utils/utils";
 import Table from "@/components/common/Table.vue";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const API_URL = import.meta.env.v_STATIC_PATH;
 const route = useRoute();
 const api = new ApiService();
 const customerId = route.params.id as string;

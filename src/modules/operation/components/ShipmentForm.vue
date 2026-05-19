@@ -302,6 +302,7 @@
       >
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <Input
+            v-if="selectedVehicleOwnership !== VehicleOwnership.Leased"
             name="odometerAtDispatch"
             label="Odometer at Dispatch"
             :attributes="{
@@ -318,7 +319,6 @@
             label="Dispatch Date"
             :validation="{
               required,
-              dateGreaterThanOrEqalToToday: dateGreaterThanOrEqalToToday,
             }"
             :attributes="{
               placeholder: 'Select a Date',
@@ -326,6 +326,7 @@
           />
 
           <Input
+            v-if="selectedVehicleOwnership !== VehicleOwnership.Leased"
             name="fuelReadingAtDispatch"
             label="Fuel Reading"
             :attributes="{

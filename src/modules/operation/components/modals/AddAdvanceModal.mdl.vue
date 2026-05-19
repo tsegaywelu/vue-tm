@@ -123,9 +123,7 @@
                 { label: 'Telebirr', value: 'TELEBIRR' },
                 { label: 'Voucher', value: 'VOUCHER' },
               ]"
-              :validation="{
-                required,
-              }"
+              :validation="currentStep === 'fuel' ? { required } : {}"
             />
             <Input
               :name="`fuel_${index}_fuelStation`"
@@ -359,6 +357,7 @@ const initialValues = {
 };
 
 async function handleFinalSubmit(values: Record<string, any>) {
+  console.log(values);
   const isFuelOnly = values.advanceType === "FUEL_ONLY";
 
   const fuelAdvances = fuelAdvancesList.value

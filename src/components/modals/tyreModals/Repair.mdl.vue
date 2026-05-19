@@ -11,16 +11,15 @@
       <Input
         name="mileage"
         label="Mileage"
-      
-        :attributes="{ placeholder: 'Enter mileage',type:'number', min: 0 }"
-        :validation="{ required }"
+        :attributes="{ placeholder: 'Enter mileage' }"
+        :validation="{ required, pos_number }"
       />
 
       <!-- Date Input -->
       <DateInput
         name="date"
-        label="Date"
-        :validation="{ required }"
+        label="Repair Date"
+        :validation="{ required, dateGreaterThanOrEqalToToday }"
         :attributes="{
           placeholder: 'Select date',
         }"
@@ -62,7 +61,7 @@ import Input from "@/components/form/Input.vue";
 import TextareaInput from "@/components/form/TextareaInput.vue";
 import SubmitButton from "@/components/form/SubmitButton.vue";
 import DateInput from "@/components/form/DateInput.vue";
-import { required } from "@/utils/validations";
+import { dateGreaterThanOrEqalToToday, pos_number, required } from "@/utils/validations";
 import { useToastStore } from "@/store/toastStore";
 import { update_tyre_status } from "@/modules/operation/api/tyre.api";
 
@@ -103,7 +102,7 @@ async function handleFormSubmit(values: any) {
     } else {
       toast.addToast(
         `Error: ${res.data?.description || "Unknown error occurred."}`,
-        "error"
+        "error",
       );
     }
   } catch (error: any) {

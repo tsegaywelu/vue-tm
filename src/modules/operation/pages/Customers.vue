@@ -1,6 +1,11 @@
 <template>
   <Teleport to="#page-actions" defer>
-    <Button v-permission="'SHIPPER:create'" size="md" variant="primary" @click="handleOpenAddModal">
+    <Button
+      v-permission="'SHIPPER:create'"
+      size="md"
+      variant="primary"
+      @click="handleOpenAddModal"
+    >
       New Customer
     </Button>
   </Teleport>
@@ -57,13 +62,19 @@ import { usePagination } from "@/composables/usePagination";
 import { openModal } from "@customizer/modal-x";
 import Dropdown from "@/components/common/Dropdown.vue";
 import DropDownItem from "@/components/common/DropDownItem.vue";
-import Table from "@/components/common/Table.vue";
+import Table, { type TableColumn } from "@/components/common/Table.vue";
 
 const router = useRouter();
 
 const { response, refetch, isLoading } = usePagination({
   id: "customers-list",
   url: "/shipper",
+  params(state) {
+    return {
+      name: state.search,
+      q: undefined,
+    };
+  },
 });
 
 const columns: TableColumn<any>[] = [

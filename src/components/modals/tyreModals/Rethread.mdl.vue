@@ -11,16 +11,15 @@
       <Input
         name="mileage"
         label="Mileage"
-      
-        :attributes="{ placeholder: 'Enter mileage', min: 0 ,type:'number'}"
-        :validation="{ required }"
+        :attributes="{ placeholder: 'Enter mileage' }"
+        :validation="{ required, pos_number }"
       />
 
       <!-- Date Input -->
       <DateInput
         name="date"
         label="Date"
-        :validation="{ required }"
+        :validation="{ dateLessThanOrEqalToToday, required }"
         :attributes="{
           placeholder: 'Select date',
         }"
@@ -29,9 +28,12 @@
       <!-- Tread Depth Input -->
       <Input
         name="treadDepth"
-        label="Tread Depth"
-       
-        :attributes="{ placeholder: 'Enter tread depth', min: 0,type:'number' }"
+        label="Tread Depth(mm)"
+        :attributes="{
+          placeholder: 'Enter tread depth',
+          min: 0,
+          type: 'number',
+        }"
       />
 
       <!-- Description Input -->
@@ -70,7 +72,11 @@ import Input from "@/components/form/Input.vue";
 import TextareaInput from "@/components/form/TextareaInput.vue";
 import SubmitButton from "@/components/form/SubmitButton.vue";
 import DateInput from "@/components/form/DateInput.vue";
-import { required } from "@/utils/validations";
+import {
+  dateLessThanOrEqalToToday,
+  pos_number,
+  required,
+} from "@/utils/validations";
 import { useToastStore } from "@/store/toastStore";
 import { update_tyre_status } from "@/modules/operation/api/tyre.api";
 
@@ -113,7 +119,7 @@ async function handleFormSubmit(values: any) {
     } else {
       toast.addToast(
         `Error: ${res.data?.description || "Unknown error occurred."}`,
-        "error"
+        "error",
       );
     }
   } catch (error: any) {

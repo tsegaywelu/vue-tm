@@ -1,7 +1,8 @@
 <template>
   <Dropdown>
     <template #default="{ close }">
-      <DropDownItem v-permission="'SHIPMENT:read'"
+      <DropDownItem
+        v-permission="'SHIPMENT:read'"
         v-if="shouldShow('view')"
         :icon="icons.eye"
         label="Details"
@@ -10,7 +11,8 @@
           close();
         "
       />
-      <DropDownItem v-permission="'SHIPMENT:update'"
+      <DropDownItem
+        v-permission="'SHIPMENT:update'"
         v-if="shouldShow('edit')"
         :icon="icons.editIcon"
         label="Edit Shipment"
@@ -19,7 +21,11 @@
           close();
         "
       />
-      <DropDownItem v-permission="[{ subject: 'ADVANCE_PAYMENT', actions: ['create'] }, { subject: 'TRANSACTION', actions: ['create'] }]"
+      <DropDownItem
+        v-permission="[
+          { subject: 'ADVANCE_PAYMENT', actions: ['create'] },
+          { subject: 'TRANSACTION', actions: ['create'] },
+        ]"
         v-if="shouldShow('create_advance')"
         :icon="icons.plusIcon"
         label="Create Advance"
@@ -28,7 +34,8 @@
           close();
         "
       />
-      <DropDownItem v-permission="'SHIPMENT:change_status'"
+      <DropDownItem
+        v-permission="'SHIPMENT:change_status'"
         v-if="shouldShow('update_status')"
         :icon="icons.editIcon"
         label="Update Status"
@@ -37,10 +44,11 @@
           close();
         "
       />
-      <DropDownItem v-permission="'SHIPMENT:add_voucher'"
+      <DropDownItem
+        v-permission="'SHIPMENT:add_voucher'"
         v-if="shouldShow('add_voucher')"
         :icon="icons.plusIcon"
-        label="Add Voucher"
+        label="Update Voucher"
         @click.stop="
           openVouchersModal(shipment);
           close();

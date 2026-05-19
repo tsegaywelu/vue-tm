@@ -166,6 +166,12 @@ export function number(value: string): [boolean, string] {
   return [true, ""];
 }
 
+export function pos_number(value: string) {
+  if (isNaN(Number(value)) || +value < 0)
+    return [false, t("validation.invalid_number")];
+  return [true, ""];
+}
+
 export function date(value: string): [boolean, string] {
   const date = new Date(value);
   if (isNaN(date.getTime())) return [false, t("validation.invalid_date")];

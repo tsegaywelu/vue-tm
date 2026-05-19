@@ -10,8 +10,8 @@
       <!-- Date Input -->
       <DateInput
         name="date"
-        label="Date"
-        :validation="{ required }"
+        label="Reassign Date"
+        :validation="{ required, dateLessThanOrEqalToToday }"
         :attributes="{
           placeholder: 'Select date',
         }"
@@ -25,10 +25,9 @@
       />
 
       <!-- Vehicle Input -->
-      <SelectInput
+      <VehicleInput
         name="newVehicle"
         label="Vehicle"
-        :options="vehicleOptions"
         label-key="label"
         value-key="value"
         :validation="{ required }"
@@ -48,9 +47,8 @@
       <Input
         name="installationMileage"
         label="Installation Mileage (New Vehicle)"
-     
-        :attributes="{ placeholder: 'Enter mileage', type:'number', min: 0 }"
-        :validation="{ required }"
+        :attributes="{ placeholder: 'Enter mileage' }"
+        :validation="{ required, pos_number }"
       />
 
       <!-- New Position Input -->
@@ -100,10 +98,18 @@ import TextareaInput from "@/components/form/TextareaInput.vue";
 import ToggleInput from "@/components/form/ToggleInput.vue";
 import SubmitButton from "@/components/form/SubmitButton.vue";
 import DateInput from "@/components/form/DateInput.vue";
-import { required } from "@/utils/validations";
+import {
+  dateLessThanOrEqalToToday,
+  pos_number,
+  required,
+} from "@/utils/validations";
 import { useToastStore } from "@/store/toastStore";
 import { update_tyre_status } from "@/modules/operation/api/tyre.api";
-import { fetch_vehicles, fetch_drivers } from "@/modules/operation/api/operation.api";
+import {
+  fetch_vehicles,
+  fetch_drivers,
+} from "@/modules/operation/api/operation.api";
+import VehicleInput from "@/components/common/inputs/VehicleInput.vue";
 
 export type ReturnType = boolean;
 export type Props = {
@@ -123,23 +129,23 @@ onMounted(async () => {
   try {
     const [vehiclesRes, driversRes] = await Promise.all([
       fetch_vehicles({ limit: 1000 }),
-      fetch_drivers({ limit: 1000 })
+      fetch_drivers({ limit: 1000 }),
     ]);
-    
-    vehicles.value = Array.isArray(vehiclesRes?.data?.result) 
-      ? vehiclesRes?.data?.result 
-      : Array.isArray(vehiclesRes?.data?.items) 
-        ? vehiclesRes?.data?.items 
-        : Array.isArray(vehiclesRes?.data) 
-          ? vehiclesRes?.data 
+
+    vehicles.value = Array.isArray(vehiclesRes?.data?.result)
+      ? vehiclesRes?.data?.result
+      : Array.isArray(vehiclesRes?.data?.items)
+        ? vehiclesRes?.data?.items
+        : Array.isArray(vehiclesRes?.data)
+          ? vehiclesRes?.data
           : [];
 
-    drivers.value = Array.isArray(driversRes?.data?.results) 
-      ? driversRes?.data?.results 
-      : Array.isArray(driversRes?.data?.items) 
-        ? driversRes?.data?.items 
-        : Array.isArray(driversRes?.data) 
-          ? driversRes?.data 
+    drivers.value = Array.isArray(driversRes?.data?.results)
+      ? driversRes?.data?.results
+      : Array.isArray(driversRes?.data?.items)
+        ? driversRes?.data?.items
+        : Array.isArray(driversRes?.data)
+          ? driversRes?.data
           : [];
   } catch (error) {
     console.error("Failed to load options", error);
@@ -147,11 +153,14 @@ onMounted(async () => {
 });
 
 const vehicleOptions = computed(() => {
-  return vehicles.value.map(v => ({ value: v._id, label: v.plateNumber }));
+  return vehicles.value.map((v) => ({ value: v._id, label: v.plateNumber }));
 });
 
 const driverOptions = computed(() => {
-  return drivers.value.map(d => ({ value: d._id, label: `${d.firstName} ${d.middleName || ''}`.trim() }));
+  return drivers.value.map((d) => ({
+    value: d._id,
+    label: `${d.firstName} ${d.middleName || ""}`.trim(),
+  }));
 });
 
 const tyre = computed(() => props.data.tyre ?? {});
@@ -229,7 +238,7 @@ async function handleFormSubmit(values: any) {
     } else {
       toast.addToast(
         `Error: ${res.data?.description || "Unknown error occurred."}`,
-        "error"
+        "error",
       );
     }
   } catch (error: any) {

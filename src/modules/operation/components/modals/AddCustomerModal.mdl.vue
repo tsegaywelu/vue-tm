@@ -1,7 +1,11 @@
 <template>
   <FormModalParent
     :title="customerData ? 'Edit Customer' : 'Add New Customer'"
-    :subtitle="customerData ? 'Update customer account' : 'Register a new customer account'"
+    :subtitle="
+      customerData
+        ? 'Update customer account'
+        : 'Register a new customer account'
+    "
     form-id="addCustomerForm"
     :submit-handler="handleSubmit"
     modal-style="auto"
@@ -9,25 +13,52 @@
   >
     <template #center="{ form }">
       <div class="flex flex-col gap-4">
-        <FileInput
-          name="logo"
-          label="Logo"
-          imageOnly
-          accept="image/*"
-        />
+        <FileInput name="logo" label="Logo" imageOnly accept="image/*" />
 
         <!-- Two columns for personal / company info -->
         <div class="grid grid-cols-2 gap-4">
-          <Input name="name" label="Customer Name" :validation="{ required }" placeholder="Full Name" />
-          <Input name="tradeName" label="Trade Name" :validation="{ required }" placeholder="Trade Name" />
+          <Input
+            name="name"
+            label="Customer Name"
+            :validation="{ required }"
+            placeholder="Full Name"
+          />
+          <Input
+            name="tradeName"
+            label="Trade Name"
+            :validation="{ required }"
+            placeholder="Trade Name"
+          />
         </div>
         <div class="grid grid-cols-2 gap-4">
-          <Input name="phone" label="Phone" :validation="{ required }" placeholder="911223344" />
-          <Input name="email" label="Email" placeholder="customer@example.com" />
+          <Input
+            name="phone"
+            label="Phone"
+            :validation="{ required, phone }"
+            :attributes="{
+              placeholder: 'Enter Phone',
+            }"
+          />
+          <Input
+            name="email"
+            label="Email"
+            placeholder="customer@example.com"
+            :validation="{ email }"
+          />
         </div>
         <div class="grid grid-cols-2 gap-4">
-          <Input name="shipperCode" label="Customer Code" :validation="{ required }" placeholder="Code" />
-          <Input name="address" label="Address" :validation="{ required }" placeholder="Addis Ababa" />
+          <Input
+            name="shipperCode"
+            label="Customer Code"
+            :validation="{ required }"
+            placeholder="Code"
+          />
+          <Input
+            name="address"
+            label="Address"
+            :validation="{ required }"
+            placeholder="Addis Ababa"
+          />
         </div>
         <div>
           <Input name="tin" label="TIN" placeholder="123456789" />
@@ -36,18 +67,32 @@
         <!-- Representatives Section -->
         <div class="border-t border-grey-100 pt-4 mt-2">
           <div class="flex justify-between items-center mb-3">
-            <label class="text-sm font-bold text-grey-700">Representatives (Optional)</label>
-            <Button size="sm" variant="outline" @click="addRepPhone">+ Add Phone</Button>
+            <label class="text-sm font-bold text-grey-700"
+              >Representatives (Optional)</label
+            >
+            <Button size="sm" variant="outline" @click="addRepPhone"
+              >+ Add Phone</Button
+            >
           </div>
           <div class="flex flex-col gap-2">
-            <div v-for="(rep, idx) in repPhones" :key="idx" class="flex items-center gap-2">
+            <div
+              v-for="(rep, idx) in repPhones"
+              :key="idx"
+              class="flex items-center gap-2"
+            >
               <CommonInput
                 v-model="repPhones[idx]"
                 placeholder="e.g. 911223344"
                 class="flex-1"
                 type="text"
               />
-              <Button size="sm" variant="outline" class="text-red-500!" @click="removeRepPhone(idx)">Remove</Button>
+              <Button
+                size="sm"
+                variant="outline"
+                class="text-red-500!"
+                @click="removeRepPhone(idx)"
+                >Remove</Button
+              >
             </div>
           </div>
         </div>
@@ -55,7 +100,9 @@
     </template>
     <template #bottom="{ form }">
       <div class="flex justify-end gap-3">
-        <Button size="md" variant="outline" @click="closeModal(false)">Cancel</Button>
+        <Button size="md" variant="outline" @click="closeModal(false)"
+          >Cancel</Button
+        >
         <SubmitButton>Submit</SubmitButton>
       </div>
     </template>
@@ -67,7 +114,7 @@ import { ref, computed, onMounted } from "vue";
 import FormModalParent from "@/components/modals/FormModalParent.vue";
 import Input from "@/components/form/Input.vue";
 import CommonInput from "@/components/common/Input.vue";
-import { required } from "@/utils/validations";
+import { email, phone, required } from "@/utils/validations";
 import { useToastStore } from "@/store/toastStore";
 import { closeModal } from "@customizer/modal-x";
 import ApiService from "@/api/ApiService";
@@ -88,7 +135,8 @@ const initialFormValues = computed(() => {
       tradeName: customerData.value.tradeName || "",
       phone: customerData.value.phone?.replace(/^\+251/, "") || "",
       email: customerData.value.email || "",
-      shipperCode: customerData.value.shipperCode || customerData.value.customerCode || "",
+      shipperCode:
+        customerData.value.shipperCode || customerData.value.customerCode || "",
       address: customerData.value.address || "",
       tin: customerData.value.tin || "",
       logo: customerData.value.logo
@@ -115,7 +163,9 @@ const api = new ApiService();
 onMounted(() => {
   if (customerData.value) {
     if (customerData.value.phoneNumbers) {
-      repPhones.value = customerData.value.phoneNumbers.map((num: string) => num.replace(/^\+251/, ""));
+      repPhones.value = customerData.value.phoneNumbers.map((num: string) =>
+        num.replace(/^\+251/, ""),
+      );
     }
   }
 });
@@ -134,7 +184,9 @@ const removeRepPhone = (idx: number) => {
 
 const handleSubmit = async (values: any) => {
   try {
-    const fullPhoneNumber = values.phone.startsWith("+") ? values.phone : `+251${values.phone}`;
+    const fullPhoneNumber = values.phone.startsWith("+")
+      ? values.phone
+      : `+251${values.phone}`;
     const formData = new FormData();
 
     if (values.tin) formData.append("tin", values.tin);
@@ -164,13 +216,15 @@ const handleSubmit = async (values: any) => {
         .patch(`/shipper/${customerData.value._id}`, formData);
     } else {
       // Create mode (POST)
-      res = await api
-        .addAuthenticationHeader()
-        .post("/shipper", formData);
+      res = await api.addAuthenticationHeader().post("/shipper", formData);
     }
 
     if (res.success || res.status === 200 || res.status === 201) {
-      toast.success(customerData.value ? "Customer updated successfully!" : "Customer added successfully!");
+      toast.success(
+        customerData.value
+          ? "Customer updated successfully!"
+          : "Customer added successfully!",
+      );
       closeModal(true);
     } else {
       toast.error(res.error || "Failed to submit customer");

@@ -11,17 +11,23 @@
         <DateInput
           name="paymentCollectedDate"
           label="Collection Date"
-          :validation="{ required }"
+          :validation="{ required, dateLessThanOrEqalToToday }"
         />
         <Input
           name="crv"
           label="CRV"
-          :validation="{ required }"
+          :validation="{ required, number }"
+          :attributes="{
+            placeholder: 'Enter CRV',
+          }"
         />
         <Input
           name="csi"
           label="CSI"
-          :validation="{ required }"
+          :validation="{ required, number }"
+          :attributes="{
+            placeholder: 'Enter CSI',
+          }"
         />
         <TextareaInput
           name="remarkCarrier"
@@ -60,7 +66,11 @@ import Input from "@/components/form/Input.vue";
 import TextareaInput from "@/components/form/TextareaInput.vue";
 import SubmitButton from "@/components/form/SubmitButton.vue";
 import DateInput from "@/components/form/DateInput.vue";
-import { required } from "@/utils/validations";
+import {
+  dateLessThanOrEqalToToday,
+  number,
+  required,
+} from "@/utils/validations";
 import { collect_invoice } from "@/modules/operation/api/operation.api";
 import { useAuthStore } from "@/store/authStore";
 
@@ -76,7 +86,7 @@ const isSubmitting = ref(false);
 
 const form = useForm({
   defaultValues: {
-    paymentCollectedDate: new Date().toISOString().split('T')[0],
+    paymentCollectedDate: new Date().toISOString().split("T")[0],
     crv: "",
     csi: "",
     remarkCarrier: "",
@@ -101,7 +111,8 @@ async function handleFormSubmit(values: any) {
   isSubmitting.value = true;
 
   try {
-    const userId = authStore.current_user?._id || authStore.current_user?.user?._id;
+    const userId =
+      authStore.current_user?._id || authStore.current_user?.user?._id;
     const formData = {
       ...values,
       paymentCollectedBy: userId,

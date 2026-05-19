@@ -5,26 +5,7 @@
     v-if="currentTab === 'shipment' || currentTab === 'settlement'"
   >
     <div class="flex items-center gap-4">
-      <Dropdown
-        contentParent="shadow-none! ring-0! ring-offset-0! p-0! bg-tras border-none! bg-none!"
-      >
-        <template #trigger>
-          <Button
-            variant="secondary"
-            class="rounded-2xl h-[46px] px-4 gap-2 border border-gray-100"
-          >
-            <i class="mdi mdi-calendar-range text-lg text-primary"></i>
-            <span class="text-sm font-bold text-gray-700">
-              {{ dateRange.start || "Start" }} - to -
-              {{ dateRange.end || "End" }}
-            </span>
-          </Button>
-        </template>
-        <template #default>
-          <DatePicker is-range :value="dateRange" @select="handleDateSelect" />
-        </template>
-      </Dropdown>
-
+      <DateRangePicker v-model="dateRange" />
       <template v-if="currentTab === 'shipment'">
         <Dropdown>
           <template #trigger>
@@ -163,7 +144,7 @@ import ReceivableLeaseTable from "../../components/finance/ReceivableLeaseTable.
 import Button from "@/components/common/Button.vue";
 import Dropdown from "@/components/common/Dropdown.vue";
 import DropDownItem from "@/components/common/DropDownItem.vue";
-import DatePicker from "@/components/DatePicker.vue";
+import DateRangePicker from "@/components/common/DateRangePicker.vue";
 import { icons } from "@/utils/icons";
 import * as XLSX from "xlsx";
 import { openModal } from "@customizer/modal-x";
@@ -187,11 +168,6 @@ const dateRange = ref({
   end: "",
 });
 
-const handleDateSelect = (val: any) => {
-  if (typeof val === "object" && val.start) {
-    dateRange.value = val;
-  }
-};
 
 const tabs = [
   { id: "shipment", name: "Shipment" },

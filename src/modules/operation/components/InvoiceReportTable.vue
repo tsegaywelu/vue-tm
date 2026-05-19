@@ -50,14 +50,15 @@
       <div class="flex items-center justify-center w-full">
         <Dropdown>
           <template #default="{ close }">
-            <!-- <DropDownItem v-permission="'REPORT:update'"
+            <DropDownItem
+              v-permission="'PAYMENT_REQUEST:update'"
               :icon="icons.edit"
               label="Edit"
               @click.stop="
                 handleAction(row, 'edit');
                 close();
               "
-            /> -->
+            />
             <DropDownItem
               v-permission="'REPORT:approve'"
               :icon="icons.check"

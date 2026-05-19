@@ -260,7 +260,12 @@
               Remark
             </th>
           </tr>
-          <tr v-for="(s, i) in invoice?.shipments || []" :key="s._id">
+          <tr
+            v-for="(s, i) in invoice?.shipments || []"
+            :key="s._id"
+            class="cursor-pointer hover:bg-gray-50"
+            @click="$router.push(`/operation/shipments/${s._id}`)"
+          >
             <td
               style="
                 border: 2px solid #374151;
@@ -713,7 +718,12 @@
               Remark
             </th>
           </tr>
-          <tr v-for="(s, i) in invoice?.shipments || []" :key="s._id">
+          <tr
+            v-for="(s, i) in invoice?.shipments || []"
+            :key="s._id"
+            class="cursor-pointer hover:bg-gray-50"
+            @click="$router.push(`/operation/shipments/${s._id}`)"
+          >
             <td
               style="
                 border: 2px solid #374151;
@@ -997,7 +1007,9 @@
         <div class="flex items-center justify-between px-1">
           <h3 class="text-lg font-bold text-gray-900">Associated Shipments</h3>
           <div class="relative w-64">
-            <i class="mdi mdi-magnify absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xl"></i>
+            <i
+              class="mdi mdi-magnify absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xl"
+            ></i>
             <input
               v-model="searchQuery"
               type="text"
@@ -1100,13 +1112,18 @@
                   colspan="16"
                   class="px-4 py-10 text-center text-sm text-gray-500 italic"
                 >
-                  {{ searchQuery ? "No shipments match your search." : "No shipments associated with this invoice." }}
+                  {{
+                    searchQuery
+                      ? "No shipments match your search."
+                      : "No shipments associated with this invoice."
+                  }}
                 </td>
               </tr>
               <tr
                 v-for="(shipment, index) in filteredShipments"
                 :key="shipment._id"
-                class="hover:bg-gray-50 transition-colors"
+                class="hover:bg-gray-50 transition-colors cursor-pointer"
+                @click="$router.push(`/operation/shipments/${shipment._id}`)"
               >
                 <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
                   {{ index + 1 }}
@@ -1177,10 +1194,7 @@
                   {{ shipment.remark || "-" }}
                 </td>
               </tr>
-              <tr
-                v-if="filteredShipments.length"
-                class="bg-gray-50 font-bold"
-              >
+              <tr v-if="filteredShipments.length" class="bg-gray-50 font-bold">
                 <td
                   colspan="14"
                   class="px-4 py-3 text-sm text-right text-gray-700"
@@ -1191,7 +1205,14 @@
                   colspan="2"
                   class="px-4 py-3 text-sm font-bold text-gray-900"
                 >
-                  {{ currencyFormatter(filteredShipments.reduce((sum: number, s: any) => sum + (s.totalPrice || 0), 0)) }}
+                  {{
+                    currencyFormatter(
+                      filteredShipments.reduce(
+                        (sum: number, s: any) => sum + (s.totalPrice || 0),
+                        0,
+                      ),
+                    )
+                  }}
                 </td>
               </tr>
             </tbody>
@@ -1304,13 +1325,18 @@
                   colspan="19"
                   class="px-4 py-10 text-center text-sm text-gray-500 italic"
                 >
-                  {{ searchQuery ? "No shipments match your search." : "No shipments associated with this invoice." }}
+                  {{
+                    searchQuery
+                      ? "No shipments match your search."
+                      : "No shipments associated with this invoice."
+                  }}
                 </td>
               </tr>
               <tr
                 v-for="(shipment, index) in filteredShipments"
                 :key="shipment._id"
-                class="hover:bg-gray-50 transition-colors"
+                class="hover:bg-gray-50 transition-colors cursor-pointer"
+                @click="$router.push(`/operation/shipments/${shipment._id}`)"
               >
                 <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
                   {{ index + 1 }}
@@ -1387,10 +1413,7 @@
                   {{ shipment.remark || "-" }}
                 </td>
               </tr>
-              <tr
-                v-if="filteredShipments.length"
-                class="bg-gray-50 font-bold"
-              >
+              <tr v-if="filteredShipments.length" class="bg-gray-50 font-bold">
                 <td
                   colspan="16"
                   class="px-4 py-3 text-sm text-right text-gray-700"
@@ -1401,7 +1424,14 @@
                   colspan="3"
                   class="px-4 py-3 text-sm font-bold text-gray-900"
                 >
-                  {{ currencyFormatter(filteredShipments.reduce((sum: number, s: any) => sum + (s.totalPrice || 0), 0)) }}
+                  {{
+                    currencyFormatter(
+                      filteredShipments.reduce(
+                        (sum: number, s: any) => sum + (s.totalPrice || 0),
+                        0,
+                      ),
+                    )
+                  }}
                 </td>
               </tr>
             </tbody>
@@ -1431,8 +1461,7 @@ const filteredShipments = computed(() => {
     const plate = (s.vehicle?.plateNumber || "").toLowerCase();
     const trailer = (s.vehicle?.trailerPlate || "").toLowerCase();
     const driver = (
-      s.driverName ||
-      `${s.driver?.firstName || ""} ${s.driver?.lastName || ""}`
+      s.driverName || `${s.driver?.firstName || ""} ${s.driver?.lastName || ""}`
     ).toLowerCase();
     const origin = (s.route?.origin || "").toLowerCase();
     const destination = (s.route?.destination || "").toLowerCase();

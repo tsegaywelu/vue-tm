@@ -12,6 +12,7 @@
             label="Raw Material"
             @click="handleDownload('Raw Material')"
           >
+            Raw Material
             <template #icon>
               <i class="mdi mdi-file-excel-outline text-lg text-green-600"></i>
             </template>
@@ -36,8 +37,12 @@
           </DropDownItem>
         </template>
       </Dropdown>
-
-      <!-- Add Shipment Button -->
+      <DateRangePicker
+        v-model="dateRange"
+        pagination-id="shipment-list"
+        start-key="dispatchStartDate"
+        end-key="dispatchEndDate"
+      />
       <Button
         v-role="UserRoles.CARRIER"
         v-permission="'SHIPMENT:create'"
@@ -63,7 +68,11 @@
 
   <ShipmentTable
     ref="shipmentTableRef"
-    :filters="shipperFilters"
+    :filters="{
+      ...shipperFilters,
+      dispatchStartDate: dateRange.start,
+      dispatchEndDate: dateRange.end,
+    }"
     @action="handleShipmentAction"
   />
 </template>
@@ -84,12 +93,16 @@ import { fetch_shipment_status_count } from "../api/operation.api";
 import Dropdown from "@/components/common/Dropdown.vue";
 import DropDownItem from "@/components/common/DropDownItem.vue";
 import { useAuthStore } from "@/store/authStore";
+import DateRangePicker from "@/components/common/DateRangePicker.vue";
 
 const all_icons = { ...icons, ...raaz_icons };
 const router = useRouter();
 const toast = useToastStore();
 const authStore = useAuthStore();
-
+const dateRange = ref({
+  start: "",
+  end: "",
+});
 const basePath = computed(() =>
   authStore.is_shipper ? "/shipper/shipments" : "/operation/shipments",
 );
@@ -151,6 +164,8 @@ const handleDownload = (type: string) => {
   const filters = {
     ...shipperFilters.value,
     ...shipmentTableRef.value?.activeFilters,
+    dispatchStartDate: dateRange.value.start,
+    dispatchEndDate: dateRange.value.end,
   };
   toast.addCustomToast(ShipmentDownloadToast, { type, filters });
 };
