@@ -44,7 +44,6 @@
           }"
         />
         <TimeInput
-          is_24_hour
           name="time"
           label="Time"
           :attributes="{

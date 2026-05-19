@@ -7,22 +7,30 @@
     @row_click="handleAction($event, 'view')"
   >
     <template #cell-vehicle="{ row }">
-      <span class="font-bold">{{ row.vehicle?.plateNumber || '-' }}</span>
+      <span class="font-bold">{{ row.vehicle?.plateNumber || "-" }}</span>
     </template>
 
     <template #cell-transporter="{ row }">
       <span class="font-medium text-gray-700">
-        {{ row.transporter?.name || row.transporter || '-' }}
+        {{ row.transporter?.name || row.transporter || "-" }}
       </span>
     </template>
 
     <template #cell-leaseDirection="{ value }">
-      <span class="text-sm text-gray-600">{{ value || 'OUTWARD' }}</span>
+      <span class="text-sm text-gray-600">{{ value || "OUTWARD" }}</span>
     </template>
 
     <template #cell-settlementStatus="{ row }">
-      <Status :variant="row.settlementStatus || row.payableStatus || 'PENDING'" type="wrapped">
-        {{ (row.settlementStatus || row.payableStatus || 'PENDING').replace(/_/g, " ") }}
+      <Status
+        :variant="row.settlementStatus || row.payableStatus || 'PENDING'"
+        type="wrapped"
+      >
+        {{
+          (row.settlementStatus || row.payableStatus || "PENDING").replace(
+            /_/g,
+            " ",
+          )
+        }}
       </Status>
     </template>
 
@@ -39,7 +47,9 @@
     </template>
 
     <template #after-search>
-      <div class="items-center gap-4 inline-flex border-l border-grey-100 overflow-x-auto px-3">
+      <div
+        class="items-center gap-4 inline-flex border-l border-grey-100 overflow-x-auto px-3"
+      >
         <i v-html="icons.filter" />
         <Form
           id="receivable-lease-filter"
@@ -58,7 +68,7 @@
               { label: 'Authorized', value: 'AUTHORIZED' },
               { label: 'Settled', value: 'SETTLED' },
               { label: 'Cancelled', value: 'CANCELLED' },
-              { label: 'Rejected', value: 'REJECTED' }
+              { label: 'Rejected', value: 'REJECTED' },
             ]"
             :attributes="{ placeholder: 'Select Status' }"
           />
@@ -70,7 +80,8 @@
       <div class="flex items-center justify-end">
         <Dropdown>
           <template #default="{ close }">
-            <DropDownItem v-permission="'TRANSACTION:read'"
+            <DropDownItem
+              v-permission="'TRANSACTION:read'"
               :icon="icons.eye"
               label="Details"
               @click.stop="
@@ -79,7 +90,9 @@
               "
             />
             <DropDownItem
-              v-if="(row.settlementStatus || row.payableStatus) === 'AUTHORIZED'"
+              v-if="
+                (row.settlementStatus || row.payableStatus) === 'AUTHORIZED'
+              "
               v-permission="'VEHICLE_LEASE_AGREEMENT:pay'"
               :icon="icons.cash"
               label="Collect"
@@ -141,11 +154,15 @@ const columns: TableColumn<any>[] = [
   { key: "actions", label: "Actions", field: "", cellAlign: "right" },
 ];
 
-const activeFilters = ref({ leaseDirection: 'OUTWARD' });
+const activeFilters = ref({ leaseDirection: "OUTWARD" });
 const { response, refetch } = usePagination<any>({
   id: "receivable-lease-list",
   url: "/vehicle-lease-agreement",
-  params: computed(() => activeFilters.value),
+  params: (state) => ({
+    ...activeFilters.value,
+    plateNumber: state.search,
+    q: undefined,
+  }),
 });
 
 const handleFilterChange = (newFilters: any) => {

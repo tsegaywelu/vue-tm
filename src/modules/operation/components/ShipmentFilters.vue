@@ -23,14 +23,19 @@
       multiple
       size="xs"
       :initial_labels="fieldLabels['routeOrigin']"
-      @select="(opt) => captureLabel('routeOrigin', opt, 'destination', 'routeName')"
+      @select="
+        (opt) => captureLabel('routeOrigin', opt, 'destination', 'routeName')
+      "
     />
     <DestinationInput
       name="routeDestination"
       multiple
       size="xs"
       :initial_labels="fieldLabels['routeDestination']"
-      @select="(opt) => captureLabel('routeDestination', opt, 'destination', 'routeName')"
+      @select="
+        (opt) =>
+          captureLabel('routeDestination', opt, 'destination', 'routeName')
+      "
     />
     <ShipmentStatusInput name="status" size="xs" />
     <ProductTypeInput name="productType" size="xs" />
@@ -42,8 +47,18 @@
       v-if="!isShipper"
       name="shipper"
       size="xs"
+      :params="
+        (state) => {
+          return {
+            name: { regexAny: state.search },
+            q: undefined,
+          };
+        }
+      "
       :initial_labels="fieldLabels['shipper']"
-      @select="(opt) => captureLabel('shipper', opt, 'shipper._id', 'shipper.name')"
+      @select="
+        (opt) => captureLabel('shipper', opt, 'shipper._id', 'shipper.name')
+      "
     />
     <AgentInput
       name="agent"
@@ -68,7 +83,10 @@ import DocumentedUploadsInput from "@/components/common/inputs/DocumentedUploads
 import ShipperInput from "@/components/common/inputs/ShipperInput.vue";
 import { useAuthStore } from "@/store/authStore";
 import AgentInput from "@/components/common/inputs/AgentInput.vue";
-import { useTableLastParams, useTableLastLabels } from "@/composables/usePagination";
+import {
+  useTableLastParams,
+  useTableLastLabels,
+} from "@/composables/usePagination";
 import { useTablePaginationStore } from "@/store/tablePaginationStore";
 
 const props = defineProps<{
@@ -92,7 +110,12 @@ function getNestedValue(obj: any, path: string): string {
   return path.split(".").reduce((acc: any, key) => acc?.[key], obj) ?? "";
 }
 
-function captureLabel(field: string, opt: any, valueKey: string, labelKey: string) {
+function captureLabel(
+  field: string,
+  opt: any,
+  valueKey: string,
+  labelKey: string,
+) {
   const value = String(getNestedValue(opt, valueKey));
   const label = getNestedValue(opt, labelKey);
   if (!fieldLabels.value[field]) fieldLabels.value[field] = {};
@@ -101,9 +124,16 @@ function captureLabel(field: string, opt: any, valueKey: string, labelKey: strin
 }
 
 const FORM_FILTER_FIELDS = [
-  "routeOrigin", "routeDestination", "status", "productType",
-  "tripType", "vehicleOwnership", "damage", "areDocumentsUploaded",
-  "shipper", "agent",
+  "routeOrigin",
+  "routeDestination",
+  "status",
+  "productType",
+  "tripType",
+  "vehicleOwnership",
+  "damage",
+  "areDocumentsUploaded",
+  "shipper",
+  "agent",
 ];
 
 // Start undefined so the Form's values-watcher fires when we assign saved params.
@@ -127,7 +157,9 @@ onMounted(() => {
     filterOnly.routeOrigin = filterOnly.routeOrigin.split(",").filter(Boolean);
   }
   if (typeof filterOnly.routeDestination === "string") {
-    filterOnly.routeDestination = filterOnly.routeDestination.split(",").filter(Boolean);
+    filterOnly.routeDestination = filterOnly.routeDestination
+      .split(",")
+      .filter(Boolean);
   }
   if (Object.keys(filterOnly).length > 0) {
     formValues.value = filterOnly;

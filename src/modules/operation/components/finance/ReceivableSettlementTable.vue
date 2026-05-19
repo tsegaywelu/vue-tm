@@ -8,7 +8,9 @@
     @row_click="handleAction($event, 'view')"
   >
     <template #search-prefix>
-      <div class="h-full flex items-center border-r border-gray-200 pr-2 mr-2 w-48">
+      <div
+        class="h-full flex items-center border-r border-gray-200 pr-2 mr-2 w-48"
+      >
         <Select
           class="[&_.input-focus]:shadow-none! [&_.input-focus]:border-none [&_.input-focus]:min-h-full min-w-48"
           v-model="selectedSearchField"
@@ -20,40 +22,54 @@
       </div>
     </template>
     <template #cell-advanceNumber="{ row }">
-      <span class="font-bold">{{ row.advancePayment?.advanceNumber || '-' }}</span>
+      <span class="font-bold">{{
+        row.advancePayment?.advanceNumber || "-"
+      }}</span>
     </template>
 
     <template #cell-driver="{ row }">
       <div class="flex flex-col">
         <span class="font-semibold text-gray-900">
-          {{ row.advancePayment?.shipment?.vehicle?.plateNumber || '-' }}
+          {{ row.advancePayment?.shipment?.vehicle?.plateNumber || "-" }}
         </span>
-        <span class="text-xs text-gray-400 font-medium" v-if="row.advancePayment?.driver">
-          {{ row.advancePayment.driver.firstName }} {{ row.advancePayment.driver.lastName }}
+        <span
+          class="text-xs text-gray-400 font-medium"
+          v-if="row.advancePayment?.driver"
+        >
+          {{ row.advancePayment.driver.firstName }}
+          {{ row.advancePayment.driver.lastName }}
         </span>
       </div>
     </template>
 
     <template #cell-route="{ row }">
       <span class="font-medium text-gray-700">
-        {{ row.advancePayment?.shipment?.route?.routeName || '-' }}
+        {{ row.advancePayment?.shipment?.route?.routeName || "-" }}
       </span>
     </template>
 
     <template #cell-shipmentCode="{ row }">
-      <span class="text-sm text-gray-600">{{ row.advancePayment?.shipment?.shipmentCode || '-' }}</span>
+      <span class="text-sm text-gray-600">{{
+        row.advancePayment?.shipment?.shipmentCode || "-"
+      }}</span>
     </template>
 
     <template #cell-fuelAdvance="{ row }">
-      <span>{{ row.category === 'FUEL' ? currencyFormatter(row.amount) : '-' }}</span>
+      <span>{{
+        row.category === "FUEL" ? currencyFormatter(row.amount) : "-"
+      }}</span>
     </template>
-    
+
     <template #cell-perdiemAdvance="{ row }">
-      <span>{{ row.category === 'PERDIEM' ? currencyFormatter(row.amount) : '-' }}</span>
+      <span>{{
+        row.category === "PERDIEM" ? currencyFormatter(row.amount) : "-"
+      }}</span>
     </template>
 
     <template #cell-otherAdvance="{ row }">
-      <span>{{ row.category === 'OTHER' ? currencyFormatter(row.amount) : '-' }}</span>
+      <span>{{
+        row.category === "OTHER" ? currencyFormatter(row.amount) : "-"
+      }}</span>
     </template>
 
     <template #cell-total="{ row }">
@@ -67,7 +83,7 @@
         {{ dateFormatter(value) }}
       </span>
     </template>
-    
+
     <template #cell-status="{ value }">
       <Status :variant="value || 'PENDING'" type="wrapped">
         {{ value.replace(/_/g, " ") }}
@@ -75,9 +91,14 @@
     </template>
 
     <template #after-search>
-      <div class="items-center gap-4 inline-flex border-l border-grey-100 overflow-x-auto px-3">
+      <div
+        class="items-center gap-4 inline-flex border-l border-grey-100 overflow-x-auto px-3"
+      >
         <i v-html="icons.filter" />
-        <ReceivableSettlementFilters @change="handleFilterChange" pagination-id="receivable-settlement-list" />
+        <ReceivableSettlementFilters
+          @change="handleFilterChange"
+          pagination-id="receivable-settlement-list"
+        />
       </div>
     </template>
 
@@ -85,7 +106,8 @@
       <div class="flex items-center justify-end">
         <Dropdown>
           <template #default="{ close }">
-            <DropDownItem v-permission="'TRANSACTION:read'"
+            <DropDownItem
+              v-permission="'TRANSACTION:read'"
               :icon="icons.eye"
               label="Details"
               @click.stop="
@@ -175,7 +197,9 @@ const selectedSearchField = ref("vehiclePlateNumber");
 const searchTerm = ref("");
 
 const dynamicSearchPlaceholder = computed(() => {
-  const option = searchFieldOptions.find((o) => o.value === selectedSearchField.value);
+  const option = searchFieldOptions.find(
+    (o) => o.value === selectedSearchField.value,
+  );
   return option ? `Search by ${option.label}...` : "Search...";
 });
 
@@ -187,7 +211,7 @@ const { response, refetch } = usePagination<any>({
   params: computed(() => {
     const params: any = { ...activeFilters.value };
     if (searchTerm.value) {
-      params[`${selectedSearchField.value}[regexAny]`] = searchTerm.value;
+      params[`${selectedSearchField.value}`] = searchTerm.value;
       params.q = undefined;
     }
     if (props.dateRange?.start) {
