@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="isRestoring"
-    class="fixed inset-0 z-[9999] bg-white flex flex-col items-center justify-center gap-6"
+    class="fixed inset-0 z-9999 bg-white flex flex-col items-center justify-center gap-6"
   >
     <!-- Premium Spinner -->
     <div class="relative size-16">
@@ -67,13 +67,17 @@ onMounted(async () => {
 
         // Validate permission for the requested route now that user is loaded
         if (currentRoute.meta.permission) {
-          if (
-            !authStore.has_permission(currentRoute.meta.permission as string, [
-              "view",
-              "read",
-              "manage",
-            ])
-          ) {
+          const perm = currentRoute.meta.permission;
+          const allowed = Array.isArray(perm)
+            ? (perm as { subject: string; actions: string[] }[]).some((p) =>
+                authStore.has_permission(p.subject, p.actions),
+              )
+            : authStore.has_permission(perm as string, [
+                "view",
+                "read",
+                "manage",
+              ]);
+          if (!allowed) {
             router.push("/unauthorized");
           }
         }
