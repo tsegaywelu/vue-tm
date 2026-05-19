@@ -1462,6 +1462,11 @@ watch(searchQuery, (val) => {
 
 const shipments = computed(() => props.invoice?.shipments || []);
 
+// Split a code value by common delimiters and check if any segment starts with q
+function codeMatch(value: string, q: string) {
+  return value.split(/[\/\\\-\s]+/).some((seg) => seg.startsWith(q));
+}
+
 const filteredShipments = computed(() => {
   const q = searchQuery.value.trim().toLowerCase();
   if (!q) return shipments.value;
@@ -1486,10 +1491,10 @@ const filteredShipments = computed(() => {
       driver.includes(q) ||
       origin.includes(q) ||
       destination.includes(q) ||
-      allocation.includes(q) ||
-      grn.includes(q) ||
-      fpiv.includes(q) ||
-      ckrf.includes(q) ||
+      codeMatch(allocation, q) ||
+      codeMatch(grn, q) ||
+      codeMatch(fpiv, q) ||
+      codeMatch(ckrf, q) ||
       remark.includes(q) ||
       date.includes(q)
     );
