@@ -1,25 +1,12 @@
 <template>
   <Teleport to="#page-actions" defer>
     <div class="flex items-center gap-4">
-      <Dropdown
-        contentParent="shadow-none! ring-0! ring-offset-0! p-0! bg-tras border-none! bg-none!"
-      >
-        <template #trigger>
-          <Button
-            variant="secondary"
-            class="rounded-2xl h-[46px] px-4 gap-2 border border-gray-100"
-          >
-            <i class="mdi mdi-calendar-range text-lg text-primary"></i>
-            <span class="text-sm font-bold text-gray-700">
-              {{ dateRange.start || "Start" }} - to -
-              {{ dateRange.end || "End" }}
-            </span>
-          </Button>
-        </template>
-        <template #default>
-          <DatePicker is-range :value="dateRange" @select="handleDateSelect" />
-        </template>
-      </Dropdown>
+      <DateRangePicker
+        v-model="dateRange"
+        pagination-id="payable-list"
+        start-key="startDate"
+        end-key="endDate"
+      />
 
       <Button variant="secondary" @click="handleExport">
         <template #leading>
@@ -89,8 +76,7 @@ import { update_purchase_order_payment_status } from "../../api/inventory.api";
 import { useToastStore } from "@/store/toastStore";
 import { useAuthStore } from "@/store/authStore";
 import Button from "@/components/Button.vue";
-import DatePicker from "@/components/DatePicker.vue";
-import Dropdown from "@/components/common/Dropdown.vue";
+import DateRangePicker from "@/components/common/DateRangePicker.vue";
 import * as XLSX from "xlsx";
 import { currencyFormatter, dateFormatter } from "@/utils/utils";
 import { icons } from "@/utils/icons";
@@ -105,12 +91,6 @@ const dateRange = ref({
   end: "",
 });
 
-const handleDateSelect = (val: any) => {
-  if (typeof val === "object" && val.start) {
-    dateRange.value = val;
-  }
-};
-
 const handleExport = () => {
   const rows = tableRef.value?.response || [];
   if (rows.length === 0) {
@@ -118,26 +98,53 @@ const handleExport = () => {
     return;
   }
 
+  const headers = [
+    "Date of Request",
+    "Advance Number",
+    "Plate Number",
+    "Driver Name",
+    "Route",
+    "Origin",
+    "Destination",
+    "Shipment Code",
+    "Payable Type",
+    "Status",
+    "Fuel Advances",
+    "Per Diem Expenses",
+    "Other Expenses",
+    "Total",
+    "Total Revenues",
+    "Transporter",
+  ];
+
   const formattedData = rows.map((row: any) => ({
     "Date of Request": dateFormatter(row.createdAt),
-    Code: row.advanceNumber || "N/A",
-    "Paid To": getPaidTo(row),
-    Type: formatType(row.payableType),
-    Status: row.status || "N/A",
-    Fuel: row.totalFuelAdvances || 0,
-    "Per Diem": row.totalPerDiemExpenses || 0,
-    Other: row.totalOtherExpenses || 0,
-    Total: row.total || 0,
-    Shipment: row.shipmentCode || "N/A",
+    "Advance Number": row.advanceNumber || "N/A",
     "Plate Number": row.plateNumber || "N/A",
+    "Driver Name":
+      `${row.driver?.firstName || ""} ${row.driver?.middleName || ""} ${row.driver?.lastName || ""}`.trim() ||
+      "N/A",
+    Route: row.route?.name || "N/A",
+    Origin: row.route?.origin || "N/A",
+    Destination: row.route?.destination || "N/A",
+    "Shipment Code": row.shipmentCode || "N/A",
+    "Payable Type": formatType(row.payableType),
+    Status: row.status || "N/A",
+    "Fuel Advances": row.totalFuelAdvances || 0,
+    "Per Diem Expenses": row.totalPerDiemExpenses || 0,
+    "Other Expenses": row.totalOtherExpenses || 0,
+    Total: row.total || 0,
+    "Total Revenues": row.totalRevenues || 0,
+    Transporter: row.transporter?.name || row.transporter || "N/A",
   }));
 
   const worksheet = XLSX.utils.json_to_sheet(formattedData);
+  worksheet["!cols"] = headers.map((h) => ({ wch: Math.max(h.length, 15) }));
   const workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, worksheet, "Payables");
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Advances");
   XLSX.writeFile(
     workbook,
-    `Payables_${new Date().toISOString().split("T")[0]}.xlsx`,
+    `Advances_${new Date().toISOString().split("T")[0]}.xlsx`,
   );
 };
 

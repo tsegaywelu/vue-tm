@@ -178,7 +178,7 @@ const searchFieldOptions = [
   { label: "Middle Name", value: "driverMiddleName" },
 ];
 
-const selectedSearchField = ref("shipmentCode");
+const selectedSearchField = ref("shipperIssueVoucher");
 const searchTerm = ref("");
 
 const dynamicSearchPlaceholder = computed(() => {

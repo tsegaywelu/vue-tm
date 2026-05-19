@@ -7,7 +7,7 @@
     @row_click="handleAction($event, 'view')"
   >
     <template #cell-reference="{ value }">
-      <span class="font-bold">{{ value || '-' }}</span>
+      <span class="font-bold">{{ value || "-" }}</span>
     </template>
 
     <template #cell-totalAmount="{ value }">
@@ -18,7 +18,7 @@
 
     <template #cell-shipperName="{ row }">
       <span class="font-medium text-gray-700">
-        {{ row.shipper?.name || '-' }}
+        {{ row.shipper?.name || "-" }}
       </span>
     </template>
 
@@ -30,38 +30,42 @@
 
     <template #cell-paymentRequestedBy="{ row }">
       <span class="font-medium text-gray-700">
-        {{ row.paymentRequestedBy?.username || '-' }}
+        {{ row.paymentRequestedBy?.username || "-" }}
       </span>
     </template>
 
     <template #cell-paymentApprovedBy="{ row }">
       <span class="font-medium text-gray-700">
-        {{ row.paymentApprovedBy?.username || '-' }}
+        {{ row.paymentApprovedBy?.username || "-" }}
       </span>
     </template>
 
     <template #cell-paymentCollectedBy="{ row }">
       <span class="font-medium text-gray-700">
-        {{ row.paymentCollectedByCarrier?.username || '-' }}
+        {{ row.paymentCollectedByCarrier?.username || "-" }}
       </span>
     </template>
 
     <template #cell-remark="{ row }">
-      <span class="text-sm text-gray-600 truncate max-w-[150px] inline-block" :title="row.remarkCarrier || row.remark || '-'">
-        {{ row.remarkCarrier || row.remark || '-' }}
+      <span
+        class="text-sm text-gray-600 truncate max-w-[150px] inline-block"
+        :title="row.remarkCarrier || row.remark || '-'"
+      >
+        {{ row.remarkCarrier || row.remark || "-" }}
       </span>
     </template>
 
     <template #cell-status="{ value }">
       <Status :variant="value || 'pending'" type="wrapped">
-        {{ (value || 'Pending').replace(/_/g, " ") }}
+        {{ (value || "Pending").replace(/_/g, " ") }}
       </Status>
     </template>
 
-  
-
     <template #after-search>
-      <PaymentCollectionFilters @change="handleFilterChange" pagination-id="payment-collection-list" />
+      <PaymentCollectionFilters
+        @change="handleFilterChange"
+        pagination-id="payment-collection-list"
+      />
     </template>
 
     <template #cell-actions="{ row }">
@@ -87,7 +91,8 @@
                 close();
               "
             />
-            <DropDownItem v-permission="'TRANSACTION:read'"
+            <DropDownItem
+              v-permission="'TRANSACTION:read'"
               :icon="icons.eye"
               label="Details"
               @click.stop="
@@ -127,10 +132,26 @@ const columns: TableColumn<any>[] = [
   { key: "reference", label: "Reference", field: "reference" },
   { key: "totalAmount", label: "Total Amount", field: "totalAmount" },
   { key: "shipperName", label: "Shipper", field: "shipper" },
-  { key: "paymentRequestedDate", label: "Request Date", field: "paymentRequestedDate" },
-  { key: "paymentRequestedBy", label: "Requested By", field: "paymentRequestedBy" },
-  { key: "paymentApprovedBy", label: "Approved By", field: "paymentApprovedBy" },
-  { key: "paymentCollectedBy", label: "Collected By", field: "paymentCollectedByCarrier" },
+  {
+    key: "paymentRequestedDate",
+    label: "Request Date",
+    field: "paymentRequestedDate",
+  },
+  {
+    key: "paymentRequestedBy",
+    label: "Requested By",
+    field: "paymentRequestedBy",
+  },
+  {
+    key: "paymentApprovedBy",
+    label: "Approved By",
+    field: "paymentApprovedBy",
+  },
+  {
+    key: "paymentCollectedBy",
+    label: "Collected By",
+    field: "paymentCollectedByCarrier",
+  },
   { key: "crv", label: "CRV", field: "crv" },
   { key: "csi", label: "CSI", field: "csi" },
   { key: "remark", label: "Remark", field: "remark" },

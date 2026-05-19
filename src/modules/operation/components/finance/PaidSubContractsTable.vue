@@ -104,6 +104,10 @@ import type { TableColumn } from "@/components/common/Table.vue";
 import PaidSubContractsFilters from "./PaidSubContractsFilters.vue";
 import { currencyFormatter, dateFormatter } from "@/utils/utils";
 
+const props = defineProps<{
+  dateRange?: { start: string; end: string };
+}>();
+
 const emit = defineEmits(["action"]);
 
 const columns: TableColumn<any>[] = [
@@ -150,6 +154,8 @@ const { response, refetch, fullResponse } = usePagination<any>({
       params[`${selectedSearchField.value}`] = searchTerm.value;
       params.q = undefined;
     }
+    if (props.dateRange?.start) params.startDate = props.dateRange.start;
+    if (props.dateRange?.end) params.endDate = props.dateRange.end;
     return params;
   }),
 });
@@ -162,5 +168,5 @@ const handleAction = (row: any, action: string) => {
   emit("action", { row, action });
 };
 
-defineExpose({ refetch, fullResponse });
+defineExpose({ refetch, fullResponse, response });
 </script>
