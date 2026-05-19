@@ -7,7 +7,14 @@
     :value_key="value_key || '_id'"
     :label_key="label_key || 'name'"
     :url="url || '/agent/shipper/carrier'"
-    :params="params || { limit: 20 }"
+    :params="
+      params ||
+      ((state) => ({
+        limit: 20,
+        q: undefined,
+        ...(state.search ? { name: { regex: state.search } } : {}),
+      }))
+    "
     :attributes="{
       placeholder: 'Search and Select Agent',
       ...attributes,

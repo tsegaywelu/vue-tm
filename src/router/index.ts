@@ -43,8 +43,9 @@ router.beforeEach(async (to, from, next) => {
   } else {
     // Permission Guard
     if (to.meta.permission && auth_store.is_authenticated) {
-      // If the user hasn't been fetched yet (hard refresh), let them pass to RouteGuard
-      if (!auth_store.current_user) {
+      // On hard refresh there is no previous route — skip the check and let
+      // the page/RouteGuard re-evaluate once fresh user data is loaded.
+      if (!auth_store.current_user || !from.name) {
         return next();
       }
 

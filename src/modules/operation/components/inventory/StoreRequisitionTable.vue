@@ -5,6 +5,7 @@
     :columns="columns"
     :rows="response"
     :search_placeholder="dynamicSearchPlaceholder"
+    @row_click="row => handleAction(row, 'view')"
   >
     <template #search-prefix>
       <div

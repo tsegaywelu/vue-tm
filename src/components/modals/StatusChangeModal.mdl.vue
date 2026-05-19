@@ -14,6 +14,7 @@
         :options="statusOptions"
         label-key="label"
         value-key="value"
+        :display_value="currentStatusLabel"
         :validation="{ required }"
         :on-change="onStatusChange"
       />
@@ -87,6 +88,12 @@ import {
 } from "@/modules/operation/api/shipment.api";
 import { ShipmentStatus } from "@/utils/utils";
 import TimeInput from "../form/TimeInput.vue";
+
+const currentStatusLabel = computed(() => {
+  const all: any[] = props.data.statusListRaw ?? ShipmentStatus;
+  const match = all.find((s) => s.value === shipment.value.status);
+  return match?.label ?? shipment.value.status?.replace(/_/g, " ").replace(/\b\w/g, (l: string) => l.toUpperCase()) ?? "";
+});
 
 export type ReturnType = boolean;
 export type Props = {

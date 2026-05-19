@@ -1,29 +1,11 @@
 <template>
   <Teleport to="#page-actions" defer>
-    <div class="items-center gap-4 inline-flex border-l border-grey-100 overflow-x-auto px-3">
-      <Dropdown
-        contentParent="shadow-none! ring-0! ring-offset-0! p-0! bg-tras border-none! bg-none!"
-      >
-        <template #trigger>
-          <Button
-            variant="secondary"
-            class="rounded-2xl h-[46px] px-4 gap-2 border border-gray-100"
-          >
-            <i class="mdi mdi-calendar-range text-lg text-primary"></i>
-            <span class="text-sm font-bold text-gray-700">
-              {{ dateRange.start || 'Start' }} - to - {{ dateRange.end || "End" }}
-            </span>
-          </Button>
-        </template>
-        <template #default>
-          <DatePicker
-            is-range
-            :value="dateRange"
-            @select="handleDateSelect"
-          />
-        </template>
-      </Dropdown>
-    </div>
+    <DateRangePicker
+      v-model="dateRange"
+      pagination-id="invoice-report-list"
+      start-key="startDate"
+      end-key="endDate"
+    />
   </Teleport>
 
   <Teleport to="#extra-page-data" defer>
@@ -59,9 +41,7 @@ import StatsCards from "@/components/common/StatsCards.vue";
 import { currencyFormatter } from "@/utils/utils";
 import { useQueryClient } from "@tanstack/vue-query";
 
-import Dropdown from "@/components/common/Dropdown.vue";
-import DatePicker from "@/components/DatePicker.vue";
-import Button from "@/components/Button.vue";
+import DateRangePicker from "@/components/common/DateRangePicker.vue";
 
 const router = useRouter();
 const toast = useToastStore();
@@ -74,11 +54,6 @@ const dateRange = ref({
   end: "",
 });
 
-const handleDateSelect = (val: any) => {
-  if (typeof val === "object" && val.start && val.end) {
-    dateRange.value = val;
-  }
-};
 
 const { data: statsResponse, isLoading: statsLoading, refetch: refetchStats } = useQuery({
   queryKey: ["invoice-report-list"],

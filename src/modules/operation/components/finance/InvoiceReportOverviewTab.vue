@@ -1443,14 +1443,22 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import InfoWrapper from "../shipment-details/InfoWrapper.vue";
 import DataLabel from "../shipment-details/ShipmentDataLabel.vue";
 import { dateFormatter, currencyFormatter } from "@/utils/utils";
 
 const props = defineProps<{ invoice?: any }>();
 
-const searchQuery = ref("");
+const route = useRoute();
+const router = useRouter();
+
+const searchQuery = ref((route.query.q as string) || "");
+
+watch(searchQuery, (val) => {
+  router.replace({ query: { ...route.query, q: val || undefined } });
+});
 
 const shipments = computed(() => props.invoice?.shipments || []);
 

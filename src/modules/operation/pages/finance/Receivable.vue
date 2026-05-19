@@ -134,7 +134,7 @@
 <script setup lang="ts">
 import { ref, watch, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { useMutation } from "@tanstack/vue-query";
+import { useMutation, useQueryClient } from "@tanstack/vue-query";
 import { useToastStore } from "@/store/toastStore";
 import { useAuthStore } from "@/store/authStore";
 import ReceivableShipmentTable from "../../components/finance/ReceivableShipmentTable.vue";
@@ -159,6 +159,7 @@ const route = useRoute();
 const router = useRouter();
 const toast = useToastStore();
 const authStore = useAuthStore();
+const queryClient = useQueryClient();
 const tableRef = ref<any>(null);
 const selectedRows = ref<any[]>([]);
 
@@ -167,7 +168,6 @@ const dateRange = ref({
   start: "",
   end: "",
 });
-
 
 const tabs = [
   { id: "shipment", name: "Shipment" },
@@ -185,14 +185,6 @@ watch(currentTab, (newTab) => {
 // Mutations
 const generateInvoiceMutation = useMutation({
   mutationFn: ({ formData }: any) => generate_invoice(formData),
-  onSuccess: () => {
-    toast.success("Invoice generated successfully! Waiting for Approval...");
-    selectedRows.value = [];
-    router.push("/finance/invoice-report");
-  },
-  onError: (error: any) => {
-    toast.error(error.response?.data?.message || "Failed to generate invoice");
-  },
 });
 
 const updateStatusMutation = useMutation({
@@ -242,13 +234,22 @@ const handleGenerateInvoice = async () => {
       return;
     }
 
-    generateInvoiceMutation.mutate({
+    const res = await generateInvoiceMutation.mutateAsync({
       formData: {
         shipmentIds: selectedRows.value.map((row) => row._id),
         paymentRequestedBy: userId,
         totalAmount,
       },
     });
+
+    if (res.success) {
+      toast.success("Invoice generated successfully! Waiting for Approval...");
+      selectedRows.value = [];
+      queryClient.invalidateQueries({ queryKey: ["invoice-report-list"] });
+      router.push("/finance/invoice-report");
+    } else {
+      toast.error(res.error || "Failed to generate invoice");
+    }
   }
 };
 

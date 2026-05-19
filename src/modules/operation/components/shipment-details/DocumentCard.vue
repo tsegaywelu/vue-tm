@@ -110,6 +110,7 @@
 
       <!-- Remove -->
       <button
+        v-if="!hideDelete"
         @click="handleRemove"
         :disabled="isRemoving || isUploading || isRejecting"
         class="flex items-center justify-center size-8 rounded-md hover:bg-white text-gray-500 hover:text-red-600 transition-colors shadow-sm"
@@ -272,6 +273,7 @@ const props = defineProps<{
   canReject?: boolean;
   allowMultiple?: boolean;
   readOnly?: boolean;
+  hideDelete?: boolean;
   uploadFunction?: (id: string, data: FormData, config: any) => Promise<any>;
 }>();
 
@@ -286,7 +288,7 @@ const progressTextRefEmpty = ref<HTMLElement | null>(null);
 
 const viewDocument = () => {
   if (!props.fullUrl) return;
-  openModal("FileViewerModal", { fileURL: props.fullUrl });
+  openModal("FileViewerModal", { fileURL: props.fullUrl, filePath: props.filePath });
 };
 
 const { mutateAsync: rejectMutate, isPending: isRejecting } = useMutation({

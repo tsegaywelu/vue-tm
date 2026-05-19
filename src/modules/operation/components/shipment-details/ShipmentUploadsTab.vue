@@ -17,6 +17,7 @@
             :can-reject="canReject"
             :read-only="isShipper"
             :upload-function="upload_civ"
+            hide-delete
           />
           <DocumentCard
             title="Agent Receive Voucher"
@@ -27,6 +28,7 @@
             :can-reject="canReject"
             :read-only="isShipper"
             :upload-function="upload_arv"
+            hide-delete
           />
           <DocumentCard
             v-if="shipment?.tripType !== 'single_trip'"
@@ -38,6 +40,7 @@
             :can-reject="canReject"
             :read-only="isShipper"
             :upload-function="upload_aiv"
+            hide-delete
           />
           <DocumentCard
             v-if="shipment?.tripType !== 'single_trip'"
@@ -49,6 +52,7 @@
             :can-reject="canReject"
             :read-only="isShipper"
             :upload-function="upload_crv"
+            hide-delete
           />
           <DocumentCard
             title="Odometer at Complete"
@@ -59,6 +63,7 @@
             :can-reject="canReject"
             :read-only="isShipper"
             :upload-function="upload_closing_documents"
+            hide-delete
           />
           <DocumentCard
             title="Fuel Reading at Complete"
@@ -69,6 +74,7 @@
             :can-reject="canReject"
             :read-only="isShipper"
             :upload-function="upload_closing_documents"
+            hide-delete
           />
         </div>
       </InfoWrapper>

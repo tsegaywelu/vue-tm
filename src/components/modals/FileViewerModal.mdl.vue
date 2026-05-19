@@ -153,30 +153,29 @@ import ModalWrapper from "./ModalWrapper.vue";
 
 export type Props = {
   fileURL: string;
+  filePath?: string;
 };
 
 const props = defineProps<{ data: Props; close: (res: any) => void }>();
 
-console.log(props.data);
 const fileURL = computed(() => props.data.fileURL);
+const filePath = computed(() => props.data.filePath ?? "");
+
+function hasExt(ext: string) {
+  return (
+    fileURL.value?.toLowerCase().includes(ext) ||
+    filePath.value?.toLowerCase().includes(ext)
+  );
+}
 
 const zoom = ref(1);
 const rotation = ref(0);
 
-const isPDF = computed(() => {
-  return fileURL.value?.toLowerCase().includes(".pdf");
-});
+const isPDF = computed(() => hasExt(".pdf"));
 
-const isImage = computed(() => {
-  const url = fileURL.value?.toLowerCase() || "";
-  return (
-    url.includes(".jpg") ||
-    url.includes(".jpeg") ||
-    url.includes(".png") ||
-    url.includes(".gif") ||
-    url.includes(".webp")
-  );
-});
+const isImage = computed(() =>
+  [".jpg", ".jpeg", ".png", ".gif", ".webp"].some(hasExt),
+);
 
 const zoomIn = () => {
   zoom.value += 0.25;
