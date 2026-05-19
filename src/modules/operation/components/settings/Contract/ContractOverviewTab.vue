@@ -27,17 +27,28 @@
         <div class="flex items-center gap-3">
           <h2 class="text-xl font-bold text-gray-900">Contract Routes</h2>
           <span class="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-xs font-bold">
-            {{ contract?.routes?.length || 0 }} Routes
+            {{ filteredRoutes.length }} / {{ contract?.routes?.length || 0 }} Routes
           </span>
         </div>
-        <Button variant="primary" size="md" @click="openAddRouteModal">
-          + Add Route
-        </Button>
+        <div class="flex items-center gap-3">
+          <div class="relative">
+            <i class="mdi mdi-magnify absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+            <input
+              v-model="routeSearch"
+              type="text"
+              placeholder="Filter by route..."
+              class="pl-8 pr-3 py-2 text-sm border border-gray-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 w-48"
+            />
+          </div>
+          <Button variant="primary" size="md" @click="openAddRouteModal">
+            + Add Route
+          </Button>
+        </div>
       </div>
 
       <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
         <div
-          v-for="routeObj in contract?.routes"
+          v-for="routeObj in filteredRoutes"
           :key="routeObj._id"
           class="relative bg-white rounded-[32px] p-6 shadow-sm border border-gray-100 flex flex-col gap-6"
         >
@@ -146,7 +157,7 @@
         </div>
       </div>
 
-      <div v-if="!contract?.routes?.length" class="bg-white rounded-3xl p-12 text-center border border-gray-100">
+      <div v-if="!filteredRoutes.length" class="bg-white rounded-3xl p-12 text-center border border-gray-100">
         <i class="mdi mdi-routes text-4xl text-gray-300 mb-3 block"></i>
         <p class="text-gray-500 text-sm">No routes added to this contract yet.</p>
         <Button variant="primary" size="md" class="mt-4" @click="openAddRouteModal">
@@ -158,6 +169,7 @@
 </template>
 
 <script setup lang="ts">
+import { ref, computed } from "vue";
 import { openModal } from "@customizer/modal-x";
 import { useQueryClient } from "@tanstack/vue-query";
 import { useToastStore } from "@/store/toastStore";
@@ -173,6 +185,19 @@ const props = defineProps<{
 
 const queryClient = useQueryClient();
 const toast = useToastStore();
+
+const routeSearch = ref("");
+
+const filteredRoutes = computed(() => {
+  const routes = props.contract?.routes || [];
+  if (!routeSearch.value.trim()) return routes;
+  const q = routeSearch.value.toLowerCase();
+  return routes.filter((r: any) =>
+    r.route?.routeName?.toLowerCase().includes(q) ||
+    r.route?.origin?.toLowerCase().includes(q) ||
+    r.route?.destination?.toLowerCase().includes(q),
+  );
+});
 
 async function openAddRouteModal() {
   await openModal("ContractRouteAddModal", {

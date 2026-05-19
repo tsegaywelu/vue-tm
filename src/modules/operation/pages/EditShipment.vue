@@ -186,7 +186,7 @@ const initialValues = computed(() => {
       data.vehicle?.ownership == VehicleOwnership.Owned
         ? data.transporter?._id
         : null,
-    transporterPrice: data.transporterPrice,
+  transporterPrice: data.transporterPrice,
   };
 });
 

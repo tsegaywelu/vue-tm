@@ -449,6 +449,11 @@ function handleInputSearch(ev: Event) {
   }
   emit("input-change", val);
 
+  if (!open.value) {
+    open.value = true;
+    highlightedIndex.value = -1;
+  }
+
   if (isRemote.value) {
     setRemoteSearch(val);
   } else {
