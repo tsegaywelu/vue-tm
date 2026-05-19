@@ -161,12 +161,7 @@ const handleShipmentAction = ({
 
 const handleDownload = (type: string) => {
   isDropdownOpen.value = false;
-  const filters = {
-    ...shipperFilters.value,
-    ...shipmentTableRef.value?.activeFilters,
-    dispatchStartDate: dateRange.value.start,
-    dispatchEndDate: dateRange.value.end,
-  };
+  const filters = shipmentTableRef.value?.activeParams ?? {};
   toast.addCustomToast(ShipmentDownloadToast, { type, filters });
 };
 </script>

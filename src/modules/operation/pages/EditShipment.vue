@@ -175,7 +175,7 @@ const initialValues = computed(() => {
     driver: data.driver?._id,
     isDamaged: data.isDamaged,
     CKRF: data.CKRF,
-    CKRFCode: data.CKRFCode || "",
+    CKRFCode: data.CKRFCode || "", 
     status: data.status,
     pricingType: data.pricingType?._id,
     ...(data.productType !== ProductType["Site Transfer"]

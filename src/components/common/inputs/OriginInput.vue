@@ -7,7 +7,7 @@
     :params="
       (values) => {
         return {
-          sort: 'shipmentCount',
+          // sort: 'shipmentCount',
           q: undefined,
           ...(values.search
             ? {
@@ -20,8 +20,8 @@
         };
       }
     "
-    :value_key="value_key || 'destination'"
-    :label_key="label_key || 'routeName'"
+    :value_key="value_key || 'origin'"
+    :label_key="label_key || 'origin'"
     :url="url || '/route'"
     :attributes="{
       placeholder: 'Search and Select Origin',

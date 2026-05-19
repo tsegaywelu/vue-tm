@@ -156,8 +156,9 @@ const props = defineProps<{
   filters?: any;
 }>();
 
-const { handleAction, openStatusModal, openVouchersModal } =
-  useShipmentActions(() => refetch());
+const { handleAction, openStatusModal, openVouchersModal } = useShipmentActions(
+  () => refetch(),
+);
 const authStore = useAuthStore();
 const shipmentBasePath = computed(() =>
   authStore.is_shipper ? "/shipper/shipments" : "/operation/shipments",
@@ -248,7 +249,7 @@ const columns: TableColumn<Shipment>[] = [
 const selectedSearchField = ref("vehiclePlateNumber");
 
 const activeFilters = ref<ShipmentFilterParams>({});
-const { response, refetch } = usePagination<Shipment>({
+const { response, refetch, debouncedSearch } = usePagination<Shipment>({
   id: "shipment-list",
   url: "/shipment",
   params: (state) => ({
@@ -257,6 +258,12 @@ const { response, refetch } = usePagination<Shipment>({
     ...activeFilters.value,
   }),
 });
+
+const activeParams = computed(() => ({
+  [selectedSearchField.value]: debouncedSearch.value || "",
+  ...props.filters,
+  ...activeFilters.value,
+}));
 
 const searchFieldOptions = [
   { label: "Plate Number", value: "vehiclePlateNumber" },
@@ -292,5 +299,5 @@ const handleFilterChange = (newFilters: ShipmentFilterParams) => {
   };
 };
 
-defineExpose({ refetch, activeFilters });
+defineExpose({ refetch, activeFilters, activeParams });
 </script>

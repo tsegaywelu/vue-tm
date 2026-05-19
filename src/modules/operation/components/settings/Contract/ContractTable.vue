@@ -46,6 +46,12 @@ const emit = defineEmits(["action"]);
 const { response, refetch } = usePagination<any>({
   id: "contract-list",
   url: "/contract",
+  params(state) {
+    return {
+      name: state.search,
+      q: undefined,
+    };
+  },
 });
 
 const columns: TableColumn<any>[] = [

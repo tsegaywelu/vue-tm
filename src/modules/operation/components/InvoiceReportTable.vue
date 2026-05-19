@@ -60,7 +60,7 @@
               "
             />
             <DropDownItem
-              v-permission="'REPORT:approve'"
+              v-permission="'PAYMENT_REQUEST:update'"
               :icon="icons.check"
               label="Approve"
               @click.stop="
@@ -69,7 +69,7 @@
               "
             />
             <DropDownItem
-              v-permission="'REPORT:cancel'"
+              v-permission="'PAYMENT_REQUEST:update'"
               :icon="icons.close"
               label="Cancel"
               @click.stop="
@@ -78,7 +78,7 @@
               "
             />
             <DropDownItem
-              v-permission="'REPORT:read'"
+              v-permission="'PAYMENT_REQUEST:view'"
               :icon="icons.eye"
               label="Details"
               @click.stop="

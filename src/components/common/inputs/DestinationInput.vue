@@ -21,7 +21,7 @@
       }
     "
     :value_key="value_key || 'destination'"
-    :label_key="label_key || 'routeName'"
+    :label_key="label_key || 'destination'"
     :url="url || '/route'"
     :attributes="{
       placeholder: 'Search and Select Destination',

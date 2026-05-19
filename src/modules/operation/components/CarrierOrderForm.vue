@@ -16,10 +16,18 @@
             :validation="{
               required,
             }"
-            :params="{
-              page: undefined,
-              limit: undefined,
-            }"
+            :params="
+              (state) => {
+                return {
+                  page: undefined,
+                  limit: undefined,
+                  q: undefined,
+                  name: {
+                    regex: state.search,
+                  },
+                };
+              }
+            "
             :attributes="{
               placeholder: 'Select carrier',
             }"
