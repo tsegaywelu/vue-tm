@@ -233,7 +233,7 @@ const { response, fullResponse, refetch } = usePagination<any>({
   params: computed(() => {
     const params: any = { ...activeFilters.value };
     if (searchTerm.value) {
-      params[`${selectedSearchField.value}[regexAny]`] = searchTerm.value;
+      params[`${selectedSearchField.value}`] = searchTerm.value;
       params.q = undefined;
     }
     if (props.dateRange?.start) {

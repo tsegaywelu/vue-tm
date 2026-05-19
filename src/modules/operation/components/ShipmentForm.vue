@@ -29,6 +29,7 @@
             label="Shipper"
             hide_icon
             :options="autoFilledOptions.shipper"
+            :display_value="internalLabels.shipper"
             :attributes="{
               placeholder: 'Auto filled values based on selected order',
               disabled: true,
@@ -44,6 +45,7 @@
             label="Route"
             hide_icon
             :options="autoFilledOptions.route"
+            :display_value="internalLabels.route"
             :attributes="{
               placeholder: 'Auto filled values based on selected order',
               disabled: true,
@@ -59,6 +61,7 @@
             label="Trip Type"
             hide_icon
             :options="autoFilledOptions.tripType"
+            :display_value="internalLabels.tripType"
             :attributes="{
               disabled: true,
               placeholder: 'Auto filled values based on selected order',
@@ -74,6 +77,7 @@
             label="Product Type"
             hide_icon
             :options="autoFilledOptions.productType"
+            :display_value="internalLabels.productType"
             :attributes="{
               disabled: true,
               placeholder: 'Auto filled values based on selected order',
@@ -89,6 +93,7 @@
             label="Vehicle Type"
             hide_icon
             :options="autoFilledOptions.vehicleType"
+            :display_value="internalLabels.vehicleType"
             :attributes="{
               disabled: true,
               placeholder: 'Auto filled values based on selected order',
@@ -121,6 +126,7 @@
             label="Packaging"
             hide_icon
             :options="autoFilledOptions.packaging"
+            :display_value="internalLabels.packaging"
             :attributes="{
               disabled: true,
               placeholder: 'Auto filled values based on selected order',

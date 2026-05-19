@@ -39,7 +39,7 @@
             <template #default="[CKRF]">
               <Input
                 v-if="CKRF"
-                name="CKRFCode"
+                name="CKRFCode"hey 
                 label="CKRF Code"
                 :validation="{ required }"
               />
@@ -206,6 +206,12 @@ const labels = computed(() => {
         acc[c._id || c] = c.name || c;
         return acc;
       }, {}) || {},
+    shipper: data.shipper?.name || "",
+    route: data.route?.routeName || "",
+    vehicleType: data.vehicleType?.name || "",
+    packaging: data.packaging?.name || "",
+    tripType: data.tripType?.replace(/_/g, " ").replace(/\b\w/g, (l: string) => l.toUpperCase()) || "",
+    productType: data.productType?.replace(/_/g, " ").replace(/\b\w/g, (l: string) => l.toUpperCase()) || "",
   };
 });
 
