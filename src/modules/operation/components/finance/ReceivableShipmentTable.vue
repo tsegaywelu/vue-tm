@@ -23,25 +23,27 @@
       :search_placeholder="dynamicSearchPlaceholder"
     >
       <template #header-selection>
-        <input 
-          type="checkbox" 
-          :checked="isAllSelected" 
+        <input
+          type="checkbox"
+          :checked="isAllSelected"
           @change="toggleSelectAll"
           class="rounded border-gray-300 text-primary focus:ring-primary h-4 w-4"
         />
       </template>
 
       <template #cell-selection="{ row }">
-        <input 
-          type="checkbox" 
-          :checked="isSelected(row)" 
+        <input
+          type="checkbox"
+          :checked="isSelected(row)"
           @change="toggleSelection(row)"
           @click.stop
           class="rounded border-gray-300 text-primary focus:ring-primary h-4 w-4"
         />
       </template>
       <template #search-prefix>
-        <div class="h-full flex items-center border-r border-gray-200 pr-2 mr-2">
+        <div
+          class="h-full flex items-center border-r border-gray-200 pr-2 mr-2"
+        >
           <Select
             class="[&_.input-focus]:shadow-none! [&_.input-focus]:border-none [&_.input-focus]:min-h-full min-w-48"
             v-model="selectedSearchField"
@@ -53,7 +55,7 @@
         </div>
       </template>
       <template #cell-shipmentCode="{ value }">
-        <span class="font-bold text-primary">{{ value || '-' }}</span>
+        <span class="font-bold text-primary">{{ value || "-" }}</span>
       </template>
 
       <template #cell-dispatchDate="{ value }">
@@ -64,19 +66,19 @@
 
       <template #cell-route="{ row }">
         <span class="font-medium text-gray-700">
-          {{ row.route?.routeName || '-' }}
+          {{ row.route?.routeName || "-" }}
         </span>
       </template>
 
       <template #cell-agent="{ row }">
         <span class="font-medium text-gray-700">
-          {{ row.agent?.name || '-' }}
+          {{ row.agent?.name || "-" }}
         </span>
       </template>
 
       <template #cell-vehicle="{ row }">
         <span class="font-medium text-gray-700">
-          {{ row.vehicle?.plateNumber || '-' }}
+          {{ row.vehicle?.plateNumber || "-" }}
         </span>
       </template>
 
@@ -95,18 +97,17 @@
 
       <template #cell-areDocumentsUploaded="{ value }">
         <Status :variant="value ? 'uploaded' : 'pending'" type="wrapped">
-          {{ value ? 'Uploaded' : 'Pending' }}
+          {{ value ? "Uploaded" : "Pending" }}
         </Status>
       </template>
 
       <template #after-search>
-        <div class="items-center gap-4 inline-flex border-l border-grey-100 overflow-x-auto px-3">
+        <div
+          class="items-center gap-4 inline-flex border-l border-grey-100 overflow-x-auto px-3"
+        >
           <i v-html="icons.filter" />
           <!-- <ReceivableShipmentFilters @change="handleFilterChange" /> -->
-              <ShipmentFilters
-          @change="handleFilterChange"
-       
-        />
+          <ShipmentFilters @change="handleFilterChange" />
         </div>
       </template>
 
@@ -194,7 +195,9 @@ const isSelected = (row: any) => {
 };
 
 const isAllSelected = computed(() => {
-  return response.value.length > 0 && response.value.every((row) => isSelected(row));
+  return (
+    response.value.length > 0 && response.value.every((row) => isSelected(row))
+  );
 });
 
 const toggleSelection = (row: any) => {
@@ -216,9 +219,13 @@ const toggleSelectAll = () => {
   }
 };
 
-watch(() => props.dateRange, () => {
-  refetch();
-}, { deep: true });
+watch(
+  () => props.dateRange,
+  () => {
+    refetch();
+  },
+  { deep: true },
+);
 
 const { response, fullResponse, refetch } = usePagination<any>({
   id: "receivable-shipment-list",
@@ -230,10 +237,10 @@ const { response, fullResponse, refetch } = usePagination<any>({
       params.q = undefined;
     }
     if (props.dateRange?.start) {
-      params.startDate = props.dateRange.start;
+      params.dispatchStartDate = props.dateRange.start;
     }
     if (props.dateRange?.end) {
-      params.endDate = props.dateRange.end;
+      params.dispatchEndDate = props.dateRange.end;
     }
     return params;
   }),
@@ -249,22 +256,22 @@ const summaryItems = computed(() => {
       fullLabel: `Total Receivable - ${summary.value.countAll} Trips`,
       value: currencyFormatter(summary.value.totalAll),
       rawValue: summary.value.totalAll,
-      icon: "mdi-cash"
+      icon: "mdi-cash",
     },
     {
       label: "Uploaded",
       fullLabel: `Uploaded - ${summary.value.countWithDocuments} Trips`,
       value: currencyFormatter(summary.value.totalWithDocuments),
       rawValue: summary.value.totalWithDocuments,
-      icon: "mdi-cash-check"
+      icon: "mdi-cash-check",
     },
     {
       label: "Not Uploaded",
       fullLabel: `Not Uploaded - ${summary.value.countWithoutDocuments} Trips`,
       value: currencyFormatter(summary.value.totalWithoutDocuments),
       rawValue: summary.value.totalWithoutDocuments,
-      icon: "mdi-cash-remove"
-    }
+      icon: "mdi-cash-remove",
+    },
   ];
 });
 

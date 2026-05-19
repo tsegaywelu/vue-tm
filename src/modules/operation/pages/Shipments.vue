@@ -152,7 +152,7 @@ const handleDownload = (type: string) => {
     ...shipperFilters.value,
     ...shipmentTableRef.value?.activeFilters,
   };
-  toast.addCustomToast(ShipmentDownloadToast, { type });
+  toast.addCustomToast(ShipmentDownloadToast, { type, filters });
 };
 </script>
 
