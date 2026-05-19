@@ -39,13 +39,13 @@
       <span class="text-sm text-gray-600">{{ value || "OUTWARD" }}</span>
     </template>
 
-    <template #cell-payableStatus="{ row }">
+    <template #cell-settlementStatus="{ row }">
       <Status
-        :variant="row.payableStatus || row.settlementStatus || 'PENDING'"
+        :variant="row.settlementStatus || row.settlementStatus || 'PENDING'"
         type="wrapped"
       >
         {{
-          (row.payableStatus || row.settlementStatus || "PENDING").replace(
+          (row.settlementStatus || row.settlementStatus || "PENDING").replace(
             /_/g,
             " ",
           )
@@ -135,7 +135,7 @@ const columns: TableColumn<any>[] = [
   { key: "transporter", label: "Transporter", field: "transporter" },
   { key: "leaseDirection", label: "Direction", field: "leaseDirection" },
   { key: "total", label: "Amount", field: "total" },
-  { key: "payableStatus", label: "Payable Status", field: "payableStatus" },
+  { key: "settlementStatus", label: "Payable Status", field: "payableStatus" },
   { key: "status", label: "Status", field: "status" },
   { key: "actions", label: "Action", field: "", cellAlign: "right" },
 ];
