@@ -39,9 +39,7 @@
           :attributes="{
             placeholder: 'Select time',
           }"
-          :validation="{
-            dateLessThanOrEqalToToday,
-          }"
+          :validation="{}"
         />
         <TimeInput
           name="time"
@@ -175,7 +173,7 @@ const statusOptions = computed(() => {
       .filter((s: any) => {
         if (ALWAYS_VISIBLE.includes(s.value)) return true;
         const idx = ordered.indexOf(s.value);
-        return idx === -1 || idx >= currentOrderedIdx;
+        return idx === -1 || idx > currentOrderedIdx;
       })
       .map((s: any) => ({
         ...s,
@@ -187,7 +185,7 @@ const statusOptions = computed(() => {
   return list
     .filter(
       (status: any, index: number) =>
-        ALWAYS_VISIBLE.includes(status.value) || index >= currentIndex,
+        ALWAYS_VISIBLE.includes(status.value) || index > currentIndex,
     )
     .map((status: any) => {
       const originalIndex = list.findIndex(
