@@ -29,6 +29,7 @@
             :upload-function="upload_arv"
           />
           <DocumentCard
+            v-if="shipment?.tripType !== 'single_trip'"
             title="Agent Issue Voucher"
             document-type="aiv"
             :shipment-id="shipment?._id"
@@ -39,6 +40,7 @@
             :upload-function="upload_aiv"
           />
           <DocumentCard
+            v-if="shipment?.tripType !== 'single_trip'"
             title="Shipper Receive Voucher"
             document-type="crv"
             :shipment-id="shipment?._id"

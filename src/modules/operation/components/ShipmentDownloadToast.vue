@@ -100,7 +100,7 @@ const { data: response, isError } = useQuery({
 });
 
 function getShipments(): any[] | null {
-  const raw = response.value?.data;
+  const raw = response.value?.data as any;
   if (!raw) return null;
   const list = raw.result || raw.data || raw;
   return Array.isArray(list) ? list : null;
