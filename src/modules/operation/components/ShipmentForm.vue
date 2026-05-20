@@ -190,10 +190,14 @@
             name="packaging"
             :display_value="internalLabels.packaging"
             :validation="{ required }"
-            :params="{
-              limit: undefined,
-              page: undefined,
-            }"
+            :params="
+              (state) => ({
+                limit: undefined,
+                page: undefined,
+                q: undefined,
+                name: state.search,
+              })
+            "
           />
           <SelectInput
             v-else

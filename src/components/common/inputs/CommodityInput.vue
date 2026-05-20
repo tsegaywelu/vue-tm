@@ -12,7 +12,7 @@
       ((state) => ({
         limit: 20,
         q: undefined,
-        name: { regex: state.search },
+        name: state.search,
       }))
     "
     :attributes="{
