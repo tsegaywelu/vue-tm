@@ -101,6 +101,12 @@ const handleCreateShipment = async (values: any, context: any) => {
   } else {
     payload.transporter = null;
     payload.transporterPrice = null;
+  }
+
+  const isOwnedOrRental =
+    selectedVehicle?.ownership === "Owned" ||
+    selectedVehicle?.ownership === "Rental";
+  if (isOwnedOrRental) {
     payload.odometerAtDispatch = Number(values.odometerAtDispatch) || undefined;
     payload.fuelReadingAtDispatch = Number(values.fuelReadingAtDispatch) || undefined;
   }
