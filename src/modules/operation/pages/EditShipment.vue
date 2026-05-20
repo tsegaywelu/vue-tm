@@ -246,7 +246,7 @@ const handleUpdateShipment = async (values: any, context: any) => {
   const { selectedOrder, selectedVehicle, filteredPricingType } = context;
 
   const shipperId = selectedOrder?.shipper?._id || values.shipper;
-  const driverId = selectedVehicle?.driver?._id || values.driver;
+  const driverId = values.driver || selectedVehicle?.driver?._id;
   const transporterId = selectedVehicle?.transporter?._id || values.transporter;
   const vehicleTypeId = selectedOrder?.vehicleType?._id || values.vehicleType;
   const routeId = selectedOrder?.route?._id || values.route;
