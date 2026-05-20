@@ -278,13 +278,6 @@ const dynamicSearchPlaceholder = computed(() => {
   return "Search Advances...";
 });
 
-watch(selectedStatus, (newStatus) => {
-  activeFilters.value = {
-    ...activeFilters.value,
-    status: newStatus || undefined,
-  };
-});
-
 const handleFilterChange = (newFilters: any) => {
   activeFilters.value = {
     ...activeFilters.value,
@@ -304,7 +297,7 @@ const { response, refetch, isLoading } = usePagination({
   params: (state) => ({
     ...props.extraParams,
     ...activeFilters.value,
-    vehiclePlateNumber: state.search,
+    [selectedStatus.value]: state.search,
     q: undefined,
   }),
 });

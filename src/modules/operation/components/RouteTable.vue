@@ -73,6 +73,15 @@ const columns: TableColumn[] = [
 const { response, refetch } = usePagination({
   id: "route-list",
   url: "/route",
+  params(state) {
+    return {
+      routeName: {
+        regexAny: state.search,
+      },
+      q: undefined,
+      sort: "-shipmentCount",
+    };
+  },
 });
 
 defineExpose({ refetch, response });
