@@ -180,7 +180,7 @@ const initialValues = computed(() => {
       ? new Date(data.dispatchDate).toISOString().split("T")[0]
       : "",
     fuelReadingAtDispatch: data.fuelReadingAtDispatch || "",
-    deadHole: data.deadHole || "",
+    deadHole: data.deadHole ?? "",
     remark: data.remark || "",
     totalPrice: data.totalPrice?.toFixed(2) || "",
     // These are used for display in ShipmentForm and will be updated via handleOrderSelect or handleVehicleSelect
