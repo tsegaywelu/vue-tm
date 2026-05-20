@@ -91,7 +91,7 @@ const labels = computed(() => {
 });
 
 const handleCreateShipment = async (values: any, context?: any) => {
-  const { selectedOrder, filteredPricingType } = context || {};
+  const { selectedOrder, selectedVehicle, filteredPricingType } = context || {};
 
   const payload: any = {
     order: values.order,
@@ -107,8 +107,6 @@ const handleCreateShipment = async (values: any, context?: any) => {
     waypoint: values.waypoint,
     freightOrder: values.freightOrder,
     dispatchWeight: Number(values.dispatchWeight) || 0,
-    odometerAtDispatch: Number(values.odometerAtDispatch) || 0,
-    fuelReadingAtDispatch: Number(values.fuelReadingAtDispatch) || 0,
     deadHole: Math.max(0, Number(values.deadHole) || 0),
     dispatchDate: values.dispatchDate,
     remark: values.remark,
@@ -120,6 +118,12 @@ const handleCreateShipment = async (values: any, context?: any) => {
       amount: filteredPricingType?.pricePerUnit || 0,
     },
   };
+
+  const isVehicleOwned = selectedVehicle?.ownership === "Owned";
+  if (isVehicleOwned) {
+    payload.odometerAtDispatch = Number(values.odometerAtDispatch) || 0;
+    payload.fuelReadingAtDispatch = Number(values.fuelReadingAtDispatch) || 0;
+  }
 
   const res = await mutation.mutateAsync(payload);
   if (res.success) {
