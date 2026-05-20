@@ -52,11 +52,11 @@
 import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import PaidSubContractsTable from "../../components/finance/PaidSubContractsTable.vue";
+import PaidSubContractsDownloadToast from "../../components/finance/PaidSubContractsDownloadToast.vue";
 import DateRangePicker from "@/components/common/DateRangePicker.vue";
 import Button from "@/components/Button.vue";
-import { currencyFormatter, dateFormatter } from "@/utils/utils";
+import { currencyFormatter } from "@/utils/utils";
 import { useToastStore } from "@/store/toastStore";
-import * as XLSX from "xlsx";
 
 const router = useRouter();
 const toast = useToastStore();
@@ -65,48 +65,11 @@ const tableRef = ref<any>(null);
 const dateRange = ref({ start: "", end: "" });
 
 const handleExport = () => {
-  const rows = tableRef.value?.response || [];
-  if (rows.length === 0) {
-    toast.error("No data to export");
-    return;
-  }
-
-  const headers = [
-    "Shipment Code",
-    "Transporter",
-    "Dispatch Date",
-    "Plate Number",
-    "Driver",
-    "Route",
-    "Total Price",
-    "Transporter Price",
-    "Advance",
-    "Gross Profit",
-  ];
-
-  const formattedData = rows.map((row: any) => ({
-    "Shipment Code": row.shipmentCode || "N/A",
-    Transporter: row.transporter?.name || "N/A",
-    "Dispatch Date": dateFormatter(row.dispatchDate),
-    "Plate Number": row.vehicle?.plateNumber || "N/A",
-    Driver:
-      `${row.driver?.firstName || ""} ${row.driver?.lastName || ""}`.trim() ||
-      "N/A",
-    Route: row.route?.routeName || "N/A",
-    "Total Price": row.totalPrice || 0,
-    "Transporter Price": row.transporterPrice || 0,
-    Advance: row.advanceAmount ?? row.prePayments ?? 0,
-    "Gross Profit": row.grossProfit || 0,
-  }));
-
-  const worksheet = XLSX.utils.json_to_sheet(formattedData);
-  worksheet["!cols"] = headers.map((h) => ({ wch: Math.max(h.length, 15) }));
-  const workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, worksheet, "Paid Sub-Contracts");
-  XLSX.writeFile(
-    workbook,
-    `PaidSubContracts_${new Date().toISOString().split("T")[0]}.xlsx`,
+  const raw = tableRef.value?.activeParams ?? {};
+  const filters = Object.fromEntries(
+    Object.entries(raw).filter(([, v]) => v !== "" && v !== null && v !== undefined),
   );
+  toast.addCustomToast(PaidSubContractsDownloadToast, { filters });
 };
 
 const stats = computed(() => {

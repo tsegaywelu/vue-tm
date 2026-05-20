@@ -61,8 +61,7 @@ export function printStoreRequisition(requisition: any, currentUser: any) {
     
     .footer-meta { text-align: right; font-size: 10px; color: #98a2b3; border-top: 1px solid #f2f4f7; padding-top: 10px; }
 
-    @media print { 
-      .no-print { display: none; } 
+    @media print {
       body { padding: 0; }
       .signature-footer { position: fixed; bottom: 40px; width: calc(100% - 60px); }
       @page { margin: 1.5cm; }
@@ -171,15 +170,6 @@ export function printStoreRequisition(requisition: any, currentUser: any) {
     <div class="footer-meta">
       <p>System Generated Document | Total Items: ${requisition.items?.length || 0}</p>
     </div>
-  </div>
-
-  <div class="no-print" style="position: fixed; bottom: 30px; right: 30px; display: flex; gap: 12px;">
-    <button onclick="window.print()" style="padding: 12px 24px; background: #2222FF; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 700; box-shadow: 0 4px 12px rgba(34, 34, 255, 0.3);">
-      Print Voucher
-    </button>
-    <button onclick="window.close()" style="padding: 12px 24px; background: #666; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 700;">
-      Close
-    </button>
   </div>
 
   <script>

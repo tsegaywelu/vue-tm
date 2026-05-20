@@ -77,8 +77,8 @@
         </div>
         <div class="flex flex-col gap-3">
           <div
-            id="agent-location-map"
-            class="w-full h-[350px] border border-grey-100 rounded-3xl bg-grey-25 overflow-hidden z-0"
+            ref="mapContainerRef"
+            class="w-full h-[350px] border border-grey-100 rounded-3xl"
             style="min-height: 350px"
           ></div>
           <p class="text-xs text-grey-500">
@@ -142,7 +142,20 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, nextTick } from "vue";
+import { ref, computed, onMounted, onUnmounted } from "vue";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
+
+const pinIcon = L.divIcon({
+  html: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 36" width="24" height="36">
+    <path fill="#2222FF" stroke="white" stroke-width="1.5" d="M12 0C7.163 0 3 4.163 3 9c0 6.75 9 27 9 27s9-20.25 9-27c0-4.837-4.163-9-9-9z"/>
+    <circle fill="white" cx="12" cy="9" r="3.5"/>
+  </svg>`,
+  className: "",
+  iconSize: [24, 36],
+  iconAnchor: [12, 36],
+  popupAnchor: [0, -36],
+});
 import Form from "@/components/form/Form.vue";
 import Input from "@/components/form/Input.vue";
 import CommonInput from "@/components/common/Input.vue";
@@ -211,52 +224,29 @@ const selectedLocation = ref({
 
 const mapError = ref<string>("");
 
+const mapContainerRef = ref<HTMLElement | null>(null);
 let map: any = null;
 let marker: any = null;
 
-const initLeaflet = async (): Promise<any> => {
-  if (typeof (window as any).L !== "undefined") {
-    return (window as any).L;
-  }
-  if (!document.getElementById("leaflet-css")) {
-    const link = document.createElement("link");
-    link.id = "leaflet-css";
-    link.rel = "stylesheet";
-    link.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
-    document.head.appendChild(link);
-  }
-  return new Promise((resolve, reject) => {
-    const script = document.createElement("script");
-    script.src = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
-    script.onload = () => resolve((window as any).L);
-    script.onerror = () => reject(new Error("Failed to load Leaflet"));
-    document.head.appendChild(script);
-  });
-};
-
-onMounted(async () => {
-  await nextTick();
-  setTimeout(async () => {
+onMounted(() => {
+  setTimeout(() => {
     try {
-      const L = await initLeaflet();
-      const mapContainer = document.getElementById("agent-location-map");
-      if (!mapContainer || map) return;
+      const el = mapContainerRef.value;
+      if (!el || map) return;
 
       const startLat = selectedLocation.value.latitude || 9.145;
       const startLng = selectedLocation.value.longitude || 40.4897;
 
-      map = L.map(mapContainer).setView([startLat, startLng], 6);
+      map = L.map(el).setView([startLat, startLng], 6);
 
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         attribution:
           '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       }).addTo(map);
 
-      if (selectedLocation.value.latitude && selectedLocation.value.longitude) {
-        marker = L.marker([
-          selectedLocation.value.latitude,
-          selectedLocation.value.longitude,
-        ]).addTo(map);
+      marker = L.marker([startLat, startLng], { icon: pinIcon }).addTo(map);
+      if (!selectedLocation.value.latitude || !selectedLocation.value.longitude) {
+        selectedLocation.value = { latitude: startLat, longitude: startLng };
       }
 
       map.on("click", (e: any) => {
@@ -265,20 +255,17 @@ onMounted(async () => {
         if (marker) {
           marker.setLatLng([lat, lng]);
         } else {
-          marker = L.marker([lat, lng]).addTo(map);
+          marker = L.marker([lat, lng], { icon: pinIcon }).addTo(map);
         }
         mapError.value = "";
       });
 
-      // Crucial: refresh map dimensions to remove grey box
-      setTimeout(() => {
-        if (map) map.invalidateSize();
-      }, 50);
+      map.invalidateSize();
     } catch (err: any) {
       console.error(err);
       mapError.value = "Unable to load map picker.";
     }
-  }, 100);
+  }, 300);
 });
 
 onUnmounted(() => {

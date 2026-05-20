@@ -55,7 +55,6 @@ export const printSummary = (
     .signature-box { width: 23%; border-top: 1px solid #000; padding-top: 8px; text-align: center; font-size: 12px; font-weight: bold; }
     .footer { text-align: right; font-size: 11px; color: #888; margin-top: 25px; border-top: 1px solid #eee; padding-top: 10px; }
     @media print {
-      .no-print { display: none; }
       .signature-footer { position: fixed; bottom: 30px; width: calc(100% - 40px); }
       body { padding-bottom: 150px; }
       @page { margin: 1.5cm; }
@@ -116,15 +115,6 @@ export const printSummary = (
     <div class="footer">
       <p>Total Records: ${rows.length} | System Generated Report</p>
     </div>
-  </div>
-
-  <div class="no-print" style="position: fixed; bottom: 20px; right: 20px; display: flex; gap: 10px;">
-    <button onclick="window.print()" style="padding: 12px 24px; background: #2222FF; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-      Print Summary
-    </button>
-    <button onclick="window.close()" style="padding: 12px 24px; background: #666; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">
-      Close
-    </button>
   </div>
 
   <script>

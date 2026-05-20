@@ -163,7 +163,7 @@ const activeFilters = ref({});
 const { response, refetch } = usePagination<any>({
   id: "payment-collection-list",
   url: "/shipment/approvedAndCollectedInvoices",
-  params: computed(() => {
+  params: (state) => {
     const params: any = { ...activeFilters.value };
     if (props.filters?.startDate) {
       params["createdAt[gte]"] = props.filters.startDate;
@@ -171,8 +171,14 @@ const { response, refetch } = usePagination<any>({
     if (props.filters?.endDate) {
       params["createdAt[lte]"] = props.filters.endDate;
     }
-    return params;
-  }),
+    return {
+      ...params,
+      reference: {
+        regexAny: state.search,
+      },
+      q: undefined,
+    };
+  },
 });
 
 const handleFilterChange = (newFilters: any) => {

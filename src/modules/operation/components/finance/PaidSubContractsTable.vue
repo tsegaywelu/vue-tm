@@ -22,12 +22,12 @@
       </div>
     </template>
     <template #cell-shipmentCode="{ value }">
-      <span class="font-bold">{{ value || '-' }}</span>
+      <span class="font-bold">{{ value || "-" }}</span>
     </template>
 
     <template #cell-transporter="{ row }">
       <span class="font-medium text-gray-700">
-        {{ row.transporter?.name || '-' }}
+        {{ row.transporter?.name || "-" }}
       </span>
     </template>
 
@@ -39,19 +39,19 @@
 
     <template #cell-plateNumber="{ row }">
       <span class="font-medium text-gray-700">
-        {{ row.vehicle?.plateNumber || '-' }}
+        {{ row.vehicle?.plateNumber || "-" }}
       </span>
     </template>
 
     <template #cell-driverName="{ row }">
       <span class="font-medium text-gray-700">
-        {{ row.driver?.firstName || '-' }} {{ row.driver?.lastName || '' }}
+        {{ row.driver?.firstName || "-" }} {{ row.driver?.lastName || "" }}
       </span>
     </template>
 
     <template #cell-routeName="{ row }">
       <span class="text-sm text-gray-600">
-        {{ row.route?.routeName || '-' }}
+        {{ row.route?.routeName || "-" }}
       </span>
     </template>
 
@@ -63,18 +63,27 @@
       <span class="text-gray-900">{{ currencyFormatter(value) }}</span>
     </template>
 
-    <template #cell-advanceAmount="{ value }">
-      <span class="text-gray-900">{{ currencyFormatter(value) }}</span>
+    <template #cell-advanceAmount="{ row }">
+      <span class="text-gray-900">{{
+        currencyFormatter(getAdvanceTotal(row))
+      }}</span>
     </template>
 
-    <template #cell-grossProfit="{ value }">
-      <span class="font-bold text-gray-900">{{ currencyFormatter(value) }}</span>
+    <template #cell-grossProfit="{ row }">
+      <span class="font-bold text-gray-900">{{
+        currencyFormatter(getGrossProfit(row))
+      }}</span>
     </template>
 
     <template #after-search>
-      <div class="items-center gap-4 inline-flex border-l border-grey-100 overflow-x-auto px-3">
+      <div
+        class="items-center gap-4 inline-flex border-l border-grey-100 overflow-x-auto px-3"
+      >
         <i v-html="icons.filter" />
-        <PaidSubContractsFilters @change="handleFilterChange" pagination-id="paid-sub-contracts-list" />
+        <PaidSubContractsFilters
+          @change="handleFilterChange"
+          pagination-id="paid-sub-contracts-list"
+        />
       </div>
     </template>
 
@@ -118,7 +127,11 @@ const columns: TableColumn<any>[] = [
   { key: "driverName", label: "Driver", field: "driver" },
   { key: "routeName", label: "Route", field: "route" },
   { key: "totalPrice", label: "Total Price", field: "totalPrice" },
-  { key: "transporterPrice", label: "Transporter Price", field: "transporterPrice" },
+  {
+    key: "transporterPrice",
+    label: "Transporter Price",
+    field: "transporterPrice",
+  },
   { key: "advanceAmount", label: "Advance", field: "prePayments" },
   { key: "grossProfit", label: "Gross Profit", field: "grossProfit" },
   { key: "actions", label: "Actions", field: "", cellAlign: "right" },
@@ -160,6 +173,25 @@ const { response, refetch, fullResponse } = usePagination<any>({
   }),
 });
 
+const activeParams = computed(() => {
+  const params: any = { ...activeFilters.value };
+  if (searchTerm.value) {
+    params[`${selectedSearchField.value}`] = searchTerm.value;
+    params.q = undefined;
+  }
+  if (props.dateRange?.start) params.startDate = props.dateRange.start;
+  if (props.dateRange?.end) params.endDate = props.dateRange.end;
+  return params;
+});
+
+const getAdvanceTotal = (row: any): number =>
+  row?.prePayments?.reduce((sum: number, p: any) => sum + (p.amount || 0), 0) ?? 0;
+
+const getGrossProfit = (row: any): number => {
+  const advance = getAdvanceTotal(row);
+  return Number(((row.totalPrice || 0) - ((row.transporterPrice || 0) + advance)).toFixed(2));
+};
+
 const handleFilterChange = (newFilters: any) => {
   activeFilters.value = newFilters;
 };
@@ -168,5 +200,5 @@ const handleAction = (row: any, action: string) => {
   emit("action", { row, action });
 };
 
-defineExpose({ refetch, fullResponse, response });
+defineExpose({ refetch, fullResponse, response, activeParams });
 </script>

@@ -1,6 +1,26 @@
 <template>
   <Teleport defer to="#page-actions">
-    <div class="flex gap-2">
+    <div class="flex items-center gap-2">
+      <Select
+        v-model="printCategories"
+        :options="categoryOptions"
+        label_key="label"
+        value_key="value"
+        multiple
+        :clearable="false"
+        :attributes="{ placeholder: 'Categories' }"
+        class="w-44"
+      />
+      <Select
+        v-model="printTypes"
+        :options="typeOptions"
+        label_key="label"
+        value_key="value"
+        multiple
+        :clearable="false"
+        :attributes="{ placeholder: 'Types' }"
+        class="w-44"
+      />
       <Button variant="outline" size="md" @click="handlePrint">
         <i v-html="icons.file" />
         Print
@@ -152,6 +172,7 @@ import { openModal } from "@customizer/modal-x";
 import { printAdvance } from "../utils/printAdvance";
 import { useAuthStore } from "@/store/authStore";
 import { icons } from "@/utils/icons";
+import Select from "@/components/common/Select.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -302,6 +323,23 @@ const formatDriverName = (driver: any) => {
     .join(" ");
 };
 
+// --- Print filter state ---
+const printCategories = ref<string[]>(["PERDIEM", "OTHER", "FUEL"]);
+const printTypes = ref<string[]>(["ADDITIONAL", "RETURN", "INITIAL", "EXPENSE"]);
+
+const categoryOptions = [
+  { label: "Perdiem", value: "PERDIEM" },
+  { label: "Other Expenses", value: "OTHER" },
+  { label: "Fuel", value: "FUEL" },
+];
+
+const typeOptions = [
+  { label: "Initial", value: "INITIAL" },
+  { label: "Additional", value: "ADDITIONAL" },
+  { label: "Return", value: "RETURN" },
+  { label: "Expense", value: "EXPENSE" },
+];
+
 const handlePrint = () => {
   if (!advance.value) return;
 
@@ -310,9 +348,14 @@ const handlePrint = () => {
     return;
   }
 
+  if (!printCategories.value.length || !printTypes.value.length) {
+    toast.warning("Please select at least one category and one type to print");
+    return;
+  }
+
   printAdvance(advance.value, authStore.user, {
-    categories: ["PERDIEM", "OTHER", "FUEL"],
-    types: ["ADDITIONAL", "RETURN", "INITIAL", "EXPENSE"],
+    categories: printCategories.value,
+    types: printTypes.value,
   });
 };
 

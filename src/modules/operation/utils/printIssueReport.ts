@@ -82,8 +82,7 @@ export function printIssueReport(report: any, currentUser: any) {
     .status-RESOLVED { background: #dcfce7; color: #166534; }
     .status-CLOSED { background: #f3f4f6; color: #374151; }
 
-    @media print { 
-      .no-print { display: none; } 
+    @media print {
       body { padding: 0; }
       .signature-footer { position: fixed; bottom: 40px; width: calc(100% - 60px); }
       @page { margin: 1.5cm; }
@@ -156,15 +155,6 @@ export function printIssueReport(report: any, currentUser: any) {
     <div class="footer-meta">
       <p>System Generated Document | RaAz TMS</p>
     </div>
-  </div>
-
-  <div class="no-print" style="position: fixed; bottom: 30px; right: 30px; display: flex; gap: 12px;">
-    <button onclick="window.print()" style="padding: 12px 24px; background: #2222FF; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 700; box-shadow: 0 4px 12px rgba(34, 34, 255, 0.3);">
-      Print Report
-    </button>
-    <button onclick="window.close()" style="padding: 12px 24px; background: #666; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 700;">
-      Close
-    </button>
   </div>
 
   <script>

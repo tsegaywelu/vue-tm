@@ -33,7 +33,7 @@
           (state) => {
             return {
               name: {
-                regex: state.search,
+                regexAny: state.search,
               },
               limit: undefined,
               page: undefined,

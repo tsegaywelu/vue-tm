@@ -33,7 +33,10 @@
         class="items-center gap-4 inline-flex border-l border-grey-100 overflow-x-auto px-3"
       >
         <i v-html="icons.filter" />
-        <AdvanceFilters @change="handleFilterChange" :pagination-id="props.paginationId" />
+        <AdvanceFilters
+          @change="handleFilterChange"
+          :pagination-id="props.paginationId"
+        />
       </div>
     </template>
 
@@ -262,15 +265,13 @@ const selectedItems = computed({
 
 const AdvanceStatusOptions = [
   { label: "Status: All", value: "" },
-  { label: "Pending", value: "PENDING" },
-  { label: "Approved", value: "APPROVED" },
-  { label: "Cancelled", value: "CANCELLED" },
-  { label: "Authorized", value: "AUTHORIZED" },
-  { label: "Rejected", value: "REJECTED" },
-  { label: "Paid", value: "PAID" },
+  { label: "Plate Number", value: "vehiclePlateNumber" },
+  { label: "Advance Number", value: "advanceNumber" },
+  { label: "Driver Name", value: "driverName" },
+  { label: "Issue Voucher", value: "shipperIssueVoucher" },
 ];
 
-const selectedStatus = ref("");
+const selectedStatus = ref("vehiclePlateNumber");
 const activeFilters = ref<any>({});
 
 const dynamicSearchPlaceholder = computed(() => {

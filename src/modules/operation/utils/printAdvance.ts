@@ -1,4 +1,3 @@
-import { currencyFormatter } from "@/utils/utils";
 
 export function printAdvance(
   advance: any,
@@ -53,6 +52,13 @@ export function printAdvance(
       .reduce((sum: number, t: any) => sum + getEffectiveAmount(t), 0);
   });
 
+  const typeTotals: Record<string, number> = {};
+  options.types.forEach((type) => {
+    typeTotals[type] = filteredTransactions
+      .filter((t: any) => t.type === type)
+      .reduce((sum: number, t: any) => sum + getEffectiveAmount(t), 0);
+  });
+
   const totalAmount = filteredTransactions.reduce(
     (sum: number, t: any) => sum + getEffectiveAmount(t),
     0,
@@ -64,6 +70,17 @@ export function printAdvance(
     <tr class="category-total">
       <td colspan="4" style="text-align: right;">${getCategoryDisplayName(category)} Total:</td>
       <td style="text-align: right;">${categoryTotals[category].toLocaleString()}</td>
+      <td></td>
+    </tr>`,
+    )
+    .join("");
+
+  const typeTotalRows = options.types
+    .map(
+      (type) => `
+    <tr class="type-total">
+      <td colspan="4" style="text-align: right;">${type} Total:</td>
+      <td style="text-align: right;">${typeTotals[type].toLocaleString()}</td>
       <td></td>
     </tr>`,
     )
@@ -102,7 +119,8 @@ export function printAdvance(
     .summary-table th, .summary-table td { border: 1px solid #dfe1e7; padding: 10px 12px; text-align: left; }
     .summary-table th { background-color: #f8f9fc; color: #475467; text-transform: uppercase; font-weight: 700; font-size: 10px; letter-spacing: 0.5px; }
     
-    .category-total { font-weight: bold; background-color: #f9fafb; color: #344054; }
+    .category-total { font-weight: bold; background-color: #f0f0f0; color: #344054; }
+    .type-total { font-weight: bold; background-color: #e8e8e8; color: #344054; }
     .grand-total { font-weight: 800; background-color: #eff8ff; color: #175cd3; font-size: 13px; }
     
     .signature-footer { margin-top: 60px; }
@@ -119,8 +137,7 @@ export function printAdvance(
     
     .footer-meta { text-align: right; font-size: 10px; color: #98a2b3; border-top: 1px solid #f2f4f7; padding-top: 10px; }
 
-    @media print { 
-      .no-print { display: none; } 
+    @media print {
       body { padding: 0; }
       .signature-footer { position: fixed; bottom: 40px; width: calc(100% - 60px); }
       @page { margin: 1.5cm; }
@@ -180,7 +197,8 @@ export function printAdvance(
         .join("")}
       
       ${categoryTotalRows}
-      
+      ${typeTotalRows}
+
       <tr class="grand-total">
         <td colspan="4" style="text-align: right; text-transform: uppercase;">Total Settlement Amount:</td>
         <td style="text-align: right;">${totalAmount.toLocaleString()}</td>
@@ -214,14 +232,7 @@ export function printAdvance(
     </div>
   </div>
 
-  <div class="no-print" style="position: fixed; bottom: 30px; right: 30px; display: flex; gap: 12px;">
-    <button onclick="window.print()" style="padding: 12px 24px; background: #2222FF; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 700; box-shadow: 0 4px 12px rgba(34, 34, 255, 0.3);">
-      Print Report
-    </button>
-    <button onclick="window.close()" style="padding: 12px 24px; background: #666; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 700;">
-      Close
-    </button>
-  </div>
+
 
   <script>
     window.onload = function() {

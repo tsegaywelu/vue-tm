@@ -1,6 +1,20 @@
 @import "tailwindcss";
 @source not "../.claude/";
 
+/* Tailwind preflight sets img { max-width: 100%; height: auto } which breaks Leaflet tile rendering */
+.leaflet-container img {
+  max-width: none !important;
+  max-height: none !important;
+}
+
+.leaflet-map-pane,
+.leaflet-tile-pane,
+.leaflet-layer,
+.leaflet-tile-container {
+  width: 100% !important;
+  height: 100% !important;
+}
+
 @layer base {
   * {
     scroll-behavior: smooth;

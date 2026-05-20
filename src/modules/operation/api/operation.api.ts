@@ -529,6 +529,15 @@ export function fetch_all_shipments_unpaginated(
   return shipment_api.addAuthenticationHeader().get("", { params, ...config });
 }
 
+export function fetch_all_sub_contracts_unpaginated(
+  params?: Record<string, any>,
+  config?: any,
+) {
+  return shipment_api
+    .addAuthenticationHeader()
+    .get("/payableShipmentsPaid", { params, ...config });
+}
+
 export function add_insurance(data: any) {
   const config = data instanceof FormData
     ? { headers: { 'Content-Type': 'multipart/form-data' } }
