@@ -24,6 +24,16 @@
         label_key="name"
         value_key="_id"
         searchable
+        :params="
+          (state) => {
+            return {
+              name: {
+                regex: state.search,
+              },
+              q: undefined,
+            };
+          }
+        "
         :display_value="labels.agent"
       />
     </template>

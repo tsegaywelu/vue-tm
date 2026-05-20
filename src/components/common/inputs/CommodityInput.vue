@@ -38,5 +38,7 @@ const props = defineProps<{
   attributes?: any;
   parent_class_name?: string;
   show_validation_status?: boolean;
+  display_value?: string;
+  initial_labels?: Record<string, string>;
 }>();
 </script>

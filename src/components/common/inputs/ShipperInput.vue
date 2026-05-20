@@ -28,5 +28,7 @@ const props = defineProps<{
   url?: string;
   attributes?: any;
   parent_class_name?: string;
+  display_value?: string;
+  validation?: any;
 }>();
 </script>

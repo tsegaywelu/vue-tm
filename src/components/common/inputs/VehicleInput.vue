@@ -40,6 +40,7 @@ const props = defineProps<{
   validation?: any;
   initial_labels?: Record<string, any>;
   options?: any[];
+  display_value?: string;
 }>();
 
 console.log(props.options, "options");

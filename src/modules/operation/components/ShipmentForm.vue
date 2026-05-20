@@ -23,7 +23,19 @@
             @select="(opt) => handleOrderSelect(opt.item, form)"
           />
 
+          <!-- shipper -->
+          <ShipperInput
+            v-if="props.mode === 'edit'"
+            name="shipper"
+            label="Shipper"
+            searchable
+            label_key="shipper.name"
+            value_key="shipper._id"
+            :display_value="internalLabels.shipper"
+            :validation="{ required }"
+          />
           <SelectInput
+            v-else
             parent_class_name="[&_.input-focus]:bg-grey-25!"
             name="shipper"
             label="Shipper"
@@ -34,12 +46,32 @@
               placeholder: 'Auto filled values based on selected order',
               disabled: true,
             }"
-            :validation="{
-              required,
-            }"
+            :validation="{ required }"
           />
 
+          <!-- route (depends on current shipper value) -->
+          <template v-if="props.mode === 'edit'">
+            <component
+              :is="form.Subscribe"
+              :selector="(state: any) => [state.values.shipper]"
+            >
+              <template #default="[shipper]">
+                <SelectInput
+                  :key="`route-${shipper}`"
+                  name="route"
+                  label="Route"
+                  searchable
+                  :url="shipper ? `/route/shipper/${shipper}` : '/route'"
+                  label_key="routeName"
+                  value_key="_id"
+                  :display_value="internalLabels.route"
+                  :validation="{ required }"
+                />
+              </template>
+            </component>
+          </template>
           <SelectInput
+            v-else
             parent_class_name="[&_.input-focus]:bg-grey-25!"
             name="route"
             label="Route"
@@ -50,44 +82,71 @@
               placeholder: 'Auto filled values based on selected order',
               disabled: true,
             }"
-            :validation="{
-              required,
-            }"
+            :validation="{ required }"
           />
 
+          <!-- tripType: full enum options in edit, single auto-filled option in add -->
           <SelectInput
-            parent_class_name="[&_.input-focus]:bg-grey-25!"
+            :parent_class_name="
+              props.mode !== 'edit' ? '[&_.input-focus]:bg-grey-25!' : ''
+            "
             name="tripType"
             label="Trip Type"
-            hide_icon
-            :options="autoFilledOptions.tripType"
+            :hide_icon="props.mode !== 'edit'"
+            :options="
+              props.mode === 'edit'
+                ? tripTypeOptions
+                : autoFilledOptions.tripType
+            "
             :display_value="internalLabels.tripType"
             :attributes="{
-              disabled: true,
-              placeholder: 'Auto filled values based on selected order',
+              disabled: props.mode !== 'edit',
+              placeholder:
+                props.mode === 'edit'
+                  ? 'Select trip type'
+                  : 'Auto filled values based on selected order',
             }"
-            :validation="{
-              required,
-            }"
+            :validation="{ required }"
           />
 
+          <!-- productType: full enum options in edit, single auto-filled option in add -->
           <SelectInput
-            parent_class_name="[&_.input-focus]:bg-grey-25!"
+            :parent_class_name="
+              props.mode !== 'edit' ? '[&_.input-focus]:bg-grey-25!' : ''
+            "
             name="productType"
             label="Product Type"
-            hide_icon
-            :options="autoFilledOptions.productType"
+            :hide_icon="props.mode !== 'edit'"
+            :options="
+              props.mode === 'edit'
+                ? productTypeOptions
+                : autoFilledOptions.productType
+            "
             :display_value="internalLabels.productType"
             :attributes="{
-              disabled: true,
-              placeholder: 'Auto filled values based on selected order',
+              disabled: props.mode !== 'edit',
+              placeholder:
+                props.mode === 'edit'
+                  ? 'Select product type'
+                  : 'Auto filled values based on selected order',
             }"
-            :validation="{
-              required,
-            }"
+            :validation="{ required }"
           />
 
+          <!-- vehicleType -->
           <SelectInput
+            v-if="props.mode === 'edit'"
+            name="vehicleType"
+            label="Vehicle Type"
+            searchable
+            url="/vehicle-type"
+            label_key="name"
+            value_key="_id"
+            :display_value="internalLabels.vehicleType"
+            :validation="{ required }"
+          />
+          <SelectInput
+            v-else
             parent_class_name="[&_.input-focus]:bg-grey-25!"
             name="vehicleType"
             label="Vehicle Type"
@@ -98,12 +157,19 @@
               disabled: true,
               placeholder: 'Auto filled values based on selected order',
             }"
-            :validation="{
-              required,
-            }"
+            :validation="{ required }"
           />
 
+          <!-- commodity -->
+          <CommodityInput
+            v-if="props.mode === 'edit'"
+            name="commodity"
+            multiple
+            :initial_labels="internalLabels.commodity"
+            :validation="{ required: (val: any) => required(val) }"
+          />
           <SelectInput
+            v-else
             parent_class_name="[&_.input-focus]:bg-grey-25!"
             name="commodity"
             label="Commodity"
@@ -115,12 +181,22 @@
               disabled: true,
               placeholder: 'Auto filled values based on selected order',
             }"
-            :validation="{
-              required: (val: any) => required(val),
-            }"
+            :validation="{ required: (val: any) => required(val) }"
           />
 
+          <!-- packaging -->
+          <PackagingInput
+            v-if="props.mode === 'edit'"
+            name="packaging"
+            :display_value="internalLabels.packaging"
+            :validation="{ required }"
+            :params="{
+              limit: undefined,
+              page: undefined,
+            }"
+          />
           <SelectInput
+            v-else
             parent_class_name="[&_.input-focus]:bg-grey-25!"
             name="packaging"
             label="Packaging"
@@ -131,9 +207,7 @@
               disabled: true,
               placeholder: 'Auto filled values based on selected order',
             }"
-            :validation="{
-              required,
-            }"
+            :validation="{ required }"
           />
           <slot name="order-selection-extra" :form="form"></slot>
         </div>
@@ -255,6 +329,31 @@
           </div>
 
           <SelectInput
+            v-if="props.mode === 'edit'"
+            name="driver"
+            label="Driver"
+            searchable
+            url="/driver"
+            :label_key="
+              (item: any) =>
+                `${item.firstName} ${item.middleName || ''} ${item.lastName || ''}`.trim()
+            "
+            value_key="_id"
+            :display_value="internalLabels.driver"
+            :validation="{ required }"
+            :params="
+              (state) => {
+                return {
+                  name: {
+                    regexAny: state.search,
+                  },
+                  q: undefined,
+                };
+              }
+            "
+          />
+          <SelectInput
+            v-else
             parent_class_name="[&_.input-focus]:bg-grey-25!"
             name="driver"
             label="Driver"
@@ -264,9 +363,7 @@
               disabled: true,
               placeholder: 'Auto filled based on selected vehicle',
             }"
-            :validation="{
-              required,
-            }"
+            :validation="{ required }"
           />
 
           <SelectInput
@@ -307,7 +404,10 @@
       >
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <Input
-            v-if="selectedVehicleOwnership === VehicleOwnership.Owned || selectedVehicleOwnership === VehicleOwnership.Leased"
+            v-if="
+              selectedVehicleOwnership === VehicleOwnership.Owned ||
+              selectedVehicleOwnership === VehicleOwnership.Leased
+            "
             name="odometerAtDispatch"
             label="Odometer at Dispatch"
             :attributes="{
@@ -331,7 +431,10 @@
           />
 
           <Input
-            v-if="selectedVehicleOwnership === VehicleOwnership.Owned || selectedVehicleOwnership === VehicleOwnership.Leased"
+            v-if="
+              selectedVehicleOwnership === VehicleOwnership.Owned ||
+              selectedVehicleOwnership === VehicleOwnership.Leased
+            "
             name="fuelReadingAtDispatch"
             label="Fuel Reading"
             :attributes="{
@@ -411,10 +514,18 @@ import {
   required,
 } from "@/utils/validations";
 import type { Order } from "../operation.types";
-import { PricingType, VehicleOwnership } from "../operation.types";
+import {
+  PricingType,
+  VehicleOwnership,
+  TripType,
+  ProductType,
+} from "../operation.types";
 import { fetch_order_by_id } from "../api/orders.api";
 import { openModal } from "@customizer/modal-x";
 import ApiService from "@/api/ApiService";
+import ShipperInput from "@/components/common/inputs/ShipperInput.vue";
+import CommodityInput from "@/components/common/inputs/CommodityInput.vue";
+import PackagingInput from "@/components/common/inputs/PackagingInput.vue";
 
 const props = withDefaults(
   defineProps<{
@@ -422,9 +533,11 @@ const props = withDefaults(
     initialValues: Record<string, any>;
     labels?: Record<string, any>;
     onSubmit: (values: any, context?: any) => Promise<void> | void;
+    mode?: "add" | "edit";
   }>(),
   {
     labels: () => ({}),
+    mode: "add",
   },
 );
 
@@ -446,6 +559,16 @@ const selectedOrder = ref<Order | null>(null);
 const selectedVehicle = ref<any>(null);
 const filteredPricingType = ref<any>(null);
 const pricingWarning = ref("");
+
+const tripTypeOptions = [
+  { label: "Round Trip", value: TripType.RoundTrip },
+  { label: "Single Trip", value: TripType.SingleTrip },
+];
+
+const productTypeOptions = Object.entries(ProductType).map(([key, value]) => ({
+  label: key,
+  value,
+}));
 
 const waypointOptions = computed(() => {
   if (!selectedOrder.value?.waypoints) return [];

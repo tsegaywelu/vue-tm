@@ -291,9 +291,24 @@ watch(
         searchResult.value = opt.displayLabel || getOptionLabel(opt);
       } else if (props.initial_labels?.[newVal]) {
         searchResult.value = props.initial_labels[newVal];
+      } else if (props.display_value) {
+        searchResult.value = props.display_value;
       }
     } else if (!newVal) {
       searchResult.value = "";
+    }
+  },
+);
+
+watch(
+  () => props.display_value,
+  (newDisplayValue) => {
+    if (!props.searchable || !newDisplayValue) return;
+    const opt = finalOptions.value.find(
+      (o: any) => getOptionValue(o) == currentSelectedValue.value,
+    );
+    if (!opt) {
+      searchResult.value = newDisplayValue;
     }
   },
 );
