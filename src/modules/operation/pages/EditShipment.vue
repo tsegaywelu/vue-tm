@@ -182,7 +182,7 @@ const initialValues = computed(() => {
     pricingType: data.pricingType?._id,
     ...(data.productType !== ProductType["Site Transfer"]
       ? {
-          agent: data.agent?._id ?? null,
+          agent: data.agent?._id ?? data.order?.agent?._id ?? null,
         }
       : {}),
     transporter:
@@ -221,7 +221,7 @@ const labels = computed(() => {
       data.productType
         ?.replace(/_/g, " ")
         .replace(/\b\w/g, (l: string) => l.toUpperCase()) || "",
-    agent: data.agent?.name || "",
+    agent: data.agent?.name || data.order?.agent?.name || "",
   };
 });
 

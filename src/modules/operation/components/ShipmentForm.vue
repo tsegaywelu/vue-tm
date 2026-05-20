@@ -514,6 +514,13 @@ const handleOrderSelect = async (order: Order, form: any) => {
       "commodity",
       order_record.commodity?.map((c: any) => c._id) || [],
     );
+    internalLabels.value.orderCode = order_record.orderCode || "";
+    internalLabels.value.shipper = order_record.shipper?.name || "";
+    internalLabels.value.route = order_record.route?.routeName || "";
+    internalLabels.value.tripType = formatType(order_record.tripType);
+    internalLabels.value.productType = formatType(order_record.productType);
+    internalLabels.value.vehicleType = order_record.vehicleType?.name || "";
+    internalLabels.value.packaging = order_record.packaging?.name || "";
     internalLabels.value.commodity =
       order_record.commodity?.reduce((acc: any, c: any) => {
         acc[c._id] = c.name;

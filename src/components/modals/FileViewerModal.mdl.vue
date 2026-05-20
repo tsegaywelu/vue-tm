@@ -74,11 +74,18 @@
 
         <!-- PDF -->
         <div v-if="isPDF" class="w-full h-full flex justify-center items-center overflow-auto rounded-xl">
-          <iframe
-            :src="`${activeFileURL}#toolbar=0`"
-            class="transition-transform duration-200 ease-in-out origin-center w-full h-full border-0 bg-white"
-            :style="{ transform: `scale(${zoom}) rotate(${rotation}deg)` }"
-          ></iframe>
+          <div v-if="isPDFLoading" class="flex flex-col items-center gap-3 text-gray-500">
+            <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
+            <span class="text-sm">Loading PDF…</span>
+          </div>
+          <div v-else-if="pdfBlobURL" class="w-full h-full">
+            <iframe
+              :src="`${pdfBlobURL}#toolbar=0`"
+              class="transition-transform duration-200 ease-in-out origin-center w-full h-full border-0 bg-white"
+              :style="{ transform: `scale(${zoom}) rotate(${rotation}deg)` }"
+            ></iframe>
+          </div>
+          <div v-else class="text-center text-red-500 text-sm">Failed to load PDF.</div>
         </div>
 
         <!-- Image -->
@@ -114,7 +121,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from "vue";
+import { ref, computed, watch, onUnmounted } from "vue";
 import { closeModal } from "@customizer/modal-x";
 import ModalWrapper from "./ModalWrapper.vue";
 
@@ -152,6 +159,37 @@ const zoom = ref(1);
 const rotation = ref(0);
 
 const isPDF = computed(() => hasExt(".pdf"));
+
+const pdfBlobURL = ref("");
+const isPDFLoading = ref(false);
+
+async function loadPDFBlob(url: string) {
+  if (pdfBlobURL.value) {
+    URL.revokeObjectURL(pdfBlobURL.value);
+    pdfBlobURL.value = "";
+  }
+  if (!url) return;
+  isPDFLoading.value = true;
+  try {
+    const res = await fetch(url);
+    const blob = await res.blob();
+    pdfBlobURL.value = URL.createObjectURL(blob);
+  } catch {
+    pdfBlobURL.value = "";
+  } finally {
+    isPDFLoading.value = false;
+  }
+}
+
+watch(
+  [activeFileURL, isPDF],
+  ([url, pdf]) => { if (pdf) loadPDFBlob(url); },
+  { immediate: true },
+);
+
+onUnmounted(() => {
+  if (pdfBlobURL.value) URL.revokeObjectURL(pdfBlobURL.value);
+});
 const isImage = computed(() =>
   [".jpg", ".jpeg", ".png", ".gif", ".webp"].some(hasExt),
 );

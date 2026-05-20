@@ -14,7 +14,7 @@ export default class ApiService {
   constructor(baseURL?: string) {
     this.api = axios.create({
       baseURL: baseURL ?? backendApi,
-      timeout: 1000 * 60,
+      // timeout: 1000 * 60,
       validateStatus: (status: number) => status >= 200 && status < 300,
     });
 
