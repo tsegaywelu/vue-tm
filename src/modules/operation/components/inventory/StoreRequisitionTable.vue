@@ -190,13 +190,15 @@ const activeFilters = ref<any>({});
 const { response, refetch } = usePagination<any>({
   id: "store-requisitions-list",
   url: "/store-requisition-vouchers",
-  params: computed(() => {
-    const params: any = { ...activeFilters.value };
-    if (searchTerm.value) {
-      params[selectedSearchField.value] = searchTerm.value;
-    }
-    return params;
-  }),
+  params: (state) => {
+    return {
+      [selectedSearchField.value]: {
+        regexAny: state.search,
+      },
+      ...activeFilters.value,
+      q: undefined,
+    };
+  },
 });
 
 const columns: TableColumn<any>[] = [

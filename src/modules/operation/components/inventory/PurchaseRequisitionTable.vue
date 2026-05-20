@@ -10,6 +10,21 @@
       <div class="h-full flex items-center border-r border-gray-200 pr-2 mr-2 w-48">
         <Select
           class="[&_.input-focus]:shadow-none! [&_.input-focus]:border-none [&_.input-focus]:min-h-full min-w-48"
+          v-model="selectedSearchField"
+          :options="searchFieldOptions"
+          label_key="label"
+          value_key="value"
+          :clearable="false"
+        />
+      </div>
+    </template>
+
+    <template #after-search>
+      <div class="flex-1">
+        <Select
+          size="xs"
+          label="Status"
+          class="[&_.input-focus]:bg-grey-25 flex-1 flex max-h-16 h-16 min-h-16 *:w-[220px] *:shrink-0 px-2 gap-2 overflow-auto"
           v-model="activeFilters.status"
           :options="statusOptions"
           label_key="label"
@@ -137,6 +152,12 @@ import Status from "@/components/common/Status.vue";
 
 const emit = defineEmits(["action"]);
 
+const searchFieldOptions = [
+  { label: "Ref No", value: "referenceNumber" },
+  { label: "Item Name", value: "itemName" },
+  { label: "Supplier", value: "supplierName" },
+];
+
 const statusOptions = [
   { label: "Pending", value: "PENDING" },
   { label: "Approved", value: "APPROVED" },
@@ -145,23 +166,25 @@ const statusOptions = [
   { label: "Cancelled", value: "CANCELLED" },
 ];
 
+const selectedSearchField = ref("referenceNumber");
 const searchTerm = ref("");
 
 const dynamicSearchPlaceholder = computed(() => {
-  return "Search by Ref No...";
+  const option = searchFieldOptions.find((o) => o.value === selectedSearchField.value);
+  return option ? `Search by ${option.label}...` : "Search...";
 });
 
 const activeFilters = ref<any>({});
 const { response, refetch } = usePagination<any>({
   id: "purchase-requisitions-list",
   url: "/purchase-requisitions",
-  params: computed(() => {
-    const params: any = { ...activeFilters.value };
-    if (searchTerm.value) {
-      params[`referenceNumber[regexAny]`] = searchTerm.value;
-    }
-    return params;
-  }),
+  params: (state) => {
+    return {
+      [selectedSearchField.value]: { regexAny: state.search },
+      ...activeFilters.value,
+      q: undefined,
+    };
+  },
 });
 
 const columns: TableColumn<any>[] = [

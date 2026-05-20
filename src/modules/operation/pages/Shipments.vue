@@ -161,8 +161,19 @@ const handleShipmentAction = ({
 
 const handleDownload = (type: string) => {
   isDropdownOpen.value = false;
-  const filters = shipmentTableRef.value?.activeParams ?? {};
-  toast.addCustomToast(ShipmentDownloadToast, { type, filters });
+  const raw = shipmentTableRef.value?.activeParams ?? {};
+  const filters = Object.fromEntries(
+    Object.entries(raw).filter(
+      ([, v]) => v !== "" && v !== null && v !== undefined,
+    ),
+  );
+  toast.addCustomToast(ShipmentDownloadToast, {
+    type,
+    filters: {
+      ...filters,
+      selectedFilterOption: undefined,
+    },
+  });
 };
 </script>
 

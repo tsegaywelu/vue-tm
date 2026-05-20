@@ -276,7 +276,7 @@ const handleUpdateShipment = async (values: any, context: any) => {
   }
 
   if (productType !== ProductType["Site Transfer"]) {
-    payload.agent = values.agent;
+    payload.agent = selectedOrder?.agent?._id || values.agent;
   }
 
   const isVehicleOwned = selectedVehicle

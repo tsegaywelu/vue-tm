@@ -18,6 +18,23 @@
         />
       </div>
     </template>
+
+    <template #after-search>
+      <div class="flex-1">
+        <Select
+          size="xs"
+          label="Status"
+          class="[&_.input-focus]:bg-grey-25 flex-1 flex max-h-16 h-16 min-h-16 *:w-[220px] *:shrink-0 px-2 gap-2 overflow-auto"
+          v-model="activeFilters.status"
+          :options="statusOptions"
+          label_key="label"
+          value_key="value"
+          :clearable="true"
+          placeholder="All Statuses"
+        />
+      </div>
+    </template>
+
     <template #cell-status="{ row }">
       <Status :variant="row.status" />
     </template>
@@ -100,7 +117,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { ref, computed } from "vue";
 import Table from "@/components/common/Table.vue";
 import Select from "@/components/common/Select.vue";
 import Dropdown from "@/components/common/Dropdown.vue";
@@ -118,6 +135,13 @@ const searchFieldOptions = [
   { label: "Remark", value: "remark" },
 ];
 
+const statusOptions = [
+  { label: "Pending", value: "PENDING" },
+  { label: "Approved", value: "APPROVED" },
+  { label: "Authorized", value: "AUTHORIZED" },
+  { label: "Cancelled", value: "CANCELLED" },
+];
+
 const selectedSearchField = ref("referenceNumber");
 const searchTerm = ref("");
 
@@ -130,13 +154,13 @@ const activeFilters = ref<any>({});
 const { response, refetch } = usePagination<any>({
   id: "purchase-orders-list",
   url: "/purchase-orders",
-  params: computed(() => {
-    const params: any = { ...activeFilters.value };
-    if (searchTerm.value) {
-      params[`${selectedSearchField.value}[regexAny]`] = searchTerm.value;
-    }
-    return params;
-  }),
+  params: (state) => {
+    return {
+      [selectedSearchField.value]: { regexAny: state.search },
+      ...activeFilters.value,
+      q: undefined,
+    };
+  },
 });
 
 const columns: TableColumn<any>[] = [

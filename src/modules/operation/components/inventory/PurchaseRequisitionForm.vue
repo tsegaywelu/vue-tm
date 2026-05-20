@@ -9,6 +9,16 @@
         label_key="referenceNumber"
         value_key="_id"
         searchable
+        :params="
+          (state) => {
+            return {
+              referenceNumber: {
+                regexAny: state.search,
+              },
+              q: undefined,
+            };
+          }
+        "
         :validation="{ required }"
         @select="handleSRVSelect"
       />

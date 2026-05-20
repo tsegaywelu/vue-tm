@@ -22,6 +22,7 @@ import { useAuthStore } from "@/store/authStore";
 import SubmitButton from "@/components/form/SubmitButton.vue";
 import Button from "@/components/Button.vue";
 import { useMutation, useQueryClient } from "@tanstack/vue-query";
+import { ProductType } from "../operation.types";
 
 const authStore = useAuthStore();
 const queryClient = useQueryClient();
@@ -84,6 +85,10 @@ const handleCreateShipment = async (values: any, context: any) => {
       amount: filteredPricingType?.pricePerUnit || undefined,
     },
   };
+
+  if (productType !== ProductType["Site Transfer"]) {
+    payload.agent = selectedOrder?.agent?._id || values.agent;
+  }
 
   if (values.CKRF) {
     payload.CKRFCode = values.CKRFCode;

@@ -189,6 +189,19 @@
               >
                 Reject
               </button>
+              <template v-if="normalizeAttachments(row).length">
+                <div class="h-px bg-gray-100 my-1"></div>
+                <button
+                  @click="
+                    handlePhotosClick(row);
+                    close();
+                  "
+                  class="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                >
+                  <i class="mdi mdi-image-multiple-outline text-base"></i>
+                  Photos ({{ normalizeAttachments(row).length }})
+                </button>
+              </template>
             </div>
           </template>
         </Dropdown>
@@ -212,6 +225,22 @@ import type { ApprovalRequest } from "../operation.types";
 import type { TableColumn } from "@/components/common/Table.vue";
 import { getPaidTo } from "./finance/payableUtils";
 
+function resolveFileUrl(path: string): string {
+  if (!path) return "";
+  if (path.startsWith("http://") || path.startsWith("https://")) return encodeURI(path);
+  const base = (import.meta.env.v_STATIC_PATH || "").replace(/\/+$/, "");
+  const normalized = path.replace(/\\/g, "/").replace(/^\/+/, "");
+  return `${base}/${encodeURI(normalized)}`;
+}
+
+function normalizeAttachments(row: any): string[] {
+  if (!row) return [];
+  const files: string[] = [];
+  if (Array.isArray(row.attachments)) files.push(...row.attachments.filter(Boolean));
+  if (row.attachment) files.push(row.attachment);
+  return [...new Set(files)].map(resolveFileUrl);
+}
+
 const props = defineProps<{}>();
 const router = useRouter();
 
@@ -232,6 +261,12 @@ const handleApproveClick = async (row: any) => {
   if (res?.amount) {
     emit("action", { row, action: "approve", amount: res.amount });
   }
+};
+
+const handlePhotosClick = (row: any) => {
+  const files = normalizeAttachments(row);
+  if (!files.length) return;
+  openModal("FileViewerModal", { files });
 };
 
 const handleRejectClick = async (row: any) => {
