@@ -245,15 +245,15 @@ const updateMutation = useMutation({
 const handleUpdateShipment = async (values: any, context: any) => {
   const { selectedOrder, selectedVehicle, filteredPricingType } = context;
 
-  const shipperId = selectedOrder?.shipper?._id || values.shipper;
+  const shipperId = values.shipper || selectedOrder?.shipper?._id;
   const driverId = values.driver || selectedVehicle?.driver?._id;
-  const transporterId = selectedVehicle?.transporter?._id || values.transporter;
-  const vehicleTypeId = selectedOrder?.vehicleType?._id || values.vehicleType;
-  const routeId = selectedOrder?.route?._id || values.route;
-  const productType = selectedOrder?.productType || values.productType;
-  const tripType = selectedOrder?.tripType || values.tripType;
-  const packagingId = selectedOrder?.packaging?._id || values.packaging;
-  const vehicleId = selectedVehicle?._id || values.vehicle;
+  const transporterId = values.transporter || selectedVehicle?.transporter?._id;
+  const vehicleTypeId = values.vehicleType || selectedOrder?.vehicleType?._id;
+  const routeId = values.route || selectedOrder?.route?._id;
+  const productType = values.productType || selectedOrder?.productType;
+  const tripType = values.tripType || selectedOrder?.tripType;
+  const packagingId = values.packaging || selectedOrder?.packaging?._id;
+  const vehicleId = values.vehicle || selectedVehicle?._id;
 
   const payload: any = {
     shipper: shipperId,
@@ -286,7 +286,7 @@ const handleUpdateShipment = async (values: any, context: any) => {
   }
 
   if (productType !== ProductType["Site Transfer"]) {
-    payload.agent = selectedOrder?.agent?._id || values.agent;
+    payload.agent = values.agent || selectedOrder?.agent?._id;
   }
 
   const isVehicleOwned = selectedVehicle
