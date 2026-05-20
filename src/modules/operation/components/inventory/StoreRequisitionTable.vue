@@ -5,7 +5,7 @@
     :columns="columns"
     :rows="response"
     :search_placeholder="dynamicSearchPlaceholder"
-    @row_click="row => handleAction(row, 'view')"
+    @row_click="(row) => handleAction(row, 'view')"
   >
     <template #search-prefix>
       <div
@@ -13,6 +13,21 @@
       >
         <Select
           class="[&_.input-focus]:shadow-none! [&_.input-focus]:border-none [&_.input-focus]:min-h-full min-w-48"
+          v-model="selectedSearchField"
+          :options="searchFieldOptions"
+          label_key="label"
+          value_key="value"
+          :clearable="false"
+        />
+      </div>
+    </template>
+
+    <template #after-search>
+      <div class="flex-1">
+        <Select
+          size="xs"
+          label="Status"
+          class="[&_.input-focus]:bg-grey-25 flex-1 flex max-h-16 h-16 min-h-16 *:w-[220px] *:shrink-0 px-2 gap-2 overflow-auto"
           v-model="activeFilters.status"
           :options="statusOptions"
           label_key="label"
@@ -22,6 +37,7 @@
         />
       </div>
     </template>
+
     <template #cell-status="{ row }">
       <Status :variant="row.status" />
     </template>
@@ -44,22 +60,16 @@
       </div>
     </template>
 
-    <template #cell-date="{ row }">
-      {{ new Date(row.date).toLocaleDateString() }}
+    <template #cell-date="{ value }">
+      {{ dateFormatter(value) }}
     </template>
 
-    <template #cell-requiredDate="{ row }">
-      {{ new Date(row.requiredDate).toLocaleDateString() }}
+    <template #cell-requiredDate="{ value }">
+      {{ dateFormatter(value) }}
     </template>
 
     <template #cell-preparedBy="{ row }">
-      <!-- <div class="flex items-center gap-2">
-        <div class="size-7 rounded-full bg-primary/10 flex items-center justify-center text-primary text-[10px] font-bold">
-          {{ row.preparedBy?.firstName?.[0] }}{{ row.preparedBy?.lastName?.[0] }}
-        </div>
-        <span class="text-xs font-medium">{{ row.preparedBy?.firstName }} {{ row.preparedBy?.lastName }}</span> -->
       {{ row.preparedBy?.username }} {{ row.preparedBy?.lastName }}
-      <!-- </div> -->
     </template>
 
     <template #cell-actions="{ row }">
@@ -147,8 +157,15 @@ import { usePagination } from "@/composables/usePagination";
 import { icons } from "@/utils/icons";
 import type { TableColumn } from "@/components/common/Table.vue";
 import Status from "@/components/common/Status.vue";
+import { dateFormatter } from "@/utils/utils";
 
 const emit = defineEmits(["action"]);
+
+const searchFieldOptions = [
+  { label: "Ref No", value: "referenceNumber" },
+  { label: "Item Name", value: "itemName" },
+  { label: "Remark", value: "remark" },
+];
 
 const statusOptions = [
   { label: "Pending", value: "PENDING" },
@@ -158,20 +175,25 @@ const statusOptions = [
   { label: "Cancelled", value: "CANCELLED" },
 ];
 
+const selectedSearchField = ref("referenceNumber");
 const searchTerm = ref("");
 
 const dynamicSearchPlaceholder = computed(() => {
-  return "Search by Ref No...";
+  const option = searchFieldOptions.find(
+    (o) => o.value === selectedSearchField.value,
+  );
+  return option ? `Search by ${option.label}...` : "Search...";
 });
 
 const activeFilters = ref<any>({});
+
 const { response, refetch } = usePagination<any>({
   id: "store-requisitions-list",
   url: "/store-requisition-vouchers",
   params: computed(() => {
     const params: any = { ...activeFilters.value };
     if (searchTerm.value) {
-      params[`referenceNumber[regexAny]`] = searchTerm.value;
+      params[selectedSearchField.value] = searchTerm.value;
     }
     return params;
   }),
@@ -186,22 +208,6 @@ const columns: TableColumn<any>[] = [
   { key: "status", label: "Status", field: "status" },
   { key: "actions", label: "Actions", field: "", cellAlign: "center" },
 ];
-
-const getStatusVariant = (status: string) => {
-  switch (status) {
-    case "PENDING":
-      return "warning";
-    case "APPROVED":
-      return "info";
-    case "AUTHORIZED":
-      return "success";
-    case "CANCELLED":
-    case "REJECTED":
-      return "error";
-    default:
-      return "neutral";
-  }
-};
 
 const handleAction = (row: any, action: string) => {
   emit("action", { row, action });
