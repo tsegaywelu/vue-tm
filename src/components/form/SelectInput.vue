@@ -32,6 +32,7 @@
         :multiple="multiple"
         :url="url"
         :base_url="base_url"
+        :search_key="search_key"
         :params="params"
         :label_key="label_key"
         :value_key="value_key"
@@ -70,6 +71,7 @@ export interface SelectInputProps extends InputLayoutProps {
   multiple?: boolean;
   url?: string;
   base_url?: string;
+  search_key?: string;
   params?:
     | Record<string, any>
     | ((data: {

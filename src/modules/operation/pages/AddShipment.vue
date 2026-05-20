@@ -73,8 +73,6 @@ const handleCreateShipment = async (values: any, context: any) => {
     waypoint: values.waypoint,
     freightOrder: values.freightOrder,
     dispatchWeight: Number(values.dispatchWeight) || undefined,
-    odometerAtDispatch: Number(values.odometerAtDispatch) || undefined,
-    fuelReadingAtDispatch: Number(values.fuelReadingAtDispatch) || undefined,
     deadHole: Math.max(0, Number(values.deadHole)) || undefined,
     dispatchDate: values.dispatchDate,
     remark: values.remark,
@@ -103,6 +101,14 @@ const handleCreateShipment = async (values: any, context: any) => {
   } else {
     payload.transporter = null;
     payload.transporterPrice = null;
+  }
+
+  const isOwnedOrRental =
+    selectedVehicle?.ownership === "Owned" ||
+    selectedVehicle?.ownership === "Rental";
+  if (isOwnedOrRental) {
+    payload.odometerAtDispatch = Number(values.odometerAtDispatch) || undefined;
+    payload.fuelReadingAtDispatch = Number(values.fuelReadingAtDispatch) || undefined;
   }
 
   const res = await mutation.mutateAsync(payload);

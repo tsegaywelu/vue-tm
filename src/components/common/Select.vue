@@ -199,6 +199,7 @@ export interface SelectProps extends Omit<InputLayoutProps, "error"> {
   multiple?: boolean;
   url?: string;
   base_url?: string;
+  search_key?: string;
   params?:
     | Record<string, any>
     | ((data: {
@@ -322,6 +323,7 @@ const {
   url: props.url,
   autofetch: isRemote.value,
   params: computedParams,
+  searchKey: props.search_key || "q",
   ...(customApi ? { api: customApi } : {}),
 });
 
