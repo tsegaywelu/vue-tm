@@ -11,6 +11,7 @@
       form-id="edit-agent-form"
       :initial-values="agent"
       :on-submit="handleUpdateAgent"
+      :labels="labels"
     >
       <template #submit-btn>
         <Button size="md" variant="outline" @click="router.back()">
@@ -44,7 +45,11 @@ const { data: agentRes, isLoading } = useQuery({
 });
 
 const agent = computed(() => agentRes.value?.data);
-
+const labels = computed(() => {
+  return {
+    shipper: agentRes?.value?.data.shipper?.name,
+  };
+});
 const mutation = useMutation({
   mutationFn: (values: any) => update_agent(agentId, values),
 });

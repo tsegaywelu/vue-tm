@@ -107,7 +107,7 @@ export function exportInvoiceToExcel(invoice: any) {
   const requestingMonth = fmtRequestingMonth(shipments);
 
   const inboundHeaders = ["No", "Business Unit", "Date", "Allocation Num", "Material Type", "Truck Type", "Supplier Name", "Origin", "Destination", "Route", "Truck Plate Number", "Driver Name", "GRN", "QTY", "Tarrif", "Remark"];
-  const outboundHeaders = ["No", "Service Date (MM, DD, YYY)", "PLATE NUMBER", "Truck Ownership", "GPS Status", "Origin", "Destination", "Distributer Name", `FPIV (${shipperName})`, "Loaded Quantity", "Number of Trip", "Receiving Voucher (Agent)", "CKRF", "Container ISSUE Voucher (Agent)", `Container Receiving Voucher (${shipperName})`, "Returned Quantity", "Tariff", "Payment Request", "Remark"];
+  const outboundHeaders = ["No", "Posting Date", "Distributor Number", "Distributor Name", "Original Doc", "For Document Number", "SR Doc. No", "UOM", "Business Unit", "Route Code", "Route Description", "Vehicle", "Shipment Method", "Shipped Qty", "Return Qty", "Route Tariff", "Rate", "Payment Amount", "Remark"];
   const headers = isInbound ? inboundHeaders : outboundHeaders;
   const colHeaderStyle = isInbound ? S.colHeaderInbound : S.colHeaderOutbound;
 
@@ -155,22 +155,22 @@ export function exportInvoiceToExcel(invoice: any) {
       row = [
         i + 1,
         fmtDate(s.dispatchDate),
-        `${s.vehicle?.plateNumber || ""}/${s.vehicle?.trailerPlate || ""}`,
-        s.vehicle?.ownership === "Owned" ? "Own" : "Subcontracted",
-        s.vehicle?.ownership === "Owned" ? "Yes" : "No",
-        s.route?.origin || "",
-        `${s.route?.origin || ""}_${s.route?.destination || ""}`,
+        s.order?.agent?.agentCode || s.order?.agent?.code || "",
         s.order?.agent?.name || "",
+        s.shipperReceiveVoucher || "",
         s.shipperIssueVoucher || "",
-        s.order?.totalRequest || "",
-        1,
-        s.agentReceiveVoucher || "",
-        s.CKRFCode || "",
-        s.tripType === "round_trip" ? s.agentIssueVoucher || "" : "",
-        s.tripType === "round_trip" ? s.shipperReceiveVoucher || "" : "",
         "",
+        s.order?.packaging?.name || "",
+        s.route?.destination || "",
+        s.route?.routeCode || s.order?.route?.routeCode || "",
+        `${s.route?.origin || ""} - ${s.route?.destination || ""}`,
+        `${s.vehicle?.plateNumber || ""}/${s.vehicle?.trailerPlate || ""}`,
+        "DELIVERY",
+        s.order?.totalRequest || s.dispatchWeight || "",
+        s.returnQty || "",
         fmtPrice(s.totalPrice),
-        s.totalPrice || "",
+        fmtPrice(s.totalPrice / (s.order?.totalRequest || s.dispatchWeight || 1)),
+        fmtPrice(s.totalPrice),
         s.remark || "",
       ];
     }

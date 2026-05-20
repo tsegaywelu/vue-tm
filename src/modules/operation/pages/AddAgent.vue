@@ -50,7 +50,7 @@ const mutation = useMutation({
 
 const handleCreateAgent = async (values: any) => {
   const res = await mutation.mutateAsync(values);
-  if (res.success || res.status === 200 || res.status === 201) {
+  if (res.success) {
     toast.success("Agent added successfully!");
     router.push("/agents");
   } else {

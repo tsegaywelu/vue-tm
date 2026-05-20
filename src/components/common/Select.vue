@@ -388,15 +388,19 @@ const finalOptions = computed(() => {
 
   let mapped = list.map((item: any) => {
     if (typeof item === "string") return { label: item, value: item, item };
+
+    const resolvedLabel =
+      typeof props.label_key === "function"
+        ? props.label_key(item)
+        : getValueByPath(item, props.label_key as string);
+    const resolvedValue =
+      typeof props.value_key === "function"
+        ? props.value_key(item)
+        : getValueByPath(item, props.value_key as string);
+
     return {
-      label:
-        typeof props.label_key === "function"
-          ? props.label_key(item)
-          : (getValueByPath(item, props.label_key as string) ?? ""),
-      value:
-        typeof props.value_key === "function"
-          ? props.value_key(item)
-          : (getValueByPath(item, props.value_key as string) ?? ""),
+      label: resolvedLabel ?? item.label ?? "",
+      value: resolvedValue ?? item.value ?? "",
       displayLabel:
         typeof props.display_label_fn === "function"
           ? props.display_label_fn(item)

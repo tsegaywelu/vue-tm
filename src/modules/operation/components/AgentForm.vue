@@ -16,6 +16,12 @@
             v-if="!hideShipper"
             name="shipper"
             label="Shipper"
+            :options="[
+              {
+                label: labels?.shipper,
+                value: initialValues?.shipper?._id,
+              },
+            ]"
             url="/shipper"
             label_key="name"
             value_key="_id"
@@ -171,6 +177,7 @@ const props = defineProps<{
   initialValues: Record<string, any>;
   onSubmit: (values: any) => Promise<void> | void;
   hideShipper?: boolean;
+  labels?: Record<string, string>;
 }>();
 
 const initialFormValues = computed(() => {
@@ -245,7 +252,10 @@ onMounted(() => {
       }).addTo(map);
 
       marker = L.marker([startLat, startLng], { icon: pinIcon }).addTo(map);
-      if (!selectedLocation.value.latitude || !selectedLocation.value.longitude) {
+      if (
+        !selectedLocation.value.latitude ||
+        !selectedLocation.value.longitude
+      ) {
         selectedLocation.value = { latitude: startLat, longitude: startLng };
       }
 

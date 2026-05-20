@@ -98,10 +98,10 @@ export function exportInvoiceToExcel(invoice: any) {
   let headers: string[] = [];
   if (isOutbound) {
     headers = [
-      "No", "Service Date", "Plate Number", "Truck Ownership", "GPS Status",
-      "Origin", "Destination", "Distributor Name", "FPIV", "Loaded Qty",
-      "Trips", "Receiving Voucher", "CKRF", "Container Issue", "Container Receive",
-      "Returned Qty", "Tariff", "Payment Request", "Remark"
+      "No", "Posting Date", "Distributor Number", "Distributor Name", "Original Doc",
+      "For Document Number", "SR Doc. No", "UOM", "Business Unit", "Route Code",
+      "Route Description", "Vehicle", "Shipment Method", "Shipped Qty", "Return Qty",
+      "Route Tariff", "Rate", "Payment Amount", "Remark"
     ];
   } else {
     headers = [
@@ -120,21 +120,23 @@ export function exportInvoiceToExcel(invoice: any) {
       row = [
         index + 1,
         s.dispatchDate?.split("T")[0] || "-",
-        s.vehiclePlateNumber || s.vehicle?.plateNumber || "-",
-        s.vehicleOwnership || (s.vehicle?.ownership === "Owned" ? "Own" : "Subcontracted"),
-        s.vehicle?.ownership === "Owned" ? "Yes" : "No",
-        s.routeOrigin || s.route?.origin || "-",
-        s.routeDestination || s.route?.destination || "-",
-        s.agentName || s.agent?.name || "-",
-        s.shipperIssueVoucher || "-",
-        s.quantity || s.order?.totalRequest || 0,
-        1,
-        s.agentReceiveVoucher || "-",
-        s.CKRFCode || "-",
-        s.agentIssueVoucher || "-",
+        s.agentCode || s.order?.agent?.agentCode || s.order?.agent?.code || "-",
+        s.agentName || s.order?.agent?.name || "-",
         s.shipperReceiveVoucher || "-",
-        "-",
+        s.shipperIssueVoucher || "-",
+        "",
+        s.order?.packaging?.name || "-",
+        s.routeDestination || s.route?.destination || "-",
+        s.route?.routeCode || s.order?.route?.routeCode || "-",
+        `${s.routeOrigin || s.route?.origin || ""} - ${s.routeDestination || s.route?.destination || ""}`,
+        `${s.vehiclePlateNumber || s.vehicle?.plateNumber || ""}/${s.vehicle?.trailerPlate || ""}`,
+        "DELIVERY",
+        s.quantity || s.order?.totalRequest || s.dispatchWeight || 0,
+        s.returnQty || "-",
         s.totalPrice || 0,
+        s.totalPrice && (s.quantity || s.order?.totalRequest || s.dispatchWeight)
+          ? +(s.totalPrice / (s.quantity || s.order?.totalRequest || s.dispatchWeight || 1)).toFixed(2)
+          : 0,
         s.totalPrice || 0,
         s.remark || ""
       ];
