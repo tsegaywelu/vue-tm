@@ -20,9 +20,11 @@
         v-if="form.state.values.productType !== ProductType['Site Transfer']"
         name="agent"
         label="Agent"
-        url="/agent"
+        url="/agent/shipper/carrier"
         label_key="name"
         value_key="_id"
+        searchable
+        :display_value="labels.agent"
       />
     </template>
 
@@ -219,6 +221,7 @@ const labels = computed(() => {
       data.productType
         ?.replace(/_/g, " ")
         .replace(/\b\w/g, (l: string) => l.toUpperCase()) || "",
+    agent: data.agent?.name || "",
   };
 });
 
