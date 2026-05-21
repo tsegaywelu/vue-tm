@@ -73,6 +73,11 @@ import {
   update_lease_status,
 } from "../../api/operation.api";
 import { update_purchase_order_payment_status } from "../../api/inventory.api";
+import {
+  set_payable_shipment_paid,
+  set_payable_shipment_authorized,
+  set_payable_shipment_cancelled,
+} from "../../api/shipment.api";
 import { useToastStore } from "@/store/toastStore";
 import { useAuthStore } from "@/store/authStore";
 import Button from "@/components/Button.vue";
@@ -191,8 +196,12 @@ const mutation = useMutation({
         return update_lease_status(id, action);
       case "purchaseOrder":
         return update_purchase_order_payment_status(id, action);
+      case "shipments":
+        if (action === "pay") return set_payable_shipment_paid(id);
+        if (action === "authorize") return set_payable_shipment_authorized(id);
+        if (action === "cancel") return set_payable_shipment_cancelled(id);
+        break;
       default:
-        // For shipments or unknown types, try advance status update as fallback or add specific logic
         return update_advance_status(id, action, data);
     }
   },

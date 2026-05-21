@@ -60,9 +60,9 @@
       </span>
     </template>
 
-    <template #cell-status="{ value }">
-      <Status :variant="value" type="wrapped">
-        {{ value?.replace(/_/g, " ") }}
+    <template #cell-status="{ value, row }">
+      <Status :variant="row.payableType === 'shipments' ? row.payableStatus : value" type="wrapped">
+        {{ (row.payableType === 'shipments' ? row.payableStatus : value)?.replace(/_/g, " ") }}
       </Status>
     </template>
 
@@ -269,7 +269,7 @@ const handleFilterChange = (newFilters: any) => {
 };
 
 const canAction = (row: any, action: string) => {
-  const status = row.status || row.payableStatus;
+  const status = row.payableType === "shipments" ? row.payableStatus : (row.status || row.payableStatus);
 
   if (action === "pay") {
     return status === "AUTHORIZED";
