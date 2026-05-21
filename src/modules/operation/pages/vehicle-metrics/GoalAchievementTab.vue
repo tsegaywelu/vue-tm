@@ -17,6 +17,7 @@
       :loading="isLoading"
       :show_pagination="false"
       v-model:search_value="state.search"
+      client_sort
     >
       <template #after-search>
         <VehicleMetricsFilter pagination-id="/goal-achievement" @change="(val) => Object.assign(filters, val)" />

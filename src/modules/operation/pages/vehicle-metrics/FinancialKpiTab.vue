@@ -11,7 +11,7 @@
       <StatsCards :stats="summaryStats" :loading="isLoading" />
     </Teleport>
 
-    <Table :columns="columns" :rows="tableData" :show_pagination="false">
+    <Table :columns="columns" :rows="tableData" :show_pagination="false" client_sort>
       <template #after-search>
         <VehicleMetricsFilter
           show-vehicle-use
@@ -167,29 +167,25 @@ const summaryStats = computed(() => [
 ]);
 
 const columns: TableColumn[] = [
-  { key: "plateNumber", label: "Plate Number▲", sortable: true },
-  { key: "ownership", label: "Ownership" },
+  { key: "plateNumber", label: "Plate Number", sortable: true },
+  { key: "ownership", label: "Ownership", sortable: true },
   { key: "vehicleUseType", label: "Vehicle Use" },
   { key: "totalRevenue", label: "Revenue", sortable: true, cellAlign: "right" },
-  {
-    key: "outwardLeaseRevenue",
-    label: "Lease Revenue",
-    cellAlign: "right",
-  },
-  { key: "fuelCost", label: "Fuel Cost", cellAlign: "right" },
-  { key: "maintenanceCost", label: "Maint. Cost", cellAlign: "right" },
-  { key: "tyreCost", label: "Tyre Cost", cellAlign: "right" },
-  { key: "inwardLeaseCost", label: "Inward Lease Cost", cellAlign: "right" },
-  { key: "perDiemCost", label: "Per Diem", cellAlign: "right" },
-  { key: "otherAdvancesCost", label: "Other Adv.", cellAlign: "right" },
+  { key: "outwardLeaseRevenue", label: "Lease Revenue", sortable: true, cellAlign: "right" },
+  { key: "fuelCost", label: "Fuel Cost", sortable: true, cellAlign: "right" },
+  { key: "maintenanceCost", label: "Maint. Cost", sortable: true, cellAlign: "right" },
+  { key: "tyreCost", label: "Tyre Cost", sortable: true, cellAlign: "right" },
+  { key: "inwardLeaseCost", label: "Inward Lease Cost", sortable: true, cellAlign: "right" },
+  { key: "perDiemCost", label: "Per Diem", sortable: true, cellAlign: "right" },
+  { key: "otherAdvancesCost", label: "Other Adv.", sortable: true, cellAlign: "right" },
   { key: "totalCost", label: "Total Cost", sortable: true, cellAlign: "right" },
   { key: "totalKilometers", label: "Total Km", sortable: true },
-  { key: "numberOfTrips", label: "Trips" },
-  { key: "costPerKm", label: "Cost/Km", cellAlign: "right" },
-  { key: "opMargin", label: "Op. Margin" },
-  { key: "netProfitMargin", label: "Net Profit %" },
-  { key: "fuelCostAsPercentageOfRevenue", label: "Fuel %" },
-  { key: "driverCostPerKm", label: "Driver/Km", cellAlign: "right" },
+  { key: "numberOfTrips", label: "Trips", sortable: true },
+  { key: "costPerKm", label: "Cost/Km", sortable: true, cellAlign: "right" },
+  { key: "opMargin", label: "Op. Margin", sortable: true },
+  { key: "netProfitMargin", label: "Net Profit %", sortable: true },
+  { key: "fuelCostAsPercentageOfRevenue", label: "Fuel %", sortable: true },
+  { key: "driverCostPerKm", label: "Driver/Km", sortable: true, cellAlign: "right" },
 ];
 
 const handleExport = async () => {

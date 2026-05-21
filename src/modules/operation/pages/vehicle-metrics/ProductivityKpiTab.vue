@@ -11,7 +11,7 @@
       <StatsCards :stats="summaryStats" :loading="isLoading" />
     </Teleport>
 
-    <Table :columns="columns" :rows="tableData" :show_pagination="false">
+    <Table :columns="columns" :rows="tableData" :show_pagination="false" client_sort>
       <template #after-search>
         <VehicleMetricsFilter
           show-vehicle-use
@@ -168,13 +168,13 @@ const summaryStats = computed(() => [
 const columns: TableColumn[] = [
   { key: "plateNumber", label: "Plate Number", sortable: true },
   { key: "driverName", label: "Driver", sortable: true },
-  { key: "ownership", label: "Ownership" },
+  { key: "ownership", label: "Ownership", sortable: true },
   { key: "vehicleUseType", label: "Vehicle Use" },
   { key: "utilizationRate", label: "Utilization", sortable: true },
-  { key: "emptyReturnRatio", label: "ERR (%)", sortable: true },
+  { key: "emptyReturnRatio", label: "ERR", sortable: true },
   { key: "averageTurnaroundTime", label: "TAT (Days)", sortable: true },
-  { key: "loadFactor", label: "Load Factor (%)", sortable: true },
-  { key: "kmPerDay", label: "Km / Day", sortable: true },
+  { key: "loadFactor", label: "Load Factor", sortable: true },
+  { key: "kmPerDay", label: "Km/Day", sortable: true },
   { key: "idleDays", label: "Idle Days", sortable: true },
   { key: "totalDistance", label: "Total Km", sortable: true },
   { key: "numberOfTrips", label: "Trips", sortable: true },

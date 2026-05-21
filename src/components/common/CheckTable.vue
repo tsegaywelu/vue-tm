@@ -59,7 +59,7 @@
 </template>
 
 <script setup lang="ts" generic="T">
-import { computed } from "vue";
+import { computed, onMounted, watch } from "vue";
 import Table from "./Table.vue";
 import type { TableColumn, TableProps } from "./Table.vue";
 import { icons } from "@/utils/icons";
@@ -70,6 +70,7 @@ interface CheckTableProps<T> extends TableProps<T> {
   unique_key?: keyof T | (string & {});
   check_column?: "first" | "last" | number;
   canBeSelected?: boolean;
+  url?: string;
 }
 
 const props = withDefaults(defineProps<CheckTableProps<T>>(), {
@@ -78,6 +79,7 @@ const props = withDefaults(defineProps<CheckTableProps<T>>(), {
   check_column: "first",
   modelValue: () => [],
   canBeSelected: true,
+  clickable_rows: true,
   hide_on_sm_screen: () => [],
   action_cell: "actions",
 });
@@ -87,6 +89,27 @@ const emit = defineEmits<{
   (e: "selection-change", value: T[]): void;
   (e: "row_click", row: T): void;
 }>();
+
+onMounted(() => {
+  if (!props.url) return;
+  const stored = sessionStorage.getItem(props.url);
+  if (!stored) return;
+  try {
+    const parsed = JSON.parse(stored) as T[];
+    emit("update:modelValue", parsed);
+    emit("selection-change", parsed);
+  } catch {}
+});
+
+watch(
+  () => props.modelValue,
+  (val) => {
+    if (props.url) {
+      sessionStorage.setItem(props.url, JSON.stringify(val));
+    }
+  },
+  { deep: true },
+);
 
 // Filter out checkbox specific props to pass to base Table
 const tableProps = computed(() => {
@@ -100,6 +123,7 @@ const tableProps = computed(() => {
     top_right_cell_key,
     hide_on_sm_screen,
     canBeSelected,
+    url,
     ...rest
   } = props;
   return rest;

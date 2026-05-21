@@ -6,7 +6,7 @@
         <span>Export</span>
       </Button>
     </Teleport>
-    <Table :show_pagination="false" :columns="columns" :rows="metricsData">
+    <Table :show_pagination="false" :columns="columns" :rows="metricsData" client_sort>
       <template #after-search>
         <VehicleMetricsFilter
           show-vehicle-use
@@ -23,15 +23,61 @@
       <template #cell-plateNumber="{ row }">
         <span class="font-bold text-gray-900">{{ row.plateNumber }}</span>
       </template>
-      <template #cell-totalRevenue="{ row }">
-        <span class="font-semibold">{{
-          currencyFormatter(row.totalRevenue)
+      <template #cell-productType="{ value }">
+        <span>{{
+          { IN_BOUND: "In Bound", OUT_BOUND: "Out Bound", SITE_TRANSFER: "Site Transfer", INHOUSE: "Internal Use", LEASE_OUT: "Lease Out" }[value] ?? value ?? "-"
         }}</span>
       </template>
-      <template #cell-totalCost="{ row }">
-        <span class="font-semibold text-red-600">{{
-          currencyFormatter(row.totalCost)
-        }}</span>
+      <template #cell-totalRevenue="{ value }">
+        <span class="font-semibold">{{ currencyFormatter(value) }}</span>
+      </template>
+      <template #cell-totalFuelCost="{ value }">
+        <span>{{ currencyFormatter(value) }}</span>
+      </template>
+      <template #cell-totalFuelUsed="{ value }">
+        <span>{{ numberFormatter(value) }}</span>
+      </template>
+      <template #cell-lastFuelReading="{ value }">
+        <span>{{ numberFormatter(value) }}</span>
+      </template>
+      <template #cell-totalDistance="{ value }">
+        <span>{{ numberFormatter(value) }}</span>
+      </template>
+      <template #cell-totalDistanceTwo="{ value }">
+        <span>{{ numberFormatter(value) }}</span>
+      </template>
+      <template #cell-fuelConsumption="{ value }">
+        <span>{{ value != null ? Number(value).toFixed(3) : "-" }}</span>
+      </template>
+      <template #cell-fuelConsumptionTwo="{ value }">
+        <span>{{ value != null ? Number(value).toFixed(3) : "-" }}</span>
+      </template>
+      <template #cell-totalTyreCost="{ value }">
+        <span>{{ currencyFormatter(value) }}</span>
+      </template>
+      <template #cell-totalMaintenanceCost="{ value }">
+        <span>{{ currencyFormatter(value) }}</span>
+      </template>
+      <template #cell-leaseCost="{ value }">
+        <span>{{ currencyFormatter(value) }}</span>
+      </template>
+      <template #cell-perDiemCost="{ value }">
+        <span>{{ currencyFormatter(value) }}</span>
+      </template>
+      <template #cell-otherAdvancesCost="{ value }">
+        <span>{{ currencyFormatter(value) }}</span>
+      </template>
+      <template #cell-totalCost="{ value }">
+        <span class="font-semibold text-red-600">{{ currencyFormatter(value) }}</span>
+      </template>
+      <template #cell-totalCompletedTrips="{ value }">
+        <span>{{ numberFormatter(value) }}</span>
+      </template>
+      <template #cell-availableDays="{ value }">
+        <span>{{ numberFormatter(value) }}</span>
+      </template>
+      <template #cell-totalGarageDays="{ value }">
+        <span>{{ numberFormatter(value) }}</span>
       </template>
     </Table>
   </div>
@@ -45,7 +91,7 @@ import type { TableColumn } from "@/components/common/Table.vue";
 import Button from "@/components/common/Button.vue";
 import VehicleMetricsFilter from "../../components/VehicleMetricsFilter.vue";
 import { fetch_vehicle_metrics, vehicle_api } from "../../api/operation.api";
-import { currencyFormatter } from "@/utils/utils";
+import { currencyFormatter, numberFormatter } from "@/utils/utils";
 import { exportVehicleMetrics } from "../../utils/vehicleMetricsExport";
 const props = defineProps<{
   dateRange: { start: string; end: string | null };
@@ -98,28 +144,29 @@ const columns: TableColumn[] = [
     cellAlign: "right",
   },
   { key: "totalFuelUsed", label: "Total Fuel Used", sortable: true },
-  { key: "lastFuelReading", label: "Last Fuel Reading" },
+  { key: "lastFuelReading", label: "Last Fuel Reading", sortable: true },
   { key: "totalDistance", label: "Total Distance (Route)", sortable: true },
   {
     key: "totalDistanceTwo",
     label: "Total Distance (Covered)",
     sortable: true,
   },
-  { key: "fuelConsumption", label: "Fuel Consumption (Route)" },
-  { key: "fuelConsumptionTwo", label: "Fuel Consumption (Covered)" },
-  { key: "totalTyreCost", label: "Tyre Cost", cellAlign: "right" },
+  { key: "fuelConsumption", label: "Fuel Consumption (Route)", sortable: true },
+  { key: "fuelConsumptionTwo", label: "Fuel Consumption (Covered)", sortable: true },
+  { key: "totalTyreCost", label: "Tyre Cost", sortable: true, cellAlign: "right" },
   {
     key: "totalMaintenanceCost",
     label: "Maintenance Cost",
+    sortable: true,
     cellAlign: "right",
   },
-  { key: "leaseCost", label: "Lease Cost", cellAlign: "right" },
-  { key: "perDiemCost", label: "Per Diem Cost", cellAlign: "right" },
-  { key: "otherAdvancesCost", label: "Other Advances", cellAlign: "right" },
+  { key: "leaseCost", label: "Lease Cost", sortable: true, cellAlign: "right" },
+  { key: "perDiemCost", label: "Per Diem Cost", sortable: true, cellAlign: "right" },
+  { key: "otherAdvancesCost", label: "Other Advances", sortable: true, cellAlign: "right" },
   { key: "totalCost", label: "Total Cost", sortable: true, cellAlign: "right" },
-  { key: "totalCompletedTrips", label: "Completed Trips" },
-  { key: "availableDays", label: "Available Days" },
-  { key: "totalGarageDays", label: "Garage Days" },
+  { key: "totalCompletedTrips", label: "Completed Trips", sortable: true },
+  { key: "availableDays", label: "Available Days", sortable: true },
+  { key: "totalGarageDays", label: "Garage Days", sortable: true },
 ];
 
 watch(

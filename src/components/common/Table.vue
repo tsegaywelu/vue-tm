@@ -102,13 +102,13 @@
                 <span v-if="show_sort_indicators && header.column.getCanSort()">
                   <div
                     v-if="
-                      props.sort_key ===
+                      activeSortKey ===
                       (header.column.columnDef.meta?.originalColumn.sort_key ||
                         header.column.id)
                     "
                     :class="[
                       'transition-transform *:size-6 size-6 flex items-center justify-center',
-                      props.sort_order === 'asc' ? 'rotate-180' : 'rotate-0',
+                      activeSortOrder === 'asc' ? 'rotate-180' : 'rotate-0',
                     ]"
                     v-html="icons.longArrow"
                   ></div>
@@ -333,6 +333,7 @@ export interface TableProps<T> {
   sort_key?: string;
   sort_order?: "asc" | "desc";
   show_sort_indicators?: boolean;
+  client_sort?: boolean;
   hide_search?: boolean;
   search_placeholder?: string;
   hide_actions?: boolean;
@@ -393,6 +394,7 @@ const props = withDefaults(defineProps<TableProps<T>>(), {
   show_labels_in_card: true,
   action_cell: "",
   alignment: "center",
+  client_sort: false,
 });
 
 type CellSlots<T> = {
@@ -446,6 +448,20 @@ const paginationContext = inject<TablePaginationContext<T>>(
   "table-pagination-context",
   null as any,
 );
+
+// --- Client-side sort state ---
+const localSortKey = ref("");
+const localSortOrder = ref<"asc" | "desc">("asc");
+
+const activeSortKey = computed(() =>
+  props.client_sort ? localSortKey.value : props.sort_key,
+);
+const activeSortOrder = computed(() =>
+  props.client_sort ? localSortOrder.value : props.sort_order,
+);
+
+const getNestedValue = (obj: any, path: string): any =>
+  path.split(".").reduce((acc, key) => acc?.[key], obj);
 
 const isLoading = computed(() => {
   if (props.loading != null) return props.loading;
@@ -562,7 +578,19 @@ const tanstackColumns = computed(() => {
   });
 });
 
-const tableData = computed(() => props.rows);
+const tableData = computed(() => {
+  if (!props.client_sort || !localSortKey.value) return props.rows;
+  const key = localSortKey.value;
+  return [...props.rows].sort((a, b) => {
+    const aVal = getNestedValue(a, key) ?? "";
+    const bVal = getNestedValue(b, key) ?? "";
+    const result =
+      typeof aVal === "number" && typeof bVal === "number"
+        ? aVal - bVal
+        : String(aVal).localeCompare(String(bVal));
+    return localSortOrder.value === "asc" ? result : -result;
+  });
+});
 
 const table = useVueTable({
   get data() {
@@ -618,10 +646,13 @@ const handleSort = (header: Header<T, any>) => {
   if (!key) return;
 
   let order = "asc" as "asc" | "desc";
-  if (props.sort_key === key) {
-    order = props.sort_order === "asc" ? "desc" : "asc";
+  if (activeSortKey.value === key) {
+    order = activeSortOrder.value === "asc" ? "desc" : "asc";
   }
-  if (paginationContext) {
+  if (props.client_sort) {
+    localSortKey.value = String(key);
+    localSortOrder.value = order;
+  } else if (paginationContext) {
     paginationContext.setSorting([{ id: String(key), desc: order === "desc" }]);
   }
   emit("sort_change", { key: String(key), order, column: originalCol });

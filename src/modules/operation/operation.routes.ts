@@ -984,6 +984,11 @@ export const operation_routes: RouteRecordRaw[] = [
           permission: "TRANSACTION",
           title: "Receivable",
           description: "Manage receivables.",
+          tabs: [
+            { value: "shipment", label: "Shipment" },
+            { value: "settlement", label: "Settlement" },
+            { value: "lease", label: "Lease" },
+          ],
         },
       },
       {

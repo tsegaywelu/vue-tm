@@ -14,32 +14,17 @@
         </div>
       </div>
     </div> -->
-    <Table
+    <CheckTable
       id="receivable-shipment-list"
       :columns="columns"
       :rows="response"
+      url="/shipment/receivableShipment"
+      v-model="selectionModel"
+      :loading="isLoading"
       @row_click="handleAction($event, 'view')"
       v-model:search_value="searchTerm"
       :search_placeholder="dynamicSearchPlaceholder"
     >
-      <template #header-selection>
-        <input
-          type="checkbox"
-          :checked="isAllSelected"
-          @change="toggleSelectAll"
-          class="rounded border-gray-300 text-primary focus:ring-primary h-4 w-4"
-        />
-      </template>
-
-      <template #cell-selection="{ row }">
-        <input
-          type="checkbox"
-          :checked="isSelected(row)"
-          @change="toggleSelection(row)"
-          @click.stop
-          class="rounded border-gray-300 text-primary focus:ring-primary h-4 w-4"
-        />
-      </template>
       <template #search-prefix>
         <div
           class="h-full flex items-center border-r border-gray-200 pr-2 mr-2"
@@ -124,13 +109,13 @@
           </button>
         </div>
       </template>
-    </Table>
+    </CheckTable>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
-import Table from "@/components/common/Table.vue";
+import CheckTable from "@/components/common/CheckTable.vue";
 import Status from "@/components/common/Status.vue";
 import { icons } from "@/utils/icons";
 import { usePagination } from "@/composables/usePagination";
@@ -148,7 +133,6 @@ const props = defineProps<{
 const emit = defineEmits(["action", "update:selection"]);
 
 const columns: TableColumn<any>[] = [
-  { key: "selection", label: "", field: "selection" },
   { key: "shipmentCode", label: "Shipment Code", field: "shipmentCode" },
   { key: "dispatchDate", label: "Dispatch Date", field: "dispatchDate" },
   { key: "route", label: "Route", field: "route" },
@@ -190,34 +174,10 @@ const dynamicSearchPlaceholder = computed(() => {
 
 const activeFilters = ref({});
 
-const isSelected = (row: any) => {
-  return props.selection?.some((s) => s._id === row._id);
-};
-
-const isAllSelected = computed(() => {
-  return (
-    response.value.length > 0 && response.value.every((row) => isSelected(row))
-  );
+const selectionModel = computed({
+  get: () => props.selection || [],
+  set: (val) => emit("update:selection", val),
 });
-
-const toggleSelection = (row: any) => {
-  const newSelection = [...(props.selection || [])];
-  const index = newSelection.findIndex((s) => s._id === row._id);
-  if (index > -1) {
-    newSelection.splice(index, 1);
-  } else {
-    newSelection.push(row);
-  }
-  emit("update:selection", newSelection);
-};
-
-const toggleSelectAll = () => {
-  if (isAllSelected.value) {
-    emit("update:selection", []);
-  } else {
-    emit("update:selection", [...response.value]);
-  }
-};
 
 watch(
   () => props.dateRange,
@@ -227,7 +187,7 @@ watch(
   { deep: true },
 );
 
-const { response, fullResponse, refetch } = usePagination<any>({
+const { response, fullResponse, refetch, isLoading } = usePagination<any>({
   id: "receivable-shipment-list",
   url: "/shipment/receivableShipment",
   params: computed(() => {
