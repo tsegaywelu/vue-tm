@@ -1,5 +1,5 @@
 <template>
-  <Form :id="formId" :values="initialValues" :onSubmit="handleSubmit">
+  <Form ref="formRef" :id="formId" :values="initialValues" :onSubmit="handleSubmit">
     <template #default="{ form }">
       <Colapsable
         title="Order Selection"
@@ -458,7 +458,7 @@
               type: 'number',
             }"
             :validation="{
-              required,
+              required: (val: any) => val !== '' && val !== null && val !== undefined ? [true, ''] : [false, 'This field is required'],
             }"
           />
 
@@ -561,6 +561,7 @@ const emit = defineEmits<{
 
 const selectedOrder = ref<Order | null>(null);
 const selectedVehicle = ref<any>(null);
+const formRef = ref<any>(null);
 const filteredPricingType = ref<any>(null);
 const pricingWarning = ref("");
 
@@ -749,14 +750,16 @@ const handleVehicleSelect = (vehicle: any, form: any) => {
   internalLabels.value.driver = driverName;
 
   let transporterName = "";
+  let transporterId = "";
   if (vehicle.transporter && typeof vehicle.transporter === "object") {
     transporterName =
       vehicle.transporter.name || vehicle.transporter.tradeName || "";
+    transporterId = vehicle.transporter._id || "";
   } else if (vehicle.transporterName) {
     transporterName = vehicle.transporterName;
   }
 
-  form.setFieldValue("transporter", transporterName);
+  form.setFieldValue("transporter", transporterId);
   internalLabels.value.transporter = transporterName;
 };
 
@@ -798,6 +801,16 @@ onMounted(async () => {
       .then((res: any) => {
         if (res.success) {
           selectedVehicle.value = res.data;
+          const vehicle = res.data;
+          if (vehicle.transporter && typeof vehicle.transporter === "object") {
+            const transporterId = vehicle.transporter._id || "";
+            const transporterName =
+              vehicle.transporter.name || vehicle.transporter.tradeName || "";
+            if (!props.initialValues.transporter && transporterId) {
+              formRef.value?.form.setFieldValue("transporter", transporterId);
+              internalLabels.value.transporter = transporterName;
+            }
+          }
         }
       });
   }

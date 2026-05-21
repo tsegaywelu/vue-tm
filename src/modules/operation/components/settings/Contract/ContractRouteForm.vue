@@ -180,11 +180,11 @@ function removePricing(wpIndex: number, pIndex: number) {
       v-if="mode !== 'edit'"
       name="route"
       label="Route"
-      :url="`/route/carrierAllRoutes/${carrierId}`"
+      url="/route"
       label_key="routeName"
       value_key="_id"
       searchable
-      :params="{ limit: 20 }"
+      :params="(state) => ({ limit: 10, q: undefined, 'routeName[regexAny]': state.search || undefined })"
       :validation="{ required }"
       :on_change="onRouteChange"
     />

@@ -57,6 +57,18 @@ export function update_shipment_shipper(id: string, data: any) {
   return shipment_api.addAuthenticationHeader().patch(`/${id}/shipper`, data);
 }
 
+export function set_payable_shipment_paid(id: string) {
+  return shipment_api.addAuthenticationHeader().patch(`/setPayableShipmentPaid/${id}`, {});
+}
+
+export function set_payable_shipment_authorized(id: string) {
+  return shipment_api.addAuthenticationHeader().patch(`/setPayableShipmentAuthorized/${id}`, {});
+}
+
+export function set_payable_shipment_cancelled(id: string) {
+  return shipment_api.addAuthenticationHeader().patch(`/setPayableShipmentCancelled/${id}`, {});
+}
+
 export function fetch_status_source_report(id: string) {
   return shipment_api
     .addAuthenticationHeader()
