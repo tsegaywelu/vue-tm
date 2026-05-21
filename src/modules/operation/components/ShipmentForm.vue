@@ -749,14 +749,16 @@ const handleVehicleSelect = (vehicle: any, form: any) => {
   internalLabels.value.driver = driverName;
 
   let transporterName = "";
+  let transporterId = "";
   if (vehicle.transporter && typeof vehicle.transporter === "object") {
     transporterName =
       vehicle.transporter.name || vehicle.transporter.tradeName || "";
+    transporterId = vehicle.transporter._id || "";
   } else if (vehicle.transporterName) {
     transporterName = vehicle.transporterName;
   }
 
-  form.setFieldValue("transporter", transporterName);
+  form.setFieldValue("transporter", transporterId);
   internalLabels.value.transporter = transporterName;
 };
 
