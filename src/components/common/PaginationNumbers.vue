@@ -1,8 +1,8 @@
 <template>
-  <div class="flex items-center gap-2">
+  <div class="flex flex-wrap items-center gap-2">
     <!-- First page button -->
     <Button
-      class="p-0! h-10 w-10 rounded-full border border-gray-100 flex items-center justify-center"
+      class="p-0! h-10 w-10 rounded-full border border-gray-100 items-center justify-center hidden sm:flex"
       variant="outline"
       @click="onPageChange(1)"
       :disabled="current_page <= 1"
@@ -83,7 +83,7 @@
 
     <!-- Last page button -->
     <Button
-      class="p-0! h-10 w-10 rounded-full border border-gray-100 flex items-center justify-center"
+      class="p-0! h-10 w-10 rounded-full border border-gray-100 items-center justify-center hidden sm:flex"
       variant="outline"
       @click="onPageChange(total_pages)"
       :disabled="current_page >= total_pages"

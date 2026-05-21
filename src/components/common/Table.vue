@@ -8,10 +8,10 @@
       v-if="!hide_search || tabs"
       class="px-1 flex justify-between items-center min-h-[88px]"
     >
-      <div class="flex items-center gap-4 flex-1 w-full max-w-full">
+      <div class="flex flex-wrap items-center gap-4 flex-1 w-full max-w-full">
         <div
           v-if="!hide_search"
-          class="w-full max-w-1/2 input-focus rounded-[36px] flex items-center gap-2.5 border pl-2 pr-4 border-gray-100 overflow-hidden"
+          class="w-full xl:max-w-1/2 input-focus rounded-[36px] flex items-center gap-2.5 border pl-2 pr-4 border-gray-100 overflow-hidden"
         >
           <slot name="search-prefix"></slot>
           <div
@@ -267,7 +267,7 @@
     <!-- Pagination Context -->
     <div
       v-if="show_pagination"
-      class="flex justify-between gap-2 items-center p-4"
+      class="flex flex-wrap justify-between gap-2 items-center p-4"
       :class="[
         isLoading || rows.length === 0 ? 'pointer-events-none opacity-50' : '',
       ]"
