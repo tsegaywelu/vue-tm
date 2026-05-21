@@ -92,6 +92,9 @@ export const useAuthStore = defineStore("auth", () => {
   const get_default_home_route = () => {
     if (!token.value) return "/login";
 
+    // User not loaded yet — let RouteGuard fetch and redirect
+    if (!current_user.value) return "/";
+
     // Shipper users always go to the shipper dashboard
     if (is_shipper.value) return "/shipper/dashboard";
 

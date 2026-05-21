@@ -158,6 +158,11 @@
                 :value="shipment?.paymentDetail?.paymentStatus || '-'"
               />
               <ShipmentDataLabel
+                v-if="shipment?.paymentDetail?.reference"
+                label="Invoice Reference"
+                :value="shipment.paymentDetail.reference"
+              />
+              <ShipmentDataLabel
                 label="Transporter Price"
                 :value="
                   shipment?.transporterPrice
@@ -216,7 +221,10 @@
         </InfoWrapper>
 
         <!-- Driver & Transporter Info Section -->
-        <InfoWrapper class="col-span-3" title="Driver & Transporter Information">
+        <InfoWrapper
+          class="col-span-3"
+          title="Driver & Transporter Information"
+        >
           <div class="grid grid-cols-1 md:grid-cols-2 gap-8 px-2 py-2">
             <!-- Driver Sub-section -->
             <div class="flex flex-col gap-4">
@@ -224,15 +232,17 @@
                 <div
                   class="size-12 rounded-full bg-primary-50 text-primary-700 flex items-center justify-center font-bold text-lg border border-primary-100 shadow-sm"
                 >
-                  {{
-                    shipment?.driver?.firstName?.charAt(0) || ""
-                  }}{{
-                    shipment?.driver?.lastName?.charAt(0) || ""
-                  }}
+                  {{ shipment?.driver?.firstName?.charAt(0) || ""
+                  }}{{ shipment?.driver?.lastName?.charAt(0) || "" }}
                 </div>
                 <div class="flex flex-col">
-                  <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Assigned Driver</span>
-                  <span class="text-base font-bold text-gray-900">{{ driverFullName }}</span>
+                  <span
+                    class="text-xs font-semibold text-gray-400 uppercase tracking-wider"
+                    >Assigned Driver</span
+                  >
+                  <span class="text-base font-bold text-gray-900">{{
+                    driverFullName
+                  }}</span>
                 </div>
               </div>
               <div class="grid grid-cols-2 gap-4">
@@ -248,7 +258,9 @@
             </div>
 
             <!-- Transporter Sub-section -->
-            <div class="flex flex-col gap-4 border-l-0 md:border-l md:pl-8 border-gray-100">
+            <div
+              class="flex flex-col gap-4 border-l-0 md:border-l md:pl-8 border-gray-100"
+            >
               <div class="flex items-center gap-4 pb-3 border-b border-gray-50">
                 <div
                   class="size-12 rounded-full bg-orange-50 text-orange-700 flex items-center justify-center border border-orange-100 shadow-sm"
@@ -256,8 +268,15 @@
                   <i class="mdi mdi-office-building text-2xl"></i>
                 </div>
                 <div class="flex flex-col">
-                  <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Transporter / Carrier</span>
-                  <span class="text-base font-bold text-gray-900">{{ shipment?.transporter?.name || shipment?.transporter?.tradeName || "-" }}</span>
+                  <span
+                    class="text-xs font-semibold text-gray-400 uppercase tracking-wider"
+                    >Transporter / Carrier</span
+                  >
+                  <span class="text-base font-bold text-gray-900">{{
+                    shipment?.transporter?.name ||
+                    shipment?.transporter?.tradeName ||
+                    "-"
+                  }}</span>
                 </div>
               </div>
               <div class="grid grid-cols-2 gap-4">
@@ -338,7 +357,10 @@ const statusTimeline = computed(() => {
 });
 
 const { data: reportResponse } = useQuery({
-  queryKey: ["shipment-status-source-report", computed(() => props.shipment?._id)],
+  queryKey: [
+    "shipment-status-source-report",
+    computed(() => props.shipment?._id),
+  ],
   queryFn: () => fetch_status_source_report(props.shipment!._id),
   enabled: computed(() => !!props.shipment?._id),
 });

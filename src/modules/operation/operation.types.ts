@@ -277,6 +277,13 @@ export interface Shipment {
   productType: ProductType;
   paymentDetail: {
     paymentStatus?: string;
+    reference?: string;
+    paymentRequestedDate?: string;
+    paymentRequestedBy?: { _id?: string; username?: string };
+    paymentApprovedBy?: { _id?: string; username?: string };
+    paymentApprovedDate?: string;
+    paidDate?: string;
+    collectedBy?: { _id?: string; username?: string };
   };
   shipmentDocuments: [];
   rejectorDrivers: [];

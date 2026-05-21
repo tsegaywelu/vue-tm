@@ -84,6 +84,23 @@ const mutation = useMutation({
 });
 
 const handleSubmit = async (values: any) => {
-  await mutation.mutateAsync(values);
+  const {
+    _id, name, ratingCount, hasUserAccount, initialSettlementBalance,
+    regionHistory, createdAt, updatedAt, __v,
+    ...rest
+  } = values;
+
+  const toDate = (v: any) => (v ? new Date(v) : undefined);
+
+  const payload = {
+    ...rest,
+    carrier: rest.carrier?._id ?? rest.carrier,
+    dateOfBirth: toDate(rest.dateOfBirth),
+    drivingLicenceExpirationDate: toDate(rest.drivingLicenceExpirationDate),
+    employmentStartDate: toDate(rest.employmentStartDate),
+    employmentEndDate: toDate(rest.employmentEndDate),
+  };
+
+  await mutation.mutateAsync(payload);
 };
 </script>
