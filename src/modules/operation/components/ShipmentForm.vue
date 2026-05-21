@@ -458,7 +458,7 @@
               type: 'number',
             }"
             :validation="{
-              required,
+              required: (val: any) => val !== '' && val !== null && val !== undefined ? [true, ''] : [false, 'This field is required'],
             }"
           />
 
