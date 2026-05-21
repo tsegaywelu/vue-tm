@@ -15,7 +15,7 @@
 
 <script setup lang="ts">
 import { useRouter } from "vue-router";
-import { useMutation } from "@tanstack/vue-query";
+import { useMutation, useQueryClient } from "@tanstack/vue-query";
 import { useToastStore } from "@/store/toastStore";
 import AgentForm from "../components/AgentForm.vue";
 import Button from "@/components/common/Button.vue";
@@ -24,6 +24,7 @@ import { add_agent } from "../api/operation.api";
 
 const router = useRouter();
 const toast = useToastStore();
+const queryClient = useQueryClient();
 
 const initialValues = {
   shipper: "",
@@ -52,6 +53,7 @@ const handleCreateAgent = async (values: any) => {
   const res = await mutation.mutateAsync(values);
   if (res.success) {
     toast.success("Agent added successfully!");
+    queryClient.invalidateQueries({ queryKey: ["agents-list"] });
     router.push("/agents");
   } else {
     toast.error(res.error || "Failed to create agent");

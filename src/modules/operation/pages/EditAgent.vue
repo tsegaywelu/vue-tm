@@ -26,7 +26,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useRouter, useRoute } from "vue-router";
-import { useQuery, useMutation } from "@tanstack/vue-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/vue-query";
 import { useToastStore } from "@/store/toastStore";
 import AgentForm from "../components/AgentForm.vue";
 import Button from "@/components/common/Button.vue";
@@ -37,6 +37,7 @@ const route = useRoute();
 const router = useRouter();
 const toast = useToastStore();
 
+const queryClient = useQueryClient();
 const agentId = route.params.id as string;
 
 const { data: agentRes, isLoading } = useQuery({
@@ -58,6 +59,8 @@ const handleUpdateAgent = async (values: any) => {
   const res = await mutation.mutateAsync(values);
   if (res.success || res.status === 200 || res.status === 201) {
     toast.success("Agent updated successfully!");
+    queryClient.invalidateQueries({ queryKey: ["agents-list"] });
+    queryClient.invalidateQueries({ queryKey: ["agent-details", agentId] });
     router.push("/agents");
   } else {
     toast.error(res.error || "Failed to update agent");

@@ -20,10 +20,7 @@
     @row_click="(row) => router.push(`${resolvedBasePath}/${row._id}`)"
   >
     <template #after-search>
-      <div
-        class="items-center gap-4 inline-flex border-l border-grey-100 overflow-x-auto px-3"
-      >
-        <i v-html="icons.filter" />
+      <div class="items-center gap-4 inline-flex overflow-x-auto px-3">
         <OrderFilters @change="handleFilterChange" pagination-id="order-list" />
       </div>
     </template>
