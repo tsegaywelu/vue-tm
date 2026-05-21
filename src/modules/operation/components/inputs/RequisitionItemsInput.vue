@@ -123,7 +123,7 @@ function remove(id: string) {
                   url="/inventory-items"
                   label_key="name"
                   value_key="_id"
-                  search_key="name"
+                  search_key="name[regexAny]"
                   searchable
                   :display_value="item.itemName"
                   @select="(opt: any) => (item.itemName = opt.label)"
