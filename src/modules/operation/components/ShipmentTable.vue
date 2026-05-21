@@ -18,6 +18,9 @@
     :columns="columns"
     :rows="response"
     :search_placeholder="dynamicSearchPlaceholder"
+    :hide_on_sm_screen="['total', 'shipmentCode']"
+    :on_sm_screen_column_span="{ driver: 2, route: 2, status: 2 }"
+    :on_sm_screen_row_alignment="{ dispatchDate: 3, shipperIssueVoucher: 4 }"
     @row_click="(row) => $router.push(`${shipmentBasePath}/${row._id}`)"
   >
     <template #search-prefix>
