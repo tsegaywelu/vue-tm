@@ -71,7 +71,7 @@ const initialValues = computed(() => {
     partNumber: "",
     itemGroup: "",
     itemGroupName: "",
-    inventoryType: "CONSUMABLE",
+    inventoryType: "",
     uom: "",
     quantity: 0,
     reorderLevel: 0,

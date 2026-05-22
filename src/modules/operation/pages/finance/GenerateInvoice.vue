@@ -250,7 +250,9 @@ import { useQuery } from "@tanstack/vue-query";
 import { fetch_invoice_details } from "../../api/invoice.api";
 import Button from "@/components/common/Button.vue";
 import { formatNumber } from "@/utils/utils";
-import { exportToExcel } from "@/utils/excel";
+import { exportInvoiceToExcel } from "@/utils/excel";
+import { exportInvoiceWithTemplate } from "@/utils/invoice-template-export";
+import { fetch_invoice_templates } from "../../api/invoice-template.api";
 
 const route = useRoute();
 const invoiceId = route.params.id as string;
@@ -318,20 +320,21 @@ const printInvoice = () => {
   window.print();
 };
 
-const handleExport = () => {
-  if (!invoice.value?.shipments) return;
-  
-  const data = invoice.value.shipments.map((s: any, i: number) => ({
-    No: i + 1,
-    Date: s.dispatchDate?.split('T')[0],
-    Reference: s.reference,
-    Origin: s.route?.origin,
-    Destination: s.route?.destination,
-    Vehicle: s.vehicle?.plateNumber,
-    Amount: s.totalPrice,
-  }));
-
-  exportToExcel(data, `Invoice_${invoice.value.reference || 'Report'}`, "Invoice Details");
+const handleExport = async () => {
+  const inv = invoice.value as any;
+  if (!inv?.shipments) return;
+  const productType = inv.shipments[0]?.productType;
+  const templateRes = await fetch_invoice_templates({
+    ownerId: inv.shipper?._id || inv.shipments[0]?.order?.shipper?._id,
+    productType,
+  });
+  const list = (templateRes?.data as any)?.data ?? (templateRes?.data as any) ?? [];
+  const template = Array.isArray(list) ? list[0] : null;
+  if (template) {
+    exportInvoiceWithTemplate(inv, template);
+  } else {
+    exportInvoiceToExcel(inv);
+  }
 };
 </script>
 
