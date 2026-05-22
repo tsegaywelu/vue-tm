@@ -7,16 +7,16 @@
   >
     <template #cell-itemGroup="{ row }">
       <span class="font-medium text-gray-700">
-        {{ row.itemGroup?.name || '-' }}
+        {{ row.itemGroup?.name || "-" }}
       </span>
     </template>
-    
+
     <template #cell-createdAt="{ row }">
       {{ new Date(row.createdAt).toLocaleDateString() }}
     </template>
 
     <template #cell-actions="{ row }">
-      <div class="flex items-center justify-end">
+      <div class="flex items-center justify-center w-full">
         <span
           v-if="immutableItems.includes(row.name)"
           class="px-2 py-1 rounded bg-gray-100 text-gray-500 text-xs font-medium"

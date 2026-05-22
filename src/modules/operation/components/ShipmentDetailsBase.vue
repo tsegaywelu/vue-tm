@@ -16,6 +16,18 @@
               {{ shipment?.shipmentCode }}
             </span>
           </span>
+          <span v-if="shipment?.shipper?.name" class="text-sm text-gray-600">
+            Shipper
+            <span class="font-bold text-black text-sm ml-1">
+              {{ shipment?.shipper?.name }}
+            </span>
+          </span>
+          <span v-if="shipment?.orderCode" class="text-sm text-gray-600">
+            Order
+            <span class="font-bold text-black text-sm ml-1">
+              {{ shipment?.orderCode }}
+            </span>
+          </span>
           <div
             class="mt-2 lg:mt-0 md:hidden flex items-center justify-between w-full"
           >

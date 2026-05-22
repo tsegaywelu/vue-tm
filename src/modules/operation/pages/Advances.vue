@@ -19,6 +19,14 @@
         </Button>
         <Button
           v-else-if="activeTab === 'transporterAdvances'"
+          v-permission="{ subject: 'PRE_PAYMENT', actions: ['create'] }"
+          size="md"
+          @click="openAddTransporterAdvanceModal"
+        >
+          + Add Transporter Advance
+        </Button>
+        <Button
+          v-else-if="activeTab === 'transporterAdvances'"
           size="md"
           variant="outline"
           @click="$router.push('/operation/prepayment-summary')"
@@ -58,6 +66,10 @@ const route = useRoute();
 
 function openAddAdvanceModal() {
   openModal("AddAdvanceStandaloneModal", {});
+}
+
+function openAddTransporterAdvanceModal() {
+  openModal("AddPrePaymentStandaloneModal", {});
 }
 
 const tabs = computed(() => route.meta.tabs as any[]);

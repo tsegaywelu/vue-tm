@@ -588,7 +588,10 @@ export const finance_navs: Navs[] = [
         path: "/finance/payable",
         show: true,
         permission: [
-          { subject: "ADVANCE_PAYMENT", actions: ["pay", "authorize", "cancel"] },
+          {
+            subject: "ADVANCE_PAYMENT",
+            actions: ["pay", "authorize", "cancel"],
+          },
           { subject: "TRANSACTION", actions: ["pay", "authorize", "cancel"] },
           { subject: "SHIPMENT", actions: ["pay", "authorize", "cancel"] },
           { subject: "PRE_PAYMENT", actions: ["pay", "authorize", "cancel"] },
@@ -1102,24 +1105,24 @@ export const setting_navs: Navs[] = [
           },
         ],
       },
-      {
-        name: "Invoice Templates",
-        path: "/setting/invoice-templates",
-        show: true,
-        permission: { subject: "SHIPMENT", actions: ["generate_invoice"] },
-        children: [
-          {
-            name: "New Invoice Template",
-            path: "/setting/invoice-templates/new",
-            show: false,
-          },
-          {
-            name: "Edit Invoice Template",
-            path: "/setting/invoice-templates/:id",
-            show: false,
-          },
-        ],
-      },
+      // {
+      //   name: "Invoice Templates",
+      //   path: "/setting/invoice-templates",
+      //   show: true,
+      //   permission: { subject: "SHIPMENT", actions: ["generate_invoice"] },
+      //   children: [
+      //     {
+      //       name: "New Invoice Template",
+      //       path: "/setting/invoice-templates/new",
+      //       show: false,
+      //     },
+      //     {
+      //       name: "Edit Invoice Template",
+      //       path: "/setting/invoice-templates/:id",
+      //       show: false,
+      //     },
+      //   ],
+      // },
     ],
   },
 ];

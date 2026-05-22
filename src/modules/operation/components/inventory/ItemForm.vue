@@ -21,8 +21,19 @@
       <Select
         name="itemGroup"
         label="Item Group"
-        :options="itemGroupOptions"
+        url="/item-groups"
         :validation="{ required }"
+        searchable
+        label_key="name"
+        value_key="_id"
+        :params="
+          (params) => {
+            return {
+              q: undefined,
+              'name[regex]': params.search,
+            };
+          }
+        "
       />
       <Select
         name="inventoryType"
@@ -51,19 +62,19 @@
               >(Enables tyre handoff tracking)</span
             >
           </div>
-          <SerialNumbersInput name="serialPrices" />
+          <SerialNumbersInput v-if="!isEdit" name="serialPrices" />
         </div>
       </template>
     </component>
     <!-- Serialized Items Section -->
 
-    <!-- Consumable Items Section -->
+    <!-- Consumable Items Section (add only) -->
     <component
-      v-if="formContext?.form"
+      v-if="formContext?.form && !isEdit"
       :is="formContext.form.Subscribe"
-      :selector="(state: any) => [state.values.inventoryType]"
+      :selector="(state: any) => [state.values.inventoryType, state.values.price, state.values.quantity]"
     >
-      <template #default="[inventoryType]">
+      <template #default="[inventoryType, price, quantity]">
         <div
           v-if="inventoryType === 'CONSUMABLE'"
           class="mt-6 p-6 bg-gray-50 rounded-2xl border border-gray-100"
@@ -104,14 +115,33 @@
               <div
                 class="h-12 px-4 flex items-center bg-white rounded-xl border border-gray-100 text-gray-500 font-bold"
               >
-                {{
-                  formatCurrency(
-                    (Number(values.price) || 0) *
-                      (Number(values.quantity) || 0),
-                  )
-                }}
+                {{ formatCurrency((Number(price) || 0) * (Number(quantity) || 0)) }}
               </div>
             </div>
+          </div>
+        </div>
+      </template>
+    </component>
+
+    <!-- Reorder Level (edit only, consumable) -->
+    <component
+      v-if="formContext?.form && isEdit"
+      :is="formContext.form.Subscribe"
+      :selector="(state: any) => [state.values.inventoryType]"
+    >
+      <template #default="[inventoryType]">
+        <div
+          v-if="inventoryType === 'CONSUMABLE'"
+          class="mt-6 p-6 bg-gray-50 rounded-2xl border border-gray-100"
+        >
+          <h3 class="text-sm font-bold text-gray-900 mb-4">Consumable Item Details</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Input
+              name="reorderLevel"
+              label="Reorder Level"
+              type="number"
+              :attributes="{ placeholder: '0' }"
+            />
           </div>
         </div>
       </template>
@@ -131,6 +161,7 @@ import { fetch_item_groups } from "../../api/inventory.api";
 
 const props = defineProps<{
   values: Record<string, any>;
+  isEdit?: boolean;
 }>();
 
 // Fetch item groups

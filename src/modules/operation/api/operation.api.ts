@@ -195,6 +195,10 @@ export function fetch_prepayments(params: Record<string, any>) {
   return prepayment_api.addAuthenticationHeader().get("", { params });
 }
 
+export function create_prepayment(data: any) {
+  return prepayment_api.addAuthenticationHeader().post("", data);
+}
+
 export function fetch_advances(params: Record<string, any>) {
   return advance_api.addAuthenticationHeader().get("", { params });
 }
@@ -527,6 +531,10 @@ export function fetch_all_shipments_unpaginated(
   config?: any,
 ) {
   return shipment_api.addAuthenticationHeader().get("", { params, ...config });
+}
+
+export function fetch_shipment_by_id(id: string) {
+  return shipment_api.addAuthenticationHeader().get(`/${id}`);
 }
 
 export function fetch_all_sub_contracts_unpaginated(

@@ -10,7 +10,7 @@
     </template>
 
     <template #cell-actions="{ row }">
-      <div class="flex items-center justify-end">
+      <div class="flex items-center justify-center w-full">
         <Dropdown>
           <template #default="{ close }">
             <DropDownItem

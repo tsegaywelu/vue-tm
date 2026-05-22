@@ -125,7 +125,7 @@ export function exportInvoiceToExcel(invoice: any) {
         s.shipperReceiveVoucher || "-",
         s.shipperIssueVoucher || "-",
         "",
-        s.order?.packaging?.name || "-",
+        s.packagingName || s.packaging?.name || s.order?.packaging?.name || "-",
         s.routeDestination || s.route?.destination || "-",
         s.route?.routeCode || s.order?.route?.routeCode || "-",
         `${s.routeOrigin || s.route?.origin || ""} - ${s.routeDestination || s.route?.destination || ""}`,

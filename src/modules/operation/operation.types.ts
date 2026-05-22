@@ -268,6 +268,7 @@ export interface Shipment {
     middleName?: string;
     lastName?: string;
     phoneNumber?: string;
+    licenseNumber?: string;
   };
   statusTime: { [K in ShipmentStatus]: string };
   transporterPrice?: string;
@@ -313,6 +314,11 @@ export interface Shipment {
   };
   civ: string;
   shipperIssueVoucher: string;
+  agentReceiveVoucher?: string;
+  agentIssueVoucher?: string;
+  shipperReceiveVoucher?: string;
+  odometerAtComplete?: number;
+  fuelReadingAtComplete?: number;
   createdByUser: {
     username: string;
   };

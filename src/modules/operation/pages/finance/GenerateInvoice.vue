@@ -167,7 +167,7 @@
               <td class="border border-grey-800 px-1 py-1 font-bold text-center">-</td>
               <td class="border border-grey-800 px-1 py-1 font-bold">{{ shipment.packagingName || shipment.packaging?.name }}</td>
               <td class="border border-grey-800 px-1 py-1 font-bold">{{ shipment.routeOrigin || shipment.route?.origin }}</td>
-              <td class="border border-grey-800 px-1 py-1 font-bold text-center">{{ generateRouteCode(shipment) }}</td>
+              <td class="border border-grey-800 px-1 py-1 font-bold text-center">{{ shipment.route?.routeCode || shipment.order?.route?.routeCode || generateRouteCode(shipment) }}</td>
               <td class="border border-grey-800 px-1 py-1 font-bold">
                 {{ shipment.routeOrigin || shipment.route?.origin }}_{{ shipment.routeDestination || shipment.route?.destination }}
               </td>
@@ -176,9 +176,9 @@
               </td>
               <td class="border border-grey-800 px-1 py-1 font-bold text-center">Delivery</td>
               <td class="border border-grey-800 px-1 py-1 font-bold text-center">{{ shipment.quantity || shipment.order?.totalRequest }}</td>
-              <td class="border border-grey-800 px-1 py-1 font-bold text-center">{{ shipment.quantity || shipment.order?.totalRequest }}</td>
+              <td class="border border-grey-800 px-1 py-1 font-bold text-center">{{ shipment.returnQty ?? '-' }}</td>
               <td class="border border-grey-800 px-1 py-1 font-bold text-right">{{ formatNumber(shipment.totalPrice) }}</td>
-              <td class="border border-grey-800 px-1 py-1 font-bold text-center">1</td>
+              <td class="border border-grey-800 px-1 py-1 font-bold text-center">{{ computeRate(shipment) }}</td>
               <td class="border border-grey-800 px-1 py-1 font-bold text-right">{{ formatNumber(shipment.totalPrice) }}</td>
             </tr>
              <tr class="bg-grey-50 font-bold">
@@ -306,6 +306,12 @@ const generateRouteCode = (shipment: any) => {
   const destination = shipment.routeDestination || shipment.route?.destination;
   if (!origin || !destination) return "-";
   return `${origin.substring(0, 3)}_${destination.substring(0, 3)}`.toUpperCase();
+};
+
+const computeRate = (shipment: any) => {
+  const qty = shipment.quantity || shipment.order?.totalRequest || shipment.dispatchWeight || 0;
+  if (!shipment.totalPrice || !qty) return "-";
+  return formatNumber(+(shipment.totalPrice / qty).toFixed(2));
 };
 
 const printInvoice = () => {

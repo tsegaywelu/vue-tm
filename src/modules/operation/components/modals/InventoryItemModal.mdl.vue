@@ -8,7 +8,7 @@
     :values="initialValues"
   >
     <template #center="{ form }">
-      <ItemForm :values="form.state.values" />
+      <ItemForm :values="form.state.values" :isEdit="isEdit" />
     </template>
 
     <template #bottom="{ form }">
@@ -87,19 +87,28 @@ const handleSubmit = async (values: any) => {
       partNumber: values.partNumber,
       inventoryType: values.inventoryType,
       uom: values.uom,
-      quantity: Number(values.quantity) || 0,
       reorderLevel: Number(values.reorderLevel) || 0,
-      price: Number(values.price) || 0,
-      isTyre: values.isTyre,
     };
 
     if (values.itemGroup) finalValues.itemGroup = values.itemGroup;
 
-    if (values.inventoryType === 'SERIALIZED') {
-      finalValues.reorderLevel = 1;
-      finalValues.serialPrices = values.serialPrices || [];
+    if (isEdit.value) {
+      // On edit: only base fields + isTyre for SERIALIZED (legacy parity)
+      if (values.inventoryType === 'SERIALIZED') {
+        finalValues.isTyre = values.isTyre;
+        finalValues.reorderLevel = 1;
+      }
     } else {
-      finalValues.totalPrice = (Number(values.price) || 0) * (Number(values.quantity) || 0);
+      // On create: include all type-specific fields
+      finalValues.isTyre = values.isTyre;
+      if (values.inventoryType === 'SERIALIZED') {
+        finalValues.reorderLevel = 1;
+        finalValues.serialPrices = values.serialPrices || [];
+      } else {
+        finalValues.quantity = Number(values.quantity) || 0;
+        finalValues.price = Number(values.price) || 0;
+        finalValues.totalPrice = (Number(values.price) || 0) * (Number(values.quantity) || 0);
+      }
     }
 
     let res;

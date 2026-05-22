@@ -10,10 +10,11 @@
     </template>
 
     <template #cell-actions="{ row }">
-      <div class="flex items-center justify-end">
+      <div class="flex items-center w-full justify-center">
         <Dropdown>
           <template #default="{ close }">
-            <DropDownItem v-permission="'SUPPLIER:update'"
+            <DropDownItem
+              v-permission="'SUPPLIER:update'"
               :icon="icons.edit"
               label="Edit"
               @click.stop="
@@ -22,7 +23,7 @@
               "
             />
             <!-- Delete action commented out temporarily -->
-        <!-- <DropDownItem
+            <!-- <DropDownItem
               :icon="icons.delete"
               label="Delete"
               class="text-error-600"
