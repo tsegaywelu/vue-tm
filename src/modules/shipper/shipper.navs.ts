@@ -190,6 +190,23 @@ export const shipper_settings_navs: Navs[] = [
         ],
       },
       {
+        name: "Invoice Templates",
+        path: "/shipper/setting/invoice-templates",
+        show: true,
+        children: [
+          {
+            name: "New Invoice Template",
+            path: "/shipper/setting/invoice-templates/new",
+            show: false,
+          },
+          {
+            name: "Edit Invoice Template",
+            path: "/shipper/setting/invoice-templates/:id",
+            show: false,
+          },
+        ],
+      },
+      {
         name: "Contracts",
         path: "/shipper/contracts",
         show: true,

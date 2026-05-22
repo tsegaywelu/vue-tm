@@ -333,6 +333,33 @@ export const shipper_routes: RouteRecordRaw[] = [
           description: "Modify an existing announcement.",
         },
       },
+      {
+        path: "setting/invoice-templates",
+        name: "shipper_setting_invoice_templates",
+        component: () => import("./pages/setting/ShipperInvoiceTemplates.vue"),
+        meta: {
+          title: "Invoice Templates",
+          description: "Configure Excel invoice export templates.",
+        },
+      },
+      {
+        path: "setting/invoice-templates/new",
+        name: "shipper_setting_invoice_template_new",
+        component: () => import("./pages/setting/ShipperInvoiceTemplateEdit.vue"),
+        meta: {
+          title: "New Invoice Template",
+          description: "Create a new invoice export template.",
+        },
+      },
+      {
+        path: "setting/invoice-templates/:id",
+        name: "shipper_setting_invoice_template_edit",
+        component: () => import("./pages/setting/ShipperInvoiceTemplateEdit.vue"),
+        meta: {
+          title: "Edit Invoice Template",
+          description: "Modify an invoice export template.",
+        },
+      },
       // ── User Management ──
       {
         path: "users",

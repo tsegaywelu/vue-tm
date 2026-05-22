@@ -1764,6 +1764,36 @@ export const operation_routes: RouteRecordRaw[] = [
           description: "Update an existing announcement.",
         },
       },
+      {
+        path: "invoice-templates",
+        name: "operation_setting_invoice_templates",
+        component: () => import("./pages/setting/InvoiceTemplates.vue"),
+        meta: {
+          permission: [{ subject: "SHIPMENT", actions: ["generate_invoice"] }],
+          title: "Invoice Templates",
+          description: "Configure Excel invoice export templates.",
+        },
+      },
+      {
+        path: "invoice-templates/new",
+        name: "operation_setting_invoice_template_new",
+        component: () => import("./pages/setting/InvoiceTemplateEdit.vue"),
+        meta: {
+          permission: [{ subject: "SHIPMENT", actions: ["generate_invoice"] }],
+          title: "New Invoice Template",
+          description: "Create a new invoice export template.",
+        },
+      },
+      {
+        path: "invoice-templates/:id",
+        name: "operation_setting_invoice_template_edit",
+        component: () => import("./pages/setting/InvoiceTemplateEdit.vue"),
+        meta: {
+          permission: [{ subject: "SHIPMENT", actions: ["generate_invoice"] }],
+          title: "Edit Invoice Template",
+          description: "Modify an invoice export template.",
+        },
+      },
     ],
   },
   {
