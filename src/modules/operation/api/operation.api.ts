@@ -546,6 +546,15 @@ export function fetch_all_sub_contracts_unpaginated(
     .get("/payableShipmentsPaid", { params, ...config });
 }
 
+export function fetch_all_payment_collections_unpaginated(
+  params?: Record<string, any>,
+  config?: any,
+) {
+  return shipment_api
+    .addAuthenticationHeader()
+    .get("/approvedAndCollectedInvoices", { params: { ...params, limit: 99999 }, ...config });
+}
+
 export function add_insurance(data: any) {
   const config = data instanceof FormData
     ? { headers: { 'Content-Type': 'multipart/form-data' } }

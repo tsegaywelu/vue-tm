@@ -5,7 +5,7 @@
     </div>
 
     <div v-else-if="invoice">
-      <!-- Actions Header -->
+      <!-- Actions Header (screen only) -->
       <div class="flex justify-between items-center mb-6 no-print">
         <h1 class="text-2xl font-black text-grey-900">Invoice Report</h1>
         <div class="flex gap-3">
@@ -23,6 +23,17 @@
           </Button>
         </div>
       </div>
+
+      <!-- Company Header (print + screen) -->
+      <div class="flex items-center gap-4 border-2 border-gray-300 p-4 mb-4 print-header">
+        <img src="@/assets/rlogo.png" alt="Company Logo" class="h-16 w-auto object-contain" />
+        <div class="flex-1 text-center">
+          <h1 class="text-xl font-bold">RaAZ Transport S/C</h1>
+          <p class="text-sm text-gray-600">TIN: 0043617352</p>
+          <h2 class="text-base font-bold uppercase mt-1">Transport Payment Request</h2>
+        </div>
+      </div>
+      <p class="text-sm mb-3"><b>Ref:</b> <u>{{ (invoice as any)?.reference }}</u></p>
 
       <!-- IN_BOUND / SITE_TRANSFER Layout -->
       <div v-if="productType === 'IN_BOUND' || productType === 'SITE_TRANSFER'">

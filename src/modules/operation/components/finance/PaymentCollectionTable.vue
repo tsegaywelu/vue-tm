@@ -108,7 +108,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { ref } from "vue";
 import Table from "@/components/common/Table.vue";
 import Dropdown from "@/components/common/Dropdown.vue";
 import DropDownItem from "@/components/common/DropDownItem.vue";
@@ -189,5 +189,5 @@ const handleAction = (row: any, action: string) => {
   emit("action", { row, action });
 };
 
-defineExpose({ refetch });
+defineExpose({ refetch, activeFilters });
 </script>
