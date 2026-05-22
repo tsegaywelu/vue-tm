@@ -172,10 +172,10 @@ const dynamicSearchPlaceholder = computed(() => {
 
 const activeFilters = ref<Record<string, any>>({});
 
-activeFilters.value.searchField = selectedSearchField.value;
+// activeFilters.value.searchField = selectedSearchField.value;
 
 watch(selectedSearchField, (newField) => {
-  activeFilters.value = { ...activeFilters.value, searchField: newField };
+  activeFilters.value = { ...activeFilters.value };
 });
 
 const selectionModel = computed({
@@ -189,8 +189,11 @@ const { response, fullResponse, refetch, isLoading } = usePagination<any>({
   params: (state) => ({
     [selectedSearchField.value]: state.search || "",
     ...activeFilters.value,
-    ...(props.dateRange?.start ? { dispatchStartDate: props.dateRange.start } : {}),
+    ...(props.dateRange?.start
+      ? { dispatchStartDate: props.dateRange.start }
+      : {}),
     ...(props.dateRange?.end ? { dispatchEndDate: props.dateRange.end } : {}),
+    q: undefined,
   }),
 });
 

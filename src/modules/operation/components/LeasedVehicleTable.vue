@@ -143,6 +143,12 @@ const columns: TableColumn<any>[] = [
 const { response, refetch } = usePagination<any>({
   id: "leased-vehicle-list",
   url: "/vehicle-lease-agreement",
+  params(state) {
+    return {
+      plateNumber: state.search,
+      q: undefined,
+    };
+  },
 });
 
 const handleAction = (row: any, action: string) => {

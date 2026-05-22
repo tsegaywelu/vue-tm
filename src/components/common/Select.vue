@@ -268,6 +268,7 @@ const customApi = props.base_url ? new ApiService(props.base_url) : undefined;
 
 const currentSelectedValue = computed(() => props.modelValue);
 onMounted(() => {
+  if (!currentSelectedValue.value) return;
   const val = finalOptions.value.find(
     (op: any) => op.item.value == currentSelectedValue.value,
   );
@@ -304,6 +305,7 @@ watch(
   () => props.display_value,
   (newDisplayValue) => {
     if (!props.searchable || !newDisplayValue) return;
+    if (!currentSelectedValue.value) return;
     const opt = finalOptions.value.find(
       (o: any) => getOptionValue(o) == currentSelectedValue.value,
     );
