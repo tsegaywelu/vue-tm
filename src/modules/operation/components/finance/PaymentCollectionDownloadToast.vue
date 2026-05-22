@@ -112,7 +112,7 @@ function tryExport() {
     };
 
     const headers = [
-      "Reference", "Total Amount", "Shipper", "Request Date",
+      "Reference", "Shipment Count", "Total Amount", "Shipper", "Request Date",
       "Requested By", "Approved By", "Collected By", "CRV", "CSI", "Remark", "Status",
     ];
 
@@ -120,6 +120,7 @@ function tryExport() {
       headers.map((h) => ({ v: h, t: "s", s: headerStyle })),
       ...rows.map((row: any) => [
         row.reference || "-",
+        row.shipments?.length ?? 0,
         row.totalAmount || 0,
         row.shipper?.name || "-",
         dateFormatter(row.paymentRequestedDate) || "-",
@@ -132,7 +133,7 @@ function tryExport() {
         (row.status || "pending").replace(/_/g, " "),
       ].map((v, i) => ({
         v,
-        t: i === 1 ? "n" : "s",
+        t: i === 1 || i === 2 ? "n" : "s",
         s: cellStyle,
       }))),
     ];
