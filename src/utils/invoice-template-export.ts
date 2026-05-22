@@ -144,9 +144,23 @@ export function toXlsxStyle(s: CellStyle): any {
 function resolveField(shipment: any, field: string, rowIndex: number): any {
   if (field === "row_number") return rowIndex + 1;
   if (field === "driver") {
+    // API may return flat driverName string or nested driver object
+    if (shipment.driverName) return shipment.driverName;
     const d = shipment.driver;
     if (!d) return "";
     return [d.firstName, d.middleName, d.lastName].filter(Boolean).join(" ");
+  }
+  if (field === "order.agent.name") {
+    return shipment.order?.agent?.name || shipment.agent?.name || "";
+  }
+  if (field === "order.agent.agentCode") {
+    return shipment.order?.agent?.agentCode || shipment.order?.agent?.code || "";
+  }
+  if (field === "route.routeCode") {
+    return shipment.route?.routeCode || shipment.order?.route?.routeCode || "";
+  }
+  if (field === "vehicleTypeName") {
+    return shipment.vehicleTypeName || shipment.vehicleType?.name || "";
   }
   return field.split(".").reduce((acc: any, k) => acc?.[k], shipment);
 }

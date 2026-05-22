@@ -13,6 +13,7 @@ export const AVAILABLE_FIELDS: { value: string; label: string }[] = [
   { value: "order.agent.agentCode", label: "Agent Code / Distributor No." },
   { value: "order.agent.name", label: "Agent / Distributor Name" },
   { value: "order.packaging.name", label: "Packaging / Material Type" },
+  { value: "vehicleTypeName", label: "Truck / Vehicle Type" },
   { value: "vehicle.plateNumber", label: "Plate Number" },
   { value: "vehicle.trailerPlate", label: "Trailer Plate" },
   { value: "driver", label: "Driver Name" },

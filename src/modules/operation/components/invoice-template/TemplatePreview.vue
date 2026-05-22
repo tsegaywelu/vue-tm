@@ -102,6 +102,7 @@ const SAMPLE_VALUES: Record<string, string> = {
   "order.agent.agentCode": "D001",
   "order.agent.name": "Distributor A",
   "order.packaging.name": "25kg Bag",
+  vehicleTypeName: "Tanker",
   "vehicle.plateNumber": "AA-1234",
   "vehicle.trailerPlate": "TR-001",
   driver: "Abebe Bekele",
