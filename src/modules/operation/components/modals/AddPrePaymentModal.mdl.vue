@@ -106,7 +106,7 @@ import Button from "@/components/common/Button.vue";
 import SubmitButton from "@/components/form/SubmitButton.vue";
 import { required, price } from "@/utils/validations";
 import { useToastStore } from "@/store/toastStore";
-import { fetch_prepayment, create_prepayment } from "../../api/operation.api";
+import { create_prepayment } from "../../api/operation.api";
 import { fetch_shipment_by_id } from "../../api/operation.api";
 import type { Shipment } from "../../operation.types";
 

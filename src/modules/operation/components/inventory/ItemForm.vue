@@ -26,6 +26,7 @@
         searchable
         label_key="name"
         value_key="_id"
+        :display_value="values.itemGroupName"
         :params="
           (params) => {
             return {
