@@ -58,6 +58,7 @@
             value_key="_id"
             :validation="{ required }"
             :attributes="{ placeholder: 'Select type' }"
+            :options="props.labels?.vehicleType ? [{ label: props.labels.vehicleType, value: props.initialValues.vehicleType }] : []"
           />
 
           <SelectInput
@@ -67,6 +68,7 @@
             label_key="name"
             value_key="_id"
             :attributes="{ placeholder: 'Select group' }"
+            :options="props.labels?.vehicleGroup ? [{ label: props.labels.vehicleGroup, value: props.initialValues.vehicleGroup }] : []"
           />
 
           <SelectInput
@@ -76,6 +78,7 @@
             label_key="name"
             value_key="_id"
             :attributes="{ placeholder: 'Select category' }"
+            :options="props.labels?.type ? [{ label: props.labels.type, value: props.initialValues.type }] : []"
           />
 
           <SelectInput
@@ -85,6 +88,7 @@
             label_key="name"
             value_key="_id"
             :attributes="{ placeholder: 'Select model' }"
+            :options="props.labels?.vehicleModel ? [{ label: props.labels.vehicleModel, value: props.initialValues.vehicleModel }] : []"
           />
 
           <SelectInput
@@ -94,6 +98,7 @@
             label_key="name"
             value_key="_id"
             :attributes="{ placeholder: 'Select maker' }"
+            :options="props.labels?.maker ? [{ label: props.labels.maker, value: props.initialValues.maker }] : []"
           />
 
           <SelectInput
@@ -103,6 +108,7 @@
             label_key="name"
             value_key="_id"
             :attributes="{ placeholder: 'Select region' }"
+            :options="props.labels?.region ? [{ label: props.labels.region, value: props.initialValues.region }] : []"
           />
 
           <DateInput
@@ -159,6 +165,7 @@
             value_key="_id"
             :validation="{ required }"
             :attributes="{ placeholder: 'Select driver' }"
+            :options="props.labels?.driver ? [{ label: props.labels.driver, value: props.initialValues.driver }] : []"
           />
 
           <SelectInput
@@ -184,6 +191,7 @@
               searchable
               :validation="{ required }"
               :attributes="{ placeholder: 'Select transporter' }"
+              :options="props.labels?.transporter ? [{ label: props.labels.transporter, value: props.initialValues.transporter }] : []"
             />
           </component>
 
@@ -374,6 +382,7 @@
             value_key="_id"
             searchable
             :attributes="{ placeholder: 'Select insurer' }"
+            :options="props.labels?.insurance_insurer ? [{ label: props.labels.insurance_insurer, value: props.initialValues.insurance_insurer }] : []"
           />
         </div>
       </Colapsable>
@@ -422,20 +431,13 @@ import {
   dateGreaterThanOrEqalToToday,
   required,
 } from "@/utils/validations";
-import { ref } from "vue";
-import Button from "@/components/common/Button.vue";
-import { openModal } from "@customizer/modal-x";
-import { getStaticUrl } from "@/utils/utils";
-
 const props = defineProps<{
   formId: string;
+  mode?: "add" | "edit";
   initialValues: Record<string, any>;
+  labels?: Record<string, string>;
   onSubmit: (values: any) => Promise<void> | void;
 }>();
-
-const triggerFileInput = () => {
-  // Logic handled by component
-};
 
 const ownershipOptions = [
   { label: "Owned", value: "Owned" },
@@ -477,7 +479,55 @@ const validateLeaseEndDate = (value: any, _msg: any, form: any) => {
 };
 
 const handleSubmit = (values: any) => {
-  // Build the nested objects as expected by the API
+  if (props.mode === "edit") {
+    return handleEditSubmit(values);
+  }
+  return handleAddSubmit(values);
+};
+
+const handleEditSubmit = (values: any) => {
+  const editFields = [
+    "plateNumber",
+    "sideNumber",
+    "weightCapacity",
+    "ownership",
+    "lastServiceDate",
+    "roadTaxExpireDate",
+    "boloIssueDate",
+    "boloExpirationDate",
+    "driver",
+    "chassisNumber",
+    "mileageSinceService",
+    "mileage",
+    "engineNumber",
+    "fuelRateLoaded",
+    "fuelRateUnloaded",
+    "remark",
+    "trailerPlate",
+    "trailerPurchaseDate",
+    "trailerChassisNumber",
+    "vehicleType",
+    "vehicleGroup",
+    "maker",
+    "region",
+    "purchaseDate",
+  ];
+
+  const payload: Record<string, any> = {};
+  editFields.forEach((key) => {
+    if (values[key] !== undefined && values[key] !== null && values[key] !== "") {
+      payload[key] = values[key];
+    }
+  });
+
+  if (values.ownership === "Owned") {
+    payload.vehicleUseType = values.vehicleUseType || "INHOUSE";
+  }
+
+  props.onSubmit(payload);
+};
+
+const handleAddSubmit = (values: any) => {
   const insuranceInformation = {
     insuredDate: values.insurance_insuredDate,
     insuredAmount: Number(values.insurance_insuredAmount) || 0,
@@ -501,13 +551,12 @@ const handleSubmit = (values: any) => {
         }
       : undefined;
 
-  // Build FormData for multi-part submission (includes files)
   const formData = new FormData();
 
-  // Primary fields
   const primaryFields = [
     "plateNumber",
     "sideNumber",
+    "weightCapacity",
     "lastServiceDate",
     "chassisNumber",
     "ownership",
@@ -516,6 +565,7 @@ const handleSubmit = (values: any) => {
     "maker",
     "region",
     "vehicleGroup",
+    "type",
     "mileage",
     "mileageSinceService",
     "driver",
@@ -533,22 +583,19 @@ const handleSubmit = (values: any) => {
     "boloIssueDate",
     "boloExpirationDate",
     "purchaseDate",
+    "transporter",
   ];
 
   primaryFields.forEach((key) => {
     if (values[key] !== undefined && values[key] !== null) {
-      // Don't append objects (like driver, vehicleType etc. if they are still objects)
-      // but in edit mode they might be IDs already due to mapping
       formData.append(key, values[key]);
     }
   });
 
-  // Ownership specific
-  if (values.ownership === "Owned" && values.vehicleUseType) {
-    formData.append("vehicleUseType", values.vehicleUseType);
+  if (values.ownership === "Owned") {
+    formData.append("vehicleUseType", values.vehicleUseType || "INHOUSE");
   }
 
-  // Insurance
   if (values.insurance_insuredDate || values.insurance_insurer) {
     formData.append("insuranceInformation", JSON.stringify(insuranceInformation));
   }
@@ -559,22 +606,13 @@ const handleSubmit = (values: any) => {
     formData.append("lease[amount]", String(lease.amount));
     formData.append("lease[transporter]", lease.transporter || "");
     formData.append("lease[leaseDirection]", lease.leaseDirection);
-    formData.append(
-      "lease[leaseAgreement][coversAdvance]",
-      String(lease.leaseAgreement.coversAdvance),
-    );
-    formData.append(
-      "lease[leaseAgreement][coversMaintenance]",
-      String(lease.leaseAgreement.coversMaintenance),
-    );
+    formData.append("lease[leaseAgreement][coversAdvance]", String(lease.leaseAgreement.coversAdvance));
+    formData.append("lease[leaseAgreement][coversMaintenance]", String(lease.leaseAgreement.coversMaintenance));
   }
 
-  // Files
-  if (values.vehicleDocuments && values.vehicleDocuments.length > 0) {
+  if (values.vehicleDocuments?.length > 0) {
     values.vehicleDocuments.forEach((file: any) => {
-      if (file instanceof File) {
-        formData.append("vehicleDocuments", file);
-      }
+      if (file instanceof File) formData.append("vehicleDocuments", file);
     });
   }
 

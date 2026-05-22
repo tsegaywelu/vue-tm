@@ -717,9 +717,28 @@ export interface Vehicle {
     _id: string;
     name: string;
   };
+  vehicleGroup?: {
+    _id: string;
+    name: string;
+  };
+  type?: {
+    _id: string;
+    name: string;
+  };
   transporter?: {
     _id: string | null;
     name: string | null;
+  };
+  lease?: {
+    startDate?: string;
+    endDate?: string;
+    amount?: number;
+    transporter?: string;
+    leaseDirection?: string;
+    leaseAgreement?: {
+      coversMaintenance?: boolean;
+      coversAdvance?: boolean;
+    };
   };
   carrier?: string;
   createdAt?: string;

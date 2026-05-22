@@ -5,10 +5,12 @@
   <template v-else-if="vehicle">
     <VehicleForm
       formId="edit-vehicle-form"
+      mode="edit"
       :initial-values="mappedValues"
+      :labels="labels"
       :onSubmit="handleSubmit"
     >
-      <template #actions="{ form }">
+      <template #actions>
         <Button variant="secondary" size="md" @click="$router.back()">
           Cancel
         </Button>
@@ -40,6 +42,23 @@ const { data: vehicleData, isLoading } = useQuery({
 });
 
 const vehicle = computed(() => vehicleData.value?.data);
+
+const labels = computed<Record<string, string>>(() => {
+  const v = vehicle.value as any;
+  if (!v) return {} as Record<string, string>;
+  const d = v.driver;
+  return {
+    vehicleType: v.vehicleType?.name || "",
+    vehicleGroup: v.vehicleGroup?.name || "",
+    type: v.type?.name || "",
+    vehicleModel: v.vehicleModel?.name || "",
+    maker: v.maker?.name || "",
+    region: v.region?.name || "",
+    transporter: v.transporter?.name || "",
+    insurance_insurer: v.insuranceInformation?.insurer?.name || "",
+    driver: d ? `${d.firstName} ${d.middleName || ""} ${d.lastName || ""}`.trim() : "",
+  };
+});
 
 const mappedValues = computed(() => {
   if (!vehicle.value) return {};
