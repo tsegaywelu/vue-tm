@@ -24,13 +24,14 @@ import { useRoute, useRouter } from "vue-router";
 import Button from "@/components/common/Button.vue";
 import SubmitButton from "@/components/form/SubmitButton.vue";
 import VehicleForm from "../components/VehicleForm.vue";
-import { useQuery, useMutation } from "@tanstack/vue-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/vue-query";
 import { fetch_vehicle_by_id, update_vehicle } from "../api/operation.api";
 import { useToastStore } from "@/store/toastStore";
 
 const route = useRoute();
 const router = useRouter();
 const toast = useToastStore();
+const queryClient = useQueryClient();
 const vehicleId = route.params.id as string;
 
 const { data: vehicleData, isLoading } = useQuery({
@@ -80,6 +81,8 @@ const mutation = useMutation({
   onSuccess: (res: any) => {
     if (res.success) {
       toast.success("Vehicle updated successfully");
+      queryClient.invalidateQueries({ queryKey: ["vehicle-list"] });
+      queryClient.invalidateQueries({ queryKey: ["vehicle", vehicleId] });
       router.push("/vehicles");
     } else {
       toast.error(res.error || "Failed to update vehicle");

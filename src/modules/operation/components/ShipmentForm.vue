@@ -1,5 +1,10 @@
 <template>
-  <Form ref="formRef" :id="formId" :values="initialValues" :onSubmit="handleSubmit">
+  <Form
+    ref="formRef"
+    :id="formId"
+    :values="initialValues"
+    :onSubmit="handleSubmit"
+  >
     <template #default="{ form }">
       <Colapsable
         title="Order Selection"
@@ -61,6 +66,17 @@
                   name="route"
                   label="Route"
                   searchable
+                  :params="
+                    (state) => {
+                      return {
+                        routeName: {
+                          regexAny: state.search,
+                        },
+                        sort: 'shipmentCount',
+                        q: undefined,
+                      };
+                    }
+                  "
                   :url="shipper ? `/route/shipper/${shipper}` : '/route'"
                   label_key="routeName"
                   value_key="_id"
@@ -458,7 +474,10 @@
               type: 'number',
             }"
             :validation="{
-              required: (val: any) => val !== '' && val !== null && val !== undefined ? [true, ''] : [false, 'This field is required'],
+              required: (val: any) =>
+                val !== '' && val !== null && val !== undefined
+                  ? [true, '']
+                  : [false, 'This field is required'],
             }"
           />
 
