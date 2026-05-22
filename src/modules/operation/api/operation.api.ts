@@ -555,6 +555,15 @@ export function fetch_all_payment_collections_unpaginated(
     .get("/approvedAndCollectedInvoices", { params: { ...params, limit: 99999 }, ...config });
 }
 
+export function fetch_all_invoice_reports_unpaginated(
+  params?: Record<string, any>,
+  config?: any,
+) {
+  return shipment_api
+    .addAuthenticationHeader()
+    .get("/paymentRequestedInvoices", { params: { ...params, limit: 99999 }, ...config });
+}
+
 export function add_insurance(data: any) {
   const config = data instanceof FormData
     ? { headers: { 'Content-Type': 'multipart/form-data' } }

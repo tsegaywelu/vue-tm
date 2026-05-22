@@ -10,6 +10,12 @@
       <span class="font-bold">{{ value || "-" }}</span>
     </template>
 
+    <template #cell-shipments="{ value }">
+      <span class="inline-flex items-center justify-center min-w-[1.5rem] px-2 py-0.5 rounded-full text-xs font-semibold bg-primary/10 text-primary">
+        {{ value?.length ?? 0 }}
+      </span>
+    </template>
+
     <template #cell-totalAmount="{ value }">
       <span class="font-bold text-gray-900">
         {{ currencyFormatter(value) }}
@@ -130,6 +136,7 @@ const emit = defineEmits(["action"]);
 
 const columns: TableColumn<any>[] = [
   { key: "reference", label: "Reference", field: "reference" },
+  { key: "shipments", label: "Shipment Count", field: "shipments" },
   { key: "totalAmount", label: "Total Amount", field: "totalAmount" },
   { key: "shipperName", label: "Shipper", field: "shipper" },
   {
