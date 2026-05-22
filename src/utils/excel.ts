@@ -169,7 +169,7 @@ export function exportInvoiceToExcel(invoice: any) {
         s.quantity || s.order?.totalRequest || s.dispatchWeight || "",
         s.returnQty || "",
         fmtPrice(s.totalPrice),
-        fmtPrice(s.totalPrice / (s.quantity || s.order?.totalRequest || s.dispatchWeight || 1)),
+        1,
         fmtPrice(s.totalPrice),
         s.remark || "",
       ];

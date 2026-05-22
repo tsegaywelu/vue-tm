@@ -98,20 +98,48 @@ export function exportInvoiceToExcel(invoice: any) {
   let headers: string[] = [];
   if (isOutbound) {
     headers = [
-      "No", "Posting Date", "Distributor Number", "Distributor Name", "Original Doc",
-      "For Document Number", "SR Doc. No", "UOM", "Business Unit", "Route Code",
-      "Route Description", "Vehicle", "Shipment Method", "Shipped Qty", "Return Qty",
-      "Route Tariff", "Rate", "Payment Amount", "Remark"
+      "No",
+      "Posting Date",
+      "Distributor Number",
+      "Distributor Name",
+      "Original Doc",
+      "For Document Number",
+      "SR Doc. No",
+      "UOM",
+      "Business Unit",
+      "Route Code",
+      "Route Description",
+      "Vehicle",
+      "Shipment Method",
+      "Shipped Qty",
+      "Return Qty",
+      "Route Tariff",
+      "Rate",
+      "Payment Amount",
+      "Remark",
     ];
   } else {
     headers = [
-      "No", "Business Unit", "Date", "Allocation Num", "Material Type",
-      "Truck Type", "Supplier Name", "Origin", "Destination", "Route",
-      "Truck Plate Number", "Driver Name", "GRN", "QTY", "Tariff", "Remark"
+      "No",
+      "Business Unit",
+      "Date",
+      "Allocation Num",
+      "Material Type",
+      "Truck Type",
+      "Supplier Name",
+      "Origin",
+      "Destination",
+      "Route",
+      "Truck Plate Number",
+      "Driver Name",
+      "GRN",
+      "QTY",
+      "Tariff",
+      "Remark",
     ];
   }
 
-  wsData.push(headers.map(h => ({ v: h, t: "s", s: styles.columnHeader })));
+  wsData.push(headers.map((h) => ({ v: h, t: "s", s: styles.columnHeader })));
 
   // Data Rows
   shipments.forEach((s: any, index: number) => {
@@ -134,11 +162,9 @@ export function exportInvoiceToExcel(invoice: any) {
         s.quantity || s.order?.totalRequest || s.dispatchWeight || 0,
         s.returnQty || "-",
         s.totalPrice || 0,
-        s.totalPrice && (s.quantity || s.order?.totalRequest || s.dispatchWeight)
-          ? +(s.totalPrice / (s.quantity || s.order?.totalRequest || s.dispatchWeight || 1)).toFixed(2)
-          : 0,
+        1,
         s.totalPrice || 0,
-        s.remark || ""
+        s.remark || "",
       ];
     } else {
       row = [
@@ -157,24 +183,35 @@ export function exportInvoiceToExcel(invoice: any) {
         s.agentReceiveVoucher || "-",
         s.quantity || s.order?.totalRequest || 0,
         s.totalPrice || 0,
-        s.remark || ""
+        s.remark || "",
       ];
     }
-    wsData.push(row.map(v => ({ v, t: typeof v === "number" ? "n" : "s", s: styles.cell })));
+    wsData.push(
+      row.map((v) => ({
+        v,
+        t: typeof v === "number" ? "n" : "s",
+        s: styles.cell,
+      })),
+    );
   });
 
   // Total Row
-  const totalAmount = shipments.reduce((sum: number, s: any) => sum + (s.totalPrice || 0), 0);
+  const totalAmount = shipments.reduce(
+    (sum: number, s: any) => sum + (s.totalPrice || 0),
+    0,
+  );
   const totalRowIndex = wsData.length;
   const totalRow = new Array(headers.length).fill("");
   totalRow[headers.length - 3] = "TOTAL";
   totalRow[headers.length - 2] = totalAmount;
-  
-  wsData.push(totalRow.map((v, i) => ({
-    v, 
-    t: typeof v === "number" ? "n" : "s", 
-    s: i >= headers.length - 3 ? styles.cellBold : styles.cell 
-  })));
+
+  wsData.push(
+    totalRow.map((v, i) => ({
+      v,
+      t: typeof v === "number" ? "n" : "s",
+      s: i >= headers.length - 3 ? styles.cellBold : styles.cell,
+    })),
+  );
 
   const ws = XLSX.utils.aoa_to_sheet(wsData);
 
