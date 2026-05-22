@@ -104,6 +104,7 @@
                   <option value="invoiceNo">Invoice No.</option>
                   <option value="poNumber">PO Number</option>
                   <option value="custom">Custom Text</option>
+                  <option value="none">None (label only)</option>
                 </select>
               </div>
             </div>
@@ -120,8 +121,8 @@
               />
             </div>
 
-            <!-- Colspan + rowspan config -->
-            <div class="grid grid-cols-3 gap-2">
+            <!-- Label Cols + Value Cols -->
+            <div class="grid grid-cols-2 gap-2">
               <div class="flex flex-col gap-1">
                 <label class="text-[10px] text-gray-400 uppercase tracking-wide">Label Cols</label>
                 <input
@@ -137,23 +138,84 @@
                 <label class="text-[10px] text-gray-400 uppercase tracking-wide">Value Cols (0=auto)</label>
                 <input
                   :value="row.colspanValue"
+                  :disabled="row.valueSource === 'none'"
                   type="number"
                   min="0"
                   max="20"
-                  class="text-xs border border-gray-200 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-primary-300"
+                  class="text-xs border border-gray-200 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-primary-300 disabled:opacity-40"
                   @input="updateMetaRow(idx, 'colspanValue', Number(($event.target as HTMLInputElement).value))"
                 />
               </div>
-              <div class="flex flex-col gap-1">
-                <label class="text-[10px] text-gray-400 uppercase tracking-wide">Row Span</label>
-                <input
-                  :value="row.rowspanLabel || 1"
-                  type="number"
-                  min="1"
-                  max="10"
-                  class="text-xs border border-gray-200 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-primary-300"
-                  @input="updateMetaRow(idx, 'rowspanLabel', Number(($event.target as HTMLInputElement).value))"
-                />
+            </div>
+
+            <!-- Row Span — own row -->
+            <div class="flex flex-col gap-1">
+              <label class="text-[10px] text-gray-400 uppercase tracking-wide">Row Span</label>
+              <input
+                :value="row.rowspanLabel || 1"
+                type="number"
+                min="1"
+                max="10"
+                class="text-xs border border-gray-200 rounded-lg px-2 py-1.5 w-24 focus:outline-none focus:ring-2 focus:ring-primary-300"
+                @input="updateMetaRow(idx, 'rowspanLabel', Number(($event.target as HTMLInputElement).value))"
+              />
+            </div>
+
+            <!-- Label style -->
+            <div class="flex flex-col gap-1.5 pt-1 border-t border-gray-100">
+              <span class="text-[10px] font-semibold text-gray-500 uppercase tracking-wide">Label Style</span>
+              <div class="flex flex-wrap items-center gap-3">
+                <div class="flex items-center gap-1.5">
+                  <span class="text-[10px] text-gray-400 w-6 shrink-0">BG</span>
+                  <input type="color" :value="metaHex(row.labelStyle?.bgColor)"
+                    class="w-6 h-6 rounded cursor-pointer border border-gray-200 p-0"
+                    @change="updateMetaStyle(idx, 'labelStyle', 'bgColor', inputToHex(($event.target as HTMLInputElement).value))" />
+                  <button v-if="row.labelStyle?.bgColor" class="text-[10px] text-gray-400 hover:text-red-400"
+                    @click="updateMetaStyle(idx, 'labelStyle', 'bgColor', '')">×</button>
+                </div>
+                <div class="flex items-center gap-1.5">
+                  <span class="text-[10px] text-gray-400 w-7 shrink-0">Text</span>
+                  <input type="color" :value="metaHex(row.labelStyle?.color)"
+                    class="w-6 h-6 rounded cursor-pointer border border-gray-200 p-0"
+                    @change="updateMetaStyle(idx, 'labelStyle', 'color', inputToHex(($event.target as HTMLInputElement).value))" />
+                  <button v-if="row.labelStyle?.color" class="text-[10px] text-gray-400 hover:text-red-400"
+                    @click="updateMetaStyle(idx, 'labelStyle', 'color', '')">×</button>
+                </div>
+                <div class="flex items-center gap-1.5">
+                  <span class="text-[10px] text-gray-400 w-6 shrink-0">Size</span>
+                  <input type="number" min="6" max="24" :value="row.labelStyle?.fontSize ?? ''" placeholder="—"
+                    class="w-12 text-xs border border-gray-200 rounded px-1.5 py-0.5 focus:outline-none focus:ring-1 focus:ring-primary-300"
+                    @input="updateMetaStyle(idx, 'labelStyle', 'fontSize', Number(($event.target as HTMLInputElement).value) || '')" />
+                </div>
+              </div>
+            </div>
+
+            <!-- Value style (hidden when valueSource === 'none') -->
+            <div v-if="row.valueSource !== 'none'" class="flex flex-col gap-1.5 pt-1 border-t border-gray-100">
+              <span class="text-[10px] font-semibold text-gray-500 uppercase tracking-wide">Value Style</span>
+              <div class="flex flex-wrap items-center gap-3">
+                <div class="flex items-center gap-1.5">
+                  <span class="text-[10px] text-gray-400 w-6 shrink-0">BG</span>
+                  <input type="color" :value="metaHex(row.valueStyle?.bgColor)"
+                    class="w-6 h-6 rounded cursor-pointer border border-gray-200 p-0"
+                    @change="updateMetaStyle(idx, 'valueStyle', 'bgColor', inputToHex(($event.target as HTMLInputElement).value))" />
+                  <button v-if="row.valueStyle?.bgColor" class="text-[10px] text-gray-400 hover:text-red-400"
+                    @click="updateMetaStyle(idx, 'valueStyle', 'bgColor', '')">×</button>
+                </div>
+                <div class="flex items-center gap-1.5">
+                  <span class="text-[10px] text-gray-400 w-7 shrink-0">Text</span>
+                  <input type="color" :value="metaHex(row.valueStyle?.color)"
+                    class="w-6 h-6 rounded cursor-pointer border border-gray-200 p-0"
+                    @change="updateMetaStyle(idx, 'valueStyle', 'color', inputToHex(($event.target as HTMLInputElement).value))" />
+                  <button v-if="row.valueStyle?.color" class="text-[10px] text-gray-400 hover:text-red-400"
+                    @click="updateMetaStyle(idx, 'valueStyle', 'color', '')">×</button>
+                </div>
+                <div class="flex items-center gap-1.5">
+                  <span class="text-[10px] text-gray-400 w-6 shrink-0">Size</span>
+                  <input type="number" min="6" max="24" :value="row.valueStyle?.fontSize ?? ''" placeholder="—"
+                    class="w-12 text-xs border border-gray-200 rounded px-1.5 py-0.5 focus:outline-none focus:ring-1 focus:ring-primary-300"
+                    @input="updateMetaStyle(idx, 'valueStyle', 'fontSize', Number(($event.target as HTMLInputElement).value) || '')" />
+                </div>
               </div>
             </div>
           </div>
@@ -250,6 +312,27 @@ const updateMetaRow = (index: number, key: keyof MetadataRow, value: any) => {
 
 const removeMetaRow = (index: number) => {
   emit("update:modelValue", { ...props.modelValue, metadataRows: props.modelValue.metadataRows.filter((_, i) => i !== index) });
+};
+
+const metaHex = (hex?: string) => hex ? `#${hex}` : "#000000";
+const inputToHex = (v: string) => v.replace("#", "").toUpperCase();
+
+const updateMetaStyle = (
+  index: number,
+  styleKey: "labelStyle" | "valueStyle",
+  prop: keyof CellStyle,
+  value: string | number,
+) => {
+  const row = props.modelValue.metadataRows[index];
+  let updated: Partial<CellStyle>;
+  if (value === "" || value === 0) {
+    const current = { ...(row[styleKey] || {}) } as Record<string, any>;
+    delete current[prop as string];
+    updated = Object.keys(current).length ? current : {};
+  } else {
+    updated = { ...(row[styleKey] || {}), [prop]: value };
+  }
+  updateMetaRow(index, styleKey, Object.keys(updated).length ? updated : undefined);
 };
 
 const moveMetaRow = (index: number, dir: -1 | 1) => {

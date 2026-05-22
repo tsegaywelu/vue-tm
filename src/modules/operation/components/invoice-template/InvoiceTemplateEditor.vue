@@ -30,17 +30,21 @@
       </div>
 
       <div class="flex items-end gap-2 ml-auto">
+        <span v-if="lastDraftSaved" class="text-[10px] text-gray-400 self-center">Draft saved {{ lastDraftSaved }}</span>
         <button
           class="text-sm px-4 py-2 rounded-xl border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors"
           @click="router.back()"
         >Cancel</button>
         <button
-          class="text-sm px-5 py-2 rounded-xl bg-primary-600 text-white font-semibold hover:bg-primary-700 transition-colors disabled:opacity-50"
+          class="text-sm px-4 py-2 rounded-xl border border-primary-300 text-primary-600 hover:bg-primary-50 transition-colors disabled:opacity-50"
           :disabled="saving || (props.ownerType !== 'shipper' && !selectedShipperId)"
-          @click="save"
-        >
-          {{ saving ? "Saving..." : (isEdit ? "Update Template" : "Save Template") }}
-        </button>
+          @click="save(false)"
+        >{{ saving === 'save' ? 'Saving…' : 'Save' }}</button>
+        <button
+          class="text-sm px-5 py-2 rounded-xl bg-primary-600 text-white font-semibold hover:bg-primary-700 transition-colors disabled:opacity-50"
+          :disabled="!!saving || (props.ownerType !== 'shipper' && !selectedShipperId)"
+          @click="save(true)"
+        >{{ saving === 'submit' ? 'Submitting…' : (isEdit ? 'Update' : 'Submit') }}</button>
       </div>
     </div>
 
@@ -72,7 +76,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted } from "vue";
+import { ref, watch, onMounted, onUnmounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useToastStore } from "@/store/toastStore";
 import { useAuthStore } from "@/store/authStore";
@@ -98,8 +102,26 @@ const authStore = useAuthStore();
 
 const templateId = route.params.id as string | undefined;
 const isEdit = !!templateId;
-const saving = ref(false);
+const saving = ref<false | 'save' | 'submit'>(false);
 const template = ref<InvoiceTemplate>(makeDefaultTemplate());
+const lastDraftSaved = ref<string>("");
+
+const DRAFT_KEY = `tms-invoice-template-draft-${props.ownerType ?? "carrier"}`;
+
+function saveDraft() {
+  if (isEdit) return;
+  try {
+    localStorage.setItem(DRAFT_KEY, JSON.stringify(template.value));
+    const now = new Date();
+    lastDraftSaved.value = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  } catch {}
+}
+
+function clearDraft() {
+  localStorage.removeItem(DRAFT_KEY);
+}
+
+let autoSaveTimer: ReturnType<typeof setInterval> | null = null;
 
 const selectedShipperId = ref<string>("");
 const shipperDisplayLabel = ref<string>("");
@@ -145,7 +167,6 @@ onMounted(async () => {
       const ownerId = template.value.ownerId;
       if (ownerId) {
         selectedShipperId.value = ownerId;
-        // Fetch shipper name so the selector shows the label instead of raw ID
         if (props.ownerType !== "shipper") {
           const shipperRes = await fetch_shipper_profile(ownerId);
           shipperDisplayLabel.value =
@@ -156,29 +177,48 @@ onMounted(async () => {
       }
     }
   } else {
+    // Restore draft from localStorage
+    try {
+      const saved = localStorage.getItem(DRAFT_KEY);
+      if (saved) {
+        template.value = migrateLoaded(JSON.parse(saved));
+        lastDraftSaved.value = "restored";
+      }
+    } catch {}
+
     template.value.ownerType = "shipper";
     if (props.ownerType === "shipper") {
-      // Shipper user — auto-fill their own ID
       selectedShipperId.value = authStore.shipperId ?? "";
     }
-    // Carrier admin — leave selectedShipperId empty; user must pick from the selector
+
+    // Auto-save every 10 s
+    autoSaveTimer = setInterval(saveDraft, 10_000);
   }
 });
 
-const save = async () => {
+onUnmounted(() => {
+  if (autoSaveTimer) clearInterval(autoSaveTimer);
+});
+
+const save = async (andSubmit: boolean) => {
   if (props.ownerType !== "shipper" && !selectedShipperId.value) {
     toast.error("Please select a shipper for this template");
     return;
   }
-  saving.value = true;
+  saving.value = andSubmit ? "submit" : "save";
   try {
     const payload = { ...template.value };
     const res = isEdit
       ? await update_invoice_template(templateId!, payload)
       : await create_invoice_template(payload);
     if (res.success) {
-      toast.success(isEdit ? "Template updated!" : "Template created!");
-      router.back();
+      if (andSubmit) {
+        clearDraft();
+        toast.success(isEdit ? "Template updated!" : "Template created!");
+        router.back();
+      } else {
+        toast.success("Template saved!");
+      }
     } else {
       toast.error(res.error || "Failed to save template");
     }

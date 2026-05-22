@@ -84,6 +84,111 @@
         </div>
       </div>
 
+      <!-- Style overrides toggle -->
+      <button
+        class="flex items-center gap-1.5 text-[10px] text-gray-400 hover:text-primary-600 transition-colors border-t border-gray-100 pt-2 w-full text-left"
+        @click="toggleStyleExpand(col.id)"
+      >
+        <svg
+          class="w-3 h-3 transition-transform duration-150"
+          :class="{ 'rotate-90': expandedStyles.has(col.id) }"
+          viewBox="0 0 20 20" fill="currentColor"
+        >
+          <path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" />
+        </svg>
+        <span class="uppercase tracking-wide font-medium">Style overrides</span>
+        <span v-if="styleOverrideCount(col) > 0" class="ml-1 px-1.5 py-0.5 rounded-full bg-primary-100 text-primary-600 font-semibold">
+          {{ styleOverrideCount(col) }}
+        </span>
+      </button>
+
+      <!-- Per-column style overrides -->
+      <div v-show="expandedStyles.has(col.id)" class="grid grid-cols-2 gap-x-3 gap-y-0">
+        <!-- Header overrides -->
+        <div class="flex flex-col gap-1.5">
+          <span class="text-[10px] font-semibold text-gray-500 uppercase tracking-wide">Header</span>
+          <div class="flex items-center gap-1.5">
+            <span class="text-[10px] text-gray-400 w-9 shrink-0">Align</span>
+            <select
+              :value="col.headerStyle?.align ?? ''"
+              class="flex-1 text-xs border border-gray-200 rounded px-1.5 py-0.5 bg-white focus:outline-none focus:ring-1 focus:ring-primary-300"
+              @change="setColStyle(index, 'headerStyle', 'align', ($event.target as HTMLSelectElement).value)"
+            >
+              <option value="">—</option>
+              <option value="left">Left</option>
+              <option value="center">Center</option>
+              <option value="right">Right</option>
+            </select>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <span class="text-[10px] text-gray-400 w-9 shrink-0">Text</span>
+            <input type="color" :value="hexInput(col.headerStyle?.color)"
+              class="w-6 h-6 rounded cursor-pointer border border-gray-200 p-0"
+              @change="setColStyle(index, 'headerStyle', 'color', inputToHex(($event.target as HTMLInputElement).value))" />
+            <button v-if="col.headerStyle?.color" class="text-[10px] text-gray-400 hover:text-red-400"
+              @click="setColStyle(index, 'headerStyle', 'color', '')">×</button>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <span class="text-[10px] text-gray-400 w-9 shrink-0">BG</span>
+            <input type="color" :value="hexInput(col.headerStyle?.bgColor)"
+              class="w-6 h-6 rounded cursor-pointer border border-gray-200 p-0"
+              @change="setColStyle(index, 'headerStyle', 'bgColor', inputToHex(($event.target as HTMLInputElement).value))" />
+            <button v-if="col.headerStyle?.bgColor" class="text-[10px] text-gray-400 hover:text-red-400"
+              @click="setColStyle(index, 'headerStyle', 'bgColor', '')">×</button>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <span class="text-[10px] text-gray-400 w-9 shrink-0">Size</span>
+            <input type="number" min="6" max="24"
+              :value="col.headerStyle?.fontSize ?? ''"
+              placeholder="—"
+              class="w-14 text-xs border border-gray-200 rounded px-1.5 py-0.5 focus:outline-none focus:ring-1 focus:ring-primary-300"
+              @input="setColStyle(index, 'headerStyle', 'fontSize', Number(($event.target as HTMLInputElement).value) || '')" />
+          </div>
+        </div>
+
+        <!-- Value overrides -->
+        <div class="flex flex-col gap-1.5">
+          <span class="text-[10px] font-semibold text-gray-500 uppercase tracking-wide">Value</span>
+          <div class="flex items-center gap-1.5">
+            <span class="text-[10px] text-gray-400 w-9 shrink-0">Align</span>
+            <select
+              :value="col.style?.align ?? ''"
+              class="flex-1 text-xs border border-gray-200 rounded px-1.5 py-0.5 bg-white focus:outline-none focus:ring-1 focus:ring-primary-300"
+              @change="setColStyle(index, 'style', 'align', ($event.target as HTMLSelectElement).value)"
+            >
+              <option value="">—</option>
+              <option value="left">Left</option>
+              <option value="center">Center</option>
+              <option value="right">Right</option>
+            </select>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <span class="text-[10px] text-gray-400 w-9 shrink-0">Text</span>
+            <input type="color" :value="hexInput(col.style?.color)"
+              class="w-6 h-6 rounded cursor-pointer border border-gray-200 p-0"
+              @change="setColStyle(index, 'style', 'color', inputToHex(($event.target as HTMLInputElement).value))" />
+            <button v-if="col.style?.color" class="text-[10px] text-gray-400 hover:text-red-400"
+              @click="setColStyle(index, 'style', 'color', '')">×</button>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <span class="text-[10px] text-gray-400 w-9 shrink-0">BG</span>
+            <input type="color" :value="hexInput(col.style?.bgColor)"
+              class="w-6 h-6 rounded cursor-pointer border border-gray-200 p-0"
+              @change="setColStyle(index, 'style', 'bgColor', inputToHex(($event.target as HTMLInputElement).value))" />
+            <button v-if="col.style?.bgColor" class="text-[10px] text-gray-400 hover:text-red-400"
+              @click="setColStyle(index, 'style', 'bgColor', '')">×</button>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <span class="text-[10px] text-gray-400 w-9 shrink-0">Size</span>
+            <input type="number" min="6" max="24"
+              :value="col.style?.fontSize ?? ''"
+              placeholder="—"
+              class="w-14 text-xs border border-gray-200 rounded px-1.5 py-0.5 focus:outline-none focus:ring-1 focus:ring-primary-300"
+              @input="setColStyle(index, 'style', 'fontSize', Number(($event.target as HTMLInputElement).value) || '')" />
+          </div>
+        </div>
+      </div>
+
       <!-- Static value input -->
       <div v-if="col.type === 'static'" class="flex flex-col gap-1">
         <label class="text-[10px] text-gray-400 uppercase tracking-wide">Static Value</label>
@@ -111,15 +216,24 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, reactive } from "vue";
 import { genId } from "@/utils/utils";
-import type { ColumnDef } from "@/utils/invoice-template-export";
+import type { ColumnDef, CellStyle } from "@/utils/invoice-template-export";
 import { AVAILABLE_FIELDS, FIELD_DEFAULT_TYPE } from "./constants";
 
 const props = defineProps<{ modelValue: ColumnDef[] }>();
 const emit = defineEmits<{ (e: "update:modelValue", val: ColumnDef[]): void }>();
 
 const dragIndex = ref<number | null>(null);
+const expandedStyles = reactive(new Set<string>());
+
+const toggleStyleExpand = (id: string) => {
+  if (expandedStyles.has(id)) expandedStyles.delete(id);
+  else expandedStyles.add(id);
+};
+
+const styleOverrideCount = (col: ColumnDef) =>
+  Object.keys(col.headerStyle || {}).length + Object.keys(col.style || {}).length;
 const dragOverIndex = ref<number | null>(null);
 
 const usedFields = (excludeId: string) =>
@@ -142,6 +256,26 @@ const onFieldChange = (index: number, field: string) => {
 
 const updateColumn = (index: number, key: keyof ColumnDef, value: any) => {
   emit("update:modelValue", props.modelValue.map((c, i) => i === index ? { ...c, [key]: value } : c));
+};
+
+const hexInput = (hex?: string) => hex ? `#${hex}` : "#000000";
+const inputToHex = (v: string) => v.replace("#", "").toUpperCase();
+
+const setColStyle = (
+  index: number,
+  styleKey: "style" | "headerStyle",
+  prop: keyof CellStyle,
+  value: string | number,
+) => {
+  emit("update:modelValue", props.modelValue.map((c, i) => {
+    if (i !== index) return c;
+    if (value === "" || value === 0) {
+      const current = { ...(c[styleKey] || {}) } as Record<string, any>;
+      delete current[prop as string];
+      return { ...c, [styleKey]: Object.keys(current).length ? current : undefined };
+    }
+    return { ...c, [styleKey]: { ...(c[styleKey] || {}), [prop]: value } };
+  }));
 };
 
 const removeColumn = (index: number) => {

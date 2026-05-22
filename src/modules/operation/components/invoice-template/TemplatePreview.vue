@@ -1,6 +1,15 @@
 <template>
   <div class="overflow-auto rounded-xl border border-gray-200 bg-gray-50 p-3">
     <table class="text-xs border-collapse" style="min-width: 100%">
+      <!-- Column widths -->
+      <colgroup>
+        <col
+          v-for="col in template.columns"
+          :key="col.id"
+          :style="{ width: (Number(col.width) * 7) + 'px', minWidth: (Number(col.width) * 7) + 'px' }"
+        />
+      </colgroup>
+
       <!-- Title row -->
       <tr v-if="template.titleRow.enabled && template.titleRow.text">
         <td
@@ -11,20 +20,23 @@
       </tr>
 
       <!-- Metadata rows -->
-      <template v-for="meta in visibleMeta" :key="meta.id">
-        <tr>
-          <!-- Label cell: omitted for rows whose label is covered by a prior rowspan -->
-          <td
-            v-if="!meta.labelCovered"
-            :colspan="meta.colspanLabel || 3"
-            :rowspan="meta.effectiveRowspan > 1 ? meta.effectiveRowspan : undefined"
-            class="px-2 py-1 border border-gray-300 font-semibold text-center bg-yellow-100 align-middle"
-          >{{ meta.labelText }}</td>
-          <!-- Value cell: always rendered -->
-          <td
-            :colspan="meta.colspanValue > 0 ? meta.colspanValue : Math.max(1, template.columns.length - (meta.colspanLabel || 3))"
-            class="px-2 py-1 border border-gray-300 bg-gray-50 text-gray-500"
-          >{{ metaSampleValue(meta.valueSource) }}</td>
+      <template v-for="(rowItems, rIdx) in metaRowGroups" :key="rIdx">
+        <tr :style="rowItems.length === 0 ? 'height:28px' : ''">
+          <template v-for="p in rowItems" :key="p.item.id">
+            <td
+              :colspan="p.labelSpan"
+              :rowspan="p.rowspan > 1 ? p.rowspan : undefined"
+              class="px-2 py-1 border border-gray-300 font-semibold align-middle"
+              :style="metaLabelCss(p.item)"
+            >{{ p.item.labelText }}</td>
+            <td
+              v-if="p.valueSpan > 0"
+              :colspan="p.valueSpan"
+              :rowspan="p.rowspan > 1 ? p.rowspan : undefined"
+              class="px-2 py-1 border border-gray-300"
+              :style="metaValueCss(p.item)"
+            >{{ metaSampleValue(p.item.valueSource) }}</td>
+          </template>
         </tr>
       </template>
 
@@ -34,7 +46,7 @@
           v-for="col in template.columns"
           :key="col.id"
           class="px-2 py-1.5 border border-gray-300 whitespace-nowrap"
-          :style="cellCss(template.styles.header)"
+          :style="cellCss(template.styles.header, col.headerStyle)"
         >{{ col.label || '—' }}</th>
       </tr>
 
@@ -44,7 +56,7 @@
           v-for="(col, ci) in template.columns"
           :key="ci"
           class="px-2 py-1 border border-gray-300 whitespace-nowrap"
-          :style="cellCss(ri % 2 === 0 ? template.styles.dataRow : template.styles.alternateRow)"
+          :style="cellCss(ri % 2 === 0 ? template.styles.dataRow : template.styles.alternateRow, col.style)"
         >{{ row[ci] }}</td>
       </tr>
 
@@ -71,8 +83,8 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import type { InvoiceTemplate, CellStyle, MetadataRow } from "@/utils/invoice-template-export";
-import type { TotalRowConfig } from "@/utils/invoice-template-export";
+import type { InvoiceTemplate, CellStyle, MetadataRow, TotalRowConfig } from "@/utils/invoice-template-export";
+import { placeMetadataItems } from "@/utils/invoice-template-export";
 import { AVAILABLE_FIELDS } from "./constants";
 
 const props = defineProps<{ template: InvoiceTemplate }>();
@@ -109,28 +121,22 @@ const META_SAMPLES: Record<MetadataRow["valueSource"], string> = {
   invoiceNo: "INV-2025-001",
   poNumber: "TBA",
   custom: "(custom text)",
+  none: "",
 };
 
 const metaSampleValue = (src: MetadataRow["valueSource"]) => META_SAMPLES[src] ?? "";
 
-const visibleMeta = computed(() => {
+const metaRowGroups = computed(() => {
   const enabled = props.template.metadataRows.filter((r) => r.enabled);
-
-  // Mark rows whose label is covered by a previous rowspan
-  const covered = new Array(enabled.length).fill(false);
-  for (let i = 0; i < enabled.length; i++) {
-    if (covered[i]) continue;
-    const rs = Math.max(1, enabled[i].rowspanLabel || 1);
-    for (let j = 1; j < rs && i + j < enabled.length; j++) {
-      covered[i + j] = true;
-    }
+  const colCount = props.template.columns.length;
+  const placed = placeMetadataItems(enabled, colCount);
+  const groups: (typeof placed)[] = [];
+  for (const p of placed) {
+    while (groups.length <= p.rowIdx) groups.push([]);
+    groups[p.rowIdx].push(p);
   }
-
-  return enabled.map((row, i) => ({
-    ...row,
-    labelCovered: covered[i],
-    effectiveRowspan: covered[i] ? 1 : Math.min(Math.max(1, row.rowspanLabel || 1), enabled.length - i),
-  }));
+  for (const g of groups) g.sort((a, b) => a.colOffset - b.colOffset);
+  return groups;
 });
 
 const sampleRows = computed(() =>
@@ -145,14 +151,41 @@ const sampleRows = computed(() =>
 const firstTotalIdxFor = (trConfig: TotalRowConfig) =>
   props.template.columns.findIndex((c) => trConfig.columns.includes(c.field));
 
-function cellCss(style: CellStyle): Record<string, string> {
+function metaLabelCss(item: MetadataRow): Record<string, string> {
+  const base: Partial<CellStyle> = { bgColor: "FFC107", bold: true, align: "center" };
+  const merged = { ...base, ...(item.labelStyle || {}) };
   const css: Record<string, string> = {};
-  if (style.bgColor) css.backgroundColor = `#${style.bgColor}`;
-  if (style.color) css.color = `#${style.color}`;
-  if (style.bold) css.fontWeight = "bold";
-  if (style.italic) css.fontStyle = "italic";
-  if (style.fontSize) css.fontSize = `${style.fontSize}px`;
-  if (style.align) css.textAlign = style.align;
+  if (merged.bgColor) css.backgroundColor = `#${merged.bgColor}`;
+  if (merged.color) css.color = `#${merged.color}`;
+  if (merged.bold) css.fontWeight = "bold";
+  if (merged.italic) css.fontStyle = "italic";
+  if (merged.fontSize) css.fontSize = `${merged.fontSize}px`;
+  if (merged.align) css.textAlign = merged.align;
+  return css;
+}
+
+function metaValueCss(item: MetadataRow): Record<string, string> {
+  const base: Partial<CellStyle> = { bgColor: "F5F5F5", color: "555555" };
+  const merged = { ...base, ...(item.valueStyle || {}) };
+  const css: Record<string, string> = {};
+  if (merged.bgColor) css.backgroundColor = `#${merged.bgColor}`;
+  if (merged.color) css.color = `#${merged.color}`;
+  if (merged.bold) css.fontWeight = "bold";
+  if (merged.italic) css.fontStyle = "italic";
+  if (merged.fontSize) css.fontSize = `${merged.fontSize}px`;
+  if (merged.align) css.textAlign = merged.align;
+  return css;
+}
+
+function cellCss(style: CellStyle, override?: Partial<CellStyle>): Record<string, string> {
+  const s: CellStyle = override ? { ...style, ...override } : style;
+  const css: Record<string, string> = {};
+  if (s.bgColor) css.backgroundColor = `#${s.bgColor}`;
+  if (s.color) css.color = `#${s.color}`;
+  if (s.bold) css.fontWeight = "bold";
+  if (s.italic) css.fontStyle = "italic";
+  if (s.fontSize) css.fontSize = `${s.fontSize}px`;
+  if (s.align) css.textAlign = s.align;
   return css;
 }
 </script>

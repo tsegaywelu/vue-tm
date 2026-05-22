@@ -18,18 +18,21 @@ export interface ColumnDef {
   width: number;
   type: "text" | "number" | "currency" | "date" | "static";
   staticValue?: string;
-  style?: Partial<CellStyle>;
+  style?: Partial<CellStyle>;       // overrides dataRow / alternateRow per cell
+  headerStyle?: Partial<CellStyle>; // overrides header style per column header cell
 }
 
 export interface MetadataRow {
   id: string;
   labelText: string;
-  valueSource: "transporterName" | "month" | "invoiceNo" | "poNumber" | "custom";
+  valueSource: "transporterName" | "month" | "invoiceNo" | "poNumber" | "custom" | "none";
   customValue?: string;
   enabled: boolean;
   colspanLabel: number;   // columns the label cell spans horizontally (default 3)
   colspanValue: number;   // columns the value cell spans horizontally (0 = auto)
   rowspanLabel?: number;  // rows the label cell spans vertically (default 1)
+  labelStyle?: Partial<CellStyle>;
+  valueStyle?: Partial<CellStyle>;
 }
 
 export interface TotalRowConfig {
@@ -54,6 +57,59 @@ export interface InvoiceTemplate {
     totalRow: CellStyle;
   };
   totalRows: TotalRowConfig[];
+}
+
+// ─── Grid placement ───────────────────────────────────────────────────────────
+
+export interface PlacedMetaItem {
+  item: MetadataRow;
+  rowIdx: number;
+  colOffset: number;
+  labelSpan: number;
+  valueSpan: number;
+  rowspan: number;
+}
+
+export function placeMetadataItems(rows: MetadataRow[], colCount: number): PlacedMetaItem[] {
+  const occupancy: boolean[][] = [];
+  const result: PlacedMetaItem[] = [];
+
+  const ensureRows = (maxRow: number) => {
+    while (occupancy.length <= maxRow)
+      occupancy.push(new Array(colCount).fill(false));
+  };
+
+  for (const item of rows) {
+    const rawLabelSpan = Math.max(1, item.colspanLabel || 3);
+    const rawValueSpan = item.colspanValue > 0
+      ? Math.min(item.colspanValue, colCount - rawLabelSpan)
+      : Math.max(1, colCount - rawLabelSpan);
+    const itemWidth = Math.min(rawLabelSpan + rawValueSpan, colCount);
+    const rowspan = Math.max(1, item.rowspanLabel || 1);
+    const isLabelOnly = item.valueSource === "none";
+    const labelSpan = isLabelOnly ? itemWidth : rawLabelSpan;
+    const valueSpan = isLabelOnly ? 0 : rawValueSpan;
+
+    let placed = false;
+    for (let r = 0; !placed; r++) {
+      ensureRows(r + rowspan - 1);
+      for (let c = 0; c <= colCount - itemWidth; c++) {
+        let fits = true;
+        outer: for (let dr = 0; dr < rowspan; dr++)
+          for (let dc = 0; dc < itemWidth; dc++)
+            if (occupancy[r + dr][c + dc]) { fits = false; break outer; }
+        if (fits) {
+          for (let dr = 0; dr < rowspan; dr++)
+            for (let dc = 0; dc < itemWidth; dc++)
+              occupancy[r + dr][c + dc] = true;
+          result.push({ item, rowIdx: r, colOffset: c, labelSpan, valueSpan, rowspan });
+          placed = true;
+          break;
+        }
+      }
+    }
+  }
+  return result;
 }
 
 // ─── Style helpers ────────────────────────────────────────────────────────────
@@ -138,6 +194,7 @@ function resolveMetaValue(row: MetadataRow, invoice: any, shipments: any[]): str
     case "invoiceNo": return invoice?.reference || "";
     case "poNumber": return "TBA";
     case "custom": return row.customValue || "";
+    case "none": return "";
     default: return "";
   }
 }
@@ -154,6 +211,17 @@ const S_META_VALUE: any = {
   alignment: { horizontal: "left" },
   border: thinBorder,
 };
+
+function mergeXlsxStyle(base: any, override?: Partial<CellStyle>): any {
+  if (!override || !Object.keys(override).length) return base;
+  const o = toXlsxStyle(override as CellStyle);
+  return {
+    fill: o.fill ?? base.fill,
+    font: { ...base.font, ...o.font },
+    alignment: { ...base.alignment, ...o.alignment },
+    border: base.border,
+  };
+}
 
 // ─── Backward compat migration ────────────────────────────────────────────────
 
@@ -202,56 +270,41 @@ export function exportInvoiceWithTemplate(invoiceRaw: any, templateRaw: any): vo
     wsData.push(row);
   }
 
-  // Metadata rows (with colspan + rowspan support)
+  // Metadata rows — grid packing
   const enabledMeta = template.metadataRows.filter((r) => r.enabled);
+  const placed = placeMetadataItems(enabledMeta, colCount);
+  const numMetaRows = placed.length === 0 ? 0 : Math.max(...placed.map((p) => p.rowIdx + p.rowspan));
+  const metaBaseRow = wsData.length;
 
-  // Pre-compute which rows have their label covered by a prior rowspan
-  const labelCovered = new Array(enabledMeta.length).fill(false);
-  for (let ei = 0; ei < enabledMeta.length; ei++) {
-    if (labelCovered[ei]) continue;
-    const rs = Math.max(1, enabledMeta[ei].rowspanLabel || 1);
-    for (let j = 1; j < rs && ei + j < enabledMeta.length; j++) {
-      labelCovered[ei + j] = true;
+  const metaGrid: any[][] = Array.from({ length: numMetaRows }, () =>
+    new Array(colCount).fill(null).map(() => ({ v: "", t: "s", s: S_META_VALUE })));
+
+  for (const p of placed) {
+    const value = resolveMetaValue(p.item, invoice, shipments);
+    const sLabel = mergeXlsxStyle(S_META_LABEL, p.item.labelStyle);
+    const sValue = mergeXlsxStyle(S_META_VALUE, p.item.valueStyle);
+    for (let dr = 0; dr < p.rowspan; dr++) {
+      for (let dc = 0; dc < p.labelSpan; dc++)
+        metaGrid[p.rowIdx + dr][p.colOffset + dc] =
+          { v: dr === 0 && dc === 0 ? p.item.labelText : "", t: "s", s: sLabel };
+      for (let dc = 0; dc < p.valueSpan; dc++)
+        metaGrid[p.rowIdx + dr][p.colOffset + p.labelSpan + dc] =
+          { v: dr === 0 && dc === 0 ? value : "", t: "s", s: sValue };
     }
+    const r = metaBaseRow + p.rowIdx;
+    if (p.labelSpan > 1 || p.rowspan > 1)
+      merges.push({ s: { r, c: p.colOffset }, e: { r: r + p.rowspan - 1, c: p.colOffset + p.labelSpan - 1 } });
+    if (p.valueSpan > 1 || p.rowspan > 1)
+      merges.push({ s: { r, c: p.colOffset + p.labelSpan }, e: { r: r + p.rowspan - 1, c: p.colOffset + p.labelSpan + p.valueSpan - 1 } });
   }
 
-  for (let ei = 0; ei < enabledMeta.length; ei++) {
-    const metaRow = enabledMeta[ei];
-    const labelSpan = Math.max(1, metaRow.colspanLabel || 3);
-    const remaining = Math.max(1, colCount - labelSpan);
-    const value = resolveMetaValue(metaRow, invoice, shipments);
-    const isCovered = labelCovered[ei];
-    const r = wsData.length;
+  for (const row of metaGrid) wsData.push(row);
 
-    const cells: any[] = [];
-    for (let i = 0; i < colCount; i++) {
-      if (i < labelSpan) {
-        cells.push({ v: !isCovered && i === 0 ? metaRow.labelText : "", t: "s", s: S_META_LABEL });
-      } else if (i === labelSpan) {
-        cells.push({ v: value, t: "s", s: S_META_VALUE });
-      } else {
-        cells.push({ v: "", t: "s", s: S_META_VALUE });
-      }
-    }
-
-    // Label merge: colspan + rowspan (only for the row that owns the label)
-    if (!isCovered) {
-      const rs = Math.max(1, metaRow.rowspanLabel || 1);
-      const actualRows = Math.min(rs, enabledMeta.length - ei);
-      const rEnd = r + actualRows - 1;
-      if (labelSpan > 1 || actualRows > 1) {
-        merges.push({ s: { r, c: 0 }, e: { r: rEnd, c: labelSpan - 1 } });
-      }
-    }
-    // Value colspan merge
-    if (remaining > 1) merges.push({ s: { r, c: labelSpan }, e: { r, c: colCount - 1 } });
-
-    wsData.push(cells);
-  }
-
-  // Header row
-  const headerStyle = toXlsxStyle({ wrapText: true, border: true, ...template.styles.header });
-  wsData.push(template.columns.map((col) => ({ v: col.label, t: "s", s: headerStyle })));
+  // Header row — per-column headerStyle overrides global header style
+  wsData.push(template.columns.map((col) => {
+    const s = toXlsxStyle({ wrapText: true, border: true, ...template.styles.header, ...(col.headerStyle || {}) });
+    return { v: col.label, t: "s", s };
+  }));
 
   // Data rows
   for (let i = 0; i < shipments.length; i++) {
@@ -298,7 +351,7 @@ export function exportInvoiceWithTemplate(invoiceRaw: any, templateRaw: any): vo
 
   const ws = XLSXStyle.utils.aoa_to_sheet(wsData);
   if (merges.length) ws["!merges"] = merges;
-  ws["!cols"] = template.columns.map((col) => ({ wch: col.width || 15 }));
+  ws["!cols"] = template.columns.map((col) => ({ wch: Number(col.width) || 15 }));
 
   const wb = XLSXStyle.utils.book_new();
   XLSXStyle.utils.book_append_sheet(wb, ws, "Invoice");
