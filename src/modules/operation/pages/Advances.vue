@@ -5,6 +5,13 @@
         <Button
           v-if="activeTab === 'driverAdvances'"
           size="md"
+          @click="openAddAdvanceModal"
+        >
+          + Add Advance
+        </Button>
+        <Button
+          v-if="activeTab === 'driverAdvances'"
+          size="md"
           variant="outline"
           @click="$router.push('/operation/advance-summary')"
         >
@@ -42,11 +49,16 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useRoute } from "vue-router";
+import { openModal } from "@customizer/modal-x";
 import AdvanceTable from "../components/AdvanceTable.vue";
 import Button from "@/components/common/Button.vue";
 import type { TableColumn } from "@/components/common/Table.vue";
 
 const route = useRoute();
+
+function openAddAdvanceModal() {
+  openModal("AddAdvanceStandaloneModal", {});
+}
 
 const tabs = computed(() => route.meta.tabs as any[]);
 const activeTab = computed(

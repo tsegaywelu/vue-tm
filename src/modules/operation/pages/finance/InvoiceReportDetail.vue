@@ -114,6 +114,8 @@ import Status from "@/components/common/Status.vue";
 import Button from "@/components/Button.vue";
 import { dateFormatter } from "@/utils/utils";
 import { exportInvoiceToExcel } from "@/utils/excel";
+import { exportInvoiceWithTemplate } from "@/utils/invoice-template-export";
+import { fetch_invoice_templates } from "../../api/invoice-template.api";
 import { useToastStore } from "@/store/toastStore";
 import { useAuthStore } from "@/store/authStore";
 
@@ -171,8 +173,20 @@ const handleApprove = () => {
 };
 
 
-const handleExport = () => {
-  if (!invoice.value?.shipments) return;
-  exportInvoiceToExcel(invoice.value);
+const handleExport = async () => {
+  const inv = invoice.value as any;
+  if (!inv?.shipments) return;
+  const productType = inv.shipments[0]?.productType;
+  const templateRes = await fetch_invoice_templates({
+    ownerId: inv.shipper?._id || inv.shipments[0]?.order?.shipper?._id,
+    productType,
+  });
+  const list = (templateRes?.data as any)?.data ?? (templateRes?.data as any) ?? [];
+  const template = Array.isArray(list) ? list[0] : null;
+  if (template) {
+    exportInvoiceWithTemplate(inv, template);
+  } else {
+    exportInvoiceToExcel(inv);
+  }
 };
 </script>

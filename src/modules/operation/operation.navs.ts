@@ -1098,7 +1098,24 @@ export const setting_navs: Navs[] = [
           {
             name: "Edit Announcement",
             path: "/setting/announcements/edit/:id",
-
+            show: false,
+          },
+        ],
+      },
+      {
+        name: "Invoice Templates",
+        path: "/setting/invoice-templates",
+        show: true,
+        permission: { subject: "SHIPMENT", actions: ["generate_invoice"] },
+        children: [
+          {
+            name: "New Invoice Template",
+            path: "/setting/invoice-templates/new",
+            show: false,
+          },
+          {
+            name: "Edit Invoice Template",
+            path: "/setting/invoice-templates/:id",
             show: false,
           },
         ],
