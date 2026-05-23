@@ -884,6 +884,12 @@ export const setting_navs: Navs[] = [
     show: true,
     children: [
       {
+        name: "Change Password",
+        path: "/setting/change-password",
+        show: true,
+        children: [],
+      },
+      {
         name: "User and Role",
         path: "/setting/user-and-role",
         show: true,

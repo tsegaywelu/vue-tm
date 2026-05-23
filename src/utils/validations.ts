@@ -271,7 +271,6 @@ export function password(value: string): [boolean, string[]] {
   let errors = [];
   if (!value) errors.push(t("validation.password_required"));
   if (value.length < 8) errors.push(t("validations.password_min_length"));
-  if (value.length > 8) errors.push(t("validations.password_max_length"));
   // if (!/[A-Za-z]/.test(value) || !/[0-9]/.test(value)) errors.push(t("validation.password_alphanumeric"));
   // if (!/[A-Z]/.test(value)) errors.push(t("validation.password_uppercase"));
   // if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>/?]/.test(value)) errors.push(t("validation.password_special_char"));

@@ -1403,6 +1403,15 @@ export const operation_routes: RouteRecordRaw[] = [
         },
       },
       {
+        path: "change-password",
+        name: "operation_setting_change_password",
+        component: () => import("./pages/setting/ChangePassword.vue"),
+        meta: {
+          title: "Change Password",
+          description: "Update your account password.",
+        },
+      },
+      {
         path: "user-and-role/user/edit/:id",
         name: "operation_setting_user_edit",
         component: () => import("./pages/setting/UserEdit.vue"),
