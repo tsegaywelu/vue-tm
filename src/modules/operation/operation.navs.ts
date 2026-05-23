@@ -271,7 +271,7 @@ export const stakeholders_navs: Navs[] = [
     icon: "customers",
     path: "/customers",
     show: true,
-    permission: { subject: "CONTACT", actions: ["view"] },
+    permission: { subject: "CUSTOMER", actions: ["view"] },
     children: [
       {
         path: "/customers/$id",
