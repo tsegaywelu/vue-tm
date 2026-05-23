@@ -2,6 +2,13 @@
 import { ref, nextTick, watch, onMounted, computed } from "vue";
 import { sendMessage, deleteConversation } from "@/api/aiChat.api";
 import { useChatStore } from "@/store/chatStore";
+import { marked } from "marked";
+
+marked.setOptions({ breaks: true });
+
+function renderMd(text: string): string {
+  return marked.parse(text) as string;
+}
 
 const emit = defineEmits<{ (e: "close"): void }>();
 
@@ -191,10 +198,9 @@ function onKeydown(e: KeyboardEvent) {
         </div>
         <div v-else-if="msg.role === 'assistant'" class="flex justify-start">
           <div
-            class="max-w-[85%] bg-gray-100 text-gray-800 rounded-2xl rounded-tl-sm px-3.5 py-2.5 text-sm leading-relaxed whitespace-pre-wrap wrap-break-word"
-          >
-            {{ msg.content }}
-          </div>
+            class="chat-md max-w-[85%] bg-gray-100 text-gray-800 rounded-2xl rounded-tl-sm px-3.5 py-2.5 text-sm leading-relaxed"
+            v-html="renderMd(msg.content ?? '')"
+          />
         </div>
       </template>
 
@@ -263,3 +269,44 @@ function onKeydown(e: KeyboardEvent) {
     </div>
   </div>
 </template>
+
+<style scoped>
+.chat-md :deep(p) { margin: 0 0 0.4em; }
+.chat-md :deep(p:last-child) { margin-bottom: 0; }
+.chat-md :deep(ul),
+.chat-md :deep(ol) { margin: 0.25em 0 0.4em 1.2em; padding: 0; }
+.chat-md :deep(li) { margin-bottom: 0.15em; }
+.chat-md :deep(strong) { font-weight: 600; }
+.chat-md :deep(em) { font-style: italic; }
+.chat-md :deep(code) {
+  background: #e5e7eb;
+  border-radius: 3px;
+  padding: 0.1em 0.35em;
+  font-size: 0.85em;
+  font-family: ui-monospace, monospace;
+}
+.chat-md :deep(pre) {
+  background: #1f2937;
+  color: #f9fafb;
+  border-radius: 8px;
+  padding: 0.75em 1em;
+  overflow-x: auto;
+  margin: 0.4em 0;
+}
+.chat-md :deep(pre code) {
+  background: transparent;
+  padding: 0;
+  color: inherit;
+}
+.chat-md :deep(blockquote) {
+  border-left: 3px solid #d1d5db;
+  margin: 0.4em 0;
+  padding-left: 0.75em;
+  color: #6b7280;
+}
+.chat-md :deep(h1),
+.chat-md :deep(h2),
+.chat-md :deep(h3) { font-weight: 600; margin: 0.4em 0 0.2em; }
+.chat-md :deep(a) { color: #2563eb; text-decoration: underline; }
+.chat-md :deep(hr) { border: none; border-top: 1px solid #e5e7eb; margin: 0.5em 0; }
+</style>
