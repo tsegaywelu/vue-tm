@@ -26,7 +26,7 @@
           { subject: 'ADVANCE_PAYMENT', actions: ['create'] },
           { subject: 'TRANSACTION', actions: ['create'] },
         ]"
-        v-if="shouldShow('create_advance') && shipment.vehicle?.ownership === 'Owned'"
+        v-if="shouldShow('create_advance') && (shipment.vehicle?.ownership === 'Owned' || shipment.vehicle?.ownership === 'Leased')"
         :icon="icons.plusIcon"
         label="Create Advance"
         @click.stop="
@@ -36,7 +36,7 @@
       />
       <DropDownItem
         v-permission="{ subject: 'PRE_PAYMENT', actions: ['create'] }"
-        v-if="shouldShow('create_prepayment') && shipment.vehicle?.ownership !== 'Owned'"
+        v-if="shouldShow('create_prepayment') && shipment.vehicle?.ownership === 'Rental'"
         :icon="icons.plusIcon"
         label="Add Transporter Advance"
         @click.stop="
