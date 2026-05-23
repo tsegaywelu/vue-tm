@@ -309,4 +309,21 @@ function onKeydown(e: KeyboardEvent) {
 .chat-md :deep(h3) { font-weight: 600; margin: 0.4em 0 0.2em; }
 .chat-md :deep(a) { color: #2563eb; text-decoration: underline; }
 .chat-md :deep(hr) { border: none; border-top: 1px solid #e5e7eb; margin: 0.5em 0; }
+.chat-md :deep(table) {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0.4em 0;
+  font-size: 0.82em;
+}
+.chat-md :deep(th),
+.chat-md :deep(td) {
+  border: 1px solid #d1d5db;
+  padding: 0.35em 0.6em;
+  text-align: left;
+}
+.chat-md :deep(th) {
+  background: #e5e7eb;
+  font-weight: 600;
+}
+.chat-md :deep(tr:nth-child(even) td) { background: #f9fafb; }
 </style>
