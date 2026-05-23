@@ -26,7 +26,7 @@
           + Add Transporter Advance
         </Button>
         <Button
-          v-else-if="activeTab === 'transporterAdvances'"
+          v-if="activeTab === 'transporterAdvances'"
           size="md"
           variant="outline"
           @click="$router.push('/operation/prepayment-summary')"
