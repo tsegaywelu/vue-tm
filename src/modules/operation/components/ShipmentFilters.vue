@@ -50,7 +50,7 @@
       :params="
         (state) => {
           return {
-            name: { regexAny: state.search },
+            name: state.search,
             q: undefined,
           };
         }
