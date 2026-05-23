@@ -230,7 +230,7 @@ export function alphaNumericWithSpecial(value: string): [boolean, string] {
 }
 
 export function price(value: string): [boolean, string] {
-  if (!/^[0-9]+(\.[0-9]{2})?$/.test(value))
+  if (!/^[0-9]+(\.[0-9]+)?$/.test(value))
     return [false, t("validation.invalid_price")];
   return [true, ""];
 } 
