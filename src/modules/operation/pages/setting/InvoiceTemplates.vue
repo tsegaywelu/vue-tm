@@ -31,6 +31,12 @@
           </span>
         </template>
 
+        <template #cell-shipper="{ row }">
+          <span class="font-medium text-gray-800">
+            {{ row.shipperName || row.shipper?.name || row.shipperId || '-' }}
+          </span>
+        </template>
+
         <template #cell-updatedAt="{ value }">
           {{ value ? new Date(value).toLocaleDateString() : '-' }}
         </template>
@@ -40,7 +46,7 @@
             <button
               class="p-1.5 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-primary transition-colors"
               title="Edit"
-              @click.stop="router.push(`/setting/invoice-templates/${row._id}`)"
+              @click.stop="router.push(`/setting/invoice-templates/${row.shipperId}/${row.productType}`)"
             >
               <i v-html="icons.edit" />
             </button>
@@ -83,6 +89,7 @@ const { response, isLoading, refetch } = usePagination<any>({
 
 const columns: TableColumn<any>[] = [
   { key: "name", label: "Template Name", field: "name" },
+  { key: "shipper", label: "Shipper", field: "shipper" },
   { key: "productType", label: "Product Type", field: "productType" },
   { key: "updatedAt", label: "Last Updated", field: "updatedAt" },
   { key: "actions", label: "", field: "", cellAlign: "right" },
@@ -96,7 +103,7 @@ const handleDelete = async (row: any) => {
     action: "delete",
   });
   if (!confirmed) return;
-  const res = await delete_invoice_template(row._id);
+  const res = await delete_invoice_template(row.shipperId, row.productType);
   if (res.success) {
     toast.success("Template deleted");
     refetch();

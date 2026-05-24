@@ -1794,7 +1794,7 @@ export const operation_routes: RouteRecordRaw[] = [
         },
       },
       {
-        path: "invoice-templates/:id",
+        path: "invoice-templates/:shipperId/:productType",
         name: "operation_setting_invoice_template_edit",
         component: () => import("./pages/setting/InvoiceTemplateEdit.vue"),
         meta: {

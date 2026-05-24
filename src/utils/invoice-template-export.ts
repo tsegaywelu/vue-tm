@@ -18,8 +18,10 @@ export interface ColumnDef {
   width: number;
   type: "text" | "number" | "currency" | "date" | "static";
   staticValue?: string;
-  style?: Partial<CellStyle>;       // overrides dataRow / alternateRow per cell
-  headerStyle?: Partial<CellStyle>; // overrides header style per column header cell
+  dateFormat?: "DMY" | "MDY" | "YMD" | "DMY_SHORT" | "D_MMM_Y" | "MMM_D_Y" | "MMM_D" | "D_MMM" | "MMM_YYYY" | "MMM_YY";
+  dateSeparator?: "/" | "-" | ".";
+  style?: Partial<CellStyle>;
+  headerStyle?: Partial<CellStyle>;
 }
 
 export interface MetadataRow {
@@ -144,28 +146,92 @@ export function toXlsxStyle(s: CellStyle): any {
 function resolveField(shipment: any, field: string, rowIndex: number): any {
   if (field === "row_number") return rowIndex + 1;
   if (field === "driver") {
-    // API may return flat driverName string or nested driver object
     if (shipment.driverName) return shipment.driverName;
     const d = shipment.driver;
     if (!d) return "";
     return [d.firstName, d.middleName, d.lastName].filter(Boolean).join(" ");
   }
   if (field === "order.agent.name") {
-    return shipment.order?.agent?.name || shipment.agent?.name || "";
+    return shipment.order?.agent?.name || shipment.agent?.name || shipment.agentName || "";
   }
   if (field === "order.agent.agentCode") {
     return shipment.order?.agent?.agentCode || shipment.order?.agent?.code || "";
   }
+  if (field === "vehicle.plateNumber") {
+    const plate = shipment.vehiclePlateNumber || shipment.vehicle?.plateNumber || "";
+    const trailer = shipment.vehicle?.trailerPlate || "";
+    return trailer ? `${plate}/${trailer}` : plate;
+  }
   if (field === "route.routeCode") {
-    return shipment.route?.routeCode || shipment.order?.route?.routeCode || "";
+    return (
+      shipment.route?.routeCode ||
+      shipment.order?.route?.routeCode ||
+      shipment.routeCode ||
+      (shipment.routeOrigin && shipment.routeDestination
+        ? `${shipment.routeOrigin.substring(0, 3)}_${shipment.routeDestination.substring(0, 3)}`.toUpperCase()
+        : "")
+    );
   }
   if (field === "vehicleTypeName") {
-    return shipment.vehicleTypeName || shipment.vehicleType?.name || "";
+    return shipment.vehicleTypeName || shipment.order?.vehicleTypeName || shipment.vehicleType?.name || "";
+  }
+  if (field === "routeName") {
+    return (
+      shipment.routeName ||
+      shipment.route?.name ||
+      (shipment.route?.origin && shipment.route?.destination
+        ? `${shipment.route.origin} - ${shipment.route.destination}`
+        : shipment.routeOrigin && shipment.routeDestination
+          ? `${shipment.routeOrigin} - ${shipment.routeDestination}`
+          : "")
+    );
+  }
+  if (field === "commodity") {
+    const list = shipment.commodity;
+    if (Array.isArray(list)) return list.map((c: any) => c.name || c).filter(Boolean).join(", ");
+    return "";
+  }
+  if (field === "vehicleOwnership") {
+    return shipment.vehicleOwnership || shipment.vehicle?.ownership || "";
+  }
+  if (field === "order.unitOfMeasurement") {
+    return shipment.order?.unitOfMeasurement || shipment.unitOfMeasurement || "";
+  }
+  if (field === "order.numberOfVehicles") {
+    return shipment.order?.numberOfVehicles ?? "";
+  }
+  if (field === "orderCode") {
+    return shipment.orderCode || shipment.order?.orderCode || "";
   }
   return field.split(".").reduce((acc: any, k) => acc?.[k], shipment);
 }
 
-function formatValue(raw: any, type: ColumnDef["type"]): { v: any; t: "s" | "n" } {
+export function formatDate(raw: any, fmt: ColumnDef["dateFormat"], sep: ColumnDef["dateSeparator"]): string {
+  const d = new Date(raw);
+  if (isNaN(d.getTime())) return String(raw);
+  const dd = String(d.getDate()).padStart(2, "0");
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const yyyy = String(d.getFullYear());
+  const yy = yyyy.slice(2);
+  const s = sep ?? "/";
+  const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  const mon = MONTHS[d.getMonth()];
+  switch (fmt ?? "DMY") {
+    case "DMY":       return `${dd}${s}${mm}${s}${yyyy}`;
+    case "MDY":       return `${mm}${s}${dd}${s}${yyyy}`;
+    case "YMD":       return `${yyyy}${s}${mm}${s}${dd}`;
+    case "DMY_SHORT": return `${dd}${s}${mm}${s}${yy}`;
+    case "D_MMM_Y":   return `${dd} ${mon} ${yyyy}`;
+    case "MMM_D_Y":   return `${mon} ${dd}, ${yyyy}`;
+    case "MMM_D":     return `${mon} ${dd}`;
+    case "D_MMM":     return `${dd} ${mon}`;
+    case "MMM_YYYY":  return `${mon} ${yyyy}`;
+    case "MMM_YY":    return `${mon} '${yy}`;
+    default:          return `${dd}${s}${mm}${s}${yyyy}`;
+  }
+}
+
+function formatValue(raw: any, type: ColumnDef["type"], col?: Pick<ColumnDef, "dateFormat" | "dateSeparator">): { v: any; t: "s" | "n" } {
   if (raw == null || raw === "") return { v: "", t: "s" };
   switch (type) {
     case "number":
@@ -174,11 +240,8 @@ function formatValue(raw: any, type: ColumnDef["type"]): { v: any; t: "s" | "n" 
       const n = Number(raw) || 0;
       return { v: new Intl.NumberFormat("en-US").format(Math.round(n)), t: "s" };
     }
-    case "date": {
-      const d = new Date(raw);
-      if (isNaN(d.getTime())) return { v: String(raw), t: "s" };
-      return { v: d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }), t: "s" };
-    }
+    case "date":
+      return { v: formatDate(raw, col?.dateFormat, col?.dateSeparator), t: "s" };
     default:
       return { v: String(raw), t: "s" };
   }
@@ -329,7 +392,7 @@ export function exportInvoiceWithTemplate(invoiceRaw: any, templateRaw: any): vo
       const cellStyle = toXlsxStyle({ border: true, ...baseStyle, ...(col.style || {}) });
       if (col.type === "static") return { v: col.staticValue ?? "", t: "s", s: cellStyle };
       const raw = resolveField(shipment, col.field, i);
-      const { v, t } = formatValue(raw, col.type);
+      const { v, t } = formatValue(raw, col.type, col);
       return { v, t, s: cellStyle };
     });
     wsData.push(row);

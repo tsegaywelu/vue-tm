@@ -11,7 +11,7 @@
       <StatsCards :stats="summaryStats" :loading="isLoading" />
     </Teleport>
 
-    <Table :columns="columns" :rows="tableData" :show_pagination="false" client_sort>
+    <Table :columns="columns" :rows="tableData" :show_pagination="false" client_sort client_search>
       <template #after-search>
         <VehicleMetricsFilter
           show-vehicle-use
@@ -69,7 +69,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from "vue";
+import { ref, computed } from "vue";
 import { usePagination } from "@/composables/usePagination";
 import Table from "@/components/common/Table.vue";
 import type { TableColumn } from "@/components/common/Table.vue";
@@ -105,7 +105,7 @@ const handleExport = async () => {
 
 // Fetching Data
 const {
-  response: tableData,
+  response: rawTableData,
   isLoading,
   fullResponse,
 } = usePagination({
@@ -114,14 +114,20 @@ const {
   params: computed(() => ({
     startDate: props.dateRange.start,
     endDate: props.dateRange.end,
-    region: filters.value.region,
-    vehicleType: filters.value.vehicleType,
-    ownership: filters.value.ownership,
-    vehicleUseType: filters.value.vehicleUse,
     page: undefined,
     limit: undefined,
   })),
   queryKey: ["vehicleProductivity"],
+});
+
+const tableData = computed(() => {
+  let data = (rawTableData.value ?? []) as any[];
+  const f = filters.value;
+  if (f.vehicleUse) data = data.filter((r) => (r.vehicleUseType ?? r.productType) === f.vehicleUse);
+  if (f.ownership) data = data.filter((r) => r.ownership === f.ownership);
+  if (f.region) data = data.filter((r) => (r.region?._id ?? r.region) === f.region);
+  if (f.vehicleType) data = data.filter((r) => (r.vehicleType?._id ?? r.vehicleType) === f.vehicleType);
+  return data;
 });
 
 const totalRows = computed(() => fullResponse.value?.total || 0);
@@ -180,11 +186,4 @@ const columns: TableColumn[] = [
   { key: "numberOfTrips", label: "Trips", sortable: true },
 ];
 
-watch(
-  filters,
-  () => {
-    // page logic removed for non-paginated table
-  },
-  { deep: true },
-);
 </script>

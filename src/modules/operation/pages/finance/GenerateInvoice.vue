@@ -263,7 +263,7 @@ import Button from "@/components/common/Button.vue";
 import { formatNumber } from "@/utils/utils";
 import { exportInvoiceToExcel } from "@/utils/excel";
 import { exportInvoiceWithTemplate } from "@/utils/invoice-template-export";
-import { fetch_invoice_templates } from "../../api/invoice-template.api";
+import { fetch_invoice_template } from "../../api/invoice-template.api";
 
 const route = useRoute();
 const invoiceId = route.params.id as string;
@@ -334,18 +334,18 @@ const printInvoice = () => {
 const handleExport = async () => {
   const inv = invoice.value as any;
   if (!inv?.shipments) return;
-  const productType = inv.shipments[0]?.productType;
-  const templateRes = await fetch_invoice_templates({
-    ownerId: inv.shipper?._id || inv.shipments[0]?.order?.shipper?._id,
-    productType,
-  });
-  const list = (templateRes?.data as any)?.data ?? (templateRes?.data as any) ?? [];
-  const template = Array.isArray(list) ? list[0] : null;
-  if (template) {
-    exportInvoiceWithTemplate(inv, template);
-  } else {
-    exportInvoiceToExcel(inv);
+  const pt = inv.shipments[0]?.productType;
+  const shipperId = inv.shipper?._id || inv.shipments[0]?.order?.shipper?._id;
+  if (shipperId && pt) {
+    const templateRes = await fetch_invoice_template(shipperId, pt);
+    const raw = (templateRes?.data as any);
+    const content = raw?.content ? JSON.parse(raw.content) : null;
+    if (content) {
+      exportInvoiceWithTemplate(inv, content);
+      return;
+    }
   }
+  exportInvoiceToExcel(inv);
 };
 </script>
 

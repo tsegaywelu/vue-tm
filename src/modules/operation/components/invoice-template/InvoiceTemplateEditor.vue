@@ -4,7 +4,9 @@
     <div class="flex flex-wrap items-center gap-3 bg-white rounded-2xl px-5 py-4 shadow-sm border border-gray-100">
       <!-- Shipper selector — carrier admin only -->
       <div v-if="props.ownerType !== 'shipper'" class="flex flex-col gap-1 flex-1 min-w-[240px]">
-        <label class="text-xs font-medium text-gray-500 uppercase tracking-wide">Shipper</label>
+        <label class="text-xs font-medium uppercase tracking-wide" :class="shipperError ? 'text-red-500' : 'text-gray-500'">
+          Shipper <span class="text-red-500">*</span>
+        </label>
         <BaseSelect
           name="shipper"
           v-model="selectedShipperId"
@@ -14,7 +16,9 @@
           searchable
           :display_value="shipperDisplayLabel"
           :attributes="{ placeholder: 'Search and select shipper...' }"
+          :class="shipperError ? '[&_.input-focus]:border-red-400' : ''"
         />
+        <span v-if="shipperError" class="text-xs text-red-500">Shipper is required</span>
       </div>
 
       <div class="flex flex-col gap-1">
@@ -100,16 +104,21 @@ const router = useRouter();
 const toast = useToastStore();
 const authStore = useAuthStore();
 
-const templateId = route.params.id as string | undefined;
-const isEdit = !!templateId;
-const saving = ref<false | 'save' | 'submit'>(false);
+// Edit mode is detected by the presence of both shipperId + productType in route params
+const routeShipperId = route.params.shipperId as string | undefined;
+const routeProductType = route.params.productType as string | undefined;
+const isEdit = !!(routeShipperId && routeProductType);
+
+const saving = ref<false | "save" | "submit">(false);
 const template = ref<InvoiceTemplate>(makeDefaultTemplate());
 const lastDraftSaved = ref<string>("");
+const shipperError = ref(false);
 
-const DRAFT_KEY = `tms-invoice-template-draft-${props.ownerType ?? "carrier"}`;
+const DRAFT_KEY = isEdit
+  ? `tms-invoice-template-draft-edit-${routeShipperId}-${routeProductType}`
+  : `tms-invoice-template-draft-${props.ownerType ?? "carrier"}`;
 
 function saveDraft() {
-  if (isEdit) return;
   try {
     localStorage.setItem(DRAFT_KEY, JSON.stringify(template.value));
     const now = new Date();
@@ -126,8 +135,8 @@ let autoSaveTimer: ReturnType<typeof setInterval> | null = null;
 const selectedShipperId = ref<string>("");
 const shipperDisplayLabel = ref<string>("");
 
-// Keep template.ownerId in sync with the shipper selector and auto-generate a name
 watch(selectedShipperId, async (val) => {
+  shipperError.value = false;
   template.value.ownerId = val;
   template.value.ownerType = "shipper";
   if (val && props.ownerType !== "shipper") {
@@ -160,24 +169,31 @@ function migrateLoaded(data: any): InvoiceTemplate {
 }
 
 onMounted(async () => {
-  if (isEdit && templateId) {
-    const res = await fetch_invoice_template(templateId);
+  if (isEdit && routeShipperId && routeProductType) {
+    const res = await fetch_invoice_template(routeShipperId, routeProductType);
     if (res.success && res.data) {
-      template.value = migrateLoaded(res.data);
-      const ownerId = template.value.ownerId;
-      if (ownerId) {
-        selectedShipperId.value = ownerId;
-        if (props.ownerType !== "shipper") {
-          const shipperRes = await fetch_shipper_profile(ownerId);
-          shipperDisplayLabel.value =
-            (shipperRes as any)?.data?.shipper?.name ||
-            (shipperRes as any)?.data?.name ||
-            "";
-        }
+      const raw = res.data as any;
+      const parsed = typeof raw.content === "string" ? JSON.parse(raw.content) : raw.content ?? raw;
+      template.value = migrateLoaded(parsed);
+      selectedShipperId.value = routeShipperId;
+      template.value.productType = routeProductType as any;
+      if (props.ownerType !== "shipper") {
+        const shipperRes = await fetch_shipper_profile(routeShipperId);
+        shipperDisplayLabel.value =
+          (shipperRes as any)?.data?.shipper?.name ||
+          (shipperRes as any)?.data?.name ||
+          "";
       }
     }
+    // Overlay with any unsaved local draft (newer than what's on the server)
+    try {
+      const saved = localStorage.getItem(DRAFT_KEY);
+      if (saved) {
+        template.value = migrateLoaded(JSON.parse(saved));
+        lastDraftSaved.value = "restored";
+      }
+    } catch {}
   } else {
-    // Restore draft from localStorage
     try {
       const saved = localStorage.getItem(DRAFT_KEY);
       if (saved) {
@@ -190,10 +206,9 @@ onMounted(async () => {
     if (props.ownerType === "shipper") {
       selectedShipperId.value = authStore.shipperId ?? "";
     }
-
-    // Auto-save every 10 s
-    autoSaveTimer = setInterval(saveDraft, 10_000);
   }
+
+  autoSaveTimer = setInterval(saveDraft, 10_000);
 });
 
 onUnmounted(() => {
@@ -202,15 +217,20 @@ onUnmounted(() => {
 
 const save = async (andSubmit: boolean) => {
   if (props.ownerType !== "shipper" && !selectedShipperId.value) {
+    shipperError.value = true;
     toast.error("Please select a shipper for this template");
     return;
   }
   saving.value = andSubmit ? "submit" : "save";
   try {
-    const payload = { ...template.value };
-    const res = isEdit
-      ? await update_invoice_template(templateId!, payload)
-      : await create_invoice_template(payload);
+    const content = JSON.stringify(template.value);
+    const res = isEdit && routeShipperId && routeProductType
+      ? await update_invoice_template(routeShipperId, routeProductType, content)
+      : await create_invoice_template({
+          shipperId: selectedShipperId.value,
+          productType: template.value.productType,
+          content,
+        });
     if (res.success) {
       if (andSubmit) {
         clearDraft();
@@ -220,7 +240,7 @@ const save = async (andSubmit: boolean) => {
         toast.success("Template saved!");
       }
     } else {
-      toast.error(res.error || "Failed to save template");
+      toast.error((res as any).error || "Failed to save template");
     }
   } finally {
     saving.value = false;

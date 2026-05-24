@@ -1111,24 +1111,29 @@ export const setting_navs: Navs[] = [
           },
         ],
       },
-      // {
-      //   name: "Invoice Templates",
-      //   path: "/setting/invoice-templates",
-      //   show: true,
-      //   permission: { subject: "SHIPMENT", actions: ["generate_invoice"] },
-      //   children: [
-      //     {
-      //       name: "New Invoice Template",
-      //       path: "/setting/invoice-templates/new",
-      //       show: false,
-      //     },
-      //     {
-      //       name: "Edit Invoice Template",
-      //       path: "/setting/invoice-templates/:id",
-      //       show: false,
-      //     },
-      //   ],
-      // },
+      {
+        name: "Invoice Templates",
+        path: "/setting/invoice-templates",
+        show: true,
+        permission: { subject: "SHIPMENT", actions: ["generate_invoice"] },
+        children: [
+          {
+            name: "New Invoice Template",
+            path: "/setting/invoice-templates/new",
+            show: false,
+          },
+          {
+            name: "Edit Invoice Template",
+            path: "/setting/invoice-templates/:shipperId/:productType",
+            show: false,
+          },
+          {
+            name: "OUT_BOUND Template",
+            path: "/setting/invoice-templates/679d94f4e6e807b9368d723f/OUT_BOUND",
+            show: false,
+          },
+        ],
+      },
     ],
   },
 ];
