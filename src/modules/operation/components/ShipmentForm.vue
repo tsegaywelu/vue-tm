@@ -571,7 +571,7 @@ watch(
   (newLabels) => {
     internalLabels.value = { ...newLabels };
   },
-  { deep: true },
+  { deep: true, immediate: true },
 );
 
 const emit = defineEmits<{
@@ -808,6 +808,10 @@ onMounted(async () => {
     const order_record = order_data.data as any as Order | undefined;
     selectedOrder.value = order_record ?? null;
 
+    if (order_record?.route?.routeName && !internalLabels.value.route) {
+      internalLabels.value.route = order_record.route.routeName;
+    }
+
     if (order_record && props.initialValues.waypoint) {
       // Small delay to ensure refs are updated before triggering logic
       handleWaypointChange(props.initialValues.waypoint, null);
@@ -816,6 +820,7 @@ onMounted(async () => {
 
   if (props.initialValues.vehicle) {
     new ApiService()
+      .addAuthenticationHeader()
       .get(`/vehicle/${props.initialValues.vehicle}`)
       .then((res: any) => {
         if (res.success) {

@@ -154,7 +154,7 @@ const { response, refetch } = usePagination<any>({
       params["createdAt[gte]"] = props.filters.startDate;
     if (props.filters?.endDate)
       params["createdAt[lte]"] = props.filters.endDate;
-    if (state.search) params["reference[regexAny]"] = state.search;
+    if (state.search) params.reference = { regexAny: state.search };
     if (activeFilters.value.shipper)
       params.shipper = activeFilters.value.shipper;
     return { ...params, q: undefined };

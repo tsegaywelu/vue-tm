@@ -174,7 +174,7 @@ const activeFilters = ref<Record<string, any>>({});
 
 // activeFilters.value.searchField = selectedSearchField.value;
 
-watch(selectedSearchField, (newField) => {
+watch(selectedSearchField, () => {
   activeFilters.value = { ...activeFilters.value };
 });
 
@@ -187,7 +187,7 @@ const { response, fullResponse, refetch, isLoading } = usePagination<any>({
   id: "receivable-shipment-list",
   url: "/shipment/receivableShipment",
   params: (state) => ({
-    [selectedSearchField.value]: state.search || "",
+    ...(state.search ? { [selectedSearchField.value]: { regexAny: state.search } } : {}),
     ...activeFilters.value,
     ...(props.dateRange?.start
       ? { dispatchStartDate: props.dateRange.start }

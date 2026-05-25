@@ -1027,8 +1027,6 @@ export const operation_routes: RouteRecordRaw[] = [
           permission: [{ subject: "SHIPMENT", actions: ["generate_invoice"] }],
           title: "Invoice Report Details",
           description: "Detailed breakdown of the invoice report.",
-          tabsTeleportTo: "#invoice-report-details-tabs",
-          tabs: [{ label: "Overview", value: "overview" }],
         },
       },
       {

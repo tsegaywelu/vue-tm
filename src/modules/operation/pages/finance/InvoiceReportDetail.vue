@@ -1,12 +1,9 @@
 <template>
   <div class="h-full flex flex-col gap-4">
-    <!-- Tab container must be always present for Teleport to work reliably -->
-    <div id="invoice-report-details-tabs" class="w-full"></div>
-
     <div v-if="isLoading" class="flex justify-center py-20">
       <i class="mdi mdi-loading mdi-spin text-4xl text-primary"></i>
     </div>
-
+    
     <template v-else-if="invoice">
       <!-- Header Section -->
       <div
@@ -172,7 +169,6 @@ const handleApprove = () => {
   });
 };
 
-
 const handleExport = async () => {
   const inv = invoice.value as any;
   if (!inv?.shipments) return;
@@ -180,7 +176,7 @@ const handleExport = async () => {
   const shipperId = inv.shipper?._id || inv.shipments[0]?.order?.shipper?._id;
   if (shipperId && pt) {
     const templateRes = await fetch_invoice_template(shipperId, pt);
-    const raw = (templateRes?.data as any);
+    const raw = templateRes?.data as any;
     const content = raw?.content ? JSON.parse(raw.content) : null;
     if (content) {
       exportInvoiceWithTemplate(inv, content);
