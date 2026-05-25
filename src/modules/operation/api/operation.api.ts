@@ -440,6 +440,19 @@ export function update_driver_status(id: string, data: any) {
     .addAuthenticationHeader()
     .patch(`/driverStatus/${id}`, data);
 }
+export function adjust_initial_settlement_balance(
+  id: string,
+  payload: { value: number; reason: string },
+) {
+  return driver_api
+    .addAuthenticationHeader()
+    .patch(`/${id}/initial-settlement-balance`, payload);
+}
+export function fetch_initial_settlement_balance_history(id: string) {
+  return driver_api
+    .addAuthenticationHeader()
+    .get(`/${id}/initial-settlement-balance-history`);
+}
 export function upload_driver_documents(
   id: string,
   data: FormData,
