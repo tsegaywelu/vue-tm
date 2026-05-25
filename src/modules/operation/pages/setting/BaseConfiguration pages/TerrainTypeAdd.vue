@@ -1,11 +1,13 @@
 <template>
   <TerrainTypeForm
     form-id="add-terrain-type-form"
-    :initial-values="{ name: '', code: '' }"
+    :initial-values="{ name: '' }"
     :on-submit="handleCreate"
   >
     <template #submit-btn>
-      <Button size="md" variant="outline" @click="router.back()">Discard</Button>
+      <Button size="md" variant="outline" @click="router.back()"
+        >Discard</Button
+      >
       <SubmitButton> Create Terrain Type </SubmitButton>
     </template>
   </TerrainTypeForm>
@@ -35,7 +37,7 @@ const handleCreate = async (values: any) => {
     const res = await mutation.mutateAsync(values);
     if (res.success) {
       toast.success("Terrain type created successfully");
-      //invalidate query 
+      //invalidate query
       queryClient.invalidateQueries({ queryKey: ["terrain-type-list"] });
       router.push("/setting/base-configuration?tab=terrainType");
     } else {

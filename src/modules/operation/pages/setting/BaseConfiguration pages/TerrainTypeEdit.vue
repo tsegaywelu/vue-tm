@@ -1,6 +1,8 @@
 <template>
   <div v-if="isLoading" class="flex justify-center py-10">
-    <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
+    <div
+      class="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"
+    ></div>
   </div>
   <TerrainTypeForm
     v-else-if="initialValues"
@@ -44,12 +46,12 @@ const initialValues = computed(() => {
   const data = (response.value.data as any).result || response.value.data;
   return {
     name: data.name || "",
-    code: data.code || "",
   };
 });
 
 const mutation = useMutation({
-  mutationFn: (values: any) => api.addAuthenticationHeader().patch(`/${id}`, values),
+  mutationFn: (values: any) =>
+    api.addAuthenticationHeader().patch(`/${id}`, values),
 });
 
 const handleUpdate = async (values: any) => {

@@ -6,7 +6,7 @@
         <span>Export</span>
       </Button>
     </Teleport>
-    <Table :show_pagination="false" :columns="columns" :rows="metricsData" client_sort>
+    <Table :show_pagination="false" :columns="columns" :rows="filteredMetricsData" client_sort client_search>
       <template #after-search>
         <VehicleMetricsFilter
           show-vehicle-use
@@ -84,7 +84,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from "vue";
+import { ref, computed } from "vue";
 import { usePagination } from "@/composables/usePagination";
 import Table from "@/components/common/Table.vue";
 import type { TableColumn } from "@/components/common/Table.vue";
@@ -111,14 +111,20 @@ const { response: metricsData } = usePagination({
   params: computed(() => ({
     startDate: props.dateRange.start,
     endDate: props.dateRange.end,
-    region: filters.value.region,
-    vehicleType: filters.value.vehicleType,
-    ownership: filters.value.ownership,
-    productType: filters.value.vehicleUse,
     page: undefined,
     limit: undefined,
   })),
   queryKey: ["vehicleMetrics"],
+});
+
+const filteredMetricsData = computed(() => {
+  let data = (metricsData.value ?? []) as any[];
+  const f = filters.value;
+  if (f.vehicleUse) data = data.filter((r) => r.productType === f.vehicleUse);
+  if (f.ownership) data = data.filter((r) => r.ownership === f.ownership);
+  if (f.region) data = data.filter((r) => (r.region?._id ?? r.region) === f.region);
+  if (f.vehicleType) data = data.filter((r) => (r.vehicleType?._id ?? r.vehicleType) === f.vehicleType);
+  return data;
 });
 
 const handleExport = async () => {
@@ -169,11 +175,4 @@ const columns: TableColumn[] = [
   { key: "totalGarageDays", label: "Garage Days", sortable: true },
 ];
 
-watch(
-  filters,
-  () => {
-    // page.value = 1;
-  },
-  { deep: true },
-);
 </script>

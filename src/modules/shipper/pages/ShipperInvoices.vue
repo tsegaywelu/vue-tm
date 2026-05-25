@@ -140,6 +140,8 @@ import StatsCards from "@/components/common/StatsCards.vue";
 import { currencyFormatter } from "@/utils/utils";
 import { fetch_invoice_details } from "@/modules/operation/api/invoice.api";
 import { exportInvoiceToExcel } from "@/modules/operation/utils/invoiceExcelExport";
+import { exportInvoiceWithTemplate } from "@/utils/invoice-template-export";
+import { fetch_invoice_templates } from "@/modules/operation/api/invoice-template.api";
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -233,8 +235,20 @@ const handleDownload = async (id: string) => {
   toast.info("Preparing your invoice download...");
   try {
     const res = await fetch_invoice_details(id);
-    if (res.data) {
-      exportInvoiceToExcel(res.data);
+    const inv = res.data as any;
+    if (inv) {
+      const productType = inv.shipments?.[0]?.productType;
+      const templateRes = await fetch_invoice_templates({
+        ownerId: authStore.shipperId || inv.shipper?._id,
+        productType,
+      });
+      const list = (templateRes?.data as any)?.data ?? (templateRes?.data as any) ?? [];
+      const template = Array.isArray(list) ? list[0] : null;
+      if (template) {
+        exportInvoiceWithTemplate(inv, template);
+      } else {
+        exportInvoiceToExcel(inv);
+      }
       toast.success("Invoice downloaded successfully!");
     } else {
       toast.error("Failed to fetch invoice details");

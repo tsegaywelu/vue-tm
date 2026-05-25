@@ -73,7 +73,6 @@
             name="tin"
             label="TIN"
             :attributes="{ placeholder: 'Tax Identification Number' }"
-            :validation="{ required }"
           />
         </div>
 

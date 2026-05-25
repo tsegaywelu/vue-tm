@@ -1,12 +1,9 @@
 <template>
   <div class="h-full flex flex-col gap-4">
-    <!-- Tab container must be always present for Teleport to work reliably -->
-    <div id="invoice-report-details-tabs" class="w-full"></div>
-
     <div v-if="isLoading" class="flex justify-center py-20">
       <i class="mdi mdi-loading mdi-spin text-4xl text-primary"></i>
     </div>
-
+    
     <template v-else-if="invoice">
       <!-- Header Section -->
       <div
@@ -114,6 +111,8 @@ import Status from "@/components/common/Status.vue";
 import Button from "@/components/Button.vue";
 import { dateFormatter } from "@/utils/utils";
 import { exportInvoiceToExcel } from "@/utils/excel";
+import { exportInvoiceWithTemplate } from "@/utils/invoice-template-export";
+import { fetch_invoice_template } from "../../api/invoice-template.api";
 import { useToastStore } from "@/store/toastStore";
 import { useAuthStore } from "@/store/authStore";
 
@@ -170,9 +169,20 @@ const handleApprove = () => {
   });
 };
 
-
-const handleExport = () => {
-  if (!invoice.value?.shipments) return;
-  exportInvoiceToExcel(invoice.value);
+const handleExport = async () => {
+  const inv = invoice.value as any;
+  if (!inv?.shipments) return;
+  const pt = inv.shipments[0]?.productType;
+  const shipperId = inv.shipper?._id || inv.shipments[0]?.order?.shipper?._id;
+  if (shipperId && pt) {
+    const templateRes = await fetch_invoice_template(shipperId, pt);
+    const raw = templateRes?.data as any;
+    const content = raw?.content ? JSON.parse(raw.content) : null;
+    if (content) {
+      exportInvoiceWithTemplate(inv, content);
+      return;
+    }
+  }
+  exportInvoiceToExcel(inv);
 };
 </script>

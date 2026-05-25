@@ -7,16 +7,16 @@
   >
     <template #cell-category="{ row }">
       <span class="font-medium text-gray-700">
-        {{ row.category?.name || '-' }}
+        {{ row.category?.name || "-" }}
       </span>
     </template>
-    
+
     <template #cell-createdAt="{ row }">
       {{ new Date(row.createdAt).toLocaleDateString() }}
     </template>
 
     <template #cell-actions="{ row }">
-      <div class="flex items-center justify-center">
+      <div class="flex items-center w-full justify-center">
         <button
           type="button"
           v-permission="'ITEM_GROUP:update'"

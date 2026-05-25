@@ -16,6 +16,18 @@
               {{ shipment?.shipmentCode }}
             </span>
           </span>
+          <span v-if="shipment?.shipper?.name" class="text-sm text-gray-600">
+            Shipper
+            <span class="font-bold text-black text-sm ml-1">
+              {{ shipment?.shipper?.name }}
+            </span>
+          </span>
+          <span v-if="shipment?.orderCode" class="text-sm text-gray-600">
+            Order
+            <span class="font-bold text-black text-sm ml-1">
+              {{ shipment?.orderCode }}
+            </span>
+          </span>
           <div
             class="mt-2 lg:mt-0 md:hidden flex items-center justify-between w-full"
           >
@@ -115,15 +127,14 @@ const activeTab = computed(
   () => (route.query.tab as string) || (tabs.value?.[0]?.value as string),
 );
 
-const { data: shipmentResponse, refetch } = useQuery({
+const { data: shipment, refetch } = useQuery({
   queryKey: ["shipment", shipmentId],
-  queryFn: () => fetch_shipment_details(shipmentId),
+  queryFn: async () => {
+    const res = await fetch_shipment_details(shipmentId);
+    return res.data as unknown as Shipment | undefined;
+  },
   enabled: computed(() => !!shipmentId && shipmentId !== "add"),
 });
-
-const shipment = computed(
-  () => shipmentResponse.value?.data as Shipment | undefined,
-);
 
 const formatStatus = (status?: string) => {
   if (!status) return "-";

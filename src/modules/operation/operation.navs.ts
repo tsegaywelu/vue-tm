@@ -319,7 +319,7 @@ export const stakeholders_navs: Navs[] = [
     icon: "customers",
     path: "/customers",
     show: true,
-    permission: { subject: "CONTACT", actions: ["view"] },
+    permission: { subject: "SHIPPER", actions: ["view"] },
     children: [
       {
         path: "/customers/$id",
@@ -636,7 +636,10 @@ export const finance_navs: Navs[] = [
         path: "/finance/payable",
         show: true,
         permission: [
-          { subject: "ADVANCE_PAYMENT", actions: ["pay", "authorize", "cancel"] },
+          {
+            subject: "ADVANCE_PAYMENT",
+            actions: ["pay", "authorize", "cancel"],
+          },
           { subject: "TRANSACTION", actions: ["pay", "authorize", "cancel"] },
           { subject: "SHIPMENT", actions: ["pay", "authorize", "cancel"] },
           { subject: "PRE_PAYMENT", actions: ["pay", "authorize", "cancel"] },
@@ -929,6 +932,12 @@ export const setting_navs: Navs[] = [
     show: true,
     children: [
       {
+        name: "Change Password",
+        path: "/setting/change-password",
+        show: true,
+        children: [],
+      },
+      {
         name: "User and Role",
         path: "/setting/user-and-role",
         show: true,
@@ -1146,7 +1155,29 @@ export const setting_navs: Navs[] = [
           {
             name: "Edit Announcement",
             path: "/setting/announcements/edit/:id",
-
+            show: false,
+          },
+        ],
+      },
+      {
+        name: "Invoice Templates",
+        path: "/setting/invoice-templates",
+        show: true,
+        permission: { subject: "SHIPMENT", actions: ["generate_invoice"] },
+        children: [
+          {
+            name: "New Invoice Template",
+            path: "/setting/invoice-templates/new",
+            show: false,
+          },
+          {
+            name: "Edit Invoice Template",
+            path: "/setting/invoice-templates/:shipperId/:productType",
+            show: false,
+          },
+          {
+            name: "OUT_BOUND Template",
+            path: "/setting/invoice-templates/679d94f4e6e807b9368d723f/OUT_BOUND",
             show: false,
           },
         ],

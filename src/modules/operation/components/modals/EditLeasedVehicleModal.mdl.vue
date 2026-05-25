@@ -23,6 +23,7 @@
               }"
               :key="leaseDirection"
               :initial_labels="initialVehicleLabel"
+              :display_value="vehiclePlateLabel"
             />
           </template>
         </component>
@@ -55,7 +56,6 @@
           :validation="{ required }"
           :attributes="{ placeholder: 'Select Direction' }"
         />
-
         <component
           :is="form.Subscribe"
           :selector="(state: any) => [state.values.leaseDirection]"
@@ -92,7 +92,7 @@
           "
           >Cancel</Button
         >
-        <SubmitButton :loading="updateMutation.isPending">Update</SubmitButton>
+        <SubmitButton>Update</SubmitButton>
       </div>
     </template>
   </FormModalParent>
@@ -127,8 +127,12 @@ const initialValues = computed(() => {
   const lease = props.data.lease;
   return {
     vehicle: lease.vehicle?._id || lease.vehicle,
-    startDate: lease.startDate ? new Date(lease.startDate).toISOString().substr(0, 10) : "",
-    endDate: lease.endDate ? new Date(lease.endDate).toISOString().substr(0, 10) : "",
+    startDate: lease.startDate
+      ? new Date(lease.startDate).toISOString().substr(0, 10)
+      : "",
+    endDate: lease.endDate
+      ? new Date(lease.endDate).toISOString().substr(0, 10)
+      : "",
     amount: lease.amount || "",
     leaseDirection: lease.leaseDirection || "INWARD",
     transporter: lease.transporter?._id || lease.transporter,
@@ -136,6 +140,8 @@ const initialValues = computed(() => {
     coversAdvance: lease.leaseAgreement?.coversAdvance ?? true,
   };
 });
+
+const vehiclePlateLabel = props.data.lease?.vehicle?.plateNumber || "";
 
 const initialVehicleLabel = computed(() => {
   const lease = props.data.lease;
@@ -178,7 +184,7 @@ const handleSubmit = async (values: any) => {
     transporter:
       values.leaseDirection === "OUTWARD"
         ? values.transporter
-        : selectedVehicle.value?.transporter?._id || values.transporter,
+        : selectedVehicle.value?.transporter?._id,
     leaseDirection: values.leaseDirection,
     leaseAgreement: {
       coversMaintenance: values.coversMaintenance ?? true,

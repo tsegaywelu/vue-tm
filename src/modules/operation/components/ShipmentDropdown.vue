@@ -26,11 +26,21 @@
           { subject: 'ADVANCE_PAYMENT', actions: ['create'] },
           { subject: 'TRANSACTION', actions: ['create'] },
         ]"
-        v-if="shouldShow('create_advance')"
+        v-if="shouldShow('create_advance') && (shipment.vehicle?.ownership === 'Owned' || shipment.vehicle?.ownership === 'Leased')"
         :icon="icons.plusIcon"
         label="Create Advance"
         @click.stop="
           handleAction(shipment, 'create_advance');
+          close();
+        "
+      />
+      <DropDownItem
+        v-permission="{ subject: 'PRE_PAYMENT', actions: ['create'] }"
+        v-if="shouldShow('create_prepayment') && shipment.vehicle?.ownership === 'Rental'"
+        :icon="icons.plusIcon"
+        label="Add Transporter Advance"
+        @click.stop="
+          handleAction(shipment, 'create_prepayment');
           close();
         "
       />
@@ -71,6 +81,7 @@ export interface ShipmentDropdownFilters {
   view?: ShipmentDropdownFilterType;
   edit?: ShipmentDropdownFilterType;
   create_advance?: ShipmentDropdownFilterType;
+  create_prepayment?: ShipmentDropdownFilterType;
   update_status?: ShipmentDropdownFilterType;
   add_voucher?: ShipmentDropdownFilterType;
 }

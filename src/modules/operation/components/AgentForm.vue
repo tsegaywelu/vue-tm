@@ -16,12 +16,21 @@
             v-if="!hideShipper"
             name="shipper"
             label="Shipper"
+            searchable
             :options="[
               {
                 label: labels?.shipper,
                 value: initialValues?.shipper?._id,
               },
             ]"
+            :params="
+              (state) => {
+                return {
+                  name: state.search,
+                  q: undefined,
+                };
+              }
+            "
             url="/shipper"
             label_key="name"
             value_key="_id"

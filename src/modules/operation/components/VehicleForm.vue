@@ -58,7 +58,16 @@
             value_key="_id"
             :validation="{ required }"
             :attributes="{ placeholder: 'Select type' }"
-            :options="props.labels?.vehicleType ? [{ label: props.labels.vehicleType, value: props.initialValues.vehicleType }] : []"
+            :options="
+              props.labels?.vehicleType
+                ? [
+                    {
+                      label: props.labels.vehicleType,
+                      value: props.initialValues.vehicleType,
+                    },
+                  ]
+                : []
+            "
           />
 
           <SelectInput
@@ -68,7 +77,16 @@
             label_key="name"
             value_key="_id"
             :attributes="{ placeholder: 'Select group' }"
-            :options="props.labels?.vehicleGroup ? [{ label: props.labels.vehicleGroup, value: props.initialValues.vehicleGroup }] : []"
+            :options="
+              props.labels?.vehicleGroup
+                ? [
+                    {
+                      label: props.labels.vehicleGroup,
+                      value: props.initialValues.vehicleGroup,
+                    },
+                  ]
+                : []
+            "
           />
 
           <SelectInput
@@ -78,7 +96,16 @@
             label_key="name"
             value_key="_id"
             :attributes="{ placeholder: 'Select category' }"
-            :options="props.labels?.type ? [{ label: props.labels.type, value: props.initialValues.type }] : []"
+            :options="
+              props.labels?.type
+                ? [
+                    {
+                      label: props.labels.type,
+                      value: props.initialValues.type,
+                    },
+                  ]
+                : []
+            "
           />
 
           <SelectInput
@@ -88,7 +115,16 @@
             label_key="name"
             value_key="_id"
             :attributes="{ placeholder: 'Select model' }"
-            :options="props.labels?.vehicleModel ? [{ label: props.labels.vehicleModel, value: props.initialValues.vehicleModel }] : []"
+            :options="
+              props.labels?.vehicleModel
+                ? [
+                    {
+                      label: props.labels.vehicleModel,
+                      value: props.initialValues.vehicleModel,
+                    },
+                  ]
+                : []
+            "
           />
 
           <SelectInput
@@ -98,7 +134,16 @@
             label_key="name"
             value_key="_id"
             :attributes="{ placeholder: 'Select maker' }"
-            :options="props.labels?.maker ? [{ label: props.labels.maker, value: props.initialValues.maker }] : []"
+            :options="
+              props.labels?.maker
+                ? [
+                    {
+                      label: props.labels.maker,
+                      value: props.initialValues.maker,
+                    },
+                  ]
+                : []
+            "
           />
 
           <SelectInput
@@ -108,7 +153,16 @@
             label_key="name"
             value_key="_id"
             :attributes="{ placeholder: 'Select region' }"
-            :options="props.labels?.region ? [{ label: props.labels.region, value: props.initialValues.region }] : []"
+            :options="
+              props.labels?.region
+                ? [
+                    {
+                      label: props.labels.region,
+                      value: props.initialValues.region,
+                    },
+                  ]
+                : []
+            "
           />
 
           <DateInput
@@ -162,10 +216,17 @@
       >
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <SelectInput
+            searchable
             name="driver"
             label="Assigned Driver"
             url="/driver"
-            :params="{ driverStatus: 'vehicle_not_assigned' }"
+            :params="
+              (state) => ({
+                driverStatus: 'vehicle_not_assigned',
+                q: undefined,
+                'name[regexAny]': state.search,
+              })
+            "
             :label_key="
               (item: any) =>
                 `${item.firstName} ${item.middleName || ''} ${item.lastName || ''}`
@@ -173,7 +234,7 @@
             value_key="_id"
             :validation="{ required }"
             :attributes="{ placeholder: 'Select driver' }"
-            :options="props.labels?.driver ? [{ label: props.labels.driver, value: props.initialValues.driver }] : []"
+            :display_value="props.labels?.driver || ''"
           />
 
           <SelectInput
@@ -199,7 +260,7 @@
               searchable
               :validation="{ required }"
               :attributes="{ placeholder: 'Select transporter' }"
-              :options="props.labels?.transporter ? [{ label: props.labels.transporter, value: props.initialValues.transporter }] : []"
+              :display_value="props.labels?.transporter || ''"
             />
           </component>
 
@@ -390,7 +451,7 @@
             value_key="_id"
             searchable
             :attributes="{ placeholder: 'Select insurer' }"
-            :options="props.labels?.insurance_insurer ? [{ label: props.labels.insurance_insurer, value: props.initialValues.insurance_insurer }] : []"
+            :display_value="props.labels?.insurance_insurer || ''"
           />
         </div>
       </Colapsable>
@@ -400,11 +461,7 @@
         title="Vehicle Documents"
         description="Upload relevant vehicle documents (Registration, Insurance, etc.)."
       >
-        <FileInput
-          name="vehicleDocuments"
-          label="Vehicle Documents"
-          multiple
-        />
+        <FileInput name="vehicleDocuments" label="Vehicle Documents" multiple />
       </Colapsable>
 
       <Colapsable
@@ -513,6 +570,7 @@ const handleEditSubmit = (values: any) => {
     "chassisNumber",
     "mileageSinceService",
     "mileage",
+    "averageFuelUsage",
     "engineNumber",
     "fuelRateLoaded",
     "fuelRateUnloaded",
@@ -522,15 +580,23 @@ const handleEditSubmit = (values: any) => {
     "trailerChassisNumber",
     "vehicleType",
     "vehicleGroup",
+    "vehicleModel",
+    "type",
     "maker",
     "region",
     "purchaseDate",
     "operationalRole",
+    "status",
+    "isOperational",
   ];
 
   const payload: Record<string, any> = {};
   editFields.forEach((key) => {
-    if (values[key] !== undefined && values[key] !== null && values[key] !== "") {
+    if (
+      values[key] !== undefined &&
+      values[key] !== null &&
+      values[key] !== ""
+    ) {
       payload[key] = values[key];
     }
   });
@@ -613,7 +679,10 @@ const handleAddSubmit = (values: any) => {
   }
 
   if (values.insurance_insuredDate || values.insurance_insurer) {
-    formData.append("insuranceInformation", JSON.stringify(insuranceInformation));
+    formData.append(
+      "insuranceInformation",
+      JSON.stringify(insuranceInformation),
+    );
   }
 
   if (lease) {
@@ -622,8 +691,14 @@ const handleAddSubmit = (values: any) => {
     formData.append("lease[amount]", String(lease.amount));
     formData.append("lease[transporter]", lease.transporter || "");
     formData.append("lease[leaseDirection]", lease.leaseDirection);
-    formData.append("lease[leaseAgreement][coversAdvance]", String(lease.leaseAgreement.coversAdvance));
-    formData.append("lease[leaseAgreement][coversMaintenance]", String(lease.leaseAgreement.coversMaintenance));
+    formData.append(
+      "lease[leaseAgreement][coversAdvance]",
+      String(lease.leaseAgreement.coversAdvance),
+    );
+    formData.append(
+      "lease[leaseAgreement][coversMaintenance]",
+      String(lease.leaseAgreement.coversMaintenance),
+    );
   }
 
   if (values.vehicleDocuments?.length > 0) {

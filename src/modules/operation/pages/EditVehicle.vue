@@ -60,6 +60,9 @@ const labels = computed<Record<string, string>>(() => {
   };
 });
 
+const toDate = (iso: string | undefined) =>
+  iso ? new Date(iso).toISOString().split("T")[0] : "";
+
 const mappedValues = computed(() => {
   if (!vehicle.value) return {};
 
@@ -74,8 +77,14 @@ const mappedValues = computed(() => {
     region: v.region?._id,
     transporter: v.transporter?._id,
     type: v.type?._id,
+    // Dates formatted for DateInput
+    purchaseDate: toDate(v.purchaseDate),
+    lastServiceDate: toDate(v.lastServiceDate),
+    roadTaxExpireDate: toDate(v.roadTaxExpireDate),
+    boloIssueDate: toDate(v.boloIssueDate),
+    boloExpirationDate: toDate(v.boloExpirationDate),
     // Insurance mapping
-    insurance_insuredDate: v.insuranceInformation?.insuredDate,
+    insurance_insuredDate: toDate(v.insuranceInformation?.insuredDate),
     insurance_insuredAmount: v.insuranceInformation?.insuredAmount,
     insurance_prePaymentAmount: v.insuranceInformation?.prePaymentAmount,
     insurance_lifespan: v.insuranceInformation?.lifespan,

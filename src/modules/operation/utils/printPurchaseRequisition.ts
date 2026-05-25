@@ -75,11 +75,17 @@ export function printPurchaseRequisition(requisition: any, currentUser: any) {
       <h4>General Information</h4>
       <p><strong>Reference No:</strong> ${requisition.referenceNumber || "N/A"}</p>
       <p><strong>Date:</strong> ${dateFormatter(requisition.date)}</p>
+      <p><strong>Status:</strong> ${requisition.status || "N/A"}</p>
+      <p><strong>Prepared By:</strong> ${requisition.preparedBy?.username || "N/A"}</p>
     </div>
     <div class="info-group">
-      <h4>SRV Information</h4>
+      <h4>Approval Information</h4>
       <p><strong>SRV Reference:</strong> ${requisition.srv?.referenceNumber || "N/A"}</p>
       <p><strong>Approved STR Date:</strong> ${dateFormatter(requisition.approvedSTRDate)}</p>
+      <p><strong>Approved By:</strong> ${requisition.approvedBy?.username || "N/A"}</p>
+      <p><strong>Approved Date:</strong> ${requisition.approvedAt ? dateFormatter(requisition.approvedAt) : "N/A"}</p>
+      <p><strong>Authorized By:</strong> ${requisition.authorizedBy?.username || "N/A"}</p>
+      <p><strong>Authorized Date:</strong> ${requisition.authorizedAt ? dateFormatter(requisition.authorizedAt) : "N/A"}</p>
     </div>
   </div>
 
@@ -121,7 +127,8 @@ export function printPurchaseRequisition(requisition: any, currentUser: any) {
   <div class="signature-footer">
     <div class="signature-section">
       <div class="signature-box">
-        Requested By<br/><br/><br/>
+        Requested By<br/>
+        <span style="font-size:11px; color:#444;">${requisition.preparedBy?.username || ""}</span><br/><br/>
         _________________________
       </div>
       <div class="signature-box">
@@ -129,11 +136,13 @@ export function printPurchaseRequisition(requisition: any, currentUser: any) {
         _________________________
       </div>
       <div class="signature-box">
-        Procurement Officer<br/><br/><br/>
+        Authorized By<br/>
+        <span style="font-size:11px; color:#444;">${requisition.authorizedBy?.username || ""}</span><br/><br/>
         _________________________
       </div>
       <div class="signature-box">
-        Approved By<br/><br/><br/>
+        Approved By<br/>
+        <span style="font-size:11px; color:#444;">${requisition.approvedBy?.username || ""}</span><br/><br/>
         _________________________
       </div>
     </div>

@@ -116,7 +116,7 @@
             :pending="isRouteDetailsLoading"
             :initial_labels="internalLabels.commodity"
             :validation="{
-              required: (val: any) => required(val),
+              required,
             }"
           />
 

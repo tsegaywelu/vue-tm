@@ -41,7 +41,7 @@
     <template #cell-items="{ row }">
       <div class="flex flex-col gap-1">
         <span v-for="item in row.items?.slice(0, 2)" :key="item._id" class="text-xs text-gray-600">
-          • {{ item.inventoryItem?.name }} ({{ item.quantity }})
+          • {{ item.item?.name }} ({{ item.quantity }})
         </span>
         <span v-if="row.items?.length > 2" class="text-[10px] text-primary font-medium">
           + {{ row.items.length - 2 }} more items

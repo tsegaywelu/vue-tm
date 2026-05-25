@@ -334,6 +334,7 @@ export interface TableProps<T> {
   sort_order?: "asc" | "desc";
   show_sort_indicators?: boolean;
   client_sort?: boolean;
+  client_search?: boolean;
   hide_search?: boolean;
   search_placeholder?: string;
   hide_actions?: boolean;
@@ -395,6 +396,7 @@ const props = withDefaults(defineProps<TableProps<T>>(), {
   action_cell: "",
   alignment: "center",
   client_sort: false,
+  client_search: false,
 });
 
 type CellSlots<T> = {
@@ -534,13 +536,15 @@ const onSearchInput = (e: Event) => {
   const val = (e.target as HTMLInputElement).value;
   local_search.value = val;
   if (searchTimeout) clearTimeout(searchTimeout);
-  searchTimeout = setTimeout(() => {
-    if (paginationContext) {
-      paginationContext.setSearch(val);
-    }
-    emit("update:search_value", val);
-    emit("search", val);
-  }, 500);
+  if (!props.client_search) {
+    searchTimeout = setTimeout(() => {
+      if (paginationContext) {
+        paginationContext.setSearch(val);
+      }
+      emit("update:search_value", val);
+      emit("search", val);
+    }, 500);
+  }
 };
 
 const resolveValue = (
@@ -579,9 +583,24 @@ const tanstackColumns = computed(() => {
 });
 
 const tableData = computed(() => {
-  if (!props.client_sort || !localSortKey.value) return props.rows;
+  let rows = props.rows as any[];
+
+  if (props.client_search && local_search.value) {
+    const term = local_search.value.toLowerCase();
+    rows = rows.filter((row) =>
+      props.columns.some((col) => {
+        const val = resolveValue(
+          row,
+          col.field || (typeof col.key === "string" ? col.key : undefined),
+        );
+        return val != null && String(val).toLowerCase().includes(term);
+      }),
+    );
+  }
+
+  if (!props.client_sort || !localSortKey.value) return rows;
   const key = localSortKey.value;
-  return [...props.rows].sort((a, b) => {
+  return [...rows].sort((a, b) => {
     const aVal = getNestedValue(a, key) ?? "";
     const bVal = getNestedValue(b, key) ?? "";
     const result =

@@ -230,25 +230,34 @@ export function alphaNumericWithSpecial(value: string): [boolean, string] {
 }
 
 export function price(value: string): [boolean, string] {
-  if (!/^[0-9]+(\.[0-9]{2})?$/.test(value))
+  if (!/^[0-9]+(\.[0-9]+)?$/.test(value))
     return [false, t("validation.invalid_price")];
   return [true, ""];
-}
+} 
 
 export function dateGreaterThanOrEqalToToday(value: string): [boolean, string] {
+  if (!value) return [true, ""];
+  const datePart = value.split("T")[0];
+  const [year, month, day] = datePart.split("-").map(Number);
+  const date = new Date(year, month - 1, day);
+
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  const date = new Date(value);
 
   if (date < today) return [false, t("validation.greater_than_today")];
   return [true, ""];
 }
 
 export function dateLessThanOrEqalToToday(value: string): [boolean, string] {
+  if (!value) return [true, ""];
+  const datePart = value.split("T")[0];
+  const [year, month, day] = datePart.split("-").map(Number);
+  const date = new Date(year, month - 1, day);
+
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  const date = new Date(value);
-  if (date >= today) return [false, t("validation.less_than_today")];
+
+  if (date > today) return [false, t("validation.less_than_today")];
   return [true, ""];
 }
 
@@ -262,15 +271,19 @@ export function password(value: string): [boolean, string[]] {
   let errors = [];
   if (!value) errors.push(t("validation.password_required"));
   if (value.length < 8) errors.push(t("validations.password_min_length"));
-  if (value.length > 8) errors.push(t("validations.password_max_length"));
   // if (!/[A-Za-z]/.test(value) || !/[0-9]/.test(value)) errors.push(t("validation.password_alphanumeric"));
   // if (!/[A-Z]/.test(value)) errors.push(t("validation.password_uppercase"));
   // if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>/?]/.test(value)) errors.push(t("validation.password_special_char"));
   return [errors.length === 0, errors];
 }
 
-export function required(value: string, message?: string): [boolean, string] {
-  if (!value) return [false, message ?? t("validation.required")];
+export function required(value: any, message?: string): [boolean, string] {
+  if (value === undefined || value === null || value === "") {
+    return [false, message ?? t("validation.required")];
+  }
+  if (Array.isArray(value) && value.length === 0) {
+    return [false, message ?? t("validation.required")];
+  }
   return [true, ""];
 }
 
