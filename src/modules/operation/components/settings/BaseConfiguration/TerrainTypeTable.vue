@@ -8,7 +8,7 @@
     <template #cell-name="{ row }">
       {{ row.name }}
     </template>
-    
+
     <template #cell-code="{ row }">
       {{ row.code }}
     </template>
@@ -45,7 +45,6 @@ const { response, refetch } = usePagination<any>({
 
 const columns: TableColumn<any>[] = [
   { key: "name", label: "Name", field: "name" },
-  { key: "code", label: "Code", field: "code" },
   { key: "actions", label: "Action", field: "", cellAlign: "center" },
 ];
 

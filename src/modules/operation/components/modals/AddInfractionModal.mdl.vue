@@ -20,6 +20,7 @@
           label_key="firstName"
           value_key="_id"
           searchable
+          :display_value="driverLabel"
           :validation="{ required }"
         />
 
@@ -33,10 +34,19 @@
             name="shipment"
             label="Shipment"
             :url="`/infraction/driver/${driver}/shipments`"
-            :params="{ page: 1, limit: 100, activeOnly: false }"
+            :params="
+              (state) => ({
+                page: 1,
+                limit: 100,
+                q: undefined,
+                activeOnly: false,
+                shipmentCode: state.search,
+              })
+            "
             label_key="shipmentCode"
             value_key="_id"
             searchable
+            :display_value="shipmentLabel"
           />
         </component>
 
@@ -110,31 +120,33 @@ const updateMutation = useMutation({
     update_infraction(id, payload),
 });
 
+const inf = props.data?.infraction;
+
+const driverLabel = (() => {
+  const d = inf?.driverData;
+  if (!d) return "";
+  return (
+    d.name || [d.firstName, d.middleName, d.lastName].filter(Boolean).join(" ")
+  );
+})();
+
+const shipmentLabel = inf?.shipment?.shipmentCode || "";
+
 const formValues = {
-  driver:
-    props.data?.infraction?.driverData?._id ||
-    props.data?.infraction?.driver ||
-    props.data?.driverId ||
-    "",
-  vehicle:
-    props.data?.infraction?.vehicle?._id ||
-    props.data?.infraction?.vehicle ||
-    "",
-  shipment:
-    props.data?.infraction?.shipment?._id ||
-    props.data?.infraction?.shipment ||
-    "",
-  date: props.data?.infraction?.createdAt
-    ? new Date(props.data.infraction.createdAt).toISOString().split("T")[0]
-    : props.data?.infraction?.date || new Date().toISOString().split("T")[0],
-  location: props.data?.infraction?.location || "",
+  driver: inf?.driverData?._id || inf?.driver || props.data?.driverId || "",
+  vehicle: inf?.vehicle?._id || inf?.vehicle || "",
+  shipment: inf?.shipment?._id || inf?.shipment || "",
+  date: inf?.createdAt
+    ? new Date(inf.createdAt).toISOString().split("T")[0]
+    : inf?.date || new Date().toISOString().split("T")[0],
+  location: inf?.location || "",
   items:
-    props.data?.infraction?.items?.map((el: any) => ({
-      title: el.title || el.reason || "",
+    inf?.items?.map((el: any) => ({
+      title: el.type?._id || el.type || el.title || el.reason || "",
       penaltyAmount: el.penaltyAmount || el.fine || "",
       description: el.description || "",
     })) || [],
-  notes: props.data?.infraction?.notes || "",
+  notes: inf?.notes || "",
 };
 
 async function handleSubmit(values: any) {

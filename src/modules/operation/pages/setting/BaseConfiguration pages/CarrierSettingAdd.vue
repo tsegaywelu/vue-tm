@@ -32,7 +32,12 @@ const mutation = useMutation({
 
 const handleCreate = async (values: any) => {
   try {
-    const res = await mutation.mutateAsync(values);
+    const payload = {
+      movementAlertStartHour: Number(values.movementAlertStartHour),
+      movementAlertEndHour: Number(values.movementAlertEndHour),
+      speedAlertThreshold: Number(values.speedAlertThreshold),
+    };
+    const res = await mutation.mutateAsync(payload);
     if (res.success) {
       //invalidate query here 
        queryClient.invalidateQueries({ queryKey: ["carrier-setting-list"] });

@@ -87,7 +87,13 @@
         </Form>
       </div>
 
-      <Table :columns="columns" :rows="response" :loading="isLoading">
+      <Table
+        client_search
+        client_sort
+        :columns="columns"
+        :rows="response"
+        :loading="isLoading"
+      >
         <template #cell-name="{ row }">
           <span class="font-bold text-grey-900">{{ row.name }}</span>
         </template>
