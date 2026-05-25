@@ -56,6 +56,16 @@
               class="px-3 py-1 bg-grey-100 text-grey-600 text-xs font-bold rounded-full uppercase"
               >{{ vehicle.ownership }}</span
             >
+            <span
+              v-if="vehicle.operationalRole"
+              class="px-3 py-1 text-xs font-bold rounded-full uppercase"
+              :class="{
+                'bg-blue-100 text-blue-700': vehicle.operationalRole === 'SHIPMENT',
+                'bg-amber-100 text-amber-700': vehicle.operationalRole === 'NON_SHIPMENT',
+                'bg-purple-100 text-purple-700': vehicle.operationalRole === 'BOTH',
+              }"
+              >{{ vehicle.operationalRole.replace('_', ' ') }}</span
+            >
           </div>
         </div>
       </div>

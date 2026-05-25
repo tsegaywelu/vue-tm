@@ -30,6 +30,7 @@ const initialValues = {
   isOperational: true,
   status: "available",
   ownership: "Owned",
+  operationalRole: "SHIPMENT",
 };
 
 const mutation = useMutation({

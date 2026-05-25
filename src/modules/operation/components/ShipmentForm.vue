@@ -330,9 +330,11 @@
             >
               Add New
             </button>
+            
             <VehicleInput
               name="vehicle"
               label="Search Vehicles"
+              :params="{ operationalRole: 'SHIPMENT,BOTH' }"
               :options="selectedVehicle ? [selectedVehicle] : []"
               :display_value="internalLabels.vehicle"
               :validation="{ required }"

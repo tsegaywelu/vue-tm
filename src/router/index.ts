@@ -3,6 +3,7 @@ import DashboardLayout from "@/layouts/DashboardLayout.vue";
 import RouteGuard from "@/components/RouteGuard.vue";
 import { operation_routes } from "@/modules/operation/operation.routes";
 import { shipper_routes } from "@/modules/shipper/shipper.routes";
+import { fleet_routes } from "@/modules/fleet/fleet.routes";
 import { useAuthStore } from "@/store/authStore";
 
 const router = createRouter({
@@ -15,7 +16,7 @@ const router = createRouter({
         {
           path: "",
           component: DashboardLayout,
-          children: [...operation_routes, ...shipper_routes],
+          children: [...operation_routes, ...shipper_routes, ...fleet_routes],
         },
       ],
     },
