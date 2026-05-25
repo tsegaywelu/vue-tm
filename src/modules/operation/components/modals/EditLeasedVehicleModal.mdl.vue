@@ -56,7 +56,6 @@
           :validation="{ required }"
           :attributes="{ placeholder: 'Select Direction' }"
         />
-
         <component
           :is="form.Subscribe"
           :selector="(state: any) => [state.values.leaseDirection]"
@@ -185,7 +184,7 @@ const handleSubmit = async (values: any) => {
     transporter:
       values.leaseDirection === "OUTWARD"
         ? values.transporter
-        : selectedVehicle.value?.transporter?._id || values.transporter,
+        : selectedVehicle.value?.transporter?._id,
     leaseDirection: values.leaseDirection,
     leaseAgreement: {
       coversMaintenance: values.coversMaintenance ?? true,
