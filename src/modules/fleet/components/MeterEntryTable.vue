@@ -75,7 +75,7 @@ const { response, refetch } = usePagination<any>({
   id: "meter-entry-list",
   url: "/fleet/meter-entries",
   params: (state) => ({
-    vehiclePlateNumber: { regex: state.search },
+     ...(state.search ? {vehiclePlateNumber: state.search } : {}),
     q: undefined,
   }),
 });

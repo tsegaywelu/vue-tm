@@ -95,7 +95,7 @@ const { response, refetch } = usePagination<any>({
   id: "recurring-rule-list",
   url: "/fleet/recurring-expense-rules",
   params: (state) => ({
-    vehiclePlateNumber: { regex: state.search },
+    ...(state.search ? {vehiclePlateNumber: state.search } : {}),
     q: undefined,
   }),
 });

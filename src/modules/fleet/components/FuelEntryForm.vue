@@ -1,5 +1,5 @@
 <template>
-  <Form :id="formId" :values="initialValues" :onSubmit="handleSubmit">
+  <Form :id="formId" :values="initialValues" :onSubmit="handleSubmit" :enable_unsaved_guard="false">
     <template #default="{ form }">
       <Colapsable
         title="Fuel Entry Details"
@@ -24,18 +24,21 @@
             name="usageType"
             label="Usage Type"
             :options="usageTypeOptions"
+            :validation="{ required }"
             :attributes="{ placeholder: 'Select usage type' }"
           />
 
           <Input
             name="odometer"
             label="Odometer Reading"
+            :validation="{ required, number }"
             :attributes="{ placeholder: '0', type: 'number' }"
           />
 
           <Input
             name="quantity"
             label="Quantity (L)"
+            :validation="{ required, number }"
             :attributes="{ placeholder: '0.00', type: 'number' }"
             :on_change="(val) => updateAmount(form, { quantity: val })"
           />
@@ -43,6 +46,7 @@
           <Input
             name="unitPrice"
             label="Unit Price"
+            :validation="{ required, number }"
             :attributes="{ placeholder: '0.00', type: 'number' }"
             :on_change="(val) => updateAmount(form, { unitPrice: val })"
           />
@@ -98,7 +102,7 @@ import TextareaInput from "@/components/form/TextareaInput.vue";
 import FileInput from "@/components/form/FileInput.vue";
 import Colapsable from "@/components/common/Colapsable.vue";
 import VehicleInput from "@/components/common/inputs/VehicleInput.vue";
-import { required } from "@/utils/validations";
+import { required, number } from "@/utils/validations";
 import { useAuthStore } from "@/store/authStore";
 
 const authStore = useAuthStore();

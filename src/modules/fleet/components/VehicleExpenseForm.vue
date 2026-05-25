@@ -1,5 +1,5 @@
 <template>
-  <Form :id="formId" :values="initialValues" :onSubmit="handleSubmit">
+  <Form :id="formId" :values="initialValues" :onSubmit="handleSubmit" :enable_unsaved_guard="false">
     <template #default="{ form }">
       <Colapsable
         title="Vehicle Expense Details"
@@ -16,14 +16,9 @@
           <SelectInput
             name="vehicleExpenseType"
             label="Expense Type"
-            url="/expense-type"
-            label_key="name"
-            value_key="_id"
-            searchable
-            :params="expenseTypeParams"
+            :options="expenseTypeOptions"
             :validation="{ required }"
             :attributes="{ placeholder: 'Select expense type' }"
-            :options="props.labels?.vehicleExpenseType ? [{ label: props.labels.vehicleExpenseType, value: props.initialValues.vehicleExpenseType }] : []"
           />
 
           <Input
@@ -82,8 +77,11 @@ import TextareaInput from "@/components/form/TextareaInput.vue";
 import FileInput from "@/components/form/FileInput.vue";
 import Colapsable from "@/components/common/Colapsable.vue";
 import VehicleInput from "@/components/common/inputs/VehicleInput.vue";
+import { computed } from "vue";
+import { useQuery } from "@tanstack/vue-query";
 import { required, number } from "@/utils/validations";
 import { useAuthStore } from "@/store/authStore";
+import { fetch_expense_types } from "@/modules/operation/api/finance.api";
 
 const authStore = useAuthStore();
 
@@ -94,10 +92,16 @@ const props = defineProps<{
   onSubmit: (data: FormData) => Promise<void> | void;
 }>();
 
-const expenseTypeParams = (state: any) => ({
-  name: { regex: state.search },
-  scope: "VEHICLE,BOTH",
-  q: undefined,
+const { data: expenseTypeResponse } = useQuery({
+  queryKey: ["expense-type-all"],
+  queryFn: () => fetch_expense_types({ limit: 200 }),
+});
+
+const expenseTypeOptions = computed(() => {
+  const list: any[] = (expenseTypeResponse.value?.data as any)?.results ?? [];
+  return list
+    .filter((e: any) => !e.scope || e.scope === "VEHICLE" || e.scope === "BOTH")
+    .map((e: any) => ({ label: e.name, value: e._id }));
 });
 
 const handleSubmit = (values: any) => {

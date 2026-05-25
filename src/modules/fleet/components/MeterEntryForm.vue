@@ -1,5 +1,5 @@
 <template>
-  <Form :id="formId" :values="initialValues" :onSubmit="handleSubmit">
+  <Form :id="formId" :values="initialValues" :onSubmit="handleSubmit" :enable_unsaved_guard="false">
     <template #default="{ form }">
       <Colapsable
         title="Meter Entry Details"

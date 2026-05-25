@@ -83,13 +83,13 @@ export function update_recurring_rule(id: string, data: Record<string, any>) {
 }
 
 export function pause_recurring_rule(id: string) {
-  return fleet_api.addAuthenticationHeader().patch(`/recurring-expense-rules/${id}/pause`);
+  return fleet_api.addAuthenticationHeader().patch(`/recurring-expense-rules/${id}/pause`,{});
 }
 
 export function resume_recurring_rule(id: string) {
-  return fleet_api.addAuthenticationHeader().patch(`/recurring-expense-rules/${id}/resume`);
+  return fleet_api.addAuthenticationHeader().patch(`/recurring-expense-rules/${id}/resume`,{});
 }
 
 export function run_recurring_rules_now() {
-  return fleet_api.addAuthenticationHeader().post('/recurring-expense-rules/run-now');
+  return fleet_api.addAuthenticationHeader().post('/recurring-expense-rules/run-now',{});
 }

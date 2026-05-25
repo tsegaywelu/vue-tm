@@ -42,7 +42,7 @@ const { data: response, isLoading } = useQuery({
 
 const entry = computed(() => {
   const data = response.value?.data as any;
-  return Array.isArray(data?.result) ? data.result[0] : data;
+  return data?.results?.[0] ?? null;
 });
 
 const initialValues = computed(() => {
@@ -61,7 +61,7 @@ const initialValues = computed(() => {
 });
 
 const labels = computed(() => {
-  if (!entry.value) return {};
+  if (!entry.value) return undefined;
   const e = entry.value;
   return {
     vehicle: typeof e.vehicle === "object" ? e.vehicle.plateNumber : "",
