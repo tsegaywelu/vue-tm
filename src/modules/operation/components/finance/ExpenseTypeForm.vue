@@ -28,6 +28,13 @@
               number,
             }"
           />
+          <SelectInput
+            name="scope"
+            label="Scope"
+            :options="scopeOptions"
+            :validation="{ required }"
+            :attributes="{ placeholder: 'Select scope' }"
+          />
         </div>
         <div class="mt-6">
           <TextareaInput
@@ -52,9 +59,16 @@
 <script setup lang="ts">
 import Form from "@/components/form/Form.vue";
 import Input from "@/components/form/Input.vue";
+import SelectInput from "@/components/form/SelectInput.vue";
 import TextareaInput from "@/components/form/TextareaInput.vue";
 import Colapsable from "@/components/common/Colapsable.vue";
 import { required, number } from "@/utils/validations";
+
+const scopeOptions = [
+  { label: "Vehicle", value: "VEHICLE" },
+  { label: "Driver", value: "DRIVER" },
+  { label: "Both", value: "BOTH" },
+];
 
 const props = defineProps<{
   formId: string;

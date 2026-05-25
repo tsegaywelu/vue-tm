@@ -690,6 +690,7 @@ export interface Vehicle {
   };
   status: string;
   isOperational: boolean;
+  operationalRole?: 'SHIPMENT' | 'NON_SHIPMENT' | 'BOTH';
   remark?: string;
   fuelRateLoaded?: number;
   fuelRateUnloaded?: number;

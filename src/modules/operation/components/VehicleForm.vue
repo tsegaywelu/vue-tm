@@ -117,6 +117,14 @@
             :validation="{ required, dateLessThanOrEqalToToday }"
             :attributes="{ placeholder: 'Select date' }"
           />
+
+          <SelectInput
+            name="operationalRole"
+            label="Operational Role"
+            :options="operationalRoleOptions"
+            :validation="{ required }"
+            :attributes="{ placeholder: 'Select operational role' }"
+          />
         </div>
       </Colapsable>
 
@@ -439,6 +447,12 @@ const props = defineProps<{
   onSubmit: (values: any) => Promise<void> | void;
 }>();
 
+const operationalRoleOptions = [
+  { label: "Shipment", value: "SHIPMENT" },
+  { label: "Non-Shipment", value: "NON_SHIPMENT" },
+  { label: "Both", value: "BOTH" },
+];
+
 const ownershipOptions = [
   { label: "Owned", value: "Owned" },
   { label: "Rental", value: "Rental" },
@@ -511,6 +525,7 @@ const handleEditSubmit = (values: any) => {
     "maker",
     "region",
     "purchaseDate",
+    "operationalRole",
   ];
 
   const payload: Record<string, any> = {};
@@ -584,6 +599,7 @@ const handleAddSubmit = (values: any) => {
     "boloExpirationDate",
     "purchaseDate",
     "transporter",
+    "operationalRole",
   ];
 
   primaryFields.forEach((key) => {

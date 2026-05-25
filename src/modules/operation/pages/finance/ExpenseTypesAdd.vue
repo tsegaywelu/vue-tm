@@ -35,6 +35,7 @@ const initialValues = {
   name: "",
   typicalPrice: "",
   description: "",
+  scope: "BOTH",
 };
 
 const handleCreate = async (values: any) => {

@@ -263,6 +263,54 @@ export const fleet_navs: Navs[] = [
       },
     ],
   },
+  {
+    name: "Fleet Management",
+    icon: "finance",
+    show: true,
+    permission: { subject: "VEHICLE", actions: ["view"] },
+    children: [
+      {
+        name: "Fuel Entries",
+        path: "/fleet/fuel-entries",
+        show: true,
+        permission: { subject: "VEHICLE", actions: ["view"] },
+        children: [
+          { path: "/fleet/fuel-entries/add", name: "Add Fuel Entry", show: false },
+          { path: "/fleet/fuel-entries/edit/$id", name: "Edit Fuel Entry", show: false },
+        ],
+      },
+      {
+        name: "Meter Entries",
+        path: "/fleet/meter-entries",
+        show: true,
+        permission: { subject: "VEHICLE", actions: ["view"] },
+        children: [
+          { path: "/fleet/meter-entries/add", name: "Add Meter Entry", show: false },
+          { path: "/fleet/meter-entries/edit/$id", name: "Edit Meter Entry", show: false },
+        ],
+      },
+      {
+        name: "Vehicle Expenses",
+        path: "/fleet/vehicle-expenses",
+        show: true,
+        permission: { subject: "VEHICLE", actions: ["view"] },
+        children: [
+          { path: "/fleet/vehicle-expenses/add", name: "Add Vehicle Expense", show: false },
+          { path: "/fleet/vehicle-expenses/edit/$id", name: "Edit Vehicle Expense", show: false },
+        ],
+      },
+      {
+        name: "Recurring Rules",
+        path: "/fleet/recurring-rules",
+        show: true,
+        permission: { subject: "VEHICLE", actions: ["view"] },
+        children: [
+          { path: "/fleet/recurring-rules/add", name: "Add Recurring Rule", show: false },
+          { path: "/fleet/recurring-rules/edit/$id", name: "Edit Recurring Rule", show: false },
+        ],
+      },
+    ],
+  },
 ];
 
 export const stakeholders_navs: Navs[] = [
