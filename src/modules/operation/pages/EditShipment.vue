@@ -182,7 +182,7 @@ const initialValues = computed(() => {
     fuelReadingAtDispatch: data.fuelReadingAtDispatch || "",
     deadHole: data.deadHole ?? "",
     remark: data.remark || "",
-    totalPrice: data.totalPrice?.toFixed(2) || "",
+    totalPrice: "",
     // These are used for display in ShipmentForm and will be updated via handleOrderSelect or handleVehicleSelect
     driver: data.driver?._id,
     isDamaged: data.isDamaged,
