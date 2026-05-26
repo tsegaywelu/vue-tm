@@ -113,6 +113,7 @@
                 :label_key="(item: any) => [item.firstName, item.middleName, item.lastName].filter(Boolean).join(' ')"
                 value_key="_id"
                 searchable
+                search_key="name[regexAny]"
                 :validation="{ required }"
               />
             </div>
