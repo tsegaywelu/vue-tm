@@ -1,15 +1,18 @@
 <template>
   <div
-    class="flex flex-col gap-4 px-5 py-4 bg-white rounded-3xl max-w-[2000px] mx-auto min-h-screen animate-fade-in"
+    class="flex flex-col mg:gap-2 sm:gap-4 px-2 py-1 sm:px-5 sm:py-4 bg-white rounded-3xl max-w-500 mx-auto min-h-screen animate-fade-in"
   >
-    <div class="flex flex-wrap justify-between items-center gap-y-3">
-      <div class="flex flex-col">
-        <h1 v-if="title" class="text-2xl font-bold text-gray-800">
-          {{ title }}
-        </h1>
-        <p v-if="description" class="text-gray-600">
-          {{ description }}
-        </p>
+    <div class="flex flex-wrap justify-between items-center gap-y-2 md:gap-y-3">
+      <div class="flex items-center justify-between w-full gap-2">
+        <div class="flex flex-col">
+          <h1 v-if="title" class="text-xl sm:text-2xl font-bold text-gray-800">
+            {{ title }}
+          </h1>
+          <p v-if="description" class="text-gray-600">
+            {{ description }}
+          </p>
+        </div>
+        <div id="page-title-actions" class="flex items-center gap-1"></div>
       </div>
       <div id="page-actions" class="flex flex-wrap items-center gap-2">
         <!-- Teleport target for page-specific actions -->

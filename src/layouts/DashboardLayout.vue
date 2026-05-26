@@ -186,8 +186,8 @@ onUnmounted(() => {
     >
       <div
         v-if="is_chat_open && !is_dashboard"
-        class="fixed bottom-4 right-4 z-50 w-96 rounded-2xl overflow-hidden shadow-2xl print-hide"
-        style="height: 560px"
+        class="fixed bottom-0 right-0 sm:bottom-4 sm:right-4 z-50 w-[calc(100vw-2rem)] max-w-96 rounded-t-2xl sm:rounded-2xl overflow-hidden shadow-2xl print-hide"
+        style="height: min(560px, calc(100dvh - 2rem))"
       >
         <AiChatBox @close="toggle_chat" />
       </div>

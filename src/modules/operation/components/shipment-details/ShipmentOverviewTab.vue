@@ -1,9 +1,9 @@
 <template>
   <div class="flex flex-col gap-4">
     <div
-      class="rounded-2xl px-3 md:px-5 py-4 bg-white flex flex-col gap-6 shadow-sm border border-gray-100"
+      class="rounded-2xl px-0 md:px-3 md:py-4 bg-white flex flex-col gap-6 shadow-sm border border-gray-100"
     >
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8 lg:gap-12">
         <InfoWrapper title="Trip Information">
           <div
             class="flex flex-col justify-between lg:grid lg:grid-cols-2 gap-6 lg:gap-2.5"
@@ -39,7 +39,7 @@
               </span>
             </div>
           </div>
-          <div class="grid border-t py-4 mt-4 border-gray-200 grid-cols-3 px-2">
+          <div class="grid border-t py-4 mt-4 border-gray-200 grid-cols-1 sm:grid-cols-3 px-2">
             <ShipmentDataLabel
               label="Waypoint"
               :value="shipment?.waypoint?.name"
@@ -76,7 +76,7 @@
         </InfoWrapper>
         <InfoWrapper title="Vouchers">
           <div class="flex flex-col gap-4">
-            <div class="grid grid-cols-2 gap-4 pb-4 border-b border-gray-100">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pb-4 border-b border-gray-100">
               <ShipmentDataLabel
                 label="Vehicle Shipper Issue"
                 :value="shipment?.shipperIssueVoucher"
@@ -89,24 +89,24 @@
           </div>
         </InfoWrapper>
 
-        <InfoWrapper class="col-span-3" title="Shipment Status Timeline">
-          <div class="flex flex-wrap items-center gap-y-8 gap-x-0 px-2 py-4">
+        <InfoWrapper class="md:col-span-3" title="Shipment Status Timeline">
+          <div class="flex overflow-x-auto items-center gap-x-0 gap-y-0 px-2 py-2 md:flex-wrap md:gap-y-6 md:py-4">
             <template
               v-for="(item, index) in statusTimeline"
               :key="item.status"
             >
               <!-- Timeline Item -->
               <div
-                class="relative flex flex-col gap-2 p-4 rounded-2xl border-2 transition-all min-w-[180px] z-10"
+                class="relative shrink-0 flex flex-col gap-1 p-2 md:p-4 rounded-xl md:rounded-2xl border-2 transition-all min-w-[120px] md:min-w-[180px] z-10"
                 :class="
                   index === statusTimeline.length - 1
                     ? 'border-blue-500 bg-blue-50/30 shadow-md ring-4 ring-blue-50'
                     : 'border-gray-100 bg-white shadow-sm'
                 "
               >
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-1.5">
                   <div
-                    class="size-2.5 rounded-full"
+                    class="size-2 md:size-2.5 rounded-full shrink-0"
                     :class="
                       index === statusTimeline.length - 1
                         ? 'bg-blue-600 animate-pulse'
@@ -114,12 +114,12 @@
                     "
                   ></div>
                   <span
-                    class="text-[10px] text-gray-500 font-bold uppercase tracking-wider"
+                    class="text-[9px] md:text-[10px] text-gray-500 font-bold uppercase tracking-wider"
                   >
                     {{ formatStatus(item.status) }}
                   </span>
                 </div>
-                <span v-if="item.time" class="text-xs font-bold text-gray-900">
+                <span v-if="item.time" class="text-[10px] md:text-xs font-bold text-gray-900">
                   {{ dateTimeFormatter(item.time) }}
                 </span>
               </div>
@@ -127,13 +127,13 @@
               <!-- Connecting Line -->
               <div
                 v-if="index < statusTimeline.length - 1"
-                class="h-0.5 w-10 min-w-[20px] bg-gray-200"
+                class="shrink-0 h-0.5 w-6 md:w-10 bg-gray-200"
               ></div>
             </template>
           </div>
         </InfoWrapper>
 
-        <InfoWrapper class="col-span-2" title="Invoice Information">
+        <InfoWrapper class="md:col-span-2" title="Invoice Information">
           <div
             class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-6 px-2.5 py-2"
           >
@@ -188,8 +188,8 @@
           </div>
         </InfoWrapper>
         <InfoWrapper title="Vehicle Information">
-          <div class="flex flex-col gap-4 px-4">
-            <div class="grid grid-cols-2 gap-4 pb-4 border-b border-gray-100">
+          <div class="flex flex-col gap-4 px-0 sm:px-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pb-4 border-b border-gray-100">
               <ShipmentDataLabel
                 label="Plate Number"
                 :value="shipment?.vehicle?.plateNumber"
@@ -222,10 +222,10 @@
 
         <!-- Driver & Transporter Info Section -->
         <InfoWrapper
-          class="col-span-3"
+          class="md:col-span-3"
           title="Driver & Transporter Information"
         >
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-8 px-2 py-2">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 px-2 py-2">
             <!-- Driver Sub-section -->
             <div class="flex flex-col gap-4">
               <div class="flex items-center gap-4 pb-3 border-b border-gray-50">
@@ -245,7 +245,7 @@
                   }}</span>
                 </div>
               </div>
-              <div class="grid grid-cols-2 gap-4">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <ShipmentDataLabel
                   label="Phone Number"
                   :value="shipment?.driver?.phoneNumber"
@@ -279,7 +279,7 @@
                   }}</span>
                 </div>
               </div>
-              <div class="grid grid-cols-2 gap-4">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <ShipmentDataLabel
                   label="Contact Phone"
                   :value="shipment?.transporter?.phoneNumber"

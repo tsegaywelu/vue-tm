@@ -1,4 +1,33 @@
 <template>
+  <!-- Mobile: filter icon next to page title -->
+  <Teleport to="#page-title-actions" defer>
+    <button
+      class="sm:hidden size-8 rounded-xl border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors"
+      @click="mobileSearchOpen = true"
+    >
+      <i class="*:size-4" v-html="icons.filterOptions"></i>
+    </button>
+  </Teleport>
+
+  <!-- Mobile: search field picker sheet -->
+  <BottomSheet v-model="mobileSearchOpen" title="Search By">
+    <div class="flex flex-col py-2 px-4 gap-1">
+      <button
+        v-for="opt in searchFieldOptions"
+        :key="opt.value"
+        class="flex items-center justify-between py-3 px-2 hover:bg-gray-50 rounded-xl transition-colors"
+        @click="selectedSearchField = opt.value; mobileSearchOpen = false"
+      >
+        <span class="font-medium">{{ opt.label }}</span>
+        <i
+          v-if="selectedSearchField === opt.value"
+          class="*:size-4 text-primary"
+          v-html="icons.check"
+        ></i>
+      </button>
+    </div>
+  </BottomSheet>
+
   <Teleport defer to="#page-actions">
     <Button
       v-permission="'SHIPMENT_DAMAGE:create'"
@@ -51,10 +80,10 @@
   >
     <template #search-prefix>
       <div
-        class="h-full flex items-center border-r border-gray-200 pr-2 mr-2 w-48"
+        class="hidden sm:flex h-full items-center border-r border-gray-200 pr-2 mr-2 w-36 md:w-48"
       >
         <Select
-          class="[&_.input-focus]:shadow-none! [&_.input-focus]:border-none [&_.input-focus]:min-h-full min-w-48"
+          class="[&_.input-focus]:shadow-none! [&_.input-focus]:border-none [&_.input-focus]:min-h-full"
           v-model="selectedSearchField"
           :options="searchFieldOptions"
           label_key="label"
@@ -224,12 +253,15 @@ import {
   update_shipment_damage_status,
   delete_shipment_damage,
 } from "../api/operation.api";
+import BottomSheet from "@/components/BottomSheet.vue";
+import { icons } from "@/utils/icons";
 import StatsCards from "@/components/common/StatsCards.vue";
 
 const router = useRouter();
 const route = useRoute();
 const toast = useToastStore();
 
+const mobileSearchOpen = ref(false);
 const selectedSearchField = ref("shipmentCode");
 
 const searchFieldOptions = [

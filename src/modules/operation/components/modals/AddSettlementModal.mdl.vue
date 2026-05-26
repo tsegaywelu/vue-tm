@@ -8,7 +8,7 @@
   >
     <template #center="{ form }">
       <div class="flex flex-col gap-6">
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <SelectInput
             name="type"
             label="Type"
@@ -36,7 +36,7 @@
           :selector="(state: any) => [state.values.category]"
         >
           <template #default="[category]">
-            <div class="grid grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Input
                 name="amount"
                 label="Amount"

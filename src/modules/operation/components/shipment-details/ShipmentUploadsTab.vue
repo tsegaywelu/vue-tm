@@ -1,12 +1,12 @@
 <template>
-  <div class="flex flex-col gap-6 p-4 relative">
+  <div class="flex flex-col gap-4 relative">
     <div
-      class="rounded-2xl px-3 md:px-5 py-4 bg-white flex flex-col gap-6 shadow-sm border border-gray-100"
+      class="rounded-2xl px-0 md:px-3 md:py-4 bg-white flex flex-col gap-6 shadow-sm border border-gray-100"
     >
       <!-- Operational Vouchers -->
       <InfoWrapper title="Operational Vouchers">
         <div
-          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 px-2.5 py-2"
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 px-0 py-2"
         >
           <DocumentCard
             title="Shipper Issue Voucher"
@@ -82,7 +82,7 @@
       <!-- Closing Documents -->
       <InfoWrapper title="Closing Documents">
         <div
-          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 px-2.5 py-2"
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 px-0 py-2"
         >
           <DocumentCard
             v-for="(doc, idx) in shipment?.closingDocuments || []"
@@ -115,7 +115,7 @@
       <!-- General Documents -->
       <InfoWrapper title="Other Shipment Documents">
         <div
-          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 px-2.5 py-2"
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 px-0 py-2"
         >
           <DocumentCard
             v-for="(doc, idx) in shipment?.shipmentDocuments || []"

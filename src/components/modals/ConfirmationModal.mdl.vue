@@ -1,15 +1,23 @@
 <template>
   <div
-    class="fixed inset-0 h-full w-full bg-black/40 backdrop-blur-[2px] grid place-items-center px-4 z-[200]"
+    class="w-full h-full overflow-hidden bg-black/40 backdrop-blur-[2px] flex flex-col justify-end sm:flex sm:items-center sm:justify-center sm:px-4 modal-overlay"
   >
     <div
-      class="bg-white p-8 rounded-[32px] shadow-2xl w-full max-w-sm transform transition-all duration-300 scale-100"
+      class="confirmation-card bg-white pt-2 rounded-t-3xl sm:rounded-4xl shadow-2xl w-full sm:max-w-sm flex flex-col max-h-[90dvh] sm:max-h-none"
       style="box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15)"
     >
-      <div class="flex flex-col items-center text-center">
+      <!-- Mobile drag handle -->
+      <div class="sm:hidden flex justify-center pb-4 shrink-0">
+        <div class="w-12 h-1.5 bg-grey-300 rounded-full" />
+      </div>
+
+      <!-- Scrollable content -->
+      <div
+        class="flex flex-col items-center text-center overflow-y-auto px-8 sm:px-8 sm:pt-8 flex-1"
+      >
         <!-- Icon/Visual Area -->
         <div
-          class="w-16 h-16 rounded-2xl flex items-center justify-center mb-6"
+          class="w-16 h-16 rounded-2xl flex items-center justify-center mb-6 shrink-0"
           :class="
             isNegativeAction
               ? 'bg-red-50 text-red-500'
@@ -49,35 +57,82 @@
             placeholder="0.00"
           />
         </div>
+      </div>
 
-        <div class="flex flex-col w-full gap-3">
-          <button
-            @click="confirm"
-            class="w-full py-4 rounded-2xl text-sm font-bold text-white transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-blue-500/20"
-            :style="{
-              background: isNegativeAction
-                ? 'linear-gradient(180deg, #FF5F5F 0%, #D93A3A 100%)'
-                : 'linear-gradient(180deg, #4A4AFF 0%, #2222FF 100%)',
-            }"
-          >
-            {{ data.confirmText || "Yes, Proceed" }}
-          </button>
+      <!-- Buttons — always pinned, never clipped -->
+      <div
+        class="flex flex-col w-full gap-3 px-8 sm:px-8 buttons-footer shrink-0"
+      >
+        <button
+          @click="confirm"
+          class="w-full py-4 rounded-2xl text-sm font-bold text-white transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-blue-500/20"
+          :style="{
+            background: isNegativeAction
+              ? 'linear-gradient(180deg, #FF5F5F 0%, #D93A3A 100%)'
+              : 'linear-gradient(180deg, #4A4AFF 0%, #2222FF 100%)',
+          }"
+        >
+          {{ data.confirmText || "Yes, Proceed" }}
+        </button>
 
-          <button
-            @click="cancel"
-            class="w-full py-4 rounded-2xl text-sm font-bold bg-gray-50 text-gray-500 hover:bg-gray-100 transition-all"
-          >
-            {{ data.cancelText || "Cancel" }}
-          </button>
-        </div>
+        <button
+          @click="cancel"
+          class="w-full py-4 rounded-2xl text-sm font-bold bg-gray-50 text-gray-500 hover:bg-gray-100 transition-all"
+        >
+          {{ data.cancelText || "Cancel" }}
+        </button>
       </div>
     </div>
   </div>
 </template>
 
+<style scoped>
+/* Safe area: buttons stay above home indicator */
+@media (max-width: 639px) {
+  .buttons-footer {
+    padding-bottom: max(2.5rem, env(safe-area-inset-bottom, 0px));
+    padding-top: 1rem;
+  }
+
+  /* Slide up — fill-mode: backwards applies from-state before animation starts, no flicker */
+  .confirmation-card {
+    animation: card-slide-up 350ms cubic-bezier(0.32, 0.72, 0, 1) backwards;
+  }
+  @keyframes card-slide-up {
+    from {
+      transform: translateY(100%);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
+}
+
+/* Desktop: scale + fade in */
+@media (min-width: 640px) {
+  .confirmation-card {
+    animation: card-scale-in 250ms ease-out backwards;
+  }
+  @keyframes card-scale-in {
+    from {
+      transform: scale(0.95);
+      opacity: 0;
+    }
+    to {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+}
+</style>
+
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, onUnmounted } from "vue";
 import { closeModal } from "@customizer/modal-x";
+
+// Set at setup time — runs synchronously before first render, no layout shift
+document.body.style.overflow = "hidden";
+onUnmounted(() => { document.body.style.overflow = ""; });
 
 export type ReturnType =
   | boolean

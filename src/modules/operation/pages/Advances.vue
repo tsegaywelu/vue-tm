@@ -1,7 +1,25 @@
 <template>
   <div class="flex flex-col gap-4">
+    <!-- Mobile: summary icon button next to title -->
+    <Teleport to="#page-title-actions" defer>
+      <button
+        v-if="activeTab === 'driverAdvances'"
+        class="sm:hidden size-8 rounded-xl border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors"
+        @click="$router.push('/operation/advance-summary')"
+      >
+        <i class="*:size-4" v-html="icons.file"></i>
+      </button>
+      <button
+        v-else-if="activeTab === 'transporterAdvances'"
+        class="sm:hidden size-8 rounded-xl border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors"
+        @click="$router.push('/operation/prepayment-summary')"
+      >
+        <i class="*:size-4" v-html="icons.file"></i>
+      </button>
+    </Teleport>
+
     <Teleport to="#page-actions" defer>
-      <div class="flex items-center gap-3">
+      <div class="hidden sm:flex items-center gap-3">
         <Button
           v-if="activeTab === 'driverAdvances'"
           size="md"
@@ -28,6 +46,7 @@
       pagination-id="driver-advance-list"
       :columns="driverColumns"
       :checkable="false"
+      :column-span="{ advanceNumber: 2, driver: 2, route: 2, status: 2 }"
     />
     <AdvanceTable
       v-if="activeTab === 'transporterAdvances'"
@@ -35,6 +54,7 @@
       pagination-id="transporter-advance-list"
       :columns="transporterColumns"
       :checkable="false"
+      :column-span="{ advanceNumber: 2, transporter: 2, route: 2, status: 2 }"
     />
   </div>
 </template>
@@ -45,6 +65,7 @@ import { useRoute } from "vue-router";
 import AdvanceTable from "../components/AdvanceTable.vue";
 import Button from "@/components/common/Button.vue";
 import type { TableColumn } from "@/components/common/Table.vue";
+import { icons } from "@/utils/icons";
 
 const route = useRoute();
 

@@ -1,14 +1,52 @@
 <template>
+  <!-- Mobile: filter icon next to page title -->
+  <Teleport to="#page-title-actions" defer>
+    <button
+      class="size-8 rounded-xl border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors"
+      @click="mobileTypeOpen = true"
+    >
+      <i class="*:size-4" v-html="icons.filterOptions"></i>
+    </button>
+  </Teleport>
+
+  <!-- Mobile: type picker sheet -->
+  <BottomSheet v-model="mobileTypeOpen" title="Filter By">
+    <div class="flex flex-col py-2 px-4 gap-1">
+      <button
+        v-for="opt in typeOptions"
+        :key="opt.value"
+        class="flex items-center justify-between py-3 px-2 hover:bg-gray-50 rounded-xl transition-colors"
+        @click="
+          selectedType = opt.value;
+          mobileTypeOpen = false;
+        "
+      >
+        <span class="font-medium">{{ opt.label }}</span>
+        <i
+          v-if="selectedType === opt.value"
+          class="*:size-4 text-primary"
+          v-html="icons.check"
+        ></i>
+      </button>
+    </div>
+  </BottomSheet>
+
   <Table
     id="approval-requests"
     :columns="columns"
     :rows="response"
     search_placeholder="Search by Ref. Number..."
-    @row_click="(row) => $router.push(`/operation/advance-details/${row._id}`)"
+    :on_sm_screen_column_span="{
+      advanceNumber: 2,
+      payableType: 2,
+      paidTo: 2,
+      route: 2,
+      actions: 2,
+    }"
   >
     <template #search-prefix>
       <div
-        class="h-full flex items-center border-r border-gray-200 pr-2 mr-2 w-48"
+        class="hidden sm:flex h-full items-center border-r border-gray-200 pr-2 mr-2 w-48"
       >
         <Select
           class="[&_.input-focus]:shadow-none! [&_.input-focus]:border-none [&_.input-focus]:min-h-full min-w-48"
@@ -23,9 +61,8 @@
 
     <template #after-search>
       <div
-        class="[&_.input-focus]:bg-grey-25 flex-1 h-12 items-center gap-4 inline-flex border-l border-grey-100 overflow-x-auto px-3"
+        class="[&_.input-focus]:bg-grey-25 min-h-16 flex-1 items-center gap-4 inline-flex overflow-x-auto px-3"
       >
-        <i v-html="icons.filter" />
         <Select
           label="Origin"
           size="xs"
@@ -198,7 +235,7 @@
                   "
                   class="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
                 >
-                  <i class="mdi mdi-image-multiple-outline text-base"></i>
+                  <i class="*:size-4" v-html="icons.file"></i>
                   Photos ({{ normalizeAttachments(row).length }})
                 </button>
               </template>
@@ -217,6 +254,7 @@ import Table from "@/components/common/Table.vue";
 import Button from "@/components/common/Button.vue";
 import Select from "@/components/common/Select.vue";
 import Dropdown from "@/components/common/Dropdown.vue";
+import BottomSheet from "@/components/BottomSheet.vue";
 import { usePagination } from "@/composables/usePagination";
 import { currencyFormatter } from "@/utils/utils";
 import { icons } from "@/utils/icons";
@@ -227,7 +265,8 @@ import { getPaidTo } from "./finance/payableUtils";
 
 function resolveFileUrl(path: string): string {
   if (!path) return "";
-  if (path.startsWith("http://") || path.startsWith("https://")) return encodeURI(path);
+  if (path.startsWith("http://") || path.startsWith("https://"))
+    return encodeURI(path);
   const base = (import.meta.env.v_STATIC_PATH || "").replace(/\/+$/, "");
   const normalized = path.replace(/\\/g, "/").replace(/^\/+/, "");
   return `${base}/${encodeURI(normalized)}`;
@@ -236,7 +275,8 @@ function resolveFileUrl(path: string): string {
 function normalizeAttachments(row: any): string[] {
   if (!row) return [];
   const files: string[] = [];
-  if (Array.isArray(row.attachments)) files.push(...row.attachments.filter(Boolean));
+  if (Array.isArray(row.attachments))
+    files.push(...row.attachments.filter(Boolean));
   if (row.attachment) files.push(row.attachment);
   return [...new Set(files)].map(resolveFileUrl);
 }
@@ -290,6 +330,7 @@ const typeOptions = [
   { label: "Transaction", value: "transaction" },
 ];
 
+const mobileTypeOpen = ref(false);
 const selectedType = ref("all");
 const origin = ref("");
 const destination = ref("");

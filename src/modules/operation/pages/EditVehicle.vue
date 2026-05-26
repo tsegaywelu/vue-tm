@@ -6,6 +6,7 @@
     <VehicleForm
       formId="edit-vehicle-form"
       :initial-values="mappedValues"
+      :labels="labels"
       :onSubmit="handleSubmit"
     >
       <template #actions="{ form }">
@@ -39,6 +40,24 @@ const { data: vehicleData, isLoading } = useQuery({
 });
 
 const vehicle = computed(() => vehicleData.value?.data);
+
+const labels = computed(() => {
+  if (!vehicle.value) return {};
+  const v = vehicle.value;
+  return {
+    vehicleType: v.vehicleType?.name || "",
+    vehicleGroup: v.vehicleGroup?.name || "",
+    type: v.type?.name || "",
+    vehicleModel: v.vehicleModel?.name || "",
+    maker: v.maker?.name || "",
+    region: v.region?.name || "",
+    driver: v.driver
+      ? `${v.driver.firstName} ${v.driver.middleName || ""} ${v.driver.lastName || ""}`.replace(/\s+/g, " ").trim()
+      : "",
+    transporter: v.transporter?.name || "",
+    insurance_insurer: v.insuranceInformation?.insurer?.name || "",
+  };
+});
 
 const mappedValues = computed(() => {
   if (!vehicle.value) return {};

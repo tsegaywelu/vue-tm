@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col gap-6 p-4">
+  <div class="flex flex-col gap-6 relative">
     <!-- Loader -->
     <div
       v-if="isLoading"
@@ -96,7 +96,7 @@
             </div>
           </div>
 
-          <div class="grid grid-cols-3 gap-4 text-sm">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
             <div class="flex flex-col gap-0.5">
               <span class="text-xs font-semibold text-gray-400">From</span>
               <span class="font-bold text-gray-800">{{

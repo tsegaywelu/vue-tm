@@ -17,6 +17,8 @@
     id="order-list"
     :columns="columns"
     :rows="response"
+    :on_sm_screen_column_span="{ order: 2, details: 2, carrier: 2, status: 2 }"
+    search_placeholder="Search by order code..."
     @row_click="(row) => router.push(`${resolvedBasePath}/${row._id}`)"
   >
     <template #after-search>

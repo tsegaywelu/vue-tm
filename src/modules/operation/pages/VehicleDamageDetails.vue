@@ -6,11 +6,11 @@
   <div v-else-if="damage" class="flex flex-col gap-6">
     <!-- Header Info Card -->
     <div
-      class="bg-grey-25 rounded-[32px] p-6 md:p-10 border border-grey-100 flex flex-col md:flex-row items-center justify-between gap-8"
+      class="bg-grey-25 rounded-[32px] p-6 md:p-10 border border-grey-100 flex flex-col gap-6 md:flex-row md:items-center md:justify-between"
     >
-      <div class="flex items-center gap-8">
+      <div class="flex items-center gap-4 md:gap-8">
         <div
-          class="size-24 md:size-32 rounded-full bg-white flex items-center justify-center shadow-lg border border-grey-100 p-4"
+          class="size-16 md:size-32 shrink-0 rounded-full bg-white flex items-center justify-center shadow-lg border border-grey-100 p-3 md:p-4"
         >
           <div class="text-red-500">
             <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -35,14 +35,14 @@
         </div>
       </div>
 
-      <div class="flex items-center gap-4">
-        <div class="flex flex-col items-end gap-1">
+      <div class="flex items-center gap-4 self-start md:self-auto">
+        <div class="flex flex-col items-start md:items-end gap-1">
           <span class="text-[10px] text-gray-500 uppercase font-bold tracking-wider">Severity</span>
           <span class="px-3 py-1 bg-red-100 text-red-700 font-bold text-xs rounded uppercase">
             {{ damage.severity || 'Unknown' }}
           </span>
         </div>
-        <div class="flex flex-col items-end gap-1">
+        <div class="flex flex-col items-start md:items-end gap-1">
           <span class="text-[10px] text-gray-500 uppercase font-bold tracking-wider">Payable Status</span>
           <Status
             :variant="damage.payableStatus || 'unknown'"
@@ -50,7 +50,7 @@
             :label="damage.payableStatus || 'Unknown'"
           />
         </div>
-        <div class="flex flex-col items-end gap-1">
+        <div class="flex flex-col items-start md:items-end gap-1">
           <span class="text-[10px] text-gray-500 uppercase font-bold tracking-wider">Receivable Status</span>
           <Status
             :variant="damage.receivableStatus || 'unknown'"

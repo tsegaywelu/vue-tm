@@ -51,7 +51,7 @@
           </span>
         </template>
 
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 py-2">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 py-2">
           <ShipmentDataLabel
             label="Date"
             :value="dateFormatter(infraction.createdAt)"
@@ -83,7 +83,7 @@
       <!-- Details Section -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
         <InfoWrapper title="Context Information">
-          <div class="grid grid-cols-2 gap-6">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <ShipmentDataLabel label="Location" :value="infraction.location" />
             <ShipmentDataLabel
               label="Notes"
@@ -99,23 +99,23 @@
           Offense & Penalty Breakdown
         </h3>
         <div
-          class="overflow-hidden border border-grey-100 rounded-2xl bg-white"
+          class="overflow-x-auto border border-grey-100 rounded-2xl bg-white"
         >
           <table class="min-w-full divide-y divide-grey-100 text-sm">
             <thead class="bg-grey-50 text-grey-700 font-semibold text-left">
               <tr>
-                <th class="px-6 py-3">Reason / Description</th>
-                <th class="px-6 py-3">Notes</th>
-                <th class="px-6 py-3 text-right">Penalty / Fine</th>
+                <th class="px-3 md:px-6 py-3">Reason / Description</th>
+                <th class="px-3 md:px-6 py-3">Notes</th>
+                <th class="px-3 md:px-6 py-3 text-right">Penalty / Fine</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-grey-100 text-grey-600">
               <tr v-for="(item, index) in infraction.items" :key="index">
-                <td class="px-6 py-4 font-medium text-grey-900">
+                <td class="px-3 md:px-6 py-4 font-medium text-grey-900">
                   {{ item.title || item.reason || "Offense Penalty" }}
                 </td>
-                <td class="px-6 py-4">{{ item.description || "-" }}</td>
-                <td class="px-6 py-4 text-right font-bold text-grey-900">
+                <td class="px-3 md:px-6 py-4">{{ item.description || "-" }}</td>
+                <td class="px-3 md:px-6 py-4 text-right font-bold text-grey-900">
                   {{ currencyFormatter(item.fine || item.penaltyAmount || 0) }}
                 </td>
               </tr>

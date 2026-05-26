@@ -96,7 +96,8 @@
         </div>
       </div>
 
-      <Teleport to="body">
+      <!-- Desktop dropdown -->
+      <Teleport v-if="!isMobile" to="body">
         <div
           v-if="open"
           ref="dropdownRef"
@@ -162,6 +163,63 @@
           </div>
         </div>
       </Teleport>
+
+      <!-- Mobile: bottom sheet -->
+      <BottomSheet v-if="isMobile" v-model="open" :title="label || 'Select'">
+        <div v-if="searchable" class="px-4 pt-3 pb-2 border-b border-grey-100">
+          <input
+            ref="searchInput"
+            type="text"
+            v-model="searchResult"
+            @input="handleInputSearch"
+            class="w-full border border-grey-100 rounded-2xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/20"
+            placeholder="Search..."
+          />
+        </div>
+        <div class="flex flex-col py-2 px-4 gap-1">
+          <div
+            v-if="finalOptions.length === 0"
+            class="text-gray-400 p-3 text-sm"
+          >
+            No options found
+          </div>
+          <div
+            v-for="(option, idx) in finalOptions"
+            :key="getOptionValue(option) + '-' + idx"
+            @click.stop="selectOption(option)"
+            class="flex items-center justify-between cursor-pointer rounded-xl hover:bg-gray-50 p-3"
+            :class="{ 'bg-gray-100': isSelected(option, modelValue) }"
+          >
+            <slot
+              name="item"
+              :option="option"
+              :label="getOptionLabel(option)"
+              :value="getOptionValue(option)"
+              :item="option.item"
+              :selected="isSelected(option, modelValue)"
+            >
+              <span class="font-medium text-sm">{{
+                getOptionLabel(option)
+              }}</span>
+            </slot>
+            <div
+              v-if="multiple"
+              :class="[
+                isSelected(option, modelValue)
+                  ? 'border-transparent'
+                  : 'border-gray-300',
+              ]"
+              class="size-5 grid place-items-center border rounded"
+            >
+              <i
+                v-if="isSelected(option, modelValue)"
+                v-html="icons.check"
+                class="*:size-4"
+              ></i>
+            </div>
+          </div>
+        </div>
+      </BottomSheet>
     </div>
   </InputLayout>
 </template>
@@ -184,6 +242,10 @@ import { usePagination } from "@/composables/usePagination";
 import ApiService from "@/api/ApiService";
 import { icons } from "@/utils/icons";
 import { getValueByPath } from "@/utils/utils";
+import { useIsMobile } from "@/composables/useIsMobile";
+import BottomSheet from "@/components/BottomSheet.vue";
+
+const { isMobile } = useIsMobile();
 
 export interface SelectProps extends Omit<InputLayoutProps, "error"> {
   modelValue?: any;
@@ -528,6 +590,7 @@ watch(open, (isOpen) => {
 });
 
 function handleOutsideClick(e: MouseEvent) {
+  if (isMobile.value) return;
   if (
     !containerRef.value?.contains(e.target as Node) &&
     !dropdownRef.value?.contains(e.target as Node)

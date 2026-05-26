@@ -32,7 +32,7 @@
       />
 
       <!-- Status Time (hidden for custom) -->
-      <div class="grid grid-cols-[1fr_15rem] gap-4">
+      <div class="grid grid-cols-[2fr_1fr] gap-4">
         <DateInput
           v-if="currentStatus !== 'custom'"
           name="statusTime"

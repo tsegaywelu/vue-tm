@@ -55,7 +55,8 @@
           </template>
         </InputLayout>
 
-        <Teleport to="body">
+        <!-- Desktop: positioned picker -->
+        <Teleport v-if="!isMobile" to="body">
           <div
             v-if="isOpen"
             ref="dropdownRef"
@@ -73,6 +74,22 @@
             />
           </div>
         </Teleport>
+
+        <!-- Mobile: bottom sheet -->
+        <BottomSheet v-if="isMobile" v-model="isOpen" :title="label || 'Select Date'">
+          <div class="px-4 py-2 w-full">
+            <DatePicker
+              class="w-full"
+              :calendar-type="internalCalendarType"
+              :value="field.state.value"
+              :is-range="is_range"
+              :output-calendar-type="output_calendar_type"
+              :show-calender-type="show_calendar_type"
+              @calendar-type-change="internalCalendarType = $event"
+              @select="onSelect($event, field)"
+            />
+          </div>
+        </BottomSheet>
       </div>
     </template>
   </InputParent>
@@ -85,6 +102,10 @@ import InputLayout from "./InputLayout.vue";
 import { type InputProps } from "./Input.vue";
 import DatePicker from "@/components/DatePicker.vue";
 import { icons } from "@/utils/icons";
+import { useIsMobile } from "@/composables/useIsMobile";
+import BottomSheet from "@/components/BottomSheet.vue";
+
+const { isMobile } = useIsMobile();
 
 export interface DateInputProps extends InputProps {
   is_range?: boolean;

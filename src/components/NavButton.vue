@@ -56,7 +56,6 @@ const handle_click = () => {
 
   if (children_showable.value.length) {
     is_open.value = !is_open.value;
-    emit("nav_item_click");
   }
 };
 

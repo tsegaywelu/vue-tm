@@ -37,6 +37,6 @@ export const getPaidTo = (row: any) => {
     return row.supplier?.name || "-";
   } else if (row.payableType === "vehicleLeaseAgreement") {
     return row.transporter?.name || "asd";
-  }
-  return "f-";
+  } else if(row.payableType == 'Sub-Contract Advance')
+  return "-";
 };

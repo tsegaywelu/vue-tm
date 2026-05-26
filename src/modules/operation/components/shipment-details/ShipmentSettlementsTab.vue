@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col gap-6 p-4">
+  <div class="flex flex-col gap-6 relative">
     <div
       v-if="(!transactions || transactions.length === 0) && !isLoading"
       class="flex flex-col items-center justify-center p-12 min-h-[300px] bg-white rounded-2xl border border-gray-100 shadow-sm gap-4 text-center"
@@ -112,7 +112,6 @@ const props = defineProps<{
 
 const shipmentId = computed(() => props.shipment._id);
 
-console.log(props.shipment);
 // Data Query
 const { response: transactions, isLoading } =
   usePagination<ShipmentTransaction>({

@@ -263,7 +263,7 @@
       </Colapsable>
 
       <!-- Action Footer -->
-      <div class="pt-10 flex justify-end gap-4">
+      <div class="form-footer pt-6 flex justify-end gap-3">
         <slot :form="form" name="submit-btn"></slot>
       </div>
     </template>
@@ -476,3 +476,17 @@ const handleSubmit = async (values: any) => {
   await props.onSubmit(payload);
 };
 </script>
+
+<style scoped>
+@media (max-width: 639px) {
+  .form-footer {
+    flex-direction: column;
+  }
+  .form-footer :deep(button) {
+    width: 100% !important;
+    min-height: 3.25rem;
+    font-size: 1rem;
+    border-radius: 1rem;
+  }
+}
+</style>

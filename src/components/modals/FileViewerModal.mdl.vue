@@ -1,12 +1,17 @@
 <template>
   <ModalWrapper
     @close="closeModal()"
-    wrapperClass="flex items-center justify-center p-4"
+    wrapperClass="flex flex-col items-stretch justify-end sm:items-center sm:justify-center sm:p-4"
   >
     <div
-      class="bg-white rounded-2xl shadow-xl w-full max-w-4xl h-[90vh] flex flex-col overflow-hidden relative pointer-events-auto"
+      class="bg-white rounded-t-2xl sm:rounded-2xl shadow-xl w-full sm:max-w-4xl h-[90vh] flex flex-col overflow-hidden relative pointer-events-auto"
       @click.stop
     >
+      <!-- Mobile drag handle -->
+      <div class="sm:hidden flex justify-center pt-3 pb-1 shrink-0">
+        <div class="w-12 h-1.5 bg-grey-300 rounded-full" />
+      </div>
+
       <!-- Header -->
       <div
         class="flex justify-between items-center border-b border-gray-100 px-6 py-4"
@@ -30,24 +35,24 @@
       <!-- Toolbar -->
       <div
         v-if="isPDF || isImage"
-        class="flex justify-center items-center gap-3 py-3 border-b border-gray-100 bg-gray-50/50"
+        class="flex justify-center items-center gap-2 py-3 border-b border-gray-100 bg-gray-50/50"
       >
         <button @click="zoomIn" class="px-3 py-1.5 bg-white border border-gray-200 hover:bg-gray-50 rounded-lg text-sm font-medium transition-colors text-gray-700 shadow-sm flex items-center gap-1.5">
-          <span class="text-lg">+</span> Zoom In
+          <span class="text-lg leading-none">+</span><span class="hidden sm:inline">Zoom In</span>
         </button>
         <button @click="zoomOut" class="px-3 py-1.5 bg-white border border-gray-200 hover:bg-gray-50 rounded-lg text-sm font-medium transition-colors text-gray-700 shadow-sm flex items-center gap-1.5">
-          <span class="text-lg">-</span> Zoom Out
+          <span class="text-lg leading-none">−</span><span class="hidden sm:inline">Zoom Out</span>
         </button>
         <button @click="rotate" class="px-3 py-1.5 bg-white border border-gray-200 hover:bg-gray-50 rounded-lg text-sm font-medium transition-colors text-gray-700 shadow-sm flex items-center gap-1.5">
-          <span>↻</span> Rotate
+          <span>↻</span><span class="hidden sm:inline">Rotate</span>
         </button>
         <button @click="reset" class="px-3 py-1.5 bg-white border border-gray-200 hover:bg-gray-50 rounded-lg text-sm font-medium transition-colors text-gray-700 shadow-sm flex items-center gap-1.5">
-          <span>↺</span> Reset
+          <span>↺</span><span class="hidden sm:inline">Reset</span>
         </button>
       </div>
 
       <!-- Viewer Content -->
-      <div class="flex-1 overflow-hidden bg-gray-100 flex justify-center items-center p-4 relative">
+      <div ref="viewerRef" class="flex-1 overflow-hidden bg-gray-100 flex justify-center items-center p-4 relative" style="touch-action: none;">
         <!-- Prev button -->
         <button
           v-if="totalFiles > 1"
@@ -121,7 +126,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onUnmounted } from "vue";
+import { ref, computed, watch, onMounted, onUnmounted } from "vue";
 import { closeModal } from "@customizer/modal-x";
 import ModalWrapper from "./ModalWrapper.vue";
 
@@ -187,9 +192,6 @@ watch(
   { immediate: true },
 );
 
-onUnmounted(() => {
-  if (pdfBlobURL.value) URL.revokeObjectURL(pdfBlobURL.value);
-});
 const isImage = computed(() =>
   [".jpg", ".jpeg", ".png", ".gif", ".webp"].some(hasExt),
 );
@@ -197,8 +199,45 @@ const isImage = computed(() =>
 const prev = () => { if (currentIndex.value > 0) { currentIndex.value--; reset(); } };
 const next = () => { if (currentIndex.value < totalFiles.value - 1) { currentIndex.value++; reset(); } };
 
-const zoomIn = () => { zoom.value += 0.25; };
-const zoomOut = () => { if (zoom.value > 0.25) zoom.value -= 0.25; };
+const zoomIn = () => { zoom.value = Math.min(zoom.value + 0.25, 5); };
+const zoomOut = () => { zoom.value = Math.max(zoom.value - 0.25, 0.25); };
 const rotate = () => { rotation.value = (rotation.value + 90) % 360; };
 const reset = () => { zoom.value = 1; rotation.value = 0; };
+
+// Pinch-to-zoom
+const viewerRef = ref<HTMLElement | null>(null);
+let pinchStartDistance = 0;
+let pinchStartZoom = 1;
+
+function touchDistance(touches: TouchList) {
+  const dx = touches[0].clientX - touches[1].clientX;
+  const dy = touches[0].clientY - touches[1].clientY;
+  return Math.sqrt(dx * dx + dy * dy);
+}
+
+function onTouchStart(e: TouchEvent) {
+  if (e.touches.length === 2) {
+    pinchStartDistance = touchDistance(e.touches);
+    pinchStartZoom = zoom.value;
+  }
+}
+
+function onTouchMove(e: TouchEvent) {
+  if (e.touches.length === 2) {
+    e.preventDefault();
+    const dist = touchDistance(e.touches);
+    zoom.value = Math.min(Math.max((dist / pinchStartDistance) * pinchStartZoom, 0.25), 5);
+  }
+}
+
+onMounted(() => {
+  viewerRef.value?.addEventListener("touchstart", onTouchStart, { passive: true });
+  viewerRef.value?.addEventListener("touchmove", onTouchMove, { passive: false });
+});
+
+onUnmounted(() => {
+  viewerRef.value?.removeEventListener("touchstart", onTouchStart);
+  viewerRef.value?.removeEventListener("touchmove", onTouchMove);
+  if (pdfBlobURL.value) URL.revokeObjectURL(pdfBlobURL.value);
+});
 </script>

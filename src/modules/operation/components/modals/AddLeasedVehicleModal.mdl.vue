@@ -23,7 +23,7 @@
           </template>
         </component>
 
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <DateInput
             name="startDate"
             label="Start Date"
@@ -80,7 +80,7 @@
           </template>
         </component>
 
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <ToggleInput name="coversMaintenance" label="Covers Maintenance" />
           <ToggleInput name="coversAdvance" label="Covers Advance" />
         </div>

@@ -103,7 +103,7 @@ const close_nav = () => {
   >
     <div
       @click.stop
-      class="w-full xl:w-full h-full flex flex-col gap-5 bg-white shadow-grey-200/50"
+      class="w-full max-w-70 xl:max-w-none xl:w-full h-full flex flex-col gap-5 bg-white shadow-grey-200/50"
     >
       <!-- Sidebar Header -->
       <div

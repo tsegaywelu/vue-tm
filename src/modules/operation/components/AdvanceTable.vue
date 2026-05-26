@@ -1,4 +1,36 @@
 <template>
+  <!-- Mobile: filter icon next to page title -->
+  <Teleport to="#page-title-actions" defer>
+    <button
+      class="size-8 rounded-xl border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors"
+      @click="mobileSearchOpen = true"
+    >
+      <i class="*:size-4" v-html="icons.filterOptions"></i>
+    </button>
+  </Teleport>
+
+  <!-- Mobile: search field picker sheet -->
+  <BottomSheet v-model="mobileSearchOpen" title="Search By">
+    <div class="flex flex-col py-2 px-4 gap-1">
+      <button
+        v-for="opt in AdvanceStatusOptions.filter((o) => o.value)"
+        :key="opt.value"
+        class="flex items-center justify-between py-3 px-2 hover:bg-gray-50 rounded-xl transition-colors"
+        @click="
+          selectedStatus = opt.value;
+          mobileSearchOpen = false;
+        "
+      >
+        <span class="font-medium">{{ opt.label }}</span>
+        <i
+          v-if="selectedStatus === opt.value"
+          class="*:size-4 text-primary"
+          v-html="icons.check"
+        ></i>
+      </button>
+    </div>
+  </BottomSheet>
+
   <CheckTable
     :row_alignment="{ driver: 'left', route: 'left' }"
     :head_alignment="{ driver: 'left', route: 'left' }"
@@ -8,6 +40,7 @@
     :clickable_rows="true"
     :search_placeholder="dynamicSearchPlaceholder"
     :canBeSelected="checkable"
+    :on_sm_screen_column_span="columnSpan"
     v-model="selectedItems"
     unique_key="_id"
     :loading="isLoading"
@@ -15,7 +48,7 @@
   >
     <template #search-prefix>
       <div
-        class="h-full flex items-center border-r border-gray-200 pr-2 mr-2 w-48"
+        class="hidden sm:flex h-full items-center border-r border-gray-200 pr-2 mr-2 w-48"
       >
         <Select
           class="[&_.input-focus]:shadow-none! [&_.input-focus]:border-none [&_.input-focus]:min-h-full min-w-48"
@@ -29,10 +62,7 @@
     </template>
 
     <template #after-search>
-      <div
-        class="items-center gap-4 inline-flex border-l border-grey-100 overflow-x-auto px-3"
-      >
-        <i v-html="icons.filter" />
+      <div class="items-center gap-4 inline-flex overflow-x-auto">
         <AdvanceFilters
           @change="handleFilterChange"
           :pagination-id="props.paginationId"
@@ -225,6 +255,7 @@ import { currencyFormatter } from "@/utils/utils";
 import AdvanceFilters from "./AdvanceFilters.vue";
 import Status from "@/components/common/Status.vue";
 import { icons } from "@/utils/icons";
+import BottomSheet from "@/components/BottomSheet.vue";
 
 const props = withDefaults(
   defineProps<{
@@ -240,6 +271,8 @@ const props = withDefaults(
     checkable?: boolean;
     /** Selected items (v-model) */
     modelValue?: any[];
+    /** Column span overrides on small screens */
+    columnSpan?: Record<string, number>;
   }>(),
   {
     url: "/advance-payment",
@@ -247,6 +280,7 @@ const props = withDefaults(
     extraParams: () => ({}),
     checkable: false,
     modelValue: () => [],
+    columnSpan: () => ({}),
   },
 );
 
@@ -273,9 +307,13 @@ const AdvanceStatusOptions = [
 
 const selectedStatus = ref("vehiclePlateNumber");
 const activeFilters = ref<any>({});
+const mobileSearchOpen = ref(false);
 
 const dynamicSearchPlaceholder = computed(() => {
-  return "Search Advances...";
+  const option = AdvanceStatusOptions.find(
+    (o) => o.value === selectedStatus.value,
+  );
+  return option ? `Search by ${option.label}...` : "Search advances...";
 });
 
 const handleFilterChange = (newFilters: any) => {

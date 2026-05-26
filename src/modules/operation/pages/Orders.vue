@@ -1,12 +1,21 @@
 <template>
   <Teleport to="#page-actions" defer>
-    <Button v-permission="'ORDER:create'" @click="navigateToAddOrder">
+    <Button v-permission="'ORDER:create'" class="hidden sm:flex" @click="navigateToAddOrder">
       <template #leading>
         <div class="size-5" v-html="all_icons.plus"></div>
       </template>
       Add Order
     </Button>
   </Teleport>
+
+  <!-- Mobile FAB -->
+  <button
+    v-permission="'ORDER:create'"
+    @click="navigateToAddOrder"
+    class="sm:hidden fixed bottom-6 right-6 z-40 size-14 rounded-full bg-primary text-white shadow-xl flex items-center justify-center"
+  >
+    <div class="size-6" v-html="all_icons.plus"></div>
+  </button>
 
   <!-- Order Statistics Cards -->
   <Teleport to="#extra-page-data" defer>

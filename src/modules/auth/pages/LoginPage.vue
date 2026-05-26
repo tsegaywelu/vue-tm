@@ -93,7 +93,7 @@ async function submitLogin(values: any) {
 
     <!-- Right Panel: Login Form -->
     <div
-      class="w-full lg:w-1/2 flex items-center justify-center p-8 bg-surface-beige-light/30"
+      class="w-full lg:w-1/2 flex items-center justify-center p-4 sm:p-8 bg-surface-beige-light/30"
     >
       <div class="w-full max-w-md space-y-10">
         <!-- Logo & Header -->
@@ -104,7 +104,7 @@ async function submitLogin(values: any) {
             </div>
             <span class="text-lg font-extrabold text-grey-800 tracking-tight">ChiNet TMS</span>
           </div>
-          <h2 class="text-4xl font-extrabold text-grey-900 tracking-tight">
+          <h2 class="text-3xl sm:text-4xl font-extrabold text-grey-900 tracking-tight">
             Welcome Back
           </h2>
           <p class="text-grey-500 mt-2">

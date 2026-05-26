@@ -25,7 +25,7 @@
   >
     <template #search-prefix>
       <div
-        class="h-full flex items-center border-r border-gray-200 pr-2 mr-2 w-48"
+        class="hidden sm:flex h-full items-center border-r border-gray-200 pr-2 mr-2 w-48"
       >
         <Select
           class="[&_.input-focus]:shadow-none! [&_.input-focus]:border-none [&_.input-focus]:min-h-full min-w-48"
@@ -101,7 +101,7 @@
     </template>
 
     <template #after-search>
-      <div class="items-center gap-4 inline-flex overflow-x-auto px-3">
+      <div class="items-center gap-4 inline-flex overflow-x-auto md:px-3">
         <ShipmentFilters
           pagination-id="shipment-list"
           @change="handleFilterChange"
@@ -299,5 +299,5 @@ const handleFilterChange = (newFilters: ShipmentFilterParams) => {
   };
 };
 
-defineExpose({ refetch, activeFilters, activeParams });
+defineExpose({ refetch, activeFilters, activeParams, selectedSearchField, searchFieldOptions });
 </script>

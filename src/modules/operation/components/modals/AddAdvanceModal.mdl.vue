@@ -45,7 +45,7 @@
           :selector="(state: any) => [state.values.advanceType]"
         >
           <template #default="[advanceType]">
-            <div class="grid grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <SelectInput
                 name="advanceType"
                 label="Advance Type"
@@ -114,7 +114,7 @@
           >
             ✕
           </button>
-          <div class="grid grid-cols-2 gap-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <SelectInput
               :name="`fuel_${index}_paymentType`"
               label="Payment Type"
@@ -192,7 +192,7 @@
           >
             ✕
           </button>
-          <div class="grid grid-cols-2 gap-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <SelectInput
               :name="`pd_${index}_category`"
               label="Category"
@@ -250,7 +250,7 @@
           >
             ✕
           </button>
-          <div class="grid grid-cols-2 gap-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <SelectInput
               :name="`other_${index}_expenseType`"
               label="Reason"

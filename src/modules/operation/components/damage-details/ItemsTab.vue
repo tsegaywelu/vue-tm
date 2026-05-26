@@ -11,36 +11,36 @@
       <table class="w-full text-left text-sm text-gray-600">
         <thead class="bg-gray-50 text-gray-700 text-xs uppercase font-semibold">
           <tr>
-            <th class="px-6 py-4">Item Name</th>
-            <th class="px-6 py-4">UOM</th>
-            <th class="px-6 py-4 text-right">Unit Price</th>
-            <th class="px-6 py-4 text-right">Quantity</th>
-            <th class="px-6 py-4 text-right">Total Price</th>
+            <th class="px-3 md:px-6 py-3 md:py-4">Item Name</th>
+            <th class="px-3 md:px-6 py-3 md:py-4">UOM</th>
+            <th class="px-3 md:px-6 py-3 md:py-4 text-right">Unit Price</th>
+            <th class="px-3 md:px-6 py-3 md:py-4 text-right">Quantity</th>
+            <th class="px-3 md:px-6 py-3 md:py-4 text-right">Total Price</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-100">
           <tr v-for="(item, index) in damage.items" :key="index" class="hover:bg-gray-50 transition-colors">
-            <td class="px-6 py-4 font-medium text-gray-900">
+            <td class="px-3 md:px-6 py-3 md:py-4 font-medium text-gray-900">
               {{ item.item?.name || 'Unknown Item' }}
             </td>
-            <td class="px-6 py-4 uppercase">
+            <td class="px-3 md:px-6 py-3 md:py-4 uppercase">
               <span class="bg-gray-100 px-2 py-1 rounded text-xs font-bold">{{ item.uom }}</span>
             </td>
-            <td class="px-6 py-4 text-right font-medium">
+            <td class="px-3 md:px-6 py-3 md:py-4 text-right font-medium">
               {{ currencyFormatter(item.unitPrice) }}
             </td>
-            <td class="px-6 py-4 text-right font-medium">
+            <td class="px-3 md:px-6 py-3 md:py-4 text-right font-medium">
               {{ item.quantity }}
             </td>
-            <td class="px-6 py-4 text-right font-bold text-gray-900">
+            <td class="px-3 md:px-6 py-3 md:py-4 text-right font-bold text-gray-900">
               {{ currencyFormatter(item.totalPrice) }}
             </td>
           </tr>
         </tbody>
         <tfoot class="bg-gray-50 font-bold text-gray-900">
           <tr>
-            <td colspan="4" class="px-6 py-4 text-right">Grand Total:</td>
-            <td class="px-6 py-4 text-right text-primary">{{ currencyFormatter(damage.total) }}</td>
+            <td colspan="4" class="px-3 md:px-6 py-3 md:py-4 text-right">Grand Total:</td>
+            <td class="px-3 md:px-6 py-3 md:py-4 text-right text-primary">{{ currencyFormatter(damage.total) }}</td>
           </tr>
         </tfoot>
       </table>

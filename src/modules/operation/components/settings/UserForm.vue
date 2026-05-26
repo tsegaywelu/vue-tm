@@ -10,7 +10,7 @@
     />
 
     <template v-if="!isEdit">
-      <div class="grid grid-cols-2 gap-2">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
         <div class="space-y-1">
           <PasswordInput
             name="password"

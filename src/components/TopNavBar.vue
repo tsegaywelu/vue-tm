@@ -4,6 +4,10 @@ import { useRouter } from "vue-router";
 import { useAuthStore } from "@/store/authStore";
 import { icons } from "@/utils/icons";
 import { openModal } from "@customizer/modal-x";
+import { useIsMobile } from "@/composables/useIsMobile";
+import BottomSheet from "@/components/BottomSheet.vue";
+
+const { isMobile } = useIsMobile();
 
 const emit = defineEmits<{ (e: "toggle_nav"): void }>();
 const slots = useSlots();
@@ -102,7 +106,7 @@ onUnmounted(() =>
             d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
           />
         </svg>
-        <span> Go Back </span>
+        <span class="hidden sm:inline"> Go Back </span>
       </button>
 
       <!-- Mobile Title (Hidden on XL) -->
@@ -136,12 +140,12 @@ onUnmounted(() =>
           </div>
           <div class="hidden xl:flex flex-col items-start leading-tight">
             <span
-              class="text-sm font-semibold text-gray-800 max-w-[120px] truncate"
+              class="text-sm font-semibold text-gray-800 max-w-30 truncate"
               >{{ userName }}</span
             >
             <span
               v-if="userRole"
-              class="text-[10px] text-gray-400 max-w-[120px] truncate"
+              class="text-[10px] text-gray-400 max-w-30 truncate"
               >{{ userRole }}</span
             >
           </div>
@@ -162,6 +166,7 @@ onUnmounted(() =>
           </svg>
         </button>
 
+        <!-- Desktop dropdown -->
         <Transition
           enter-active-class="transition-all duration-150 ease-out"
           enter-from-class="opacity-0 scale-95 translate-y-1"
@@ -171,10 +176,9 @@ onUnmounted(() =>
           leave-to-class="opacity-0 scale-95 translate-y-1"
         >
           <div
-            v-if="dropdownOpen"
+            v-if="dropdownOpen && !isMobile"
             class="absolute right-0 top-full mt-2 w-52 bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden z-50 origin-top-right"
           >
-            <!-- User info header -->
             <div class="px-4 py-3 border-b border-gray-100">
               <p class="text-sm font-semibold text-gray-800 truncate">
                 {{ userName }}
@@ -183,8 +187,6 @@ onUnmounted(() =>
                 {{ userRole }}
               </p>
             </div>
-
-            <!-- Actions -->
             <div class="py-1">
               <button
                 class="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors"
@@ -209,6 +211,40 @@ onUnmounted(() =>
             </div>
           </div>
         </Transition>
+
+        <!-- Mobile: bottom sheet -->
+        <BottomSheet v-if="isMobile" v-model="dropdownOpen" title="Account">
+          <div class="px-4 py-2">
+            <div class="py-3 mb-1 border-b border-gray-100">
+              <p class="text-sm font-semibold text-gray-800 truncate">
+                {{ userName }}
+              </p>
+              <p v-if="userRole" class="text-xs text-gray-400 truncate">
+                {{ userRole }}
+              </p>
+            </div>
+            <button
+              class="w-full flex items-center gap-3 py-3 text-sm text-red-600"
+              @click="handleLogout"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-5 h-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75"
+                />
+              </svg>
+              Logout
+            </button>
+          </div>
+        </BottomSheet>
       </div>
     </div>
   </header>

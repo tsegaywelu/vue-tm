@@ -1,6 +1,6 @@
 <template>
   <div
-    class="bg-white rounded-[2rem] p-6 select-none shadow-2xl min-w-[320px] transition-all duration-300"
+    class="bg-white rounded-[2rem] p-6 select-none w-full sm:shadow-2xl sm:min-w-[320px] sm:w-auto transition-all duration-300"
     @click.stop
   >
     <!-- Calendar Type Toggle (Optional) -->

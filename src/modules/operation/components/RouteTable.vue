@@ -3,6 +3,7 @@
     id="route-list"
     :columns="columns"
     :rows="response"
+    :on_sm_screen_column_span="{ routeName: 2 }"
     @row_click="(row) => $router.push(`/operation/routes/${row._id}`)"
   >
     <template #cell-origin="{ value }">

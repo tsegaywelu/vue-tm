@@ -1,18 +1,49 @@
 <template>
+  <!-- Mobile: filter icon next to page title -->
+  <Teleport to="#page-title-actions" defer>
+    <button
+      class="sm:hidden size-8 rounded-xl border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors"
+      @click="mobileSearchOpen = true"
+    >
+      <i class="*:size-4" v-html="icons.filterOptions"></i>
+    </button>
+  </Teleport>
+
+  <!-- Mobile: search field picker sheet -->
+  <BottomSheet v-model="mobileSearchOpen" title="Search By">
+    <div class="flex flex-col py-2 px-4 gap-1">
+      <button
+        v-for="opt in searchFieldOptions"
+        :key="opt.value"
+        class="flex items-center justify-between py-3 px-2 hover:bg-gray-50 rounded-xl transition-colors"
+        @click="selectedSearchField = opt.value; mobileSearchOpen = false"
+      >
+        <span class="font-medium">{{ opt.label }}</span>
+        <i
+          v-if="selectedSearchField === opt.value"
+          class="*:size-4 text-primary"
+          v-html="icons.check"
+        ></i>
+      </button>
+    </div>
+  </BottomSheet>
+
   <Table
     id="shipment-adjustment-list"
     :columns="columns"
     :rows="response"
+    :search_placeholder="dynamicSearchPlaceholder"
+    :on_sm_screen_column_span="{ shipmentCode: 2, route: 2, issueVoucher: 3, driver: 2 }"
     @row_click="
       (row) => $router.push(`/operation/shipments/${row.shipment?._id}`)
     "
   >
     <template #search-prefix>
       <div
-        class="h-full flex items-center border-r border-gray-200 pr-2 mr-2 w-48"
+        class="hidden sm:flex h-full items-center border-r border-gray-200 pr-2 mr-2 w-40 md:w-48"
       >
         <Select
-          class="[&_.input-focus]:shadow-none! [&_.input-focus]:border-none [&_.input-focus]:min-h-full min-w-48"
+          class="[&_.input-focus]:shadow-none! [&_.input-focus]:border-none [&_.input-focus]:min-h-full"
           v-model="selectedSearchField"
           :options="searchFieldOptions"
           label_key="label"
@@ -72,6 +103,10 @@ import Table from "@/components/common/Table.vue";
 import type { TableColumn } from "@/components/common/Table.vue";
 import { usePagination } from "@/composables/usePagination";
 import Select from "@/components/common/Select.vue";
+import BottomSheet from "@/components/BottomSheet.vue";
+import { icons } from "@/utils/icons";
+
+const mobileSearchOpen = ref(false);
 
 const searchFieldOptions = [
   { label: "Plate Number", value: "vehiclePlateNumber" },
@@ -84,6 +119,11 @@ const searchFieldOptions = [
   { label: "Transporter Name", value: "transporterName" },
 ];
 const selectedSearchField = ref("vehiclePlateNumber");
+
+const dynamicSearchPlaceholder = computed(() => {
+  const option = searchFieldOptions.find((o) => o.value === selectedSearchField.value);
+  return option ? `Search by ${option.label}...` : "Search...";
+});
 
 const columns: TableColumn[] = [
   {

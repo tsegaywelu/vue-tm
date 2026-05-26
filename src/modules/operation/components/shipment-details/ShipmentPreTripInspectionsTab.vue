@@ -1,12 +1,16 @@
 <template>
-  <div class="flex flex-col gap-6 p-4">
+  <div class="flex flex-col gap-6 relative">
     <!-- Loading state -->
     <div
       v-if="isLoading"
       class="flex flex-col items-center justify-center p-12 min-h-[300px] bg-white rounded-2xl border border-gray-100 shadow-sm gap-4"
     >
-      <div class="w-12 h-12 border-4 border-blue-500/20 border-t-blue-600 rounded-full animate-spin"></div>
-      <p class="text-sm font-medium text-gray-500">Loading pre-trip inspections...</p>
+      <div
+        class="w-12 h-12 border-4 border-blue-500/20 border-t-blue-600 rounded-full animate-spin"
+      ></div>
+      <p class="text-sm font-medium text-gray-500">
+        Loading pre-trip inspections...
+      </p>
     </div>
 
     <!-- Empty state -->
@@ -14,14 +18,31 @@
       v-else-if="!inspections || inspections.length === 0"
       class="flex flex-col items-center justify-center p-12 min-h-[300px] bg-white rounded-2xl border border-gray-100 shadow-sm gap-4 text-center"
     >
-      <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center text-gray-400 border border-gray-100/80">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+      <div
+        class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center text-gray-400 border border-gray-100/80"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-8 w-8"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="1.5"
+            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+          />
         </svg>
       </div>
       <div class="flex flex-col gap-1">
-        <h3 class="text-base font-semibold text-gray-900">No Pre-Trip Inspections Found</h3>
-        <p class="text-sm text-gray-500 max-w-sm">No inspection records are available for this shipment at the moment.</p>
+        <h3 class="text-base font-semibold text-gray-900">
+          No Pre-Trip Inspections Found
+        </h3>
+        <p class="text-sm text-gray-500 max-w-sm">
+          No inspection records are available for this shipment at the moment.
+        </p>
       </div>
     </div>
 
@@ -33,25 +54,42 @@
         class="flex flex-col gap-6 p-6 bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300"
       >
         <!-- Inspection Top Header (Overview Details) -->
-        <div class="flex flex-col md:flex-row justify-between gap-4 border-b border-gray-50 pb-5">
+        <div
+          class="flex flex-col md:flex-row justify-between gap-4 border-b border-gray-50 pb-5"
+        >
           <div class="flex flex-col md:flex-row md:items-center gap-4 md:gap-8">
             <div class="flex flex-col gap-1">
-              <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Inspection Date</span>
+              <span
+                class="text-xs font-semibold text-gray-400 uppercase tracking-wider"
+                >Inspection Date</span
+              >
               <span class="text-base font-bold text-gray-900">
                 {{ dateTimeFormatter(inspection.createdAt) || "-" }}
               </span>
             </div>
 
             <div class="flex flex-col gap-1">
-              <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Vehicle Plate</span>
-              <span class="text-base font-bold text-blue-600 bg-blue-50/60 px-3 py-1 rounded-lg border border-blue-100/60 inline-flex items-center w-fit">
-                {{ inspection.shipment?.vehiclePlateNumber || inspection.vehiclePlate || "-" }}
+              <span
+                class="text-xs font-semibold text-gray-400 uppercase tracking-wider"
+                >Vehicle Plate</span
+              >
+              <span
+                class="text-base font-bold text-blue-600 bg-blue-50/60 px-3 py-1 rounded-lg border border-blue-100/60 inline-flex items-center w-fit"
+              >
+                {{
+                  inspection.shipment?.vehiclePlateNumber ||
+                  inspection.vehiclePlate ||
+                  "-"
+                }}
               </span>
             </div>
           </div>
 
           <div class="flex flex-col gap-1 md:items-end flex-1 md:max-w-md">
-            <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Remarks</span>
+            <span
+              class="text-xs font-semibold text-gray-400 uppercase tracking-wider"
+              >Remarks</span
+            >
             <span class="text-sm text-gray-600 md:text-right">
               {{ inspection.remarks || "No remarks provided" }}
             </span>
@@ -68,10 +106,14 @@
             <!-- Sub-card header: Label & Status Badge -->
             <div class="flex justify-between items-start gap-2">
               <div class="flex flex-col gap-1">
-                <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider group-hover:text-gray-500 transition-colors duration-200">
+                <span
+                  class="text-xs font-semibold text-gray-400 uppercase tracking-wider group-hover:text-gray-500 transition-colors duration-200"
+                >
                   Inspected Component
                 </span>
-                <span class="text-sm font-bold text-gray-800 group-hover:text-gray-900 transition-colors duration-200">
+                <span
+                  class="text-sm font-bold text-gray-800 group-hover:text-gray-900 transition-colors duration-200"
+                >
                   {{ item.label }}
                 </span>
               </div>
@@ -86,16 +128,28 @@
             </div>
 
             <!-- Sub-card footer: Level or Location Details -->
-            <div class="flex flex-col border-t border-gray-100/50 pt-2.5 gap-0.5">
+            <div
+              class="flex flex-col border-t border-gray-100/50 pt-2.5 gap-0.5"
+            >
               <span class="text-[11px] font-semibold text-gray-400">
-                {{ item.isLocation ? "Location Detail" : "Level / Measurement" }}
+                {{
+                  item.isLocation ? "Location Detail" : "Level / Measurement"
+                }}
               </span>
               <span class="text-sm font-semibold text-gray-700">
-                <template v-if="item.level !== undefined && item.level !== null && item.level !== ''">
+                <template
+                  v-if="
+                    item.level !== undefined &&
+                    item.level !== null &&
+                    item.level !== ''
+                  "
+                >
                   {{ item.level }}{{ item.unit || "" }}
                 </template>
                 <template v-else>
-                  <span class="text-gray-400 text-xs italic font-normal">N/A</span>
+                  <span class="text-gray-400 text-xs italic font-normal"
+                    >N/A</span
+                  >
                 </template>
               </span>
             </div>

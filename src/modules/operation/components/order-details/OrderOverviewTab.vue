@@ -1,9 +1,9 @@
 <template>
   <div class="flex flex-col gap-4">
     <div
-      class="rounded-2xl px-3 md:px-5 py-4 bg-white flex flex-col gap-6 shadow-sm border border-gray-100"
+      class="rounded-2xl px-0 md:px-3 md:py-4 bg-white flex flex-col gap-6 shadow-sm border border-gray-100"
     >
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8 lg:gap-12">
         <InfoWrapper title="Order Information">
           <div
             class="flex flex-col justify-between lg:grid lg:grid-cols-2 gap-6 lg:gap-2.5"
@@ -28,7 +28,7 @@
               </div>
             </div>
           </div>
-          <div class="grid border-t py-4 mt-4 border-gray-200 grid-cols-2 px-2 gap-4">
+          <div class="grid border-t py-4 mt-4 border-gray-200 grid-cols-1 sm:grid-cols-2 px-2 gap-4">
             <DataLabel
               label="Trip Type"
               :value="formatStatus(order?.tripType)"

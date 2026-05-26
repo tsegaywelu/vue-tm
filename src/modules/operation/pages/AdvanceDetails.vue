@@ -1,6 +1,71 @@
 <template>
+  <!-- Mobile: print filter bottom sheet -->
+  <BottomSheet v-model="mobilePrintOpen" title="Print Options">
+    <div class="flex flex-col gap-4 px-4 py-3">
+      <Select
+        v-model="printCategories"
+        :options="categoryOptions"
+        label_key="label"
+        value_key="value"
+        multiple
+        :clearable="false"
+        label="Categories"
+        :attributes="{ placeholder: 'Select categories' }"
+      />
+      <Select
+        v-model="printTypes"
+        :options="typeOptions"
+        label_key="label"
+        value_key="value"
+        multiple
+        :clearable="false"
+        label="Types"
+        :attributes="{ placeholder: 'Select types' }"
+      />
+      <Button
+        variant="primary"
+        size="lg"
+        class="w-full mt-2"
+        @click="
+          mobilePrintOpen = false;
+          handlePrint();
+        "
+      >
+        <i class="*:size-4 mr-1" v-html="icons.file"></i>
+        Print
+      </Button>
+    </div>
+  </BottomSheet>
+
+  <!-- Mobile: action icon buttons next to title -->
+  <Teleport defer to="#page-title-actions">
+    <div class="sm:hidden flex items-center gap-1">
+      <button
+        class="size-8 rounded-xl border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors"
+        @click="mobilePrintOpen = true"
+      >
+        <i class="*:size-4" v-html="icons.file"></i>
+      </button>
+      <button
+        v-if="advance?.status !== 'SETTLED'"
+        :disabled="!isEligibleForSettlement"
+        class="size-8 rounded-xl border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors disabled:opacity-40"
+        @click="handleSettle"
+      >
+        <i class="*:size-4" v-html="icons.circleCheck"></i>
+      </button>
+      <button
+        v-if="advance?.status"
+        class="size-8 rounded-xl border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors"
+        @click="handleCreateSettlement"
+      >
+        <i class="*:size-4" v-html="icons.tinAdd"></i>
+      </button>
+    </div>
+  </Teleport>
+
   <Teleport defer to="#page-actions">
-    <div class="flex items-center gap-2">
+    <div class="hidden sm:flex flex-wrap items-center gap-2">
       <Select
         v-model="printCategories"
         :options="categoryOptions"
@@ -9,7 +74,7 @@
         multiple
         :clearable="false"
         :attributes="{ placeholder: 'Categories' }"
-        class="w-44"
+        class="w-36 sm:w-44"
       />
       <Select
         v-model="printTypes"
@@ -19,7 +84,7 @@
         multiple
         :clearable="false"
         :attributes="{ placeholder: 'Types' }"
-        class="w-44"
+        class="w-36 sm:w-44"
       />
       <Button variant="outline" size="md" @click="handlePrint">
         <i v-html="icons.file" />
@@ -50,7 +115,7 @@
     </div>
   </Teleport>
 
-  <div class="flex flex-col gap-8">
+  <div class="flex flex-col gap-4 md:gap-8">
     <div v-if="isLoading" class="flex justify-center p-8">
       <i class="w-10 h-10 animate-spin text-primary" v-html="icons.spinner" />
     </div>
@@ -68,7 +133,7 @@
           </Status>
         </template>
 
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 py-2">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 py-2">
           <ShipmentDataLabel
             label="Advance Number"
             :value="advance.advanceNumber"
@@ -87,9 +152,9 @@
       </InfoWrapper>
 
       <!-- Context Information -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
         <InfoWrapper title="Driver & Vehicle">
-          <div class="grid grid-cols-2 gap-6">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <ShipmentDataLabel
               label="Driver"
               :value="formatDriverName(advance.driver)"
@@ -111,15 +176,14 @@
             <ShipmentDataLabel
               label="Route"
               :value="
-                advance.shipment?.route?.routeName ||
-                advance.shipment?.routeName
+                advance.shipment?.route?.routeName
               "
             />
           </div>
         </InfoWrapper>
 
         <InfoWrapper title="Approvals & Processing">
-          <div class="grid grid-cols-2 gap-6">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <ShipmentDataLabel
               label="Authorized By"
               :value="advance.authorizedBy?.username"
@@ -173,6 +237,7 @@ import { printAdvance } from "../utils/printAdvance";
 import { useAuthStore } from "@/store/authStore";
 import { icons } from "@/utils/icons";
 import Select from "@/components/common/Select.vue";
+import BottomSheet from "@/components/BottomSheet.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -306,10 +371,6 @@ const handleSettle = () => {
   });
 };
 
-const formatCategory = (category?: string) => {
-  if (!category) return "-";
-  return category.toLowerCase().replace(/_/g, " ");
-};
 
 const formatStatus = (status?: string) => {
   if (!status) return "Unknown";
@@ -324,6 +385,7 @@ const formatDriverName = (driver: any) => {
 };
 
 // --- Print filter state ---
+const mobilePrintOpen = ref(false);
 const printCategories = ref<string[]>(["PERDIEM", "OTHER", "FUEL"]);
 const printTypes = ref<string[]>(["ADDITIONAL", "RETURN", "INITIAL", "EXPENSE"]);
 
@@ -353,7 +415,7 @@ const handlePrint = () => {
     return;
   }
 
-  printAdvance(advance.value, authStore.user, {
+  printAdvance(advance.value, authStore.current_user, {
     categories: printCategories.value,
     types: printTypes.value,
   });

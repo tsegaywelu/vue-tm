@@ -48,11 +48,12 @@
           </template>
         </InputLayout>
 
-        <Teleport to="body">
+        <!-- Desktop: positioned picker -->
+        <Teleport v-if="!isMobile" to="body">
           <div
             v-if="isOpen"
             ref="dropdownRef"
-            class="fixed z-[9999]"
+            class="fixed z-9999"
             :style="dropdownStyle"
           >
             <TimePicker
@@ -64,6 +65,20 @@
             />
           </div>
         </Teleport>
+
+        <!-- Mobile: bottom sheet -->
+        <BottomSheet v-if="isMobile" v-model="isOpen" :title="label || 'Select Time'">
+          <div class="px-4 py-4 w-full">
+            <TimePicker
+              class="w-full"
+              :value="field.state.value"
+              :is-range="is_range"
+              :is24-hour="is_24_hour"
+              :use-object-value="use_object_value"
+              @change="onSelect($event, field)"
+            />
+          </div>
+        </BottomSheet>
       </div>
     </template>
   </InputParent>
@@ -76,6 +91,10 @@ import InputLayout from "./InputLayout.vue";
 import { type InputProps } from "./Input.vue";
 import TimePicker from "@/components/TimePicker.vue";
 import { icons } from "@/utils/icons";
+import { useIsMobile } from "@/composables/useIsMobile";
+import BottomSheet from "@/components/BottomSheet.vue";
+
+const { isMobile } = useIsMobile();
 
 export interface TimeInputProps extends InputProps {
   is_range?: boolean;

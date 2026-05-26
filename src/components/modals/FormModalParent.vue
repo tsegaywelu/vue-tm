@@ -1,28 +1,31 @@
 <template>
-  <ModalWrapper
-    class="p-6"
-    :wrapper-class="
-      [
-        'flex justify-end',
-        modalStyle === 'full' ? '' : 'items-end',
-        wrapperClass,
-      ]
-        .filter(Boolean)
-        .join(' ')
-    "
-    @close="handleClose"
+  <div
+    class="fixed inset-0 z-100 overflow-hidden bg-black/40 backdrop-blur-[2px] flex justify-end md:p-4 modal-overlay"
+    :class="[modalStyle === 'full' ? '' : 'items-end', wrapperClass]"
+    @click.self="handleClose"
   >
+    <Transition
+      appear
+      enter-active-class="panel-enter-active"
+      enter-from-class="panel-enter-from"
+      enter-to-class="panel-enter-to"
+    >
     <div
-      class="bg-white flex flex-col max-h-full transition-all duration-150 ease-in-out overflow-auto"
+      class="bg-white flex flex-col overflow-auto"
       :class="[
         modalStyle === 'full'
-          ? 'h-full border-l border-gray-100 shadow-2xl'
-          : 'h-auto rounded-[40px] shadow-2xl',
-        'w-full max-w-[646px]',
+          ? 'max-h-[90dvh] sm:max-h-none sm:h-full sm:border-l sm:border-gray-100 shadow-2xl'
+          : 'max-h-[90dvh] sm:max-h-none h-auto shadow-2xl',
+        'w-full max-w-full sm:max-w-161.5',
+        'rounded-t-3xl sm:rounded-[40px]',
         containerClass,
       ]"
-      :style="'border-radius: 40px'"
     >
+      <!-- Mobile drag handle -->
+      <div class="sm:hidden flex justify-center pt-3 pb-1 shrink-0">
+        <div class="w-12 h-1.5 bg-grey-300 rounded-full" />
+      </div>
+
       <!-- Header -->
       <div
         class="border-b border-gray-100 p-6 flex justify-between items-start gap-1 shrink-0"
@@ -68,22 +71,26 @@
         <!-- Footer -->
         <div
           v-if="$slots.bottom"
-          class="p-6 border-t border-[#DFE1E7] shrink-0"
+          class="p-6 border-t border-[#DFE1E7] shrink-0 modal-footer"
           :class="bottomClass"
         >
           <slot :form="form" name="bottom" />
         </div>
       </Form>
     </div>
-  </ModalWrapper>
+    </Transition>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, type PropType } from "vue";
-import ModalWrapper from "./ModalWrapper.vue";
+import { ref, computed, onUnmounted, type PropType } from "vue";
 import Form from "@/components/form/Form.vue";
 import { icons } from "@/utils/icons";
 import { openModal, closeModal } from "@customizer/modal-x";
+
+// Set at setup time — runs synchronously before first render, no layout shift
+document.body.style.overflow = "hidden";
+onUnmounted(() => { document.body.style.overflow = ""; });
 
 const props = defineProps({
   title: { type: String, required: true },
@@ -102,18 +109,18 @@ const props = defineProps({
   formId: { type: String, default: "" },
   values: { type: Object, default: null },
   /** Async submit handler — pass as prop (not event) so TanStack can track isSubmitting */
-  submitHandler: { type: Function as PropType<(value: any, resetCb: () => void) => void | Promise<void>>, default: null },
+  submitHandler: {
+    type: Function as PropType<
+      (value: any, resetCb: () => void) => void | Promise<void>
+    >,
+    default: null,
+  },
 });
 
 const emit = defineEmits(["close", "submit"]);
 
 const formRef = ref<InstanceType<typeof Form> | null>(null);
 
-/**
- * Wraps the submit handler so TanStack can always await it (keeping isSubmitting true).
- * If submitHandler prop is provided, use it directly.
- * Otherwise, fall back to emitting the "submit" event (fire-and-forget — isSubmitting won't track).
- */
 const formSubmitHandler = computed(() => {
   if (props.submitHandler) return props.submitHandler;
   return (values: any, resetCb: () => void) => {
@@ -131,10 +138,8 @@ const formProps = computed(() => {
 });
 
 async function handleClose() {
-  // Check if the form has unsaved changes
   const isDirty = formRef.value?.is_dirty;
 
-  console.log(isDirty);
   if (isDirty) {
     const res = await openModal("ConfirmationModal", {
       title: "Alert",
@@ -146,9 +151,38 @@ async function handleClose() {
     if (res) {
       closeModal();
     }
-    // If user cancelled, do nothing — stay on the modal
   } else {
     closeModal();
   }
 }
 </script>
+
+<style scoped>
+/* Panel: slide up from bottom on mobile, slide in from right on desktop */
+.panel-enter-active {
+  transition: transform 350ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+.panel-enter-from {
+  transform: translateY(100%);
+}
+.panel-enter-to {
+  transform: translateY(0);
+}
+@media (min-width: 640px) {
+  .panel-enter-from { transform: translateX(100%); }
+  .panel-enter-to   { transform: translateX(0); }
+}
+
+@media (max-width: 639px) {
+  .modal-footer :deep(> div) {
+    flex-direction: column;
+    width: 100%;
+  }
+  .modal-footer :deep(button) {
+    width: 100% !important;
+    min-height: 3.25rem;
+    font-size: 1rem;
+    border-radius: 1rem;
+  }
+}
+</style>

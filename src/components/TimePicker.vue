@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white rounded-2xl shadow-lg p-4 flex flex-col gap-4 select-none min-w-[240px]">
+  <div class="bg-white rounded-2xl p-4 flex flex-col gap-4 select-none w-full sm:shadow-lg sm:min-w-[240px] sm:w-auto">
     <!-- Range tab switcher -->
     <div v-if="isRange" class="flex bg-gray-50 p-1 rounded-xl">
       <button

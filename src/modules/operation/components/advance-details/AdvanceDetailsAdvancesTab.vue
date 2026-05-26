@@ -6,7 +6,7 @@
       :key="`fuel-${index}`"
     >
       <InfoWrapper :title="`Fuel Advance ${index + 1}`">
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
           <ShipmentDataLabel label="Payment Type" :value="item.paymentType" />
           <ShipmentDataLabel label="Fuel Station" :value="item.fuelStation" />
           <ShipmentDataLabel
@@ -32,7 +32,7 @@
       :key="`per-diem-${index}`"
     >
       <InfoWrapper :title="`Perdiem Expense ${index + 1}`">
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
           <ShipmentDataLabel
             label="Category"
             :value="formatCategory(item.category)"

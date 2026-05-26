@@ -58,6 +58,7 @@
             value_key="_id"
             :validation="{ required }"
             :attributes="{ placeholder: 'Select type' }"
+            :options="seedOption('vehicleType')"
           />
 
           <SelectInput
@@ -67,6 +68,7 @@
             label_key="name"
             value_key="_id"
             :attributes="{ placeholder: 'Select group' }"
+            :options="seedOption('vehicleGroup')"
           />
 
           <SelectInput
@@ -76,6 +78,7 @@
             label_key="name"
             value_key="_id"
             :attributes="{ placeholder: 'Select category' }"
+            :options="seedOption('type')"
           />
 
           <SelectInput
@@ -85,6 +88,7 @@
             label_key="name"
             value_key="_id"
             :attributes="{ placeholder: 'Select model' }"
+            :options="seedOption('vehicleModel')"
           />
 
           <SelectInput
@@ -94,6 +98,7 @@
             label_key="name"
             value_key="_id"
             :attributes="{ placeholder: 'Select maker' }"
+            :options="seedOption('maker')"
           />
 
           <SelectInput
@@ -103,6 +108,7 @@
             label_key="name"
             value_key="_id"
             :attributes="{ placeholder: 'Select region' }"
+            :options="seedOption('region')"
           />
 
           <DateInput
@@ -148,10 +154,17 @@
       >
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <SelectInput
+            searchable
             name="driver"
             label="Assigned Driver"
             url="/driver"
-            :params="{ driverStatus: 'vehicle_not_assigned' }"
+            :params="
+              (state) => ({
+                driverStatus: 'vehicle_not_assigned',
+                q: undefined,
+                'name[regexAny]': state.search,
+              })
+            "
             :label_key="
               (item: any) =>
                 `${item.firstName} ${item.middleName || ''} ${item.lastName || ''}`
@@ -159,6 +172,7 @@
             value_key="_id"
             :validation="{ required }"
             :attributes="{ placeholder: 'Select driver' }"
+            :options="seedOption('driver')"
           />
 
           <SelectInput
@@ -184,6 +198,7 @@
               searchable
               :validation="{ required }"
               :attributes="{ placeholder: 'Select transporter' }"
+              :options="seedOption('transporter')"
             />
           </component>
 
@@ -374,6 +389,7 @@
             value_key="_id"
             searchable
             :attributes="{ placeholder: 'Select insurer' }"
+            :options="seedOption('insurance_insurer')"
           />
         </div>
       </Colapsable>
@@ -383,11 +399,7 @@
         title="Vehicle Documents"
         description="Upload relevant vehicle documents (Registration, Insurance, etc.)."
       >
-        <FileInput
-          name="vehicleDocuments"
-          label="Vehicle Documents"
-          multiple
-        />
+        <FileInput name="vehicleDocuments" label="Vehicle Documents" multiple />
       </Colapsable>
 
       <Colapsable
@@ -422,20 +434,19 @@ import {
   dateGreaterThanOrEqalToToday,
   required,
 } from "@/utils/validations";
-import { ref } from "vue";
-import Button from "@/components/common/Button.vue";
-import { openModal } from "@customizer/modal-x";
-import { getStaticUrl } from "@/utils/utils";
 
 const props = defineProps<{
   formId: string;
   initialValues: Record<string, any>;
   onSubmit: (values: any) => Promise<void> | void;
+  labels?: Record<string, string>;
 }>();
 
-const triggerFileInput = () => {
-  // Logic handled by component
-};
+const seedOption = (key: string) =>
+  props.labels?.[key] && props.initialValues?.[key]
+    ? [{ label: props.labels[key], value: props.initialValues[key] }]
+    : [];
+
 
 const ownershipOptions = [
   { label: "Owned", value: "Owned" },
@@ -477,7 +488,6 @@ const validateLeaseEndDate = (value: any, _msg: any, form: any) => {
 };
 
 const handleSubmit = (values: any) => {
-  // Build the nested objects as expected by the API
   const insuranceInformation = {
     insuredDate: values.insurance_insuredDate,
     insuredAmount: Number(values.insurance_insuredAmount) || 0,
@@ -501,18 +511,18 @@ const handleSubmit = (values: any) => {
         }
       : undefined;
 
-  // Build FormData for multi-part submission (includes files)
   const formData = new FormData();
 
-  // Primary fields
   const primaryFields = [
     "plateNumber",
     "sideNumber",
+    "weightCapacity",
     "lastServiceDate",
     "chassisNumber",
     "ownership",
     "vehicleType",
     "vehicleModel",
+    "type",
     "maker",
     "region",
     "vehicleGroup",
@@ -537,20 +547,19 @@ const handleSubmit = (values: any) => {
 
   primaryFields.forEach((key) => {
     if (values[key] !== undefined && values[key] !== null) {
-      // Don't append objects (like driver, vehicleType etc. if they are still objects)
-      // but in edit mode they might be IDs already due to mapping
       formData.append(key, values[key]);
     }
   });
 
-  // Ownership specific
   if (values.ownership === "Owned" && values.vehicleUseType) {
     formData.append("vehicleUseType", values.vehicleUseType);
   }
 
-  // Insurance
   if (values.insurance_insuredDate || values.insurance_insurer) {
-    formData.append("insuranceInformation", JSON.stringify(insuranceInformation));
+    formData.append(
+      "insuranceInformation",
+      JSON.stringify(insuranceInformation),
+    );
   }
 
   if (lease) {
@@ -569,7 +578,6 @@ const handleSubmit = (values: any) => {
     );
   }
 
-  // Files
   if (values.vehicleDocuments && values.vehicleDocuments.length > 0) {
     values.vehicleDocuments.forEach((file: any) => {
       if (file instanceof File) {

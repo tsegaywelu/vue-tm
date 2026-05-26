@@ -1,12 +1,17 @@
 <template>
   <ModalWrapper
-    wrapper-class="flex items-center justify-center p-4"
+    wrapper-class="flex flex-col items-stretch justify-end sm:items-center sm:justify-center sm:p-4"
     @close="closeModal()"
   >
     <div
-      class="bg-white rounded-[28px] shadow-2xl w-full max-w-4xl overflow-hidden flex flex-col"
+      class="bg-white rounded-t-3xl sm:rounded-[28px] shadow-2xl w-full sm:max-w-4xl overflow-hidden flex flex-col"
       style="max-height: 85vh"
     >
+      <!-- Mobile drag handle -->
+      <div class="sm:hidden flex justify-center pt-3 pb-1 shrink-0">
+        <div class="w-12 h-1.5 bg-grey-300 rounded-full" />
+      </div>
+
       <!-- Header -->
       <div
         class="border-b border-gray-100 px-6 py-4 flex justify-between items-center shrink-0"

@@ -29,7 +29,7 @@
     <!-- Search / Filter actions -->
     <template #table-actions>
       <div class="flex items-center gap-4 flex-1">
-        <div class="relative w-64">
+        <div class="relative w-full sm:w-64">
           <i
             class="mdi mdi-magnify absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xl"
           ></i>

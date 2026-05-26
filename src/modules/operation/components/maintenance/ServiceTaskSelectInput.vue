@@ -82,7 +82,7 @@ const removeTask = (fakeId: string) => {
       <div
         tabindex="0"
         :data-name="props.name"
-        class="space-y-4 rounded grid grid-cols-4 gap-4"
+        class="space-y-4 rounded grid grid-cols-2 sm:grid-cols-4 gap-4"
       >
         <div
           v-for="(task, index) in tasks"

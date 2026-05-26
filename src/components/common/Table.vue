@@ -6,23 +6,25 @@
     <!-- Header Area: Search, Title and Actions -->
     <div
       v-if="!hide_search || tabs"
-      class="px-1 flex justify-between items-center min-h-[88px]"
+      class="md:p-1 sm:py-0 flex justify-between items-center min-h-14 sm:min-h-22"
     >
-      <div class="flex flex-wrap items-center gap-4 flex-1 w-full max-w-full">
+      <div
+        class="flex flex-wrap p-1 items-center gap-4 flex-1 w-full max-w-full"
+      >
         <div
           v-if="!hide_search"
-          class="w-full xl:max-w-1/2 input-focus rounded-[36px] flex items-center gap-2.5 border pl-2 pr-4 border-gray-100 overflow-hidden"
+          class="w-full xl:max-w-1/2 input-focus rounded-[36px] flex items-center gap-2.5 border pl-1 pr-2 sm:pl-2 sm:pr-4 border-gray-100 overflow-hidden"
         >
           <slot name="search-prefix"></slot>
           <div
-            class="text-gray-500 *:size-4 flex justify-center items-center ml-2"
+            class="text-gray-500 *:size-4 flex justify-center items-center ml-1 sm:ml-2"
             v-html="icons.search"
           ></div>
           <input
             :value="local_search"
             @input="onSearchInput"
             :placeholder="search_placeholder"
-            class="focus:shadow-none h-14 w-full outline-none text-base bg-transparent"
+            class="focus:shadow-none h-11 sm:h-14 w-full outline-none text-sm sm:text-base bg-transparent"
             type="text"
           />
         </div>
@@ -522,7 +524,9 @@ const getAlignmentClass = (
   if (metaAlign && (alignmentStyles as any)[metaAlign])
     return (alignmentStyles as any)[metaAlign];
 
-  return (alignmentStyles as any)[props.alignment] || "justify-center text-center";
+  return (
+    (alignmentStyles as any)[props.alignment] || "justify-center text-center"
+  );
 };
 
 watch(searchValue, (newVal) => {
