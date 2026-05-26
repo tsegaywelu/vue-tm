@@ -23,17 +23,10 @@
                 value: initialValues?.shipper?._id,
               },
             ]"
-            :params="
-              (state) => {
-                return {
-                  name: state.search,
-                  q: undefined,
-                };
-              }
-            "
-            url="/shipper"
-            label_key="name"
-            value_key="_id"
+            url="/shipper/contractedShippers"
+            label_key="shipper.name"
+            value_key="shipper._id"
+            search_key="name"
             :validation="{ required }"
             :attributes="{ placeholder: 'Select shipper' }"
           />
@@ -173,10 +166,8 @@ const pinIcon = L.divIcon({
 });
 import Form from "@/components/form/Form.vue";
 import Input from "@/components/form/Input.vue";
-import CommonInput from "@/components/common/Input.vue";
 import SelectInput from "@/components/form/SelectInput.vue";
 import Colapsable from "@/components/common/Colapsable.vue";
-import Button from "@/components/common/Button.vue";
 import Checkbox from "@/components/form/Checkbox.vue";
 import MultiPhoneInput from "./inputs/MultiPhoneInput.vue";
 import { email, required } from "@/utils/validations";

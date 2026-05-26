@@ -141,6 +141,7 @@
                   (state) => ({ q: undefined, 'name[regexAny]': state.search })
                 "
                 searchable
+                search_key="name[regexAny]"
                 :validation="{ required }"
               />
             </div>
