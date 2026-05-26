@@ -1,6 +1,11 @@
 <template>
   <Teleport to="#page-actions" defer>
-    <Button v-permission="'AGENT:create'" size="md" variant="primary" @click="navigateToAddAgent">
+    <Button
+      v-permission="'AGENT:create'"
+      size="md"
+      variant="primary"
+      @click="navigateToAddAgent"
+    >
       New Agent
     </Button>
   </Teleport>
@@ -70,6 +75,10 @@ const router = useRouter();
 const { response, refetch, isLoading } = usePagination({
   id: "agents-list",
   url: "/agent/shipper/carrier",
+  params: (state: any) => ({
+    q: undefined,
+    "name[regex]": state.search,
+  }),
 });
 
 const columns: TableColumn<any>[] = [
