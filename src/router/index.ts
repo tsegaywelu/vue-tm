@@ -68,4 +68,20 @@ router.beforeEach(async (to, from, next) => {
   }
 });
 
+// When a lazy-loaded chunk is missing (old index.html + new deployment), reload once
+router.onError((error) => {
+  const isChunkError =
+    error.message.includes('Failed to fetch dynamically imported module') ||
+    error.message.includes('Importing a module script failed') ||
+    error.message.includes('Unable to preload CSS')
+
+  if (isChunkError) {
+    const reloadedKey = 'chunk-reload-attempted'
+    if (!sessionStorage.getItem(reloadedKey)) {
+      sessionStorage.setItem(reloadedKey, '1')
+      window.location.reload()
+    }
+  }
+})
+
 export default router;

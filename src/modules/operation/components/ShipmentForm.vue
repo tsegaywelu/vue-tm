@@ -330,7 +330,7 @@
             >
               Add New
             </button>
-            
+
             <VehicleInput
               name="vehicle"
               label="Search Vehicles"
@@ -483,17 +483,35 @@
             }"
           />
 
-          <Input
-            name="totalPrice"
-            label="Total Price"
-            :attributes="{
-              placeholder: 'Enter Total Price',
-            }"
-            :validation="{
-              required,
-              price,
-            }"
-          />
+          <div class="relative">
+            <button
+              v-if="
+                filteredPricingType &&
+                +calculateTotalPrice(form.state.values) > 0
+              "
+              type="button"
+              class="absolute top-0 right-0 text-primary text-[10px] font-black uppercase tracking-wider hover:underline z-10"
+              @click="
+                form.setFieldValue(
+                  'totalPrice',
+                  String(+calculateTotalPrice(form.state.values)),
+                )
+              "
+            >
+              Use Calculated Price from Contract
+            </button>
+            <Input
+              name="totalPrice"
+              label="Total Price"
+              :attributes="{
+                placeholder: 'Enter Total Price',
+              }"
+              :validation="{
+                required,
+                price,
+              }"
+            />
+          </div>
 
           <div
             v-if="pricingWarning"
@@ -566,7 +584,10 @@ const props = withDefaults(
   },
 );
 
-const formInitialValues = computed(() => ({ ...props.initialValues, totalPrice: "" }));
+const formInitialValues = computed(() => ({
+  ...props.initialValues,
+  ...(props.mode === "add" && { totalPrice: "" }),
+}));
 
 const internalLabels = ref({ ...props.labels });
 

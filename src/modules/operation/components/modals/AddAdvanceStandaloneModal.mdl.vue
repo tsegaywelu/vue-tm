@@ -42,7 +42,12 @@
       <div class="flex flex-col gap-6 mb-6">
         <component
           :is="form.Subscribe"
-          :selector="(state: any) => [state.values.operationalAdvance, state.values.advanceType]"
+          :selector="
+            (state: any) => [
+              state.values.operationalAdvance,
+              state.values.advanceType,
+            ]
+          "
         >
           <template #default="[operationalAdvance, advanceType]">
             <div class="grid grid-cols-2 gap-4">
@@ -76,7 +81,10 @@
             </div>
 
             <!-- Operational: shipment search + derived fields -->
-            <div v-if="operationalAdvance === 'true'" class="grid grid-cols-2 gap-4 bg-gray-50 p-4 rounded-lg mt-2">
+            <div
+              v-if="operationalAdvance === 'true'"
+              class="grid grid-cols-2 gap-4 bg-gray-50 p-4 rounded-lg mt-2"
+            >
               <SelectInput
                 name="shipment"
                 label="Select Shipment"
@@ -90,28 +98,48 @@
               <Input
                 name="driverName"
                 label="Driver"
-                :attributes="{ disabled: true, placeholder: 'Auto-filled on shipment select' }"
+                :attributes="{
+                  disabled: true,
+                  placeholder: 'Auto-filled on shipment select',
+                }"
               />
               <Input
                 name="routeName"
                 label="Route"
-                :attributes="{ disabled: true, placeholder: 'Auto-filled on shipment select' }"
+                :attributes="{
+                  disabled: true,
+                  placeholder: 'Auto-filled on shipment select',
+                }"
               />
               <Input
                 name="vehiclePlate"
                 label="Vehicle"
-                :attributes="{ disabled: true, placeholder: 'Auto-filled on shipment select' }"
+                :attributes="{
+                  disabled: true,
+                  placeholder: 'Auto-filled on shipment select',
+                }"
               />
             </div>
 
             <!-- Non-operational: driver dropdown -->
-            <div v-if="operationalAdvance === 'false'" class="bg-gray-50 p-4 rounded-lg mt-2">
+            <div
+              v-if="operationalAdvance === 'false'"
+              class="bg-gray-50 p-4 rounded-lg mt-2"
+            >
               <SelectInput
                 name="driver"
                 label="Driver"
                 url="/driver"
-                :label_key="(item: any) => [item.firstName, item.middleName, item.lastName].filter(Boolean).join(' ')"
+                :label_key="
+                  (item: any) =>
+                    [item.firstName, item.middleName, item.lastName]
+                      .filter(Boolean)
+                      .join(' ')
+                "
                 value_key="_id"
+                :params="
+                  (state) => ({ q: undefined, 'name[regexAny]': state.search })
+                "
                 searchable
                 :validation="{ required }"
               />
@@ -124,7 +152,9 @@
       <div v-show="currentStep === 'fuel'" class="flex flex-col gap-6">
         <div class="flex justify-between items-center">
           <h3 class="font-semibold text-gray-700">Fuel Advances</h3>
-          <Button variant="outline" size="sm" @click="addFuelList">+ Add Another</Button>
+          <Button variant="outline" size="sm" @click="addFuelList"
+            >+ Add Another</Button
+          >
         </div>
 
         <div
@@ -200,7 +230,9 @@
       <div v-show="currentStep === 'per_diem'" class="flex flex-col gap-6">
         <div class="flex justify-between items-center">
           <h3 class="font-semibold text-gray-700">Per Diem Expenses</h3>
-          <Button variant="outline" size="sm" @click="addPerDiemList">+ Add Another</Button>
+          <Button variant="outline" size="sm" @click="addPerDiemList"
+            >+ Add Another</Button
+          >
         </div>
 
         <div
@@ -256,7 +288,9 @@
       <div v-show="currentStep === 'other'" class="flex flex-col gap-6">
         <div class="flex justify-between items-center">
           <h3 class="font-semibold text-gray-700">Other Expenses</h3>
-          <Button variant="outline" size="sm" @click="addOtherList">+ Add Another</Button>
+          <Button variant="outline" size="sm" @click="addOtherList"
+            >+ Add Another</Button
+          >
         </div>
 
         <div
@@ -343,7 +377,11 @@ const selectedShipmentDriverId = ref("");
 function onShipmentSelected(shipment: any, form: any) {
   if (!shipment) return;
   selectedShipmentDriverId.value = shipment.driver?._id || "";
-  const driverName = [shipment.driver?.firstName, shipment.driver?.middleName, shipment.driver?.lastName]
+  const driverName = [
+    shipment.driver?.firstName,
+    shipment.driver?.middleName,
+    shipment.driver?.lastName,
+  ]
     .filter(Boolean)
     .join(" ");
   form.setFieldValue("driverName", driverName);
@@ -422,12 +460,18 @@ async function handleFinalSubmit(values: Record<string, any>) {
     }))
     .filter((o) => o.amount > 0);
 
-  if (!fuelAdvances.length && !perDiemExpenses.length && !otherExpenses.length) {
+  if (
+    !fuelAdvances.length &&
+    !perDiemExpenses.length &&
+    !otherExpenses.length
+  ) {
     toast.error("Fill at least one section (Fuel, Per Diem, or Other)");
     return;
   }
 
-  const driverId = isOperational ? selectedShipmentDriverId.value : values.driver;
+  const driverId = isOperational
+    ? selectedShipmentDriverId.value
+    : values.driver;
 
   isLoading.value = true;
   try {

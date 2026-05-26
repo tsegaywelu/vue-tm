@@ -54,7 +54,7 @@
                 name="CKRFCode"
                 hey
                 label="CKRF Code"
-                :validation="{ required }"
+                :validation="{ required }"totalPrice
               />
             </template>
           </component>
@@ -182,7 +182,7 @@ const initialValues = computed(() => {
     fuelReadingAtDispatch: data.fuelReadingAtDispatch || "",
     deadHole: data.deadHole ?? "",
     remark: data.remark || "",
-    totalPrice: "",
+    totalPrice: data.totalPrice?.toFixed(2) || "",
     // These are used for display in ShipmentForm and will be updated via handleOrderSelect or handleVehicleSelect
     driver: data.driver?._id,
     isDamaged: data.isDamaged,

@@ -22,3 +22,16 @@ app.directive('role', roleDirective)
 app.directive('permission', permissionDirective)
 
 app.mount('#app')
+
+if ('serviceWorker' in navigator) {
+  // Reload when a new SW takes control (new deployment activated)
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    window.location.reload()
+  })
+
+  // Periodically poll for SW updates — SPAs never make full-page requests
+  // so the browser never auto-checks. This forces a check every 60 seconds.
+  navigator.serviceWorker.ready.then((registration) => {
+    setInterval(() => registration.update(), 60 * 1000)
+  })
+}
