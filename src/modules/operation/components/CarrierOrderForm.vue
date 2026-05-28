@@ -43,10 +43,12 @@
             <template #default="[shipper]">
               <SelectInput
                 :key="shipper"
-                :params="{
+                :params="state=>({
                   page: undefined,
                   limit: undefined,
-                }"
+                  q: undefined,
+                  'routeName[regexAny]': state.search
+                })"
                 name="route"
                 label="Route"
                 searchable

@@ -5,7 +5,20 @@
     </Button>
   </Teleport>
 
-  <Table :columns="columns" :rows="response" @row_click="navigateToDetails">
+  <Table :columns="columns" :rows="response" @row_click="navigateToDetails" search_placeholder="Search transporters...">
+    <template #search-prefix>
+      <div class="h-full flex items-center border-r border-gray-200 pr-2 mr-2 w-44">
+        <Select
+          v-model="selectedSearchField"
+          class="[&_.input-focus]:shadow-none! [&_.input-focus]:border-none [&_.input-focus]:min-h-full min-w-44"
+          :options="filterFieldOptions"
+          label_key="label"
+          value_key="value"
+          :clearable="false"
+        />
+      </div>
+    </template>
+
     <template #cell-name="{ row }">
       <span class="font-bold text-grey-900">{{ row.name }}</span>
     </template>
@@ -53,6 +66,7 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from "vue";
 import { useRouter } from "vue-router";
 import Button from "@/components/common/Button.vue";
 import { usePagination } from "@/composables/usePagination";
@@ -60,12 +74,26 @@ import { openModal } from "@customizer/modal-x";
 import Dropdown from "@/components/common/Dropdown.vue";
 import DropDownItem from "@/components/common/DropDownItem.vue";
 import Table, { type TableColumn } from "@/components/common/Table.vue";
+import Select from "@/components/common/Select.vue";
 
 const router = useRouter();
+
+const filterFieldOptions = [
+  { label: "Name", value: "name" },
+  { label: "Trade Name", value: "tradeName" },
+  { label: "TIN", value: "tin" },
+  { label: "Phone Number", value: "phoneNumber" },
+];
+
+const selectedSearchField = ref("name");
 
 const { response, refetch, isLoading } = usePagination({
   id: "transporters-list",
   url: "/transporter",
+  params: (state) => ({
+    [`${selectedSearchField.value}[regex]`]: state.search || undefined,
+    q: undefined,
+  }),
 });
 
 const columns: TableColumn<any>[] = [
