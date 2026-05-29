@@ -50,22 +50,13 @@
             :attributes="{ placeholder: 'Enter chassis number' }"
           />
 
-          <SelectInput
+          <VehicleTypeInput
             name="vehicleType"
-            label="Vehicle Type"
-            url="/vehicle-type"
-            label_key="name"
-            value_key="_id"
             :validation="{ required }"
             :attributes="{ placeholder: 'Select type' }"
             :options="
               props.labels?.vehicleType
-                ? [
-                    {
-                      label: props.labels.vehicleType,
-                      value: props.initialValues.vehicleType,
-                    },
-                  ]
+                ? [{ label: props.labels.vehicleType, value: props.initialValues.vehicleType }]
                 : []
             "
           />
@@ -146,21 +137,12 @@
             "
           />
 
-          <SelectInput
+          <RegionInput
             name="region"
-            label="Region"
-            url="/region"
-            label_key="name"
-            value_key="_id"
             :attributes="{ placeholder: 'Select region' }"
             :options="
               props.labels?.region
-                ? [
-                    {
-                      label: props.labels.region,
-                      value: props.initialValues.region,
-                    },
-                  ]
+                ? [{ label: props.labels.region, value: props.initialValues.region }]
                 : []
             "
           />
@@ -215,23 +197,15 @@
         description="Management details and operational assignment."
       >
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <SelectInput
-            searchable
+          <DriverInput
             name="driver"
-            label="Assigned Driver"
-            url="/driver"
             :params="
-              (state) => ({
+              (state: any) => ({
                 driverStatus: 'vehicle_not_assigned',
                 q: undefined,
                 'name[regexAny]': state.search,
               })
             "
-            :label_key="
-              (item: any) =>
-                `${item.firstName} ${item.middleName || ''} ${item.lastName || ''}`
-            "
-            value_key="_id"
             :validation="{ required }"
             :attributes="{ placeholder: 'Select driver' }"
             :display_value="props.labels?.driver || ''"
@@ -486,6 +460,9 @@
 import Form from "@/components/form/Form.vue";
 import Input from "@/components/form/Input.vue";
 import SelectInput from "@/components/form/SelectInput.vue";
+import VehicleTypeInput from "@/components/common/inputs/VehicleTypeInput.vue";
+import RegionInput from "@/components/common/inputs/RegionInput.vue";
+import DriverInput from "@/components/common/inputs/DriverInput.vue";
 import DateInput from "@/components/form/DateInput.vue";
 import ToggleInput from "@/components/form/ToggleInput.vue";
 import TextareaInput from "@/components/form/TextareaInput.vue";

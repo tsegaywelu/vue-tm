@@ -18,69 +18,24 @@
     "
     class="[&_.input-focus]:bg-grey-25 flex-1 flex max-h-16 h-16 min-h-16 *:w-[220px] *:shrink-0 px-2 gap-2 overflow-auto"
   >
-    <SelectInput
-      searchable
-      :show_validation_status="false"
-      label="Origin"
-      multiple
-      parent_class_name=""
-      size="xs"
-      :params="
-        (values) => {
-          return {
-            sort: 'shipmentCount',
-            q: undefined,
-            ...(values.search
-              ? {
-                  routeName: {
-                    regexAny: values.search,
-                  },
-                }
-              : {}),
-          };
-        }
-      "
+    <OriginInput
       name="routeOrigin"
-      value_key="destination"
-      label_key="routeName"
-      :url="`/route`"
-      :attributes="{
-        placeholder: 'Search Origin',
-      }"
-      :initial_labels="fieldLabels['routeOrigin']"
-      @select="(opt) => captureLabel('routeOrigin', opt, 'destination', 'routeName')"
-    />
-    <SelectInput
-      :show_validation_status="false"
-      label="Destination"
-      searchable
       multiple
-      parent_class_name=""
       size="xs"
-      :params="
-        (values) => {
-          return {
-            sort: 'shipmentCount',
-            q: undefined,
-            ...(values.search
-              ? {
-                  routeName: {
-                    regexAny: values.search,
-                  },
-                }
-              : {}),
-          };
-        }
-      "
-      name="routeDestination"
       value_key="destination"
       label_key="routeName"
-      :url="`/route`"
-      :attributes="{
-        placeholder: 'Search Destination',
-      }"
+      :params="{ sort: 'shipmentCount' }"
+      :attributes="{ placeholder: 'Search Origin' }"
+      :initial_labels="fieldLabels['routeOrigin']"
+      @select="(opt: any) => captureLabel('routeOrigin', opt, 'destination', 'routeName')"
+    />
+    <DestinationInput
+      name="routeDestination"
+      multiple
+      size="xs"
+      :attributes="{ placeholder: 'Search Destination' }"
       :initial_labels="fieldLabels['routeDestination']"
-      @select="(opt) => captureLabel('routeDestination', opt, 'destination', 'routeName')"
+      @select="(opt: any) => captureLabel('routeDestination', opt, 'destination', 'routeName')"
     />
     <SelectInput
       :show_validation_status="false"
@@ -99,6 +54,8 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import SelectInput from "@/components/form/SelectInput.vue";
+import OriginInput from "@/components/common/inputs/OriginInput.vue";
+import DestinationInput from "@/components/common/inputs/DestinationInput.vue";
 import Form from "@/components/form/Form.vue";
 import { useTableLastParams, useTableLastLabels } from "@/composables/usePagination";
 import { useTablePaginationStore } from "@/store/tablePaginationStore";

@@ -150,14 +150,9 @@
           />
 
           <!-- vehicleType -->
-          <SelectInput
+          <VehicleTypeInput
             v-if="props.mode === 'edit'"
             name="vehicleType"
-            label="Vehicle Type"
-            searchable
-            url="/vehicle-type"
-            label_key="name"
-            value_key="_id"
             :display_value="internalLabels.vehicleType"
             :validation="{ required }"
           />
@@ -350,28 +345,16 @@
             </VehicleInput>
           </div>
 
-          <SelectInput
+          <DriverInput
             v-if="props.mode === 'edit'"
             name="driver"
-            label="Driver"
-            searchable
-            url="/driver"
-            :label_key="
-              (item: any) =>
-                `${item.firstName} ${item.middleName || ''} ${item.lastName || ''}`.trim()
-            "
-            value_key="_id"
             :display_value="internalLabels.driver"
             :validation="{ required }"
             :params="
-              (state) => {
-                return {
-                  name: {
-                    regexAny: state.search,
-                  },
-                  q: undefined,
-                };
-              }
+              (state: any) => ({
+                name: { regexAny: state.search },
+                q: undefined,
+              })
             "
           />
           <SelectInput
@@ -550,6 +533,8 @@ import DateInput from "@/components/form/DateInput.vue";
 import TextareaInput from "@/components/form/TextareaInput.vue";
 import Colapsable from "@/components/common/Colapsable.vue";
 import VehicleInput from "@/components/common/inputs/VehicleInput.vue";
+import VehicleTypeInput from "@/components/common/inputs/VehicleTypeInput.vue";
+import DriverInput from "@/components/common/inputs/DriverInput.vue";
 import { currencyFormatter } from "@/utils/utils";
 import {
   dateGreaterThanOrEqalToToday,

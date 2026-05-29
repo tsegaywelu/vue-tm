@@ -4,7 +4,6 @@
     :columns="columns"
     :rows="response"
     search_placeholder="Search by Ref. Number..."
-    @row_click="(row) => $router.push(`/operation/advance-details/${row._id}`)"
   >
     <template #search-prefix>
       <div
@@ -139,7 +138,7 @@
           </template>
           <template #default="{ close }">
             <div class="py-1 min-w-[160px]">
-              <button
+              <!-- <button
                 @click="
                   handleRowClick(row);
                   close();
@@ -167,7 +166,7 @@
                   />
                 </svg>
                 View Details
-              </button>
+              </button> -->
 
               <div class="h-px bg-gray-100 my-1"></div>
 
@@ -227,7 +226,8 @@ import { getPaidTo } from "./finance/payableUtils";
 
 function resolveFileUrl(path: string): string {
   if (!path) return "";
-  if (path.startsWith("http://") || path.startsWith("https://")) return encodeURI(path);
+  if (path.startsWith("http://") || path.startsWith("https://"))
+    return encodeURI(path);
   const base = (import.meta.env.v_STATIC_PATH || "").replace(/\/+$/, "");
   const normalized = path.replace(/\\/g, "/").replace(/^\/+/, "");
   return `${base}/${encodeURI(normalized)}`;
@@ -236,7 +236,8 @@ function resolveFileUrl(path: string): string {
 function normalizeAttachments(row: any): string[] {
   if (!row) return [];
   const files: string[] = [];
-  if (Array.isArray(row.attachments)) files.push(...row.attachments.filter(Boolean));
+  if (Array.isArray(row.attachments))
+    files.push(...row.attachments.filter(Boolean));
   if (row.attachment) files.push(row.attachment);
   return [...new Set(files)].map(resolveFileUrl);
 }

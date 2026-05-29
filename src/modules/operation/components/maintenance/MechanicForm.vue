@@ -98,20 +98,11 @@
             :on_change="(val) => handleInternalToggle(val, form)"
           />
 
-          <SelectInput
+          <WorkshopInput
             v-if="!isInternal"
             name="workshop"
-            label="Workshop"
-            :attributes="{
-              placeholder: 'Choose workshop',
-            }"
-            searchable
-            label_key="name"
-            value_key="_id"
-            url="/workshop"
-            :validation="{
-              required,
-            }"
+            :attributes="{ placeholder: 'Choose workshop' }"
+            :validation="{ required }"
           />
         </div>
       </Colapsable>
@@ -129,6 +120,7 @@ import { ref, watch } from "vue";
 import Form from "@/components/form/Form.vue";
 import Input from "@/components/form/Input.vue";
 import SelectInput from "@/components/form/SelectInput.vue";
+import WorkshopInput from "@/components/common/inputs/WorkshopInput.vue";
 import DateInput from "@/components/form/DateInput.vue";
 import ToggleInput from "@/components/form/ToggleInput.vue";
 import Colapsable from "@/components/common/Colapsable.vue";

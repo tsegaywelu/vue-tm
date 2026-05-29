@@ -11,7 +11,7 @@
     v-model="selectedItems"
     unique_key="_id"
     :loading="isLoading"
-    @row_click="handleRowClick"
+    @row_click="handleRowClick($event)"
   >
     <template #search-prefix>
       <div

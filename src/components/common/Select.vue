@@ -173,6 +173,7 @@ import {
   watch,
   onMounted,
   onBeforeUnmount,
+  onUnmounted,
   nextTick,
   type SelectHTMLAttributes,
   watchEffect,
@@ -336,13 +337,16 @@ const {
   isLoading: remoteLoading,
   isFetching: remoteFetching,
 } = usePagination({
-  queryKey: [props.url || props.name, props.size, props.base_url || ""],
+  id: props.url ? `${props.url}__${props.name}` : props.name,
+  queryKey: [props.url || props.name, props.name, props.size, props.base_url || ""],
   url: props.url,
   autofetch: isRemote.value,
   params: computedParams,
   searchKey: props.search_key || "q",
   ...(customApi ? { api: customApi } : {}),
 });
+
+onUnmounted(() => setRemoteSearch(""));
 
 watch(
   () => debouncedSearch?.value,
