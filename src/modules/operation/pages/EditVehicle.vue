@@ -5,11 +5,12 @@
   <template v-else-if="vehicle">
     <VehicleForm
       formId="edit-vehicle-form"
+      mode="edit"
       :initial-values="mappedValues"
       :labels="labels"
       :onSubmit="handleSubmit"
     >
-      <template #actions="{ form }">
+      <template #actions>
         <Button variant="secondary" size="md" @click="$router.back()">
           Cancel
         </Button>
@@ -25,13 +26,14 @@ import { useRoute, useRouter } from "vue-router";
 import Button from "@/components/common/Button.vue";
 import SubmitButton from "@/components/form/SubmitButton.vue";
 import VehicleForm from "../components/VehicleForm.vue";
-import { useQuery, useMutation } from "@tanstack/vue-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/vue-query";
 import { fetch_vehicle_by_id, update_vehicle } from "../api/operation.api";
 import { useToastStore } from "@/store/toastStore";
 
 const route = useRoute();
 const router = useRouter();
 const toast = useToastStore();
+const queryClient = useQueryClient();
 const vehicleId = route.params.id as string;
 
 const { data: vehicleData, isLoading } = useQuery({
@@ -41,9 +43,10 @@ const { data: vehicleData, isLoading } = useQuery({
 
 const vehicle = computed(() => vehicleData.value?.data);
 
-const labels = computed(() => {
-  if (!vehicle.value) return {};
-  const v = vehicle.value;
+const labels = computed<Record<string, string>>(() => {
+  const v = vehicle.value as any;
+  if (!v) return {} as Record<string, string>;
+  const d = v.driver;
   return {
     vehicleType: v.vehicleType?.name || "",
     vehicleGroup: v.vehicleGroup?.name || "",
@@ -51,13 +54,15 @@ const labels = computed(() => {
     vehicleModel: v.vehicleModel?.name || "",
     maker: v.maker?.name || "",
     region: v.region?.name || "",
-    driver: v.driver
-      ? `${v.driver.firstName} ${v.driver.middleName || ""} ${v.driver.lastName || ""}`.replace(/\s+/g, " ").trim()
-      : "",
     transporter: v.transporter?.name || "",
     insurance_insurer: v.insuranceInformation?.insurer?.name || "",
+    driver: d ? `${d.firstName} ${d.middleName || ""} ${d.lastName || ""}`.trim() : "",
   };
 });
+
+const toDate = (iso: string | undefined) =>
+  iso ? new Date(iso).toISOString().split("T")[0] : "";
+
 
 const mappedValues = computed(() => {
   if (!vehicle.value) return {};
@@ -73,8 +78,14 @@ const mappedValues = computed(() => {
     region: v.region?._id,
     transporter: v.transporter?._id,
     type: v.type?._id,
+    // Dates formatted for DateInput
+    purchaseDate: toDate(v.purchaseDate),
+    lastServiceDate: toDate(v.lastServiceDate),
+    roadTaxExpireDate: toDate(v.roadTaxExpireDate),
+    boloIssueDate: toDate(v.boloIssueDate),
+    boloExpirationDate: toDate(v.boloExpirationDate),
     // Insurance mapping
-    insurance_insuredDate: v.insuranceInformation?.insuredDate,
+    insurance_insuredDate: toDate(v.insuranceInformation?.insuredDate),
     insurance_insuredAmount: v.insuranceInformation?.insuredAmount,
     insurance_prePaymentAmount: v.insuranceInformation?.prePaymentAmount,
     insurance_lifespan: v.insuranceInformation?.lifespan,
@@ -99,6 +110,8 @@ const mutation = useMutation({
   onSuccess: (res: any) => {
     if (res.success) {
       toast.success("Vehicle updated successfully");
+      queryClient.invalidateQueries({ queryKey: ["vehicle-list"] });
+      queryClient.invalidateQueries({ queryKey: ["vehicle", vehicleId] });
       router.push("/vehicles");
     } else {
       toast.error(res.error || "Failed to update vehicle");

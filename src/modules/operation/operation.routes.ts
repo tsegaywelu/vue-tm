@@ -1027,8 +1027,6 @@ export const operation_routes: RouteRecordRaw[] = [
           permission: [{ subject: "SHIPMENT", actions: ["generate_invoice"] }],
           title: "Invoice Report Details",
           description: "Detailed breakdown of the invoice report.",
-          tabsTeleportTo: "#invoice-report-details-tabs",
-          tabs: [{ label: "Overview", value: "overview" }],
         },
       },
       {
@@ -1403,6 +1401,15 @@ export const operation_routes: RouteRecordRaw[] = [
         },
       },
       {
+        path: "change-password",
+        name: "operation_setting_change_password",
+        component: () => import("./pages/setting/ChangePassword.vue"),
+        meta: {
+          title: "Change Password",
+          description: "Update your account password.",
+        },
+      },
+      {
         path: "user-and-role/user/edit/:id",
         name: "operation_setting_user_edit",
         component: () => import("./pages/setting/UserEdit.vue"),
@@ -1762,6 +1769,36 @@ export const operation_routes: RouteRecordRaw[] = [
           permission: "ANNOUNCEMENT",
           title: "Edit Announcement",
           description: "Update an existing announcement.",
+        },
+      },
+      {
+        path: "invoice-templates",
+        name: "operation_setting_invoice_templates",
+        component: () => import("./pages/setting/InvoiceTemplates.vue"),
+        meta: {
+          permission: [{ subject: "SHIPMENT", actions: ["generate_invoice"] }],
+          title: "Invoice Templates",
+          description: "Configure Excel invoice export templates.",
+        },
+      },
+      {
+        path: "invoice-templates/new",
+        name: "operation_setting_invoice_template_new",
+        component: () => import("./pages/setting/InvoiceTemplateEdit.vue"),
+        meta: {
+          permission: [{ subject: "SHIPMENT", actions: ["generate_invoice"] }],
+          title: "New Invoice Template",
+          description: "Create a new invoice export template.",
+        },
+      },
+      {
+        path: "invoice-templates/:shipperId/:productType",
+        name: "operation_setting_invoice_template_edit",
+        component: () => import("./pages/setting/InvoiceTemplateEdit.vue"),
+        meta: {
+          permission: [{ subject: "SHIPMENT", actions: ["generate_invoice"] }],
+          title: "Edit Invoice Template",
+          description: "Modify an invoice export template.",
         },
       },
     ],

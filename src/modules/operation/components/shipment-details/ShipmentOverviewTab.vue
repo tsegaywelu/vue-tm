@@ -41,6 +41,10 @@
           </div>
           <div class="grid border-t py-4 mt-4 border-gray-200 grid-cols-1 sm:grid-cols-3 px-2">
             <ShipmentDataLabel
+              label="Route Name"
+              :value="shipment?.route?.routeName"
+            />
+            <ShipmentDataLabel
               label="Waypoint"
               :value="shipment?.waypoint?.name"
             />
@@ -56,6 +60,10 @@
         </InfoWrapper>
         <InfoWrapper title="Additional Information">
           <div class="flex flex-col gap-4">
+            <ShipmentDataLabel
+              label="Shipper"
+              :value="shipment?.shipper?.name"
+            />
             <ShipmentDataLabel
               label="Product Type"
               :value="formatStatus(shipment?.productType)"
@@ -78,12 +86,24 @@
           <div class="flex flex-col gap-4">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pb-4 border-b border-gray-100">
               <ShipmentDataLabel
-                label="Vehicle Shipper Issue"
+                label="Shipper Issue"
                 :value="shipment?.shipperIssueVoucher"
               />
               <ShipmentDataLabel
                 label="Agent Receive"
-                :value="shipment?.agent?.name || '-'"
+                :value="shipment?.agentReceiveVoucher || '-'"
+              />
+            </div>
+            <div class="grid grid-cols-2 gap-4" v-if="shipment?.agentIssueVoucher || shipment?.shipperReceiveVoucher">
+              <ShipmentDataLabel
+                v-if="shipment?.agentIssueVoucher"
+                label="Agent Issue"
+                :value="shipment?.agentIssueVoucher"
+              />
+              <ShipmentDataLabel
+                v-if="shipment?.shipperReceiveVoucher"
+                label="Shipper Receive"
+                :value="shipment?.shipperReceiveVoucher"
               />
             </div>
           </div>
@@ -215,6 +235,27 @@
               <ShipmentDataLabel
                 label="Dispatch Weight"
                 :value="numberFormatter(shipment?.dispatchWeight || 0) + ' Q'"
+              />
+            </div>
+            <!-- Completion metrics (only shown when shipment is completed) -->
+            <div
+              v-if="shipment?.status === 'completed' && (shipment?.odometerAtComplete || shipment?.fuelReadingAtComplete)"
+              class="grid grid-cols-1 gap-4 pt-4 border-t border-gray-100"
+            >
+              <ShipmentDataLabel
+                v-if="shipment?.odometerAtComplete"
+                label="Odometer at Complete"
+                :value="numberFormatter(shipment?.odometerAtComplete || 0)"
+              />
+              <ShipmentDataLabel
+                v-if="shipment?.fuelReadingAtComplete"
+                label="Fuel Reading at Complete"
+                :value="shipment?.fuelReadingAtComplete + ' L'"
+              />
+              <ShipmentDataLabel
+                v-if="shipment?.odometerAtComplete && shipment?.odometerAtDispatch"
+                label="Distance Travelled"
+                :value="numberFormatter((shipment?.odometerAtComplete || 0) - (shipment?.odometerAtDispatch || 0)) + ' km'"
               />
             </div>
           </div>

@@ -23,6 +23,13 @@
         <Button
           v-if="activeTab === 'driverAdvances'"
           size="md"
+          @click="openAddAdvanceModal"
+        >
+          + Add Advance
+        </Button>
+        <Button
+          v-if="activeTab === 'driverAdvances'"
+          size="md"
           variant="outline"
           @click="$router.push('/operation/advance-summary')"
         >
@@ -30,6 +37,14 @@
         </Button>
         <Button
           v-else-if="activeTab === 'transporterAdvances'"
+          v-permission="{ subject: 'PRE_PAYMENT', actions: ['create'] }"
+          size="md"
+          @click="openAddTransporterAdvanceModal"
+        >
+          + Add Transporter Advance
+        </Button>
+        <Button
+          v-if="activeTab === 'transporterAdvances'"
           size="md"
           variant="outline"
           @click="$router.push('/operation/prepayment-summary')"
@@ -62,12 +77,21 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useRoute } from "vue-router";
+import { openModal } from "@customizer/modal-x";
 import AdvanceTable from "../components/AdvanceTable.vue";
 import Button from "@/components/common/Button.vue";
 import type { TableColumn } from "@/components/common/Table.vue";
 import { icons } from "@/utils/icons";
 
 const route = useRoute();
+
+function openAddAdvanceModal() {
+  openModal("AddAdvanceStandaloneModal", {});
+}
+
+function openAddTransporterAdvanceModal() {
+  openModal("AddPrePaymentStandaloneModal", {});
+}
 
 const tabs = computed(() => route.meta.tabs as any[]);
 const activeTab = computed(

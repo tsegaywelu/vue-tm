@@ -1,11 +1,19 @@
 <template>
   <Teleport to="#page-actions" defer>
-    <DateRangePicker
-      v-model="dateRange"
-      pagination-id="payment-collection-list"
-      start-key="startDate"
-      end-key="endDate"
-    />
+    <div class="flex items-center gap-2">
+      <DateRangePicker
+        v-model="dateRange"
+        pagination-id="payment-collection-list"
+        start-key="startDate"
+        end-key="endDate"
+      />
+      <Button variant="secondary" @click="handleExport">
+        <template #leading>
+          <i class="mdi mdi-file-excel text-lg text-green-600"></i>
+        </template>
+        Export Excel
+      </Button>
+    </div>
   </Teleport>
 
   <Teleport to="#extra-page-data" defer>
@@ -59,19 +67,23 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, markRaw } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "@/store/authStore";
 import { useQuery } from "@tanstack/vue-query";
 import { openModal } from "@customizer/modal-x";
 import PaymentCollectionTable from "../../components/finance/PaymentCollectionTable.vue";
+import PaymentCollectionDownloadToast from "../../components/finance/PaymentCollectionDownloadToast.vue";
 import StatsCards from "@/components/common/StatsCards.vue";
 import { fetch_approved_and_collected_invoice_count } from "../../api/operation.api";
 import { currencyFormatter } from "@/utils/utils";
+import { useToastStore } from "@/store/toastStore";
 import DateRangePicker from "@/components/common/DateRangePicker.vue";
+import Button from "@/components/Button.vue";
 
 const router = useRouter();
 const authStore = useAuthStore();
+const toastStore = useToastStore();
 const tableRef = ref<any>(null);
 
 const dateRange = ref({
@@ -115,6 +127,15 @@ const collectionStats = computed(() => {
     },
   ];
 });
+
+const handleExport = () => {
+  const filters = {
+    ...(tableRef.value?.activeFilters ?? {}),
+    ...(dateRange.value.start ? { "createdAt[gte]": dateRange.value.start } : {}),
+    ...(dateRange.value.end ? { "createdAt[lte]": dateRange.value.end } : {}),
+  };
+  toastStore.addCustomToast(markRaw(PaymentCollectionDownloadToast), { filters });
+};
 
 const handlePaymentCollectionAction = async ({ row, action }: any) => {
   const id = row._id || row.id;

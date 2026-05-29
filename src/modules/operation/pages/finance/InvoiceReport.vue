@@ -1,11 +1,19 @@
 <template>
   <Teleport to="#page-actions" defer>
-    <DateRangePicker
-      v-model="dateRange"
-      pagination-id="invoice-report-list"
-      start-key="startDate"
-      end-key="endDate"
-    />
+    <div class="flex items-center gap-2">
+      <DateRangePicker
+        v-model="dateRange"
+        pagination-id="invoice-report-list"
+        start-key="startDate"
+        end-key="endDate"
+      />
+      <Button variant="secondary" @click="handleExport">
+        <template #leading>
+          <i class="mdi mdi-file-excel text-lg text-green-600"></i>
+        </template>
+        Export Excel
+      </Button>
+    </div>
   </Teleport>
 
   <Teleport to="#extra-page-data" defer>
@@ -29,19 +37,19 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, markRaw } from "vue";
 import { useRouter } from "vue-router";
-import { useMutation, useQuery } from "@tanstack/vue-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/vue-query";
 import { useToastStore } from "@/store/toastStore";
 import { useAuthStore } from "@/store/authStore";
 import { openModal } from "@customizer/modal-x";
 import { approve_invoice, cancel_invoice, fetch_requested_invoice_count } from "../../api/operation.api";
 import InvoiceReportTable from "../../components/InvoiceReportTable.vue";
+import InvoiceReportDownloadToast from "../../components/InvoiceReportDownloadToast.vue";
 import StatsCards from "@/components/common/StatsCards.vue";
 import { currencyFormatter } from "@/utils/utils";
-import { useQueryClient } from "@tanstack/vue-query";
-
 import DateRangePicker from "@/components/common/DateRangePicker.vue";
+import Button from "@/components/Button.vue";
 
 const router = useRouter();
 const toast = useToastStore();
@@ -97,6 +105,15 @@ const cancelMutation = useMutation({
     toast.error(error.response?.data?.message || "Failed to cancel invoice");
   }
 });
+
+const handleExport = () => {
+  const filters = {
+    ...(tableRef.value?.activeFilters ?? {}),
+    ...(dateRange.value.start ? { "createdAt[gte]": dateRange.value.start } : {}),
+    ...(dateRange.value.end ? { "createdAt[lte]": dateRange.value.end } : {}),
+  };
+  toast.addCustomToast(markRaw(InvoiceReportDownloadToast), { filters });
+};
 
 const handleInvoiceAction = async ({ row, action }: any) => {
   const id = row._id || row.id;

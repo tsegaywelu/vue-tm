@@ -18,17 +18,19 @@ import { useRouter } from "vue-router";
 import Button from "@/components/common/Button.vue";
 import SubmitButton from "@/components/form/SubmitButton.vue";
 import VehicleForm from "../components/VehicleForm.vue";
-import { useMutation } from "@tanstack/vue-query";
+import { useMutation, useQueryClient } from "@tanstack/vue-query";
 import { add_vehicle } from "../api/operation.api";
 import { useToastStore } from "@/store/toastStore";
 
 const router = useRouter();
 const toast = useToastStore();
+const queryClient = useQueryClient();
 
 const initialValues = {
   isOperational: true,
   status: "available",
   ownership: "Owned",
+  operationalRole: "SHIPMENT",
 };
 
 const mutation = useMutation({
@@ -36,6 +38,7 @@ const mutation = useMutation({
   onSuccess: (res: any) => {
     if (res.success) {
       toast.success("Vehicle registered successfully");
+      queryClient.invalidateQueries({ queryKey: ["vehicle-list"] });
       router.push("/vehicles");
     } else {
       toast.error(res.error || "Failed to register vehicle");

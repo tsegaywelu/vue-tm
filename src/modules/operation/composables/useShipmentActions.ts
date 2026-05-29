@@ -21,6 +21,8 @@ export const useShipmentActions = (onActionComplete?: () => void) => {
       router.push(`${basePath.value}/edit/${row._id}`);
     } else if (action === "create_advance") {
       openAddAdvanceModal(row);
+    } else if (action === "create_prepayment") {
+      openAddPrePaymentModal(row);
     } else {
       console.log(`Action: ${action} on Shipment: ${row.shipmentCode}`);
     }
@@ -28,6 +30,14 @@ export const useShipmentActions = (onActionComplete?: () => void) => {
 
   const openAddAdvanceModal = (shipment: Shipment) => {
     openModal("AddAdvanceModal", { shipment }, (res) => {
+      if (res && onActionComplete) {
+        onActionComplete();
+      }
+    });
+  };
+
+  const openAddPrePaymentModal = (shipment: Shipment) => {
+    openModal("AddPrePaymentModal", { shipment }, (res) => {
       if (res && onActionComplete) {
         onActionComplete();
       }
@@ -61,6 +71,7 @@ export const useShipmentActions = (onActionComplete?: () => void) => {
   return {
     handleAction,
     openAddAdvanceModal,
+    openAddPrePaymentModal,
     openStatusModal,
     openVouchersModal,
     basePath,

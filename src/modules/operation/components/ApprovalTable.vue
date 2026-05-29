@@ -176,7 +176,7 @@
           </template>
           <template #default="{ close }">
             <div class="py-1 min-w-[160px]">
-              <button
+              <!-- <button
                 @click="
                   handleRowClick(row);
                   close();
@@ -204,7 +204,7 @@
                   />
                 </svg>
                 View Details
-              </button>
+              </button> -->
 
               <div class="h-px bg-gray-100 my-1"></div>
 

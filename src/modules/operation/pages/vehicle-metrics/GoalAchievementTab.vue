@@ -16,8 +16,8 @@
       :rows="tableData"
       :loading="isLoading"
       :show_pagination="false"
-      v-model:search_value="state.search"
       client_sort
+      client_search
     >
       <template #after-search>
         <VehicleMetricsFilter pagination-id="/goal-achievement" @change="(val) => Object.assign(filters, val)" />
@@ -133,7 +133,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from "vue";
+import { ref, computed } from "vue";
 import { usePagination } from "@/composables/usePagination";
 import { useMutation, useQueryClient } from "@tanstack/vue-query";
 import Table from "@/components/common/Table.vue";
@@ -174,9 +174,8 @@ const handleExport = async () => {
 
 // Fetching Data
 const {
-  response: tableData,
+  response: rawTableData,
   isLoading,
-  state,
   fullResponse,
 } = usePagination({
   url: "/goal-achievement",
@@ -186,14 +185,19 @@ const {
     return {
       year: date.getFullYear(),
       month: date.getMonth() + 1,
-      region: filters.value.region,
-      vehicleType: filters.value.vehicleType,
       page: undefined,
       limit: undefined,
     };
   }),
-  searchKey: "search",
   queryKey: ["vehicleGoalAchievement"],
+});
+
+const tableData = computed(() => {
+  let data = (rawTableData.value ?? []) as any[];
+  const f = filters.value;
+  if (f.region) data = data.filter((r) => (r.region?._id ?? r.region ?? r.regionId) === f.region);
+  if (f.vehicleType) data = data.filter((r) => (r.vehicleType?._id ?? r.vehicleType) === f.vehicleType);
+  return data;
 });
 
 const totalRows = computed(() => fullResponse.value?.total || 0);
@@ -272,11 +276,4 @@ const getPercentageTextColor = (val: number) => {
   return "text-red-600";
 };
 
-watch(
-  filters,
-  () => {
-    // page.value = 1;
-  },
-  { deep: true },
-);
 </script>

@@ -50,6 +50,7 @@ const initialValues = computed(() => {
     name: data.name || "",
     typicalPrice: data.typicalPrice || "",
     description: data.description || "",
+    scope: data.scope || "BOTH",
   };
 });
 

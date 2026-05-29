@@ -11,3 +11,7 @@ export function login(mode: LoginMode, credentials: LoginCredentials) {
 export function fetch_current_user() {
   return api.addAuthenticationHeader().get<any>("/currentUser");
 }
+
+export function change_password(data: { oldPassword: string; newPassword: string }) {
+  return api.addAuthenticationHeader().post("/changePassword", data);
+}

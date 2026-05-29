@@ -41,6 +41,7 @@
                 name="amount"
                 label="Amount"
                 type="number"
+                step="any"
                 :attributes="{
                   placeholder: 'Enter Amount',
                 }"

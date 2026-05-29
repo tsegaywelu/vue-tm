@@ -1,5 +1,10 @@
 <template>
-  <Form ref="formRef" :id="formId" :values="initialValues" :onSubmit="handleSubmit">
+  <Form
+    ref="formRef"
+    :id="formId"
+    :values="formInitialValues"
+    :onSubmit="handleSubmit"
+  >
     <template #default="{ form }">
       <Colapsable
         title="Order Selection"
@@ -61,6 +66,17 @@
                   name="route"
                   label="Route"
                   searchable
+                  :params="
+                    (state) => {
+                      return {
+                        routeName: {
+                          regexAny: state.search,
+                        },
+                        sort: 'shipmentCount',
+                        q: undefined,
+                      };
+                    }
+                  "
                   :url="shipper ? `/route/shipper/${shipper}` : '/route'"
                   label_key="routeName"
                   value_key="_id"
@@ -134,14 +150,9 @@
           />
 
           <!-- vehicleType -->
-          <SelectInput
+          <VehicleTypeInput
             v-if="props.mode === 'edit'"
             name="vehicleType"
-            label="Vehicle Type"
-            searchable
-            url="/vehicle-type"
-            label_key="name"
-            value_key="_id"
             :display_value="internalLabels.vehicleType"
             :validation="{ required }"
           />
@@ -314,9 +325,11 @@
             >
               Add New
             </button>
+
             <VehicleInput
               name="vehicle"
               label="Search Vehicles"
+              :params="{ operationalRole: 'SHIPMENT,BOTH' }"
               :options="selectedVehicle ? [selectedVehicle] : []"
               :display_value="internalLabels.vehicle"
               :validation="{ required }"
@@ -332,28 +345,16 @@
             </VehicleInput>
           </div>
 
-          <SelectInput
+          <DriverInput
             v-if="props.mode === 'edit'"
             name="driver"
-            label="Driver"
-            searchable
-            url="/driver"
-            :label_key="
-              (item: any) =>
-                `${item.firstName} ${item.middleName || ''} ${item.lastName || ''}`.trim()
-            "
-            value_key="_id"
             :display_value="internalLabels.driver"
             :validation="{ required }"
             :params="
-              (state) => {
-                return {
-                  name: {
-                    regexAny: state.search,
-                  },
-                  q: undefined,
-                };
-              }
+              (state: any) => ({
+                name: { regexAny: state.search },
+                q: undefined,
+              })
             "
           />
           <SelectInput
@@ -458,22 +459,42 @@
               type: 'number',
             }"
             :validation="{
-              required: (val: any) => val !== '' && val !== null && val !== undefined ? [true, ''] : [false, 'This field is required'],
+              required: (val: any) =>
+                val !== '' && val !== null && val !== undefined
+                  ? [true, '']
+                  : [false, 'This field is required'],
             }"
           />
 
-          <Input
-            name="totalPrice"
-            label="Total Price"
-            parent_class_name="lg:col-span-full xl:col-span-1"
-            :attributes="{
-              placeholder: 'Enter Total Price',
-            }"
-            :validation="{
-              required,
-              price,
-            }"
-          />
+          <div class="relative lg:col-span-full xl:col-span-1">
+            <button
+              v-if="
+                filteredPricingType &&
+                +calculateTotalPrice(form.state.values) > 0
+              "
+              type="button"
+              class="absolute top-0 right-0 text-primary text-[10px] font-black uppercase tracking-wider hover:underline z-10"
+              @click="
+                form.setFieldValue(
+                  'totalPrice',
+                  String(+calculateTotalPrice(form.state.values)),
+                )
+              "
+            >
+              Use Calculated Price from Contract
+            </button>
+            <Input
+              name="totalPrice"
+              label="Total Price"
+              :attributes="{
+                placeholder: 'Enter Total Price',
+              }"
+              :validation="{
+                required,
+                price,
+              }"
+            />
+          </div>
 
           <div
             v-if="pricingWarning"
@@ -512,6 +533,8 @@ import DateInput from "@/components/form/DateInput.vue";
 import TextareaInput from "@/components/form/TextareaInput.vue";
 import Colapsable from "@/components/common/Colapsable.vue";
 import VehicleInput from "@/components/common/inputs/VehicleInput.vue";
+import VehicleTypeInput from "@/components/common/inputs/VehicleTypeInput.vue";
+import DriverInput from "@/components/common/inputs/DriverInput.vue";
 import { currencyFormatter } from "@/utils/utils";
 import {
   dateGreaterThanOrEqalToToday,
@@ -546,6 +569,11 @@ const props = withDefaults(
   },
 );
 
+const formInitialValues = computed(() => ({
+  ...props.initialValues,
+  ...(props.mode === "add" && { totalPrice: "" }),
+}));
+
 const internalLabels = ref({ ...props.labels });
 
 watch(
@@ -553,7 +581,7 @@ watch(
   (newLabels) => {
     internalLabels.value = { ...newLabels };
   },
-  { deep: true },
+  { deep: true, immediate: true },
 );
 
 const emit = defineEmits<{
@@ -662,37 +690,20 @@ const handleOrderSelect = async (order: Order, form: any) => {
 };
 
 const handleWaypointChange = (val: string, form: any) => {
-  console.log("[DEBUG] handleWaypointChange called with val:", val);
-
   if (!selectedOrder.value || !val) {
-    console.log(
-      "[DEBUG] Early return: selectedOrder=",
-      !!selectedOrder.value,
-      "val=",
-      val,
-    );
     filteredPricingType.value = null;
     form?.setFieldValue("totalPrice", "");
     return;
   }
 
   const wp = selectedOrder.value.waypoints.find((w) => w.waypoint._id === val);
-  console.log("[DEBUG] Found waypoint:", wp ? wp.waypoint.name : "NOT FOUND");
-  console.log("[DEBUG] vehiclePricing:", wp?.vehiclePricing);
 
   if (wp?.vehiclePricing) {
-    console.log(
-      "[DEBUG] Looking for match: vehicleType=",
-      selectedOrder.value?.vehicleType._id,
-      "productType=",
-      selectedOrder.value?.productType,
-    );
     const vp = wp.vehiclePricing.find(
       (pricing) =>
         pricing.vehicleType === selectedOrder.value?.vehicleType._id &&
         pricing.productType === selectedOrder.value?.productType,
     );
-    console.log("[DEBUG] Matched pricing:", vp);
     filteredPricingType.value = vp;
     pricingWarning.value = vp
       ? ""
@@ -707,18 +718,11 @@ const handleWaypointChange = (val: string, form: any) => {
 };
 
 const updateTotalPrice = (form: any, overrides?: Record<string, any>) => {
-  if (!form) return;
-  const values = { ...form.state.values, ...overrides };
-  console.log(
-    "[DEBUG] updateTotalPrice values.waypoint=",
-    values.waypoint,
-    "values.dispatchWeight=",
-    values.dispatchWeight,
-  );
-  console.log("[DEBUG] filteredPricingType=", filteredPricingType.value);
+  const f = form ?? formRef.value?.form;
+  if (!f) return;
+  const values = { ...f.state.values, ...overrides };
   const total = calculateTotalPrice(values);
-  console.log("[DEBUG] Calculated total=", total);
-  form.setFieldValue("totalPrice", +total > 0 ? String(total) : "");
+  if (+total > 0) f.setFieldValue("totalPrice", String(total));
 };
 
 const openRegistrationModal = async (form: any) => {
@@ -790,6 +794,10 @@ onMounted(async () => {
     const order_record = order_data.data as any as Order | undefined;
     selectedOrder.value = order_record ?? null;
 
+    if (order_record?.route?.routeName && !internalLabels.value.route) {
+      internalLabels.value.route = order_record.route.routeName;
+    }
+
     if (order_record && props.initialValues.waypoint) {
       // Small delay to ensure refs are updated before triggering logic
       handleWaypointChange(props.initialValues.waypoint, null);
@@ -798,6 +806,7 @@ onMounted(async () => {
 
   if (props.initialValues.vehicle) {
     new ApiService()
+      .addAuthenticationHeader()
       .get(`/vehicle/${props.initialValues.vehicle}`)
       .then((res: any) => {
         if (res.success) {

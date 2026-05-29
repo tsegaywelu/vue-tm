@@ -195,6 +195,10 @@ export function fetch_prepayments(params: Record<string, any>) {
   return prepayment_api.addAuthenticationHeader().get("", { params });
 }
 
+export function create_prepayment(data: any) {
+  return prepayment_api.addAuthenticationHeader().post("", data);
+}
+
 export function fetch_advances(params: Record<string, any>) {
   return advance_api.addAuthenticationHeader().get("", { params });
 }
@@ -436,6 +440,19 @@ export function update_driver_status(id: string, data: any) {
     .addAuthenticationHeader()
     .patch(`/driverStatus/${id}`, data);
 }
+export function adjust_initial_settlement_balance(
+  id: string,
+  payload: { value: number; reason: string },
+) {
+  return driver_api
+    .addAuthenticationHeader()
+    .patch(`/${id}/initial-settlement-balance`, payload);
+}
+export function fetch_initial_settlement_balance_history(id: string) {
+  return driver_api
+    .addAuthenticationHeader()
+    .get(`/${id}/initial-settlement-balance-history`);
+}
 export function upload_driver_documents(
   id: string,
   data: FormData,
@@ -529,6 +546,10 @@ export function fetch_all_shipments_unpaginated(
   return shipment_api.addAuthenticationHeader().get("", { params, ...config });
 }
 
+export function fetch_shipment_by_id(id: string) {
+  return shipment_api.addAuthenticationHeader().get(`/${id}`);
+}
+
 export function fetch_all_sub_contracts_unpaginated(
   params?: Record<string, any>,
   config?: any,
@@ -536,6 +557,24 @@ export function fetch_all_sub_contracts_unpaginated(
   return shipment_api
     .addAuthenticationHeader()
     .get("/payableShipmentsPaid", { params, ...config });
+}
+
+export function fetch_all_payment_collections_unpaginated(
+  params?: Record<string, any>,
+  config?: any,
+) {
+  return shipment_api
+    .addAuthenticationHeader()
+    .get("/approvedAndCollectedInvoices", { params: { ...params, limit: 99999 }, ...config });
+}
+
+export function fetch_all_invoice_reports_unpaginated(
+  params?: Record<string, any>,
+  config?: any,
+) {
+  return shipment_api
+    .addAuthenticationHeader()
+    .get("/paymentRequestedInvoices", { params: { ...params, limit: 99999 }, ...config });
 }
 
 export function add_insurance(data: any) {

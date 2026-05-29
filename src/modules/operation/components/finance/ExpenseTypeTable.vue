@@ -14,6 +14,16 @@
       <span class="text-gray-900">{{ currencyFormatter(value || 0) }}</span>
     </template>
 
+    <template #cell-scope="{ value }">
+      <span class="px-2 py-1 rounded-full text-xs font-bold uppercase"
+        :class="{
+          'bg-blue-100 text-blue-700': value === 'VEHICLE',
+          'bg-green-100 text-green-700': value === 'DRIVER',
+          'bg-purple-100 text-purple-700': value === 'BOTH' || !value,
+        }"
+      >{{ value || 'BOTH' }}</span>
+    </template>
+
     <template #cell-description="{ value }">
       <span class="text-gray-600 line-clamp-1">{{ value || '-' }}</span>
     </template>
@@ -50,6 +60,7 @@ const emit = defineEmits(["action"]);
 const columns: TableColumn<any>[] = [
   { key: "name", label: "Name", field: "name" },
   { key: "typicalPrice", label: "Typical Price", field: "typicalPrice" },
+  { key: "scope", label: "Scope", field: "scope" },
   { key: "description", label: "Description", field: "description" },
   { key: "createdAt", label: "Created At", field: "createdAt" },
   { key: "actions", label: "Actions", field: "", cellAlign: "center" },

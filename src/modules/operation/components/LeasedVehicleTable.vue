@@ -14,7 +14,7 @@
 
     <template #cell-date="{ row }">
       <span class="text-sm text-gray-600">
-        {{ dateFormatter(row.createdAt || row.date) }}
+        {{ dateFormatter(row.startDate) }} to {{ dateFormatter(row.endDate) }}
       </span>
     </template>
 
@@ -53,9 +53,9 @@
       </Status>
     </template>
 
-    <template #cell-total="{ row }">
+    <template #cell-amount="{ row }">
       <span class="font-bold text-gray-900">
-        {{ currencyFormatter(row.total || row.payable || 0) }}
+        {{ currencyFormatter(row.amount || row.payable || 0) }}
       </span>
     </template>
 
@@ -134,7 +134,7 @@ const columns: TableColumn<any>[] = [
   { key: "date", label: "Date", field: "createdAt" },
   { key: "transporter", label: "Transporter", field: "transporter" },
   { key: "leaseDirection", label: "Direction", field: "leaseDirection" },
-  { key: "total", label: "Amount", field: "total" },
+  { key: "amount", label: "Amount", field: "amount" },
   { key: "settlementStatus", label: "Payable Status", field: "payableStatus" },
   { key: "status", label: "Status", field: "status" },
   { key: "actions", label: "Action", field: "", cellAlign: "right" },
@@ -143,6 +143,12 @@ const columns: TableColumn<any>[] = [
 const { response, refetch } = usePagination<any>({
   id: "leased-vehicle-list",
   url: "/vehicle-lease-agreement",
+  params(state) {
+    return {
+      plateNumber: state.search,
+      q: undefined,
+    };
+  },
 });
 
 const handleAction = (row: any, action: string) => {

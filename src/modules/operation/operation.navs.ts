@@ -263,6 +263,54 @@ export const fleet_navs: Navs[] = [
       },
     ],
   },
+  {
+    name: "Fleet Management",
+    icon: "finance",
+    show: true,
+    permission: { subject: "VEHICLE", actions: ["view"] },
+    children: [
+      {
+        name: "Fuel Entries",
+        path: "/fleet/fuel-entries",
+        show: true,
+        permission: { subject: "VEHICLE", actions: ["view"] },
+        children: [
+          { path: "/fleet/fuel-entries/add", name: "Add Fuel Entry", show: false },
+          { path: "/fleet/fuel-entries/edit/$id", name: "Edit Fuel Entry", show: false },
+        ],
+      },
+      {
+        name: "Meter Entries",
+        path: "/fleet/meter-entries",
+        show: true,
+        permission: { subject: "VEHICLE", actions: ["view"] },
+        children: [
+          { path: "/fleet/meter-entries/add", name: "Add Meter Entry", show: false },
+          { path: "/fleet/meter-entries/edit/$id", name: "Edit Meter Entry", show: false },
+        ],
+      },
+      {
+        name: "Vehicle Expenses",
+        path: "/fleet/vehicle-expenses",
+        show: true,
+        permission: { subject: "VEHICLE", actions: ["view"] },
+        children: [
+          { path: "/fleet/vehicle-expenses/add", name: "Add Vehicle Expense", show: false },
+          { path: "/fleet/vehicle-expenses/edit/$id", name: "Edit Vehicle Expense", show: false },
+        ],
+      },
+      {
+        name: "Recurring Rules",
+        path: "/fleet/recurring-rules",
+        show: true,
+        permission: { subject: "VEHICLE", actions: ["view"] },
+        children: [
+          { path: "/fleet/recurring-rules/add", name: "Add Recurring Rule", show: false },
+          { path: "/fleet/recurring-rules/edit/$id", name: "Edit Recurring Rule", show: false },
+        ],
+      },
+    ],
+  },
 ];
 
 export const stakeholders_navs: Navs[] = [
@@ -271,7 +319,7 @@ export const stakeholders_navs: Navs[] = [
     icon: "customers",
     path: "/customers",
     show: true,
-    permission: { subject: "CONTACT", actions: ["view"] },
+    permission: { subject: "SHIPPER", actions: ["view"] },
     children: [
       {
         path: "/customers/$id",
@@ -588,7 +636,10 @@ export const finance_navs: Navs[] = [
         path: "/finance/payable",
         show: true,
         permission: [
-          { subject: "ADVANCE_PAYMENT", actions: ["pay", "authorize", "cancel"] },
+          {
+            subject: "ADVANCE_PAYMENT",
+            actions: ["pay", "authorize", "cancel"],
+          },
           { subject: "TRANSACTION", actions: ["pay", "authorize", "cancel"] },
           { subject: "SHIPMENT", actions: ["pay", "authorize", "cancel"] },
           { subject: "PRE_PAYMENT", actions: ["pay", "authorize", "cancel"] },
@@ -881,6 +932,12 @@ export const setting_navs: Navs[] = [
     show: true,
     children: [
       {
+        name: "Change Password",
+        path: "/setting/change-password",
+        show: true,
+        children: [],
+      },
+      {
         name: "User and Role",
         path: "/setting/user-and-role",
         show: true,
@@ -1098,7 +1155,29 @@ export const setting_navs: Navs[] = [
           {
             name: "Edit Announcement",
             path: "/setting/announcements/edit/:id",
-
+            show: false,
+          },
+        ],
+      },
+      {
+        name: "Invoice Templates",
+        path: "/setting/invoice-templates",
+        show: true,
+        permission: { subject: "SHIPMENT", actions: ["generate_invoice"] },
+        children: [
+          {
+            name: "New Invoice Template",
+            path: "/setting/invoice-templates/new",
+            show: false,
+          },
+          {
+            name: "Edit Invoice Template",
+            path: "/setting/invoice-templates/:shipperId/:productType",
+            show: false,
+          },
+          {
+            name: "OUT_BOUND Template",
+            path: "/setting/invoice-templates/679d94f4e6e807b9368d723f/OUT_BOUND",
             show: false,
           },
         ],

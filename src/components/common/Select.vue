@@ -231,6 +231,7 @@ import {
   watch,
   onMounted,
   onBeforeUnmount,
+  onUnmounted,
   nextTick,
   type SelectHTMLAttributes,
   watchEffect,
@@ -330,6 +331,7 @@ const customApi = props.base_url ? new ApiService(props.base_url) : undefined;
 
 const currentSelectedValue = computed(() => props.modelValue);
 onMounted(() => {
+  if (!currentSelectedValue.value) return;
   const val = finalOptions.value.find(
     (op: any) => op.item.value == currentSelectedValue.value,
   );
@@ -366,6 +368,7 @@ watch(
   () => props.display_value,
   (newDisplayValue) => {
     if (!props.searchable || !newDisplayValue) return;
+    if (!currentSelectedValue.value) return;
     const opt = finalOptions.value.find(
       (o: any) => getOptionValue(o) == currentSelectedValue.value,
     );
@@ -396,13 +399,16 @@ const {
   isLoading: remoteLoading,
   isFetching: remoteFetching,
 } = usePagination({
-  queryKey: [props.url || props.name, props.size, props.base_url || ""],
+  id: props.url ? `${props.url}__${props.name}` : props.name,
+  queryKey: [props.url || props.name, props.name, props.size, props.base_url || ""],
   url: props.url,
   autofetch: isRemote.value,
   params: computedParams,
   searchKey: props.search_key || "q",
   ...(customApi ? { api: customApi } : {}),
 });
+
+onUnmounted(() => setRemoteSearch(""));
 
 watch(
   () => debouncedSearch?.value,

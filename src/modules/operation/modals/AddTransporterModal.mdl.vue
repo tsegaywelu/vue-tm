@@ -73,7 +73,6 @@
             name="tin"
             label="TIN"
             :attributes="{ placeholder: 'Tax Identification Number' }"
-            :validation="{ required }"
           />
         </div>
 
@@ -84,6 +83,8 @@
           :attributes="{ placeholder: 'Select Type' }"
           :validation="{ required }"
         />
+
+        <BankAccountInput name="bankAccount" />
       </div>
     </template>
 
@@ -109,6 +110,7 @@ import SelectInput from "@/components/form/SelectInput.vue";
 import Button from "@/components/common/Button.vue";
 import SubmitButton from "@/components/form/SubmitButton.vue";
 import { required, email, phone } from "@/utils/validations";
+import BankAccountInput from "../components/inputs/BankAccountInput.vue";
 import { useToastStore } from "@/store/toastStore";
 import { add_transporter, update_transporter } from "../api/operation.api";
 import { useMutation } from "@tanstack/vue-query";
@@ -133,6 +135,11 @@ const initialValues = computed(() => {
       region: transporter.value.region || "",
       tin: transporter.value.tin || "",
       type: transporter.value.type || "",
+      bankAccount: (transporter.value.bankAccount || []).map((ba: any) => ({
+        bank: ba.bank?._id || ba.bank || "",
+        accountNumber: ba.accountNumber || "",
+        preferred: ba.preferred || false,
+      })),
     };
   }
   return {
@@ -145,6 +152,7 @@ const initialValues = computed(() => {
     region: "",
     tin: "",
     type: "",
+    bankAccount: [],
   };
 });
 
@@ -180,11 +188,23 @@ const updateMutation = useMutation({
     update_transporter(id, values),
 });
 
+function buildPayload(values: any) {
+  return {
+    ...values,
+    bankAccount: (values.bankAccount || []).map((ba: any) => ({
+      bank: ba.bank,
+      accountNumber: ba.accountNumber,
+      preferred: ba.preferred || false,
+    })),
+  };
+}
+
 async function handleSubmit(values: any) {
+  const payload = buildPayload(values);
   if (transporter.value) {
     const res: any = await updateMutation.mutateAsync({
       id: transporter.value._id,
-      values,
+      values: payload,
     });
     if (res.success || res.status === 200 || res.status === 201) {
       toast.success("Transporter updated successfully!");
@@ -193,7 +213,7 @@ async function handleSubmit(values: any) {
       toast.error(res.error || "Failed to update transporter");
     }
   } else {
-    const res: any = await createMutation.mutateAsync(values);
+    const res: any = await createMutation.mutateAsync(payload);
     if (res.success || res.status === 200 || res.status === 201) {
       toast.success("Transporter added successfully!");
       closeModal(true);

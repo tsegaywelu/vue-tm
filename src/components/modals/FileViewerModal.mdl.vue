@@ -78,19 +78,21 @@
         </button>
 
         <!-- PDF -->
-        <div v-if="isPDF" class="w-full h-full flex justify-center items-center overflow-auto rounded-xl">
-          <div v-if="isPDFLoading" class="flex flex-col items-center gap-3 text-gray-500">
+        <div v-if="isPDF" class="w-full h-full overflow-auto rounded-xl">
+          <div v-if="isPDFLoading" class="w-full h-full flex flex-col items-center justify-center gap-3 text-gray-500">
             <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
             <span class="text-sm">Loading PDF…</span>
           </div>
-          <div v-else-if="pdfBlobURL" class="w-full h-full">
+          <div
+            v-else-if="pdfBlobURL"
+            :style="{ width: `${zoom * 100}%`, height: `${zoom * 100}%`, transform: `rotate(${rotation}deg)`, transformOrigin: 'top left' }"
+          >
             <iframe
               :src="`${pdfBlobURL}#toolbar=0`"
-              class="transition-transform duration-200 ease-in-out origin-center w-full h-full border-0 bg-white"
-              :style="{ transform: `scale(${zoom}) rotate(${rotation}deg)` }"
+              class="w-full h-full border-0 bg-white"
             ></iframe>
           </div>
-          <div v-else class="text-center text-red-500 text-sm">Failed to load PDF.</div>
+          <div v-else class="w-full h-full flex items-center justify-center text-red-500 text-sm">Failed to load PDF.</div>
         </div>
 
         <!-- Image -->
@@ -154,10 +156,13 @@ const activeFileURL = computed(() => allFiles.value[currentIndex.value] ?? "");
 const activeFilePath = computed(() => props.data.filePath ?? "");
 
 function hasExt(ext: string) {
-  return (
-    activeFileURL.value?.toLowerCase().includes(ext) ||
-    activeFilePath.value?.toLowerCase().includes(ext)
-  );
+  const urlBase = (activeFileURL.value ?? "").split("?")[0].toLowerCase();
+  // Only use filePath for single-file mode — it's a static prop, not per-file
+  const pathBase =
+    allFiles.value.length <= 1
+      ? (activeFilePath.value ?? "").split("?")[0].toLowerCase()
+      : "";
+  return urlBase.endsWith(ext) || pathBase.endsWith(ext);
 }
 
 const zoom = ref(1);

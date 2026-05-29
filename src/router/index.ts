@@ -3,6 +3,7 @@ import DashboardLayout from "@/layouts/DashboardLayout.vue";
 import RouteGuard from "@/components/RouteGuard.vue";
 import { operation_routes } from "@/modules/operation/operation.routes";
 import { shipper_routes } from "@/modules/shipper/shipper.routes";
+import { fleet_routes } from "@/modules/fleet/fleet.routes";
 import { useAuthStore } from "@/store/authStore";
 
 const router = createRouter({
@@ -15,7 +16,7 @@ const router = createRouter({
         {
           path: "",
           component: DashboardLayout,
-          children: [...operation_routes, ...shipper_routes],
+          children: [...operation_routes, ...shipper_routes, ...fleet_routes],
         },
       ],
     },
@@ -66,5 +67,21 @@ router.beforeEach(async (to, from, next) => {
     next();
   }
 });
+
+// When a lazy-loaded chunk is missing (old index.html + new deployment), reload once
+router.onError((error) => {
+  const isChunkError =
+    error.message.includes('Failed to fetch dynamically imported module') ||
+    error.message.includes('Importing a module script failed') ||
+    error.message.includes('Unable to preload CSS')
+
+  if (isChunkError) {
+    const reloadedKey = 'chunk-reload-attempted'
+    if (!sessionStorage.getItem(reloadedKey)) {
+      sessionStorage.setItem(reloadedKey, '1')
+      window.location.reload()
+    }
+  }
+})
 
 export default router;

@@ -97,9 +97,9 @@ export const printSummary = (
         )
         .join("")}
       <tr class="total-row">
-        <td colspan="${columns.length - 2}" style="text-align: right;">GRAND TOTAL (ETB): </td>
+        <td colspan="${columns.length - 3}" style="text-align: right;">GRAND TOTAL (ETB): </td>
         <td style="text-align: right;">${totalAmount.toLocaleString()}</td>
-        <td></td>
+        <td colspan="2"></td>
       </tr>
     </tbody>
   </table>

@@ -54,7 +54,7 @@
                 name="CKRFCode"
                 hey
                 label="CKRF Code"
-                :validation="{ required }"
+                :validation="{ required }"totalPrice
               />
             </template>
           </component>

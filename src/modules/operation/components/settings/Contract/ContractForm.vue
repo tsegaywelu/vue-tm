@@ -40,11 +40,11 @@ const counterpartyId = ref("");
 
 // Route URL: carrier mode = auth carrier ID; shipper mode = selected carrier ID
 const routeCarrierId = computed(() =>
-  props.mode === "shipper" ? counterpartyId.value : authCarrierId
+  props.mode === "shipper" ? counterpartyId.value : authCarrierId,
 );
 
 const counterpartyFieldName = computed(() =>
-  props.mode === "shipper" ? "carrier" : "shipper"
+  props.mode === "shipper" ? "carrier" : "shipper",
 );
 
 const selectedRouteData = ref<any>(null);
@@ -250,9 +250,13 @@ function removeRouteFromContract(idx: number) {
           name="tempAgents"
           label="Agents"
           url="/agent/shipper/carrier"
-          :label_key="(item: any) => `${item.name} - ${item?.location?.city ?? ''}`"
+          :label_key="
+            (item: any) => `${item.name} - ${item?.location?.city ?? ''}`
+          "
           value_key="_id"
           multiple
+          searchable
+          :params="(state) => ({ q: undefined, 'name[regex]': state.search })"
           :show_validation_status="false"
           :attributes="{ disabled: !counterpartyId }"
         />
@@ -352,6 +356,10 @@ function removeRouteFromContract(idx: number) {
   </InputParent>
 
   <div class="flex justify-end pt-4 gap-4">
-    <slot name="actions" :addedRoutes="addedRoutes" :counterpartyId="counterpartyId" />
+    <slot
+      name="actions"
+      :addedRoutes="addedRoutes"
+      :counterpartyId="counterpartyId"
+    />
   </div>
 </template>

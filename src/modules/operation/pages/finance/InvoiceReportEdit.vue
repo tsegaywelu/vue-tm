@@ -140,6 +140,7 @@
                   url="/shipment/receivableShipment"
                   label_key="shipmentCode"
                   value_key="_id"
+                  search_key="shipmentCode"
                   :attributes="{
                     placeholder: 'Search and select shipments to add...',
                   }"

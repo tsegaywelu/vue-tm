@@ -7,33 +7,20 @@
         description="Select carrier, route, and define order parameters."
       >
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <SelectInput
+          <ShipperInput
             name="shipper"
-            label="Shipper"
-            searchable
-            url="/shipper/contractedShippers"
             :display_value="internalLabels.shipper"
-            :validation="{
-              required,
-            }"
+            :validation="{ required }"
             :params="
-              (state) => {
-                return {
-                  page: undefined,
-                  limit: undefined,
-                  q: undefined,
-                  name: {
-                    regex: state.search,
-                  },
-                };
-              }
+              (state: any) => ({
+                page: undefined,
+                limit: undefined,
+                q: undefined,
+                name: { regex: state.search },
+              })
             "
-            :attributes="{
-              placeholder: 'Select carrier',
-            }"
-            label_key="shipper.name"
-            value_key="shipper._id"
-            @select="(opt) => handleShipperSelect(opt.item, form)"
+            :attributes="{ placeholder: 'Select carrier' }"
+            @select="(opt: any) => handleShipperSelect(opt.item, form)"
           />
 
           <component
@@ -43,10 +30,12 @@
             <template #default="[shipper]">
               <SelectInput
                 :key="shipper"
-                :params="{
+                :params="state=>({
                   page: undefined,
                   limit: undefined,
-                }"
+                  q: undefined,
+                  'routeName[regexAny]': state.search
+                })"
                 name="route"
                 label="Route"
                 searchable
@@ -116,7 +105,7 @@
             :pending="isRouteDetailsLoading"
             :initial_labels="internalLabels.commodity"
             :validation="{
-              required: (val: any) => required(val),
+              required,
             }"
           />
 
@@ -146,18 +135,10 @@
         description="Specify vehicle type, trip details, and quantities."
       >
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <SelectInput
+          <VehicleTypeInput
             name="vehicleType"
-            label="Vehicle Type"
-            :attributes="{
-              placeholder: 'Select vehicle type',
-            }"
-            url="/vehicle-type"
-            label_key="name"
-            value_key="_id"
-            :validation="{
-              required,
-            }"
+            :attributes="{ placeholder: 'Select vehicle type' }"
+            :validation="{ required }"
           />
 
           <SelectInput
@@ -275,6 +256,8 @@ import { ref, watch, onMounted, computed } from "vue";
 import Form from "@/components/form/Form.vue";
 import Input from "@/components/form/Input.vue";
 import SelectInput from "@/components/form/SelectInput.vue";
+import ShipperInput from "@/components/common/inputs/ShipperInput.vue";
+import VehicleTypeInput from "@/components/common/inputs/VehicleTypeInput.vue";
 import TextareaInput from "@/components/form/TextareaInput.vue";
 import Colapsable from "@/components/common/Colapsable.vue";
 import { required } from "@/utils/validations";

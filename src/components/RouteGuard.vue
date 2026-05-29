@@ -48,7 +48,9 @@ const router = useRouter();
 const isRestoring = ref(false);
 
 onMounted(async () => {
-  if (authStore.is_authenticated && !authStore.current_user) {
+  if (!authStore.is_authenticated) return;
+
+  if (!authStore.current_user) {
     isRestoring.value = true;
     try {
       await authStore.fetch_user();
@@ -57,41 +59,38 @@ onMounted(async () => {
           name: "login",
           query: { redirect: router.currentRoute.value.fullPath },
         });
-      } else {
-        const currentRoute = router.currentRoute.value;
-        // If we are at the root, redirect to the default home route
-        if (currentRoute.path === "/") {
-          router.push(authStore.get_default_home_route());
-          return;
-        }
-
-        // Validate permission for the requested route now that user is loaded
-        if (currentRoute.meta.permission) {
-          const perm = currentRoute.meta.permission;
-          const allowed = Array.isArray(perm)
-            ? (perm as { subject: string; actions: string[] }[]).some((p) =>
-                authStore.has_permission(p.subject, p.actions),
-              )
-            : authStore.has_permission(perm as string, [
-                "view",
-                "read",
-                "manage",
-              ]);
-          if (!allowed) {
-            router.push("/unauthorized");
-          }
-        }
+        return;
       }
     } catch (error) {
       router.push({
         name: "login",
         query: { redirect: router.currentRoute.value.fullPath },
       });
+      return;
     } finally {
-      // Small delay for smooth transition
       setTimeout(() => {
         isRestoring.value = false;
       }, 500);
+    }
+  }
+
+  // User is loaded (either pre-loaded from login or just fetched)
+  const currentRoute = router.currentRoute.value;
+
+  if (currentRoute.path === "/") {
+    router.push(authStore.get_default_home_route());
+    return;
+  }
+
+  if (currentRoute.meta.permission) {
+    const perm = currentRoute.meta.permission;
+    const allowed = Array.isArray(perm)
+      ? (perm as { subject: string; actions: string[] }[]).some((p) =>
+          authStore.has_permission(p.subject, p.actions),
+        )
+      : authStore.has_permission(perm as string, ["view", "read", "manage"]);
+    if (!allowed) {
+      router.push("/unauthorized");
     }
   }
 });

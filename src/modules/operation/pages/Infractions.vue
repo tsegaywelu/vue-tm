@@ -3,7 +3,12 @@
     <!-- Tab 1: Infractions List -->
     <div v-if="activeTab === 'infractions'">
       <Teleport to="#page-actions" defer>
-        <Button v-permission="'INFRACTION:create'" size="md" variant="primary" @click="handleOpenAddModal">
+        <Button
+          v-permission="'INFRACTION:create'"
+          size="md"
+          variant="primary"
+          @click="handleOpenAddModal"
+        >
           New Infraction
         </Button>
       </Teleport>
@@ -19,7 +24,9 @@
           }}</span>
         </template>
         <template #cell-shipment="{ row }">
-          <span class="text-grey-600">{{ row.shipment?.shipmentCode || "-" }}</span>
+          <span class="text-grey-600">{{
+            row.shipment?.shipmentCode || "-"
+          }}</span>
         </template>
         <template #cell-totalFine="{ row }">
           <span class="font-bold text-grey-900">{{
@@ -27,7 +34,10 @@
           }}</span>
         </template>
         <template #cell-status="{ row }">
-          <Status :variant="row.status || 'pending'" :label="row.status || 'Pending'" />
+          <Status
+            :variant="row.status || 'pending'"
+            :label="row.status || 'Pending'"
+          />
         </template>
         <template #cell-actions="{ row }">
           <div @click.stop class="flex justify-center">
@@ -85,7 +95,10 @@
 
     <!-- Tab 2: Infraction Types Management -->
     <div v-if="activeTab === 'types'" class="flex flex-col gap-6">
-      <div ref="formContainer" class="bg-grey-25 rounded-3xl p-6 border border-grey-100">
+      <div
+        ref="formContainer"
+        class="bg-grey-25 rounded-3xl p-6 border border-grey-100"
+      >
         <h3 class="text-lg font-bold text-grey-900 mb-4">
           {{ selectedType ? "Edit Infraction Type" : "Add Infraction Type" }}
         </h3>
@@ -103,15 +116,12 @@
                   placeholder="e.g. Over Speeding"
                 />
               </div>
-              <div class="flex-1">
-                <Input
-                  name="description"
-                  label="Description"
-                  placeholder="Type description"
-                />
-              </div>
               <div class="shrink-0 flex gap-2">
-                <Button size="md" variant="outline" @click="resetTypeForm(form)">
+                <Button
+                  size="md"
+                  variant="outline"
+                  @click="resetTypeForm(form)"
+                >
                   Reset
                 </Button>
                 <SubmitButton>
@@ -124,8 +134,14 @@
       </div>
 
       <div class="rounded-3xl p-6 border border-grey-100 bg-white">
-        <h3 class="text-lg font-bold text-grey-900 mb-4">Infraction Types List</h3>
-        <Table :columns="typeColumns" :rows="typesResponse" :loading="typesLoading">
+        <h3 class="text-lg font-bold text-grey-900 mb-4">
+          Infraction Types List
+        </h3>
+        <Table
+          :columns="typeColumns"
+          :rows="typesResponse"
+          :loading="typesLoading"
+        >
           <template #cell-name="{ row }">
             <span class="font-bold text-grey-900">{{ row.name }}</span>
           </template>
@@ -133,7 +149,9 @@
             <span class="text-grey-600">{{ row.description || "-" }}</span>
           </template>
           <template #cell-createdAt="{ row }">
-            <span class="text-grey-600">{{ dateFormatter(row.createdAt) }}</span>
+            <span class="text-grey-600">{{
+              dateFormatter(row.createdAt)
+            }}</span>
           </template>
           <template #cell-actions="{ row }">
             <Button
@@ -162,10 +180,15 @@ import { usePagination } from "@/composables/usePagination";
 import { openModal } from "@customizer/modal-x";
 import Dropdown from "@/components/common/Dropdown.vue";
 import DropDownItem from "@/components/common/DropDownItem.vue";
-import Table from "@/components/common/Table.vue";
+import Table, { type TableColumn } from "@/components/common/Table.vue";
 import Status from "@/components/common/Status.vue";
 import { currencyFormatter, dateFormatter } from "@/utils/utils";
-import { update_infraction_status, add_infraction_type, update_infraction_type } from "../api/infraction.api";
+import {
+  fetch_infraction_by_id,
+  update_infraction_status,
+  add_infraction_type,
+  update_infraction_type,
+} from "../api/infraction.api";
 import { useToastStore } from "@/store/toastStore";
 import { useMutation } from "@tanstack/vue-query";
 
@@ -205,7 +228,9 @@ const handleOpenAddModal = async () => {
 };
 
 const handleEdit = async (row: any) => {
-  const success = await openModal("AddInfractionModal", { infraction: row });
+  const res = await fetch_infraction_by_id(row._id);
+  const infraction = res?.data ?? row;
+  const success = await openModal("AddInfractionModal", { infraction });
   if (success) {
     refetch();
   }
@@ -230,7 +255,9 @@ const handleAction = async (row: any, action: string) => {
         toast.error(res.error || `Failed to approve infraction`);
       }
     } catch (err: any) {
-      toast.error(err.response?.data?.description || `Failed to approve infraction`);
+      toast.error(
+        err.response?.data?.description || `Failed to approve infraction`,
+      );
     }
   } else if (action === "reject") {
     const success = await openModal("RejectInfractionModal", {
@@ -256,7 +283,7 @@ const navigateToDetails = (row: any) => {
 // Infraction Types Management
 const formContainer = ref<HTMLElement | null>(null);
 const selectedType = ref<any>(null);
-const typeInitialValues = ref({ name: "", description: "" });
+const typeInitialValues = ref({ name: "" });
 
 const {
   response: typesResponse,
@@ -272,7 +299,6 @@ const {
 
 const typeColumns: TableColumn<any>[] = [
   { key: "name", label: "Type Name", field: "name" },
-  { key: "description", label: "Description", field: "description" },
   { key: "createdAt", label: "Created At", field: "createdAt" },
   { key: "actions", label: "Action", field: "", cellAlign: "right" },
 ];
@@ -290,7 +316,6 @@ const handleTypeEdit = (row: any) => {
   selectedType.value = row;
   typeInitialValues.value = {
     name: row.name || "",
-    description: row.description || "",
   };
 
   formContainer.value?.scrollIntoView({ behavior: "smooth" });
@@ -298,7 +323,7 @@ const handleTypeEdit = (row: any) => {
 
 const resetTypeForm = (form: any) => {
   selectedType.value = null;
-  typeInitialValues.value = { name: "", description: "" };
+  typeInitialValues.value = { name: "" };
   form.reset();
 };
 
@@ -312,7 +337,7 @@ const handleTypeSubmit = async (values: any) => {
       toast.success("Infraction Type updated successfully");
       refetchTypes();
       selectedType.value = null;
-      typeInitialValues.value = { name: "", description: "" };
+      typeInitialValues.value = { name: "" }; 
     } else {
       toast.error(res.error || "Failed to update infraction type");
     }
@@ -321,7 +346,7 @@ const handleTypeSubmit = async (values: any) => {
     if (res.success || res.status === 200 || res.status === 201) {
       toast.success("Infraction Type created successfully");
       refetchTypes();
-      typeInitialValues.value = { name: "", description: "" };
+      typeInitialValues.value = { name: "" };
     } else {
       toast.error(res.error || "Failed to create infraction type");
     }

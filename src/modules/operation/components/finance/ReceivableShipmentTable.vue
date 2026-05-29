@@ -22,7 +22,6 @@
       v-model="selectionModel"
       :loading="isLoading"
       @row_click="handleAction($event, 'view')"
-      v-model:search_value="searchTerm"
       :search_placeholder="dynamicSearchPlaceholder"
     >
       <template #search-prefix>
@@ -163,7 +162,6 @@ const searchFieldOptions = [
 ];
 
 const selectedSearchField = ref("shipperIssueVoucher");
-const searchTerm = ref("");
 
 const dynamicSearchPlaceholder = computed(() => {
   const option = searchFieldOptions.find(
@@ -172,11 +170,31 @@ const dynamicSearchPlaceholder = computed(() => {
   return option ? `Search by ${option.label}...` : "Search...";
 });
 
-const activeFilters = ref({});
+const activeFilters = ref<Record<string, any>>({});
+
+// activeFilters.value.searchField = selectedSearchField.value;
+
+watch(selectedSearchField, () => {
+  activeFilters.value = { ...activeFilters.value };
+});
 
 const selectionModel = computed({
   get: () => props.selection || [],
   set: (val) => emit("update:selection", val),
+});
+
+const { response, fullResponse, refetch, isLoading } = usePagination<any>({
+  id: "receivable-shipment-list",
+  url: "/shipment/receivableShipment",
+  params: (state) => ({
+    ...(state.search ? { [selectedSearchField.value]: state.search } : {}),
+    ...activeFilters.value,
+    ...(props.dateRange?.start
+      ? { dispatchStartDate: props.dateRange.start }
+      : {}),
+    ...(props.dateRange?.end ? { dispatchEndDate: props.dateRange.end } : {}),
+    q: undefined,
+  }),
 });
 
 watch(
@@ -186,25 +204,6 @@ watch(
   },
   { deep: true },
 );
-
-const { response, fullResponse, refetch, isLoading } = usePagination<any>({
-  id: "receivable-shipment-list",
-  url: "/shipment/receivableShipment",
-  params: computed(() => {
-    const params: any = { ...activeFilters.value };
-    if (searchTerm.value) {
-      params[`${selectedSearchField.value}`] = searchTerm.value;
-      params.q = undefined;
-    }
-    if (props.dateRange?.start) {
-      params.dispatchStartDate = props.dateRange.start;
-    }
-    if (props.dateRange?.end) {
-      params.dispatchEndDate = props.dateRange.end;
-    }
-    return params;
-  }),
-});
 
 const summary = computed(() => fullResponse.value?.result?.summary);
 

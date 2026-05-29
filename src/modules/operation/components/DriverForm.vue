@@ -18,12 +18,12 @@
             name="middleName"
             label="Middle Name"
             :attributes="{ placeholder: 'Enter middle name' }"
+            :validation="{ required }"
           />
 
           <Input
             name="lastName"
             label="Last Name"
-            :validation="{ required }"
             :attributes="{ placeholder: 'Enter last name' }"
           />
 
@@ -94,10 +94,7 @@
         description="Employment details and driver status."
       >
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <ToggleInput
-            name="isEmployed"
-            label="Is Employee?"
-          />
+          <ToggleInput name="isEmployed" label="Is Employee?" />
 
           <Input
             name="employeeNumber"
@@ -209,17 +206,9 @@
               :attributes="{ placeholder: 'e.g. University Name' }"
             />
 
-            <BaseInput
-              v-model="edu.startDate"
-              label="Start Date"
-              type="date"
-            />
+            <BaseInput v-model="edu.startDate" label="Start Date" type="date" />
 
-            <BaseInput
-              v-model="edu.endDate"
-              label="End Date"
-              type="date"
-            />
+            <BaseInput v-model="edu.endDate" label="End Date" type="date" />
 
             <button
               v-if="educationalBackground.length > 1"
@@ -270,11 +259,7 @@
               type="date"
             />
 
-            <BaseInput
-              v-model="work.endDate"
-              label="End Date"
-              type="date"
-            />
+            <BaseInput v-model="work.endDate" label="End Date" type="date" />
 
             <button
               v-if="workExperience.length > 1"
@@ -321,11 +306,7 @@
         title="Document Uploads"
         description="Upload driver files and identity documents."
       >
-        <FileInput
-          name="driverDocuments"
-          label="Driver Documents"
-          multiple
-        />
+        <FileInput name="driverDocuments" label="Driver Documents" multiple />
       </Colapsable>
 
       <div class="pt-10 flex justify-end gap-4">
@@ -360,11 +341,11 @@ const triggerFileInput = () => {
 };
 
 const educationalBackground = ref<any[]>([
-  { type: "", institutionName: "", startDate: "", endDate: "" }
+  { type: "", institutionName: "", startDate: "", endDate: "" },
 ]);
 
 const workExperience = ref<any[]>([
-  { position: "", companyName: "", startDate: "", endDate: "" }
+  { position: "", companyName: "", startDate: "", endDate: "" },
 ]);
 
 // Initialize arrays on edit mode
@@ -372,21 +353,31 @@ watch(
   () => props.initialValues,
   (newVal) => {
     if (newVal?.educationalBackground?.length) {
-      educationalBackground.value = newVal.educationalBackground.map((el: any) => ({
-        ...el,
-        startDate: el.startDate ? new Date(el.startDate).toISOString().split("T")[0] : "",
-        endDate: el.endDate ? new Date(el.endDate).toISOString().split("T")[0] : "",
-      }));
+      educationalBackground.value = newVal.educationalBackground.map(
+        (el: any) => ({
+          ...el,
+          startDate: el.startDate
+            ? new Date(el.startDate).toISOString().split("T")[0]
+            : "",
+          endDate: el.endDate
+            ? new Date(el.endDate).toISOString().split("T")[0]
+            : "",
+        }),
+      );
     }
     if (newVal?.workExperience?.length) {
       workExperience.value = newVal.workExperience.map((el: any) => ({
         ...el,
-        startDate: el.startDate ? new Date(el.startDate).toISOString().split("T")[0] : "",
-        endDate: el.endDate ? new Date(el.endDate).toISOString().split("T")[0] : "",
+        startDate: el.startDate
+          ? new Date(el.startDate).toISOString().split("T")[0]
+          : "",
+        endDate: el.endDate
+          ? new Date(el.endDate).toISOString().split("T")[0]
+          : "",
       }));
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 const addEdu = () => {
@@ -394,7 +385,7 @@ const addEdu = () => {
     type: "",
     institutionName: "",
     startDate: "",
-    endDate: ""
+    endDate: "",
   });
 };
 
@@ -407,7 +398,7 @@ const addWork = () => {
     position: "",
     companyName: "",
     startDate: "",
-    endDate: ""
+    endDate: "",
   });
 };
 
@@ -418,7 +409,9 @@ const removeWork = (index: number) => {
 const handleSubmit = (values: any) => {
   // Filter out any empty array items to prevent backend validation errors
   const filteredEdu = educationalBackground.value
-    .filter((edu) => edu.type && edu.institutionName && edu.startDate && edu.endDate)
+    .filter(
+      (edu) => edu.type && edu.institutionName && edu.startDate && edu.endDate,
+    )
     .map((edu) => ({
       ...edu,
       startDate: new Date(edu.startDate).toISOString(),
@@ -426,7 +419,10 @@ const handleSubmit = (values: any) => {
     }));
 
   const filteredWork = workExperience.value
-    .filter((work) => work.position && work.companyName && work.startDate && work.endDate)
+    .filter(
+      (work) =>
+        work.position && work.companyName && work.startDate && work.endDate,
+    )
     .map((work) => ({
       ...work,
       startDate: new Date(work.startDate).toISOString(),
@@ -456,7 +452,11 @@ const handleSubmit = (values: any) => {
   }
 
   // Cleanup bank account fields
-  if (payload.bankAccount && !payload.bankAccount.bank && !payload.bankAccount.accountNumber) {
+  if (
+    payload.bankAccount &&
+    !payload.bankAccount.bank &&
+    !payload.bankAccount.accountNumber
+  ) {
     delete payload.bankAccount;
   }
 

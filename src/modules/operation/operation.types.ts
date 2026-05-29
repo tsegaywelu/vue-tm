@@ -268,6 +268,7 @@ export interface Shipment {
     middleName?: string;
     lastName?: string;
     phoneNumber?: string;
+    licenseNumber?: string;
   };
   statusTime: { [K in ShipmentStatus]: string };
   transporterPrice?: string;
@@ -313,6 +314,11 @@ export interface Shipment {
   };
   civ: string;
   shipperIssueVoucher: string;
+  agentReceiveVoucher?: string;
+  agentIssueVoucher?: string;
+  shipperReceiveVoucher?: string;
+  odometerAtComplete?: number;
+  fuelReadingAtComplete?: number;
   createdByUser: {
     username: string;
   };
@@ -690,6 +696,7 @@ export interface Vehicle {
   };
   status: string;
   isOperational: boolean;
+  operationalRole?: 'SHIPMENT' | 'NON_SHIPMENT' | 'BOTH';
   remark?: string;
   fuelRateLoaded?: number;
   fuelRateUnloaded?: number;
@@ -717,9 +724,28 @@ export interface Vehicle {
     _id: string;
     name: string;
   };
+  vehicleGroup?: {
+    _id: string;
+    name: string;
+  };
+  type?: {
+    _id: string;
+    name: string;
+  };
   transporter?: {
     _id: string | null;
     name: string | null;
+  };
+  lease?: {
+    startDate?: string;
+    endDate?: string;
+    amount?: number;
+    transporter?: string;
+    leaseDirection?: string;
+    leaseAgreement?: {
+      coversMaintenance?: boolean;
+      coversAdvance?: boolean;
+    };
   };
   carrier?: string;
   createdAt?: string;

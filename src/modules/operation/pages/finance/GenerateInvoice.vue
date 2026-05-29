@@ -5,7 +5,7 @@
     </div>
 
     <div v-else-if="invoice">
-      <!-- Actions Header -->
+      <!-- Actions Header (screen only) -->
       <div class="flex justify-between items-center mb-6 no-print">
         <h1 class="text-2xl font-black text-grey-900">Invoice Report</h1>
         <div class="flex gap-3">
@@ -23,6 +23,17 @@
           </Button>
         </div>
       </div>
+
+      <!-- Company Header (print + screen) -->
+      <div class="flex items-center gap-4 border-2 border-gray-300 p-4 mb-4 print-header">
+        <img src="@/assets/rlogo.png" alt="Company Logo" class="h-16 w-auto object-contain" />
+        <div class="flex-1 text-center">
+          <h1 class="text-xl font-bold">RaAZ Transport S/C</h1>
+          <p class="text-sm text-gray-600">TIN: 0043617352</p>
+          <h2 class="text-base font-bold uppercase mt-1">Transport Payment Request</h2>
+        </div>
+      </div>
+      <p class="text-sm mb-3"><b>Ref:</b> <u>{{ (invoice as any)?.reference }}</u></p>
 
       <!-- IN_BOUND / SITE_TRANSFER Layout -->
       <div v-if="productType === 'IN_BOUND' || productType === 'SITE_TRANSFER'">
@@ -167,7 +178,7 @@
               <td class="border border-grey-800 px-1 py-1 font-bold text-center">-</td>
               <td class="border border-grey-800 px-1 py-1 font-bold">{{ shipment.packagingName || shipment.packaging?.name }}</td>
               <td class="border border-grey-800 px-1 py-1 font-bold">{{ shipment.routeOrigin || shipment.route?.origin }}</td>
-              <td class="border border-grey-800 px-1 py-1 font-bold text-center">{{ generateRouteCode(shipment) }}</td>
+              <td class="border border-grey-800 px-1 py-1 font-bold text-center">{{ shipment.route?.routeCode || shipment.order?.route?.routeCode || generateRouteCode(shipment) }}</td>
               <td class="border border-grey-800 px-1 py-1 font-bold">
                 {{ shipment.routeOrigin || shipment.route?.origin }}_{{ shipment.routeDestination || shipment.route?.destination }}
               </td>
@@ -176,9 +187,9 @@
               </td>
               <td class="border border-grey-800 px-1 py-1 font-bold text-center">Delivery</td>
               <td class="border border-grey-800 px-1 py-1 font-bold text-center">{{ shipment.quantity || shipment.order?.totalRequest }}</td>
-              <td class="border border-grey-800 px-1 py-1 font-bold text-center">{{ shipment.quantity || shipment.order?.totalRequest }}</td>
+              <td class="border border-grey-800 px-1 py-1 font-bold text-center">{{ shipment.returnQty ?? '-' }}</td>
               <td class="border border-grey-800 px-1 py-1 font-bold text-right">{{ formatNumber(shipment.totalPrice) }}</td>
-              <td class="border border-grey-800 px-1 py-1 font-bold text-center">1</td>
+              <td class="border border-grey-800 px-1 py-1 font-bold text-center">{{ computeRate(shipment) }}</td>
               <td class="border border-grey-800 px-1 py-1 font-bold text-right">{{ formatNumber(shipment.totalPrice) }}</td>
             </tr>
              <tr class="bg-grey-50 font-bold">
@@ -250,7 +261,9 @@ import { useQuery } from "@tanstack/vue-query";
 import { fetch_invoice_details } from "../../api/invoice.api";
 import Button from "@/components/common/Button.vue";
 import { formatNumber } from "@/utils/utils";
-import { exportToExcel } from "@/utils/excel";
+import { exportInvoiceToExcel } from "@/utils/excel";
+import { exportInvoiceWithTemplate } from "@/utils/invoice-template-export";
+import { fetch_invoice_template } from "../../api/invoice-template.api";
 
 const route = useRoute();
 const invoiceId = route.params.id as string;
@@ -308,24 +321,31 @@ const generateRouteCode = (shipment: any) => {
   return `${origin.substring(0, 3)}_${destination.substring(0, 3)}`.toUpperCase();
 };
 
+const computeRate = (shipment: any) => {
+  const qty = shipment.quantity || shipment.order?.totalRequest || shipment.dispatchWeight || 0;
+  if (!shipment.totalPrice || !qty) return "-";
+  return formatNumber(+(shipment.totalPrice / qty).toFixed(2));
+};
+
 const printInvoice = () => {
   window.print();
 };
 
-const handleExport = () => {
-  if (!invoice.value?.shipments) return;
-  
-  const data = invoice.value.shipments.map((s: any, i: number) => ({
-    No: i + 1,
-    Date: s.dispatchDate?.split('T')[0],
-    Reference: s.reference,
-    Origin: s.route?.origin,
-    Destination: s.route?.destination,
-    Vehicle: s.vehicle?.plateNumber,
-    Amount: s.totalPrice,
-  }));
-
-  exportToExcel(data, `Invoice_${invoice.value.reference || 'Report'}`, "Invoice Details");
+const handleExport = async () => {
+  const inv = invoice.value as any;
+  if (!inv?.shipments) return;
+  const pt = inv.shipments[0]?.productType;
+  const shipperId = inv.shipper?._id || inv.shipments[0]?.order?.shipper?._id;
+  if (shipperId && pt) {
+    const templateRes = await fetch_invoice_template(shipperId, pt);
+    const raw = (templateRes?.data as any);
+    const content = raw?.content ? JSON.parse(raw.content) : null;
+    if (content) {
+      exportInvoiceWithTemplate(inv, content);
+      return;
+    }
+  }
+  exportInvoiceToExcel(inv);
 };
 </script>
 

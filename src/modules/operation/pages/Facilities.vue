@@ -63,7 +63,7 @@ const columns: TableColumn<any>[] = [
 ];
 
 const openFacilityModal = async (facility: any = null) => {
-  const res = await openModal("FacilityModal", { facility });
+  const res = await openModal("FacilityModal", { facility, isShipper: false });
   if (res) {
     refetch();
   }

@@ -36,7 +36,12 @@ export const getPaidTo = (row: any) => {
   } else if (row.supplier) {
     return row.supplier?.name || "-";
   } else if (row.payableType === "vehicleLeaseAgreement") {
-    return row.transporter?.name || "asd";
-  } else if(row.payableType == 'Sub-Contract Advance')
+    return row.transporter?.name || "-";
+  } else if (
+    row.payableType === "prePayment" ||
+    row.payableType === "prePayments"
+  ) {
+    return row.transporter?.name || "-";
+  }
   return "-";
 };

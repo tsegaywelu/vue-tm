@@ -64,6 +64,7 @@
         label_key="name"
         value_key="_id"
         url="/shipper"
+        search_key="name"
         :attributes="{ placeholder: 'Choose Shipper' }"
         :initial_labels="fieldLabels['shipper']"
         @select="(opt: any) => captureLabel('shipper', opt, '_id', 'name')"

@@ -50,15 +50,10 @@
             :attributes="{ placeholder: 'Enter chassis number' }"
           />
 
-          <SelectInput
+          <VehicleTypeInput
             name="vehicleType"
-            label="Vehicle Type"
-            url="/vehicle-type"
-            label_key="name"
-            value_key="_id"
             :validation="{ required }"
             :attributes="{ placeholder: 'Select type' }"
-            :options="seedOption('vehicleType')"
           />
 
           <SelectInput
@@ -68,7 +63,6 @@
             label_key="name"
             value_key="_id"
             :attributes="{ placeholder: 'Select group' }"
-            :options="seedOption('vehicleGroup')"
           />
 
           <SelectInput
@@ -78,7 +72,6 @@
             label_key="name"
             value_key="_id"
             :attributes="{ placeholder: 'Select category' }"
-            :options="seedOption('type')"
           />
 
           <SelectInput
@@ -88,7 +81,6 @@
             label_key="name"
             value_key="_id"
             :attributes="{ placeholder: 'Select model' }"
-            :options="seedOption('vehicleModel')"
           />
 
           <SelectInput
@@ -98,17 +90,11 @@
             label_key="name"
             value_key="_id"
             :attributes="{ placeholder: 'Select maker' }"
-            :options="seedOption('maker')"
           />
 
-          <SelectInput
+          <RegionInput
             name="region"
-            label="Region"
-            url="/region"
-            label_key="name"
-            value_key="_id"
             :attributes="{ placeholder: 'Select region' }"
-            :options="seedOption('region')"
           />
 
           <DateInput
@@ -116,6 +102,14 @@
             label="Last Service Date"
             :validation="{ required, dateLessThanOrEqalToToday }"
             :attributes="{ placeholder: 'Select date' }"
+          />
+
+          <SelectInput
+            name="operationalRole"
+            label="Operational Role"
+            :options="operationalRoleOptions"
+            :validation="{ required }"
+            :attributes="{ placeholder: 'Select operational role' }"
           />
         </div>
       </Colapsable>
@@ -154,17 +148,10 @@
       >
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <SelectInput
-            searchable
             name="driver"
             label="Assigned Driver"
             url="/driver"
-            :params="
-              (state) => ({
-                driverStatus: 'vehicle_not_assigned',
-                q: undefined,
-                'name[regexAny]': state.search,
-              })
-            "
+            :params="{ driverStatus: 'vehicle_not_assigned' }"
             :label_key="
               (item: any) =>
                 `${item.firstName} ${item.middleName || ''} ${item.lastName || ''}`
@@ -172,7 +159,6 @@
             value_key="_id"
             :validation="{ required }"
             :attributes="{ placeholder: 'Select driver' }"
-            :options="seedOption('driver')"
           />
 
           <SelectInput
@@ -198,7 +184,6 @@
               searchable
               :validation="{ required }"
               :attributes="{ placeholder: 'Select transporter' }"
-              :options="seedOption('transporter')"
             />
           </component>
 
@@ -389,7 +374,6 @@
             value_key="_id"
             searchable
             :attributes="{ placeholder: 'Select insurer' }"
-            :options="seedOption('insurance_insurer')"
           />
         </div>
       </Colapsable>
@@ -424,6 +408,9 @@
 import Form from "@/components/form/Form.vue";
 import Input from "@/components/form/Input.vue";
 import SelectInput from "@/components/form/SelectInput.vue";
+import VehicleTypeInput from "@/components/common/inputs/VehicleTypeInput.vue";
+import RegionInput from "@/components/common/inputs/RegionInput.vue";
+import DriverInput from "@/components/common/inputs/DriverInput.vue";
 import DateInput from "@/components/form/DateInput.vue";
 import ToggleInput from "@/components/form/ToggleInput.vue";
 import TextareaInput from "@/components/form/TextareaInput.vue";
@@ -434,19 +421,23 @@ import {
   dateGreaterThanOrEqalToToday,
   required,
 } from "@/utils/validations";
+import { ref } from "vue";
+import Button from "@/components/common/Button.vue";
+import { openModal } from "@customizer/modal-x";
+import { getStaticUrl } from "@/utils/utils";
 
 const props = defineProps<{
   formId: string;
+  mode?: "add" | "edit";
   initialValues: Record<string, any>;
+  labels?: Record<string, string>;
   onSubmit: (values: any) => Promise<void> | void;
   labels?: Record<string, string>;
 }>();
 
-const seedOption = (key: string) =>
-  props.labels?.[key] && props.initialValues?.[key]
-    ? [{ label: props.labels[key], value: props.initialValues[key] }]
-    : [];
-
+const triggerFileInput = () => {
+  // Logic handled by component
+};
 
 const ownershipOptions = [
   { label: "Owned", value: "Owned" },
@@ -488,6 +479,7 @@ const validateLeaseEndDate = (value: any, _msg: any, form: any) => {
 };
 
 const handleSubmit = (values: any) => {
+  // Build the nested objects as expected by the API
   const insuranceInformation = {
     insuredDate: values.insurance_insuredDate,
     insuredAmount: Number(values.insurance_insuredAmount) || 0,
@@ -526,6 +518,7 @@ const handleSubmit = (values: any) => {
     "maker",
     "region",
     "vehicleGroup",
+    "type",
     "mileage",
     "mileageSinceService",
     "driver",
@@ -543,6 +536,8 @@ const handleSubmit = (values: any) => {
     "boloIssueDate",
     "boloExpirationDate",
     "purchaseDate",
+    "transporter",
+    "operationalRole",
   ];
 
   primaryFields.forEach((key) => {
@@ -551,6 +546,7 @@ const handleSubmit = (values: any) => {
     }
   });
 
+  // Ownership specific
   if (values.ownership === "Owned" && values.vehicleUseType) {
     formData.append("vehicleUseType", values.vehicleUseType);
   }
@@ -578,11 +574,10 @@ const handleSubmit = (values: any) => {
     );
   }
 
+  // Files
   if (values.vehicleDocuments && values.vehicleDocuments.length > 0) {
     values.vehicleDocuments.forEach((file: any) => {
-      if (file instanceof File) {
-        formData.append("vehicleDocuments", file);
-      }
+      if (file instanceof File) formData.append("vehicleDocuments", file);
     });
   }
 
