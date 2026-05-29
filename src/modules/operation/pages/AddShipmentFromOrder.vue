@@ -30,6 +30,7 @@ import { useToastStore } from "@/store/toastStore";
 import SubmitButton from "@/components/form/SubmitButton.vue";
 import Button from "@/components/Button.vue";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/vue-query";
+import { ProductType } from "../operation.types";
 
 const router = useRouter();
 const route = useRoute();
@@ -63,6 +64,7 @@ const initialValues = computed(() => {
     vehicleType: data.vehicleType?._id || "",
     packaging: data.packaging?._id || "",
     commodity: data.commodity?.map((c: any) => c._id || c) || [],
+    agent: data.agent?._id || "",
     waypoint: "",
     freightOrder: "",
     dispatchWeight: "",
@@ -118,6 +120,10 @@ const handleCreateShipment = async (values: any, context?: any) => {
       amount: filteredPricingType?.pricePerUnit || 0,
     },
   };
+
+  if (values.productType !== ProductType["Site Transfer"]) {
+    payload.agent = selectedOrder?.agent?._id || values.agent;
+  }
 
   const isOwnedOrRental =
     selectedVehicle?.ownership === "Owned" ||
