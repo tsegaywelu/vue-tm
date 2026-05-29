@@ -12,6 +12,7 @@ import Input from "@/components/form/Input.vue";
 import { icons } from "@/utils/icons";
 import PasswordInput from "@/components/form/PasswordInput.vue";
 import SubmitButton from "@/components/form/SubmitButton.vue";
+import { required } from "@/utils/validations";
 
 const router = useRouter();
 const auth_store = useAuthStore();
@@ -95,16 +96,20 @@ async function submitLogin(values: any) {
     <div
       class="w-full lg:w-1/2 flex items-center justify-center p-4 sm:p-8 bg-surface-beige-light/30"
     >
-      <div class="w-full max-w-md space-y-10">
+      <div class="w-full max-w-md space-y-6 sm:space-y-10 px-5 sm:px-0">
         <!-- Logo & Header -->
         <div class="text-center">
-          <div class="flex flex-col items-center gap-3 mb-6">
+          <div class="flex flex-col items-center gap-1.5 sm:gap-3 mb-3 sm:mb-6">
             <div class="p-4 bg-white rounded-3xl shadow-soft">
               <i class="h-12 w-auto block" v-html="icons['raaz-logo']"></i>
             </div>
-            <span class="text-lg font-extrabold text-grey-800 tracking-tight">ChiNet TMS</span>
+            <span class="text-lg font-extrabold text-grey-800 tracking-tight"
+              >ChiNet TMS</span
+            >
           </div>
-          <h2 class="text-3xl sm:text-4xl font-extrabold text-grey-900 tracking-tight">
+          <h2
+            class="text-3xl sm:text-4xl font-extrabold text-grey-900 tracking-tight"
+          >
             Welcome Back
           </h2>
           <p class="text-grey-500 mt-2">
@@ -149,6 +154,7 @@ async function submitLogin(values: any) {
           <Input
             name="username"
             label="Username"
+            :validation="{ required }"
             :attributes="{ placeholder: 'Enter your username' }"
           >
             <template #left_component>

@@ -48,10 +48,14 @@
         @click.stop="toggleRow(row)"
       >
         <div
-          class="size-5 rounded transition-colors flex items-center justify-center"
-          :class="[isChecked(row) ? ' ' : 'bg-white border border-grey-300']"
+          class="size-5 rounded border-2 transition-colors flex items-center justify-center"
+          :class="[
+            isChecked(row)
+              ? 'bg-primary border-primary'
+              : 'bg-white border-gray-400',
+          ]"
         >
-          <i class="*:size-5" v-if="isChecked(row)" v-html="icons.check"></i>
+          <i class="*:size-3.5" v-if="isChecked(row)" v-html="icons.check"></i>
         </div>
       </div>
     </template>

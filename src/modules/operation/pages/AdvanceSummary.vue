@@ -1,12 +1,12 @@
 <template>
   <div class="flex flex-col gap-4">
-    <Teleport to="#page-actions" defer>
-      <div class="flex items-center gap-3">
-        <Button size="md" variant="outline" @click="handlePrint">
-          <i class="mdi mdi-printer mr-2" />
-          Print
-        </Button>
-      </div>
+    <Teleport to="#page-title-actions" defer>
+      <button
+        class="size-8 rounded-xl border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors"
+        @click="handlePrint"
+      >
+        <i class="*:size-4" v-html="icons.printer" />
+      </button>
     </Teleport>
 
     <AdvanceTable
@@ -15,6 +15,8 @@
       :columns="columns"
       checkable
       v-model="selectedAdvances"
+      :hide-on-sm-screen="['plateNumber', 'route', 'perDiemAdvance', 'otherAdvance', 'fuelAdvance', 'remark']"
+      :column-span="{ shipment: 3, driver: 2, date: 1, type: 1, total: 2, status: 3 }"
     />
   </div>
 </template>
@@ -22,10 +24,10 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import AdvanceTable from "../components/AdvanceTable.vue";
-import Button from "@/components/common/Button.vue";
 import type { TableColumn } from "@/components/common/Table.vue";
 import { printSummary } from "@/utils/print";
 import { useAuthStore } from "@/store/authStore";
+import { icons } from "@/utils/icons";
 
 const authStore = useAuthStore();
 const selectedAdvances = ref([]);

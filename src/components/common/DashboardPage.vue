@@ -2,20 +2,20 @@
   <div
     class="flex flex-col mg:gap-2 sm:gap-4 px-2 py-1 sm:px-5 sm:py-4 bg-white rounded-3xl max-w-500 mx-auto min-h-screen animate-fade-in"
   >
-    <div class="flex flex-wrap justify-between items-center gap-y-2 md:gap-y-3">
-      <div class="flex items-center justify-between w-full gap-2">
-        <div class="flex flex-col">
-          <h1 v-if="title" class="text-xl sm:text-2xl font-bold text-gray-800">
-            {{ title }}
-          </h1>
-          <p v-if="description" class="text-gray-600">
-            {{ description }}
-          </p>
-        </div>
-        <div id="page-title-actions" class="flex items-center gap-1"></div>
+    <div class="flex items-center justify-between gap-3">
+      <!-- Left: title + description -->
+      <div class="flex flex-col min-w-0">
+        <h1 v-if="title" class="text-xl sm:text-2xl font-bold text-gray-800">
+          {{ title }}
+        </h1>
+        <p v-if="description" class="text-gray-600 text-sm">
+          {{ description }}
+        </p>
       </div>
-      <div id="page-actions" class="flex flex-wrap items-center gap-2">
-        <!-- Teleport target for page-specific actions -->
+      <!-- Right: icon buttons + full action buttons, all in one row -->
+      <div class="flex items-center gap-2 shrink-0">
+        <div id="page-title-actions" class="flex items-center gap-1"></div>
+        <div id="page-actions" class="flex flex-wrap items-center gap-2"></div>
       </div>
     </div>
 

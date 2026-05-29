@@ -213,8 +213,9 @@
 
     <!-- Mobile Card View -->
     <div class="xl:hidden w-full px-1">
+      <!-- Initial load skeleton -->
       <div
-        v-if="isLoading"
+        v-if="isLoading && accumulated_mobile_rows.length === 0"
         class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-4 mt-4"
       >
         <div
@@ -234,42 +235,72 @@
           </div>
         </div>
       </div>
+
       <div
-        v-else-if="rows.length > 0"
-        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-4 mt-4"
+        v-else-if="accumulated_mobile_rows.length > 0"
+        class="relative w-full mt-4"
+        :style="{ height: `${row_virtualizer.getTotalSize()}px` }"
       >
-        <ResponsiveRow
-          v-for="(row, idx) in table.getRowModel().rows"
-          :key="getRowKeyInternal(row.original)"
-          :idx="idx"
-          :row="row"
-          :hide_numbers="hide_numbers"
-          :alignment="row_alignment"
-          :col_style="col_style"
-          :on_sm_screen_row_alignment="on_sm_screen_row_alignment"
-          :on_sm_screen_column_span="on_sm_screen_column_span"
-          :hide_on_sm_screen="hide_on_sm_screen"
-          :show_labels_in_card="show_labels_in_card"
-          :top_right_cell_key="top_right_cell_key"
-          :get_row_card_class_name="get_row_card_class_name"
-          :action_cell="action_cell"
-          @click="handleRowClick(row.original)"
+        <div
+          v-for="vRow in row_virtualizer.getVirtualItems()"
+          :key="String(vRow.key)"
+          :ref="
+            (el) => {
+              if (el) row_virtualizer.measureElement(el as Element);
+            }
+          "
+          :data-index="vRow.index"
+          :style="{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            transform: `translateY(${vRow.start}px)`,
+            paddingBottom: '12px',
+          }"
         >
-          <!-- Pass all slots down -->
-          <template v-for="(_, slotName) in $slots" #[slotName]="slotProps">
-            <slot :name="slotName" v-bind="slotProps" />
-          </template>
-        </ResponsiveRow>
+          <ResponsiveRow
+            :idx="vRow.index"
+            :row="mobile_rows[vRow.index]"
+            :hide_numbers="hide_numbers"
+            :alignment="row_alignment"
+            :col_style="col_style"
+            :on_sm_screen_row_alignment="on_sm_screen_row_alignment"
+            :on_sm_screen_column_span="on_sm_screen_column_span"
+            :hide_on_sm_screen="hide_on_sm_screen"
+            :show_labels_in_card="show_labels_in_card"
+            :top_right_cell_key="top_right_cell_key"
+            :get_row_card_class_name="get_row_card_class_name"
+            :action_cell="action_cell"
+            @click="handleRowClick(mobile_rows[vRow.index].original)"
+          >
+            <template v-for="(_, slotName) in $slots" #[slotName]="slotProps">
+              <slot :name="slotName" v-bind="slotProps" />
+            </template>
+          </ResponsiveRow>
+        </div>
       </div>
-      <div v-else class="py-8 grid place-items-center">
+
+      <div v-else-if="!isLoading" class="py-8 grid place-items-center">
         <EmptyData :title="empty_text" />
+      </div>
+
+      <!-- Sentinel: invisible 1px trigger for IntersectionObserver -->
+      <div v-if="show_pagination" ref="sentinel_ref" class="w-full h-px" />
+
+      <!-- Fetch-more spinner (complement of skeleton: loading + rows already present) -->
+      <div
+        v-if="show_pagination && isLoading && accumulated_mobile_rows.length > 0"
+        class="flex justify-center items-center gap-3 py-8"
+      >
+        <i class="*:size-5" v-html="all_icons.spinner" />
       </div>
     </div>
 
-    <!-- Pagination Context -->
+    <!-- Pagination Context (desktop only — mobile uses infinite scroll) -->
     <div
       v-if="show_pagination"
-      class="flex flex-wrap justify-between gap-2 items-center p-4"
+      class="hidden xl:flex flex-wrap justify-between gap-2 items-center p-4"
       :class="[
         isLoading || rows.length === 0 ? 'pointer-events-none opacity-50' : '',
       ]"
@@ -302,21 +333,28 @@ export interface TableColumn<T = any> {
 </script>
 
 <script setup lang="ts" generic="T">
-import { ref, computed, watch, inject } from "vue";
+import {
+  ref,
+  computed,
+  watch,
+  inject,
+  onMounted,
+  onUnmounted,
+  type Ref,
+} from "vue";
+import { useVirtualizer } from "@tanstack/vue-virtual";
 import {
   useVueTable,
   getCoreRowModel,
   type ColumnDef,
   type Header,
-  type RowData,
 } from "@tanstack/vue-table";
-import Button from "@/components/common/Button.vue";
 import EmptyData from "./EmptyData.vue";
 import TablePerPageSelect from "./TablePerPageSelect.vue";
 import PaginationNumbers from "./PaginationNumbers.vue";
 import ResponsiveRow from "./ResponsiveRow.vue";
 import type { TablePaginationContext } from "@/composables/usePagination";
-
+import { icons as all_icons } from "@/utils/icons.ts";
 export interface TableProps<T> {
   columns: TableColumn<T>[];
   rows: T[];
@@ -366,6 +404,7 @@ export interface TableProps<T> {
   top_right_cell_key?: string;
   get_row_card_class_name?: (row: T) => string;
   action_cell?: string;
+  scroll_parent_id?: string;
 }
 
 const props = withDefaults(defineProps<TableProps<T>>(), {
@@ -397,6 +436,7 @@ const props = withDefaults(defineProps<TableProps<T>>(), {
   action_cell: "",
   alignment: "center",
   client_sort: false,
+  scroll_parent_id: "page-scroll-container",
 });
 
 type CellSlots<T> = {
@@ -612,6 +652,93 @@ const table = useVueTable({
 const loadingRowCount = computed(() =>
   props.loading_rows > 0 ? props.loading_rows : itemsPerPage.value,
 );
+
+// ── Mobile infinite scroll ────────────────────────────────────────────────────
+const accumulated_mobile_rows = ref([...props.rows]) as Ref<T[]>;
+const sentinel_ref = ref<HTMLElement | null>(null);
+let scroll_observer: IntersectionObserver | null = null;
+
+// Append on new page, reset on page 1 (search/filter change resets page to 1)
+watch([() => props.rows, currentPage, itemsPerPage], ([newRows, page]) => {
+  if (page === 1) {
+    accumulated_mobile_rows.value = [...(newRows as T[])];
+  } else {
+    const existingKeys = new Set(
+      accumulated_mobile_rows.value.map((r) => getRowKeyInternal(r)),
+    );
+    const incoming = (newRows as T[]).filter(
+      (r) => !existingKeys.has(getRowKeyInternal(r)),
+    );
+    if (incoming.length > 0) {
+      accumulated_mobile_rows.value = [
+        ...accumulated_mobile_rows.value,
+        ...incoming,
+      ];
+    }
+  }
+});
+
+const mobile_table = useVueTable({
+  get data() {
+    return accumulated_mobile_rows.value as T[];
+  },
+  get columns() {
+    return tanstackColumns.value;
+  },
+  getCoreRowModel: getCoreRowModel(),
+  manualPagination: true,
+  manualSorting: true,
+  manualFiltering: true,
+});
+
+const setup_scroll_observer = () => {
+  scroll_observer?.disconnect();
+  if (!sentinel_ref.value) return;
+  const root = document.getElementById(props.scroll_parent_id!) || null;
+  scroll_observer = new IntersectionObserver(
+    (entries) => {
+      if (
+        entries[0].isIntersecting &&
+        !isLoading.value &&
+        currentPage.value < totalPages.value
+      ) {
+        onPageChange(currentPage.value + 1);
+      }
+    },
+    { root, threshold: 0.1 },
+  );
+  scroll_observer.observe(sentinel_ref.value);
+};
+
+// Reactive row array used by both the virtualizer and the observer
+const mobile_rows = computed(() => mobile_table.getRowModel().rows);
+
+// Scroll container ref — resolved after mount
+const scroll_container_el = ref<HTMLElement | null>(null);
+
+const row_virtualizer = useVirtualizer(
+  computed(() => ({
+    count: mobile_rows.value.length,
+    getScrollElement: () => scroll_container_el.value,
+    estimateSize: () => 200,
+    overscan: 5,
+  })),
+);
+
+onMounted(() => {
+  scroll_container_el.value =
+    document.getElementById(props.scroll_parent_id!) ?? null;
+
+  // Reset to page 1 so accumulated rows rebuild fresh on every visit
+  if (paginationContext && currentPage.value > 1) {
+    paginationContext.setPage(1);
+  }
+
+  setup_scroll_observer();
+});
+
+onUnmounted(() => scroll_observer?.disconnect());
+// ─────────────────────────────────────────────────────────────────────────────
 
 const getRowKeyInternal = (row: T) => {
   if (typeof props.row_key === "function") return props.row_key(row) as string;

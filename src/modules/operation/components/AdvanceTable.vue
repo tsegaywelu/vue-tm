@@ -2,7 +2,7 @@
   <!-- Mobile: filter icon next to page title -->
   <Teleport to="#page-title-actions" defer>
     <button
-      class="size-8 rounded-xl border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors"
+      class="sm:hidden size-8 rounded-xl border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors"
       @click="mobileSearchOpen = true"
     >
       <i class="*:size-4" v-html="icons.filterOptions"></i>
@@ -41,6 +41,8 @@
     :search_placeholder="dynamicSearchPlaceholder"
     :canBeSelected="checkable"
     :on_sm_screen_column_span="columnSpan"
+    :hide_on_sm_screen="hideOnSmScreen"
+    :top_right_cell_key="topRightCellKey"
     v-model="selectedItems"
     unique_key="_id"
     :loading="isLoading"
@@ -245,7 +247,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
+import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
 import CheckTable from "@/components/common/CheckTable.vue";
 import Select from "@/components/common/Select.vue";
@@ -273,6 +275,10 @@ const props = withDefaults(
     modelValue?: any[];
     /** Column span overrides on small screens */
     columnSpan?: Record<string, number>;
+    /** Columns hidden in mobile card view */
+    hideOnSmScreen?: string[];
+    /** Key shown in the top-right of each mobile card */
+    topRightCellKey?: string;
   }>(),
   {
     url: "/advance-payment",
@@ -281,6 +287,8 @@ const props = withDefaults(
     checkable: false,
     modelValue: () => [],
     columnSpan: () => ({}),
+    hideOnSmScreen: () => [],
+    topRightCellKey: "",
   },
 );
 

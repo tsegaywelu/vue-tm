@@ -127,7 +127,7 @@
     </template>
 
     <template #cell-status="{ row }">
-      <div class="flex gap-2 gap-1">
+      <div class="flex gap-2">
         <div
           v-if="activeTab === 'list' || activeTab === 'payable'"
           class="flex items-center justify-between text-[10px] min-w-[120px]"

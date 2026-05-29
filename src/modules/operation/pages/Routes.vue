@@ -2,7 +2,7 @@
   <!-- Export: icon button always next to page title -->
   <Teleport to="#page-title-actions" defer>
     <button
-      class="size-10 rounded-lg bg-grey-75 border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors"
+      class="sm:hidden size-10 rounded-lg bg-grey-75 border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors"
       @click="handleExport"
     >
       <i class="*:size-6" v-html="all_icons.excell"></i>
@@ -11,16 +11,23 @@
   </Teleport>
 
   <Teleport to="#page-actions" defer>
-    <Button
-      v-permission="'ROUTE:create'"
-      class="hidden sm:flex"
-      @click="navigateToAddRoute"
-    >
-      <template #leading>
-        <div class="size-5" v-html="all_icons.plus"></div>
-      </template>
-      Add Route
-    </Button>
+    <div class="hidden sm:flex items-center gap-2">
+      <Button variant="secondary" size="md" @click="handleExport">
+        <template #leading>
+          <div class="size-5" v-html="all_icons.excell"></div>
+        </template>
+        Export to Excel
+      </Button>
+      <Button
+        v-permission="'ROUTE:create'"
+        @click="navigateToAddRoute"
+      >
+        <template #leading>
+          <div class="size-5" v-html="all_icons.plus"></div>
+        </template>
+        Add Route
+      </Button>
+    </div>
   </Teleport>
 
   <!-- Mobile FAB -->

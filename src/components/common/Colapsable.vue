@@ -7,7 +7,7 @@
       class="rounded-t-[20px] flex items-center justify-between p-5 border-b border-[#ECECEC] bg-grey-25"
       @click="isExpanded = !isExpanded"
     >
-      <div class="text-left">
+      <div class="text-left min-w-0 flex-1 pr-3">
         <h2 class="text-xl font-bold text-gray-900 tracking-tight">
           {{ title }}
         </h2>
@@ -17,7 +17,7 @@
       </div>
       <button
         type="button"
-        class="size-10 rounded-full flex items-center justify-center bg-white border border-gray-100 shadow-sm group-hover:border-primary/30 group-hover:text-primary transition-all duration-300"
+        class="size-10 min-w-10 shrink-0 rounded-full flex items-center justify-center bg-white border border-gray-100 shadow-sm group-hover:border-primary/30 group-hover:text-primary transition-all duration-300"
       >
         <div
           class="transition-all duration-300 transform"

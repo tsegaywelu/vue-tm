@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, nextTick, watch } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import Sidebar from "@/components/Sidebar.vue";
 import TopNavBar from "@/components/TopNavBar.vue";
 import Breadcrumb from "@/components/Breadcrumb.vue";
@@ -25,7 +25,7 @@ const is_dashboard = computed(
     route.name === "operation_dashboard" || route.name === "shipper_dashboard",
 );
 
-const is_open = ref(window.innerWidth > 1280);
+const is_open = ref(false);
 const is_chat_open = ref(false);
 // Delayed — keeps the grid column alive during the leave transition
 const chat_col_active = ref(false);
@@ -59,14 +59,12 @@ const close_nav = () => {
 };
 
 const update_layout = () => {
-  if (window.innerWidth > 1280) is_open.value = true;
+  if (window.innerWidth <= 1280) is_open.value = false;
 };
 
 const grid_cols_class = computed(() => {
   const with_chat = is_dashboard.value && chat_col_active.value;
-  if (is_open.value && with_chat)
-    return "xl:grid-cols-[18rem_minmax(0,1fr)_32rem]";
-  if (is_open.value) return "xl:grid-cols-[18rem_minmax(0,1fr)]";
+  // Sidebar always occupies its collapsed width — hover expansion is absolute/overlay
   if (with_chat) return "xl:grid-cols-[5.5rem_minmax(0,1fr)_32rem]";
   return "xl:grid-cols-[5.5rem_minmax(0,1fr)]";
 });
@@ -78,14 +76,27 @@ onMounted(() => {
   window.addEventListener("resize", update_layout);
 });
 
+const router = useRouter();
+
+// Reset scroll before the incoming route's component renders
+const unregister_scroll_guard = router.beforeEach((to, from) => {
+  if (to.path === from.path) return;
+  const container = document.getElementById("page-scroll-container");
+  if (!container) return;
+  container.style.scrollBehavior = "auto";
+  container.scrollTop = 0;
+  container.style.scrollBehavior = "";
+});
+
 onUnmounted(() => {
   window.removeEventListener("resize", update_layout);
+  unregister_scroll_guard();
 });
 </script>
 
 <template>
   <div
-    class="grid transition-all duration-300 ease-in-out bg-[#fafafa] h-full w-full overflow-hidden"
+    class="grid transition-all duration-300 ease-in-out bg-[#fafafa] h-full w-full overflow-hidden xl:overflow-visible"
     :class="grid_cols_class"
   >
     <Sidebar
@@ -138,6 +149,7 @@ onUnmounted(() => {
       </TopNavBar>
 
       <div
+        id="page-scroll-container"
         class="grid grid-cols-1 gap-3 grid-rows-[auto_auto_1fr] overflow-auto"
       >
         <div class="min-w-0">
