@@ -195,6 +195,7 @@ const initialValues = computed(() => {
           agent: data.agent?._id ?? data.order?.agent?._id ?? null,
         }
       : {}),
+    vehicleOwnership: data.vehicle?.ownership || "",
     transporter:
       data.vehicle?.ownership !== VehicleOwnership.Owned
         ? data.transporter?._id
