@@ -1,4 +1,5 @@
 import * as XLSXStyle from "xlsx-js-style";
+import { generateRouteCode, getBusinessUnit, getMaterialType, getOrigin, getDestination, getRouteDescription } from "./shipment-export-utils";
 
 export interface CellStyle {
   bold?: boolean;
@@ -162,35 +163,18 @@ function resolveField(shipment: any, field: string, rowIndex: number): any {
     const trailer = shipment.vehicle?.trailerPlate || "";
     return trailer ? `${plate}/${trailer}` : plate;
   }
-  if (field === "route.routeCode") {
-    return (
-      shipment.route?.routeCode ||
-      shipment.order?.route?.routeCode ||
-      shipment.routeCode ||
-      (shipment.routeOrigin && shipment.routeDestination
-        ? `${shipment.routeOrigin.substring(0, 3)}_${shipment.routeDestination.substring(0, 3)}`.toUpperCase()
-        : "")
-    );
-  }
+  if (field === "route.routeCode") return generateRouteCode(shipment);
+  if (field === "businessUnit") return getBusinessUnit(shipment);
   if (field === "vehicleTypeName") {
     return shipment.vehicleTypeName || shipment.order?.vehicleTypeName || shipment.vehicleType?.name || "";
   }
-  if (field === "routeName") {
-    return (
-      shipment.routeName ||
-      shipment.route?.name ||
-      (shipment.route?.origin && shipment.route?.destination
-        ? `${shipment.route.origin} - ${shipment.route.destination}`
-        : shipment.routeOrigin && shipment.routeDestination
-          ? `${shipment.routeOrigin} - ${shipment.routeDestination}`
-          : "")
-    );
-  }
+  if (field === "routeName") return shipment.routeName || shipment.route?.name || getRouteDescription(shipment);
   if (field === "commodity") {
     const list = shipment.commodity;
     if (Array.isArray(list)) return list.map((c: any) => c.name || c).filter(Boolean).join(", ");
     return "";
   }
+  if (field === "materialType") return getMaterialType(shipment);
   if (field === "vehicleOwnership") {
     return shipment.vehicleOwnership || shipment.vehicle?.ownership || "";
   }

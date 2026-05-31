@@ -17,13 +17,11 @@
       <div
         class="h-full flex items-center border-r border-gray-200 pr-2 mr-2 w-48"
       >
-        <Select
-          class="[&_.input-focus]:shadow-none! [&_.input-focus]:border-none [&_.input-focus]:min-h-full min-w-48"
+        <SearchFieldSelect
           v-model="selectedStatus"
-          :options="AdvanceStatusOptions"
-          label_key="label"
-          value_key="value"
-          :clearable="false"
+          :pagination-id="props.paginationId"
+          :options="props.searchOptions"
+          select-class="[&_.input-focus]:shadow-none! [&_.input-focus]:border-none [&_.input-focus]:min-h-full min-w-48"
         />
       </div>
     </template>
@@ -218,9 +216,9 @@
 import { computed, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import CheckTable from "@/components/common/CheckTable.vue";
-import Select from "@/components/common/Select.vue";
+import SearchFieldSelect from "@/components/common/SearchFieldSelect.vue";
 import type { TableColumn } from "@/components/common/Table.vue";
-import { usePagination } from "@/composables/usePagination";
+import { usePagination, useTableLastMeta } from "@/composables/usePagination";
 import { currencyFormatter } from "@/utils/utils";
 import AdvanceFilters from "./AdvanceFilters.vue";
 import Status from "@/components/common/Status.vue";
@@ -240,6 +238,8 @@ const props = withDefaults(
     checkable?: boolean;
     /** Selected items (v-model) */
     modelValue?: any[];
+    /** Search field selector options */
+    searchOptions?: { label: string; value: string }[];
   }>(),
   {
     url: "/advance-payment",
@@ -247,6 +247,12 @@ const props = withDefaults(
     extraParams: () => ({}),
     checkable: false,
     modelValue: () => [],
+    searchOptions: () => [
+      { label: "Plate Number", value: "vehiclePlateNumber" },
+      { label: "Advance Number", value: "advanceNumber" },
+      { label: "Driver Name", value: "driverName" },
+      { label: "Issue Voucher", value: "shipperIssueVoucher" },
+    ],
   },
 );
 
@@ -263,15 +269,12 @@ const selectedItems = computed({
   set: (val) => emit("update:modelValue", val),
 });
 
-const AdvanceStatusOptions = [
-  { label: "Status: All", value: "" },
-  { label: "Plate Number", value: "vehiclePlateNumber" },
-  { label: "Advance Number", value: "advanceNumber" },
-  { label: "Driver Name", value: "driverName" },
-  { label: "Issue Voucher", value: "shipperIssueVoucher" },
-];
-
-const selectedStatus = ref("vehiclePlateNumber");
+const lastMeta = useTableLastMeta(props.paginationId);
+const selectedStatus = ref(
+  (lastMeta.value.searchField as string | undefined) ||
+    props.searchOptions[0]?.value ||
+    "vehiclePlateNumber",
+);
 const activeFilters = ref<any>({});
 
 const dynamicSearchPlaceholder = computed(() => {
