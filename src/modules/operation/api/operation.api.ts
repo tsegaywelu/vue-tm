@@ -152,7 +152,7 @@ export function update_transaction_status(
 export function update_prepayment_status(id: string, status: ApprovalAction) {
   return prepayment_api
     .addAuthenticationHeader()
-    .post(`/updateStatus`, { id, status });
+    .post(`/${id}/${status}`, { });
 }
 
 export function update_lease_status(id: string, status: ApprovalAction) {
