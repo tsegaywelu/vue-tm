@@ -263,6 +263,7 @@ import Button from "@/components/common/Button.vue";
 import { formatNumber } from "@/utils/utils";
 import { exportInvoiceToExcel } from "@/utils/excel";
 import { exportInvoiceWithTemplate } from "@/utils/invoice-template-export";
+import { generateRouteCode } from "@/utils/shipment-export-utils";
 import { fetch_invoice_template } from "../../api/invoice-template.api";
 
 const route = useRoute();
@@ -314,12 +315,6 @@ const formatShortDate = (dateStr: string) => {
   });
 };
 
-const generateRouteCode = (shipment: any) => {
-  const origin = shipment.routeOrigin || shipment.route?.origin;
-  const destination = shipment.routeDestination || shipment.route?.destination;
-  if (!origin || !destination) return "-";
-  return `${origin.substring(0, 3)}_${destination.substring(0, 3)}`.toUpperCase();
-};
 
 const computeRate = (shipment: any) => {
   const qty = shipment.quantity || shipment.order?.totalRequest || shipment.dispatchWeight || 0;

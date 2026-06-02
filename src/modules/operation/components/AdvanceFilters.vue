@@ -22,12 +22,13 @@
       name="routeOrigin"
       multiple
       size="xs"
-      value_key="destination"
-      label_key="routeName"
       :params="{ sort: 'shipmentCount' }"
       :attributes="{ placeholder: 'Search Origin' }"
       :initial_labels="fieldLabels['routeOrigin']"
-      @select="(opt: any) => captureLabel('routeOrigin', opt, 'destination', 'routeName')"
+      @select="
+        (opt: any) =>
+          captureLabel('routeOrigin', opt, 'destination', 'routeName')
+      "
     />
     <DestinationInput
       name="routeDestination"
@@ -35,7 +36,10 @@
       size="xs"
       :attributes="{ placeholder: 'Search Destination' }"
       :initial_labels="fieldLabels['routeDestination']"
-      @select="(opt: any) => captureLabel('routeDestination', opt, 'destination', 'routeName')"
+      @select="
+        (opt: any) =>
+          captureLabel('routeDestination', opt, 'destination', 'routeName')
+      "
     />
     <SelectInput
       :show_validation_status="false"
@@ -57,7 +61,10 @@ import SelectInput from "@/components/form/SelectInput.vue";
 import OriginInput from "@/components/common/inputs/OriginInput.vue";
 import DestinationInput from "@/components/common/inputs/DestinationInput.vue";
 import Form from "@/components/form/Form.vue";
-import { useTableLastParams, useTableLastLabels } from "@/composables/usePagination";
+import {
+  useTableLastParams,
+  useTableLastLabels,
+} from "@/composables/usePagination";
 import { useTablePaginationStore } from "@/store/tablePaginationStore";
 
 const props = defineProps<{
@@ -76,7 +83,12 @@ function getNestedValue(obj: any, path: string): string {
   return path.split(".").reduce((acc: any, key) => acc?.[key], obj) ?? "";
 }
 
-function captureLabel(field: string, opt: any, valueKey: string, labelKey: string) {
+function captureLabel(
+  field: string,
+  opt: any,
+  valueKey: string,
+  labelKey: string,
+) {
   const value = String(getNestedValue(opt, valueKey));
   const label = getNestedValue(opt, labelKey);
   if (!fieldLabels.value[field]) fieldLabels.value[field] = {};
@@ -103,7 +115,9 @@ onMounted(() => {
     filterOnly.routeOrigin = filterOnly.routeOrigin.split(",").filter(Boolean);
   }
   if (typeof filterOnly.routeDestination === "string") {
-    filterOnly.routeDestination = filterOnly.routeDestination.split(",").filter(Boolean);
+    filterOnly.routeDestination = filterOnly.routeDestination
+      .split(",")
+      .filter(Boolean);
   }
   if (Object.keys(filterOnly).length > 0) {
     formValues.value = filterOnly;

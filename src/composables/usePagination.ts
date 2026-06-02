@@ -231,7 +231,34 @@ export function usePagination<T = any>({
   // nextTick alone is a microtask — it resolves BEFORE any setTimeout(0)
   // macrotasks (including Form.vue's `setTimeout(() => emit("change"), 0)`).
   // Wrapping in another setTimeout ensures post_mount flips AFTER those emits.
-  onMounted(() => nextTick(() => setTimeout(() => { post_mount = true; }, 0)));
+  onMounted(() => {
+    // Sync Pinia-persisted values back to URL when the URL has lost them
+    // (happens when the user navigated away and the browser replaced the URL).
+    // Without this, a hard-refresh after navigation-back loses the search.
+    nextTick(() => {
+      const needsSync =
+        (debounced_search.value && !route.query[URL_SEARCH]) ||
+        (state.value.page !== 1 && !route.query[URL_PAGE]) ||
+        (state.value.limit !== per_page && !route.query[URL_LIMIT]);
+
+      if (needsSync) {
+        router.replace({
+          query: {
+            ...route.query,
+            [URL_PAGE]:
+              state.value.page !== 1 ? String(state.value.page) : undefined,
+            [URL_LIMIT]:
+              state.value.limit !== per_page
+                ? String(state.value.limit)
+                : undefined,
+            [URL_SEARCH]: debounced_search.value || undefined,
+          },
+        });
+      }
+
+      setTimeout(() => { post_mount = true; }, 0);
+    });
+  });
 
   // effective_params drives the query. On navigation-back it uses the Pinia-
   // saved params so the TanStack Query cache key matches the previous visit
@@ -469,4 +496,14 @@ export function useTableLastParams(id: string): ComputedRef<Record<string, any>>
 export function useTableLastLabels(id: string): ComputedRef<Record<string, Record<string, string>>> {
   const store = useTablePaginationStore();
   return computed(() => (store.tableLabels[id] ?? {}) as Record<string, Record<string, string>>);
+}
+
+/**
+ * Returns a computed ref of the non-API UI meta saved for a given pagination id.
+ * Use this to persist UI state (e.g. selected search field) that must NOT be
+ * sent to the API. Unlike tableParams, this is never overwritten by setParams.
+ */
+export function useTableLastMeta(id: string): ComputedRef<Record<string, any>> {
+  const store = useTablePaginationStore();
+  return computed(() => (store.tableMeta[id] ?? {}) as Record<string, any>);
 }

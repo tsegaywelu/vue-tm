@@ -31,6 +31,14 @@
                 close();
               "
             />
+            <DropDownItem
+              label="All"
+              :icon="icons.excel"
+              @click="
+                handleExport('all');
+                close();
+              "
+            />
           </template>
         </Dropdown>
 
@@ -266,30 +274,44 @@ const handleAction = async ({ row, action }: any) => {
   }
 };
 
-const handleExport = (type: "raw" | "full") => {
-  const data = tableRef.value?.response || [];
+const handleExport = (type: "raw" | "full" | "all") => {
+  const data = selectedRows.value.length > 0 ? selectedRows.value : (tableRef.value?.response || []);
   if (data.length === 0) {
     toast.warning("No data to export");
     return;
   }
 
-  // Filter based on productType if needed (legacy logic)
   let filteredData = data;
   if (type === "raw") {
     filteredData = data.filter(
       (s: any) =>
         s.productType === "IN_BOUND" || s.productType === "SITE_TRANSFER",
     );
-  } else {
+  } else if (type === "full") {
     filteredData = data.filter((s: any) => s.productType === "OUT_BOUND");
   }
 
   if (filteredData.length === 0) {
     toast.warning(
-      `No ${type === "raw" ? "Raw Material" : "Full Product"} data found to export`,
+      type === "raw" ? "No Raw Material data found to export"
+      : type === "full" ? "No Full Product data found to export"
+      : "No data found to export",
     );
     return;
   }
+
+  const columns = [
+    "Date of Request",
+    "Supplier Name",
+    "Origin",
+    "Destination",
+    "Plate Number",
+    "Driver Name",
+    "Issue Voucher",
+    "Receive Voucher",
+    "Document Uploaded",
+    "Product Type",
+  ];
 
   const formattedData = filteredData.map((s: any) => ({
     "Date of Request": s.dispatchDate?.split("T")[0] || "N/A",
@@ -297,20 +319,20 @@ const handleExport = (type: "raw" | "full") => {
     Origin: s.route?.origin || "N/A",
     Destination: s.route?.destination || "N/A",
     "Plate Number": `${s.vehicle?.plateNumber || "N/A"}/${s.vehicle?.trailerPlate || "N/A"}`,
-    "Driver Name":
-      `${s.driver?.firstName || ""} ${s.driver?.lastName || ""}`.trim() ||
-      "N/A",
+    "Driver Name": `${s.driver?.firstName || ""} ${s.driver?.lastName || ""}`.trim() || "N/A",
     "Issue Voucher": s.shipperIssueVoucher || "N/A",
     "Receive Voucher": s.agentReceiveVoucher || "N/A",
     "Document Uploaded": s.areDocumentsUploaded ? "Yes" : "No",
+    "Product Type": s.productType || "N/A",
   }));
 
   const worksheet = XLSX.utils.json_to_sheet(formattedData);
+  worksheet["!cols"] = columns.map((h) => ({ wch: Math.max(h.length + 4, 20) }));
   const workbook = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(workbook, worksheet, "Receivables");
   XLSX.writeFile(
     workbook,
-    `Receivable_${type === "raw" ? "Raw_Material" : "Full_Product"}_${new Date().toISOString().split("T")[0]}.xlsx`,
+    `Receivable_${type === "raw" ? "Raw_Material" : type === "full" ? "Full_Product" : "All"}_${new Date().toISOString().split("T")[0]}.xlsx`,
   );
 };
 </script>

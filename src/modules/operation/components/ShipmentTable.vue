@@ -27,13 +27,11 @@
       <div
         class="h-full flex items-center border-r border-gray-200 pr-2 mr-2 w-48"
       >
-        <Select
-          class="[&_.input-focus]:shadow-none! [&_.input-focus]:border-none [&_.input-focus]:min-h-full min-w-48"
+        <SearchFieldSelect
           v-model="selectedSearchField"
+          pagination-id="shipment-list"
           :options="searchFieldOptions"
-          label_key="label"
-          value_key="value"
-          :clearable="false"
+          select-class="[&_.input-focus]:shadow-none! [&_.input-focus]:border-none [&_.input-focus]:min-h-full min-w-48"
         />
       </div>
     </template>
@@ -131,10 +129,10 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
 import Table from "@/components/common/Table.vue";
-import Select from "@/components/common/Select.vue";
+import SearchFieldSelect from "@/components/common/SearchFieldSelect.vue";
 import ShipmentDropdown from "./ShipmentDropdown.vue";
 import { icons } from "@/utils/icons";
-import { usePagination } from "@/composables/usePagination";
+import { usePagination, useTableLastMeta } from "@/composables/usePagination";
 import { openModal } from "@customizer/modal-x";
 import type {
   ShipmentFilterParams,
@@ -246,7 +244,10 @@ const columns: TableColumn<Shipment>[] = [
   { key: "status", label: "Status", field: "status" },
   { key: "actions", label: "Actions", field: "", cellAlign: "right" },
 ];
-const selectedSearchField = ref("vehiclePlateNumber");
+const lastMeta = useTableLastMeta("shipment-list");
+const selectedSearchField = ref(
+  (lastMeta.value.searchField as string | undefined) || "vehiclePlateNumber",
+);
 
 const activeFilters = ref<ShipmentFilterParams>({});
 const { response, refetch, debouncedSearch } = usePagination<Shipment>({
@@ -256,6 +257,7 @@ const { response, refetch, debouncedSearch } = usePagination<Shipment>({
     [selectedSearchField.value]: state.search || "",
     ...props.filters,
     ...activeFilters.value,
+    q: undefined
   }),
 });
 
@@ -293,6 +295,7 @@ const dynamicSearchPlaceholder = computed(() => {
 const handleFilterChange = (newFilters: ShipmentFilterParams) => {
   activeFilters.value = {
     ...newFilters,
+    searchField: selectedSearchField.value,
     selectedFilterOption: {
       value: selectedSearchField.value,
     },

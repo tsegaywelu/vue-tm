@@ -9,51 +9,23 @@
       <div
         class="h-full flex items-center border-r border-gray-200 pr-2 mr-2 w-48"
       >
-        <Select
-          class="[&_.input-focus]:shadow-none! [&_.input-focus]:border-none [&_.input-focus]:min-h-full min-w-48"
-          v-model="selectedType"
-          :options="typeOptions"
-          label_key="label"
-          value_key="value"
-          :clearable="false"
+        <SearchFieldSelect
+          v-model="selectedSearchField"
+          pagination-id="approval-requests"
+          :options="searchFieldOptions"
+          select-class="[&_.input-focus]:shadow-none! [&_.input-focus]:border-none [&_.input-focus]:min-h-full min-w-48"
         />
       </div>
     </template>
 
     <template #after-search>
       <div
-        class="[&_.input-focus]:bg-grey-25 flex-1 h-12 items-center gap-4 inline-flex border-l border-grey-100 overflow-x-auto px-3"
+        class="items-center gap-4 inline-flex border-l border-grey-100 overflow-x-auto px-3"
       >
         <i v-html="icons.filter" />
-        <Select
-          label="Origin"
-          size="xs"
-          name="routeOrigin"
-          v-model="origin"
-          :url="`/route`"
-          label_key="routeName"
-          value_key="destination"
-          searchable
-          class="min-w-48"
-          multiple
-          :attributes="{
-            placeholder: 'Origins',
-          }"
-        />
-        <Select
-          label="Destination"
-          size="xs"
-          name="routeDestination"
-          v-model="destination"
-          :url="`/route`"
-          label_key="routeName"
-          value_key="destination"
-          :attributes="{
-            placeholder: 'Destinations',
-          }"
-          class="min-w-48"
-          searchable
-          multiple
+        <ApprovalFilters
+          @change="handleFilterChange"
+          pagination-id="approval-requests"
         />
       </div>
     </template>
@@ -210,13 +182,13 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { ref } from "vue";
 import { useRouter } from "vue-router";
 import Table from "@/components/common/Table.vue";
-import Button from "@/components/common/Button.vue";
-import Select from "@/components/common/Select.vue";
+import SearchFieldSelect from "@/components/common/SearchFieldSelect.vue";
 import Dropdown from "@/components/common/Dropdown.vue";
-import { usePagination } from "@/composables/usePagination";
+import ApprovalFilters from "./ApprovalFilters.vue";
+import { usePagination, useTableLastMeta } from "@/composables/usePagination";
 import { currencyFormatter } from "@/utils/utils";
 import { icons } from "@/utils/icons";
 import { openModal } from "@customizer/modal-x";
@@ -283,23 +255,24 @@ const handleRejectClick = async (row: any) => {
   }
 };
 
-// --- Filters State ---
-const typeOptions = [
-  { label: "All", value: "all" },
-  { label: "Advance", value: "advance" },
-  { label: "Pre Payment", value: "prePayment" },
-  { label: "Transaction", value: "transaction" },
+// --- Search Field ---
+const searchFieldOptions = [
+  { label: "Plate Number", value: "vehiclePlateNumber" },
+  { label: "Advance Number", value: "advanceNumber" },
+  { label: "Driver Name", value: "driverName" },
 ];
 
-const selectedType = ref("all");
-const origin = ref("");
-const destination = ref("");
+const lastMeta = useTableLastMeta("approval-requests");
+const selectedSearchField = ref(
+  (lastMeta.value.searchField as string | undefined) || "vehiclePlateNumber",
+);
 
-const activeFilters = computed(() => ({
-  select: selectedType.value || undefined,
-  routeOrigin: origin.value || undefined,
-  routeDestination: destination.value || undefined,
-}));
+// --- Filters State ---
+const activeFilters = ref<any>({});
+
+const handleFilterChange = (newFilters: any) => {
+  activeFilters.value = { ...activeFilters.value, ...newFilters };
+};
 
 // --- Columns Definition ---
 const columns: TableColumn<ApprovalRequest>[] = [
@@ -336,7 +309,7 @@ const { response, setPage, refetch } = usePagination<ApprovalRequest>({
   params: (state) => {
     return {
       ...activeFilters.value,
-      vehiclePlateNumber: state.search || undefined,
+      [selectedSearchField.value]: state.search || undefined,
       q: undefined,
     };
   },
