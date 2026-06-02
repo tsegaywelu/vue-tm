@@ -1,5 +1,5 @@
 <template>
-  <Form :id="formId" :values="initialValues" :onSubmit="handleSubmit">
+  <Form :id="formId" :values="normalizedValues" :onSubmit="handleSubmit">
     <template #default="{ form }">
       <!-- 1. Personal Information -->
       <Colapsable
@@ -58,6 +58,22 @@
             value_key="value"
             :validation="{ required }"
             :attributes="{ placeholder: 'Select gender' }"
+          />
+
+          <SelectInput
+            name="region"
+            label="Region"
+            url="/region/myRegions"
+            label_key="name"
+            value_key="_id"
+            :attributes="{ placeholder: 'Select region' }"
+            :options="
+              props.initialValues.region?.name
+                ? [{ label: props.initialValues.region.name, value: props.initialValues.region._id }]
+                : props.labels?.region
+                  ? [{ label: props.labels.region, value: props.initialValues.region }]
+                  : []
+            "
           />
         </div>
       </Colapsable>
@@ -317,7 +333,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { ref, watch, computed } from "vue";
 import Form from "@/components/form/Form.vue";
 import Input from "@/components/form/Input.vue";
 import SelectInput from "@/components/form/SelectInput.vue";
@@ -333,12 +349,14 @@ import { dateLessThanOrEqalToToday, required } from "@/utils/validations";
 const props = defineProps<{
   formId: string;
   initialValues: Record<string, any>;
+  labels?: Record<string, string>;
   onSubmit: (values: any) => Promise<void> | void;
 }>();
 
-const triggerFileInput = () => {
-  // Logic handled by component
-};
+const normalizedValues = computed(() => ({
+  ...props.initialValues,
+  region: props.initialValues.region?._id || props.initialValues.region || "",
+}));
 
 const educationalBackground = ref<any[]>([
   { type: "", institutionName: "", startDate: "", endDate: "" },

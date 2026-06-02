@@ -64,9 +64,16 @@
           <SelectInput
             name="region"
             label="Region"
-            :options="regionOptions"
+            url="/region/myRegions"
+            label_key="name"
+            value_key="_id"
             :attributes="{ placeholder: 'Select Region' }"
             :validation="{ required }"
+            :options="
+              transporter?.region?.name
+                ? [{ label: transporter.region.name, value: transporter.region._id }]
+                : []
+            "
           />
 
           <Input
@@ -132,7 +139,7 @@ const initialValues = computed(() => {
       email: transporter.value.email || "",
       address: transporter.value.address || "",
       city: transporter.value.city || "",
-      region: transporter.value.region || "",
+      region: transporter.value.region?._id || transporter.value.region || "",
       tin: transporter.value.tin || "",
       type: transporter.value.type || "",
       bankAccount: (transporter.value.bankAccount || []).map((ba: any) => ({
@@ -155,24 +162,6 @@ const initialValues = computed(() => {
     bankAccount: [],
   };
 });
-
-const regionOptions = [
-  { label: "Addis Ababa", value: "Addis Ababa" },
-  { label: "Afar", value: "Afar" },
-  { label: "Amhara", value: "Amhara" },
-  { label: "Benishangul-Gumuz", value: "Benishangul-Gumuz" },
-  { label: "Dire Dawa", value: "Dire Dawa" },
-  { label: "Gambela", value: "Gambela" },
-  { label: "Harari", value: "Harari" },
-  { label: "Oromia", value: "Oromia" },
-  { label: "Sidama", value: "Sidama" },
-  { label: "Somali", value: "Somali" },
-  {
-    label: "SNNPR",
-    value: "Southern Nations, Nationalities, and Peoples' Region (SNNPR)",
-  },
-  { label: "Tigray", value: "Tigray" },
-];
 
 const typeOptions = [
   { label: "Long Term Sub Contract", value: "LTSC" },

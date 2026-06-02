@@ -44,7 +44,7 @@ const initialValues = {
   password: "",
   confirmPassword: "",
   role: "",
-  region: "",
+  region: [],
 };
 
 const handleCreate = async (values: any) => {

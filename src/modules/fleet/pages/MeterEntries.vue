@@ -16,6 +16,10 @@ import MeterEntryTable from "../components/MeterEntryTable.vue";
 const router = useRouter();
 
 const handleAction = ({ row, action }: { row: any; action: string }) => {
+  if (action === "view") {
+    router.push(`/fleet/meter-entries/${row._id}`);
+    return;
+  }
   if (action === "edit") {
     router.push(`/fleet/meter-entries/edit/${row._id}`);
   }

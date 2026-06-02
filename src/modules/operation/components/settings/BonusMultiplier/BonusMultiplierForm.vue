@@ -51,6 +51,15 @@
             }"
           />
 
+          <SelectInput
+            name="region"
+            label="Region"
+            url="/region/myRegions"
+            label_key="name"
+            value_key="_id"
+            :attributes="{ placeholder: 'Select region' }"
+          />
+
           <div class="md:col-span-2">
             <TextareaInput
               name="description"

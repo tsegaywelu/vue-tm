@@ -149,7 +149,7 @@
           <SelectInput
             name="region"
             label="Region"
-            url="/region"
+            url="/region/myRegions"
             label_key="name"
             value_key="_id"
             :attributes="{ placeholder: 'Select region' }"

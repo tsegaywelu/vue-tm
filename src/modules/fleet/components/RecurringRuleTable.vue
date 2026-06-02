@@ -40,33 +40,33 @@
     </template>
 
     <template #cell-actions="{ row }">
-      <div class="flex items-center justify-center gap-1">
-        <button
-          type="button"
-          class="p-2 rounded-full hover:bg-gray-100 transition-colors text-gray-500 hover:text-primary"
-          title="Edit"
-          @click.stop="emit('action', { row, action: 'edit' })"
-        >
-          <i v-html="icons.edit"></i>
-        </button>
-        <button
-          v-if="row.isActive"
-          type="button"
-          class="p-2 rounded-full hover:bg-amber-50 transition-colors text-gray-500 hover:text-amber-600"
-          title="Pause"
-          @click.stop="emit('action', { row, action: 'pause' })"
-        >
-          <i class="mdi mdi-pause-circle-outline text-base"></i>
-        </button>
-        <button
-          v-else
-          type="button"
-          class="p-2 rounded-full hover:bg-green-50 transition-colors text-gray-500 hover:text-green-600"
-          title="Resume"
-          @click.stop="emit('action', { row, action: 'resume' })"
-        >
-          <i class="mdi mdi-play-circle-outline text-base"></i>
-        </button>
+      <div class="flex items-center justify-center">
+        <Dropdown>
+          <template #default="{ close }">
+            <DropDownItem
+              :icon="icons.eye"
+              label="View Details"
+              @click.stop="emit('action', { row, action: 'view' }); close()"
+            />
+            <DropDownItem
+              :icon="icons.edit"
+              label="Edit"
+              @click.stop="emit('action', { row, action: 'edit' }); close()"
+            />
+            <DropDownItem
+              v-if="row.isActive"
+              :icon="icons.deactivate"
+              label="Pause"
+              variant="danger"
+              @click.stop="emit('action', { row, action: 'pause' }); close()"
+            />
+            <DropDownItem
+              v-else
+              label="Resume"
+              @click.stop="emit('action', { row, action: 'resume' }); close()"
+            />
+          </template>
+        </Dropdown>
       </div>
     </template>
   </Table>
@@ -74,6 +74,8 @@
 
 <script setup lang="ts">
 import Table from "@/components/common/Table.vue";
+import Dropdown from "@/components/common/Dropdown.vue";
+import DropDownItem from "@/components/common/DropDownItem.vue";
 import type { TableColumn } from "@/components/common/Table.vue";
 import { icons } from "@/utils/icons";
 import { usePagination } from "@/composables/usePagination";
@@ -95,7 +97,7 @@ const { response, refetch } = usePagination<any>({
   id: "recurring-rule-list",
   url: "/fleet/recurring-expense-rules",
   params: (state) => ({
-    ...(state.search ? {vehiclePlateNumber: state.search } : {}),
+    ...(state.search ? { vehiclePlateNumber: state.search } : {}),
     q: undefined,
   }),
 });

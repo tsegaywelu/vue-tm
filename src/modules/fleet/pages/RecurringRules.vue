@@ -47,6 +47,11 @@ const refresh = () => {
 };
 
 const handleAction = async ({ row, action }: { row: any; action: string }) => {
+  if (action === "view") {
+    router.push(`/fleet/recurring-rules/${row._id}`);
+    return;
+  }
+
   if (action === "edit") {
     router.push(`/fleet/recurring-rules/edit/${row._id}`);
     return;
@@ -60,6 +65,7 @@ const handleAction = async ({ row, action }: { row: any; action: string }) => {
     } else {
       toast.error(res.error || "Failed to pause rule");
     }
+    return;
   }
 
   if (action === "resume") {

@@ -56,11 +56,11 @@
     <SelectInput
       name="region"
       label="Region"
-      url="/region"
+      url="/region/myRegions"
       label_key="name"
       value_key="_id"
       searchable
-      :display_value="labels?.region"
+      multiple
     />
   </div>
 </template>

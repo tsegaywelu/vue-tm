@@ -68,7 +68,7 @@
           </div>
           <div class="flex flex-wrap gap-2">
             <label
-              v-for="action in getActionsForSubject(subject)"
+              v-for="action in getRegularActions(subject)"
               :key="action"
               class="flex items-center gap-2 px-2 py-1.5 rounded-lg border border-gray-50 hover:bg-gray-50 cursor-pointer transition-all"
             >
@@ -82,6 +82,27 @@
                 {{ action.replace(/_/g, ' ') }}
               </span>
             </label>
+          </div>
+          <div v-if="hasScopeActions(subject)" class="mt-2 pt-2 border-t border-gray-100">
+            <p class="text-[10px] font-bold text-gray-400 mb-2 uppercase tracking-widest">Scope</p>
+            <div class="flex flex-wrap gap-2">
+              <label
+                v-for="scope in getScopeActionsForSubject(subject)"
+                :key="scope"
+                class="flex items-center gap-2 px-2 py-1.5 rounded-lg border border-gray-50 hover:bg-gray-50 cursor-pointer transition-all"
+              >
+                <input
+                  type="radio"
+                  :name="`scope-${subject}`"
+                  :checked="isPermissionChecked(subject, scope)"
+                  @click="() => toggleScopePermission(subject, scope)"
+                  class="size-4 border-gray-300 text-primary focus:ring-primary"
+                />
+                <span class="text-[10px] font-bold text-gray-600 capitalize">
+                  {{ scope.replace(/_/g, ' ') }}
+                </span>
+              </label>
+            </div>
           </div>
         </div>
       </div>
@@ -99,7 +120,7 @@ import TextareaInput from "@/components/form/TextareaInput.vue";
 const formContext = inject("formContext") as any;
 
 const subjects = [
-  "ALL", "ADVANCE_PAYMENT", "ANNOUNCEMENT", "AUTH", "BANK", "COMMODITY", "CONTACT", "CONTRACT",
+  "ALL", "ADVANCE_PAYMENT", "ANNOUNCEMENT", "AUTH", "BANK", "DRIVER_BONUS", "COMMODITY", "CONTACT", "CONTRACT",
   "DRIVER", "EXPENSE", "GROUP", "INSPECTION", "INSURANCE", "MAKER", "MECHANIC", "ORDER",
   "PACKAGING", "PAYMENT_REQUEST", "REPORT", "ROLE", "ROUTE", "SERVICE_RECORD", "SHIPMENT",
   "SHIPPER", "TRANSPORTER", "TYRE", "USER", "VEHICLE", "WORK_ORDER", "WORKSHOP",
@@ -116,14 +137,27 @@ const specificActions: Record<string, string[]> = {
   STORE_REQUISITION_VOUCHER: ["approve", "authorize", "cancel", "reject"],
   ADVANCE_PAYMENT: ["approve", "authorize", "pay"],
   WORK_ORDER: ["approve"],
+  DRIVER: ["self", "region", "all_regions"],
+  DRIVER_BONUS: ["self", "region", "all_regions"],
+  CONTACT: ["self", "region", "all_regions"],
+  MECHANIC: ["self", "region", "all_regions"],
+  ROUTE: ["self", "region", "all_regions"],
+  TRANSPORTER: ["self", "region", "all_regions"],
+  VEHICLE: ["self", "region", "all_regions"],
+  WORKSHOP: ["self", "region", "all_regions"],
 };
 
-const getActionsForSubject = (subject: string) => {
-  const actions = [...baseActions];
-  if (specificActions[subject]) {
-    actions.push(...specificActions[subject]);
-  }
-  return [...new Set(actions)];
+const scopeActionsList = ["self", "region", "all_regions"];
+
+const hasScopeActions = (subject: string) =>
+  (specificActions[subject] || []).some(a => scopeActionsList.includes(a));
+
+const getScopeActionsForSubject = (subject: string) =>
+  (specificActions[subject] || []).filter(a => scopeActionsList.includes(a));
+
+const getRegularActions = (subject: string) => {
+  const specific = (specificActions[subject] || []).filter(a => !scopeActionsList.includes(a));
+  return [...new Set([...baseActions, ...specific])];
 };
 
 const isPermissionChecked = (subject: string, action: string) => {
@@ -155,11 +189,33 @@ const togglePermission = (subject: string, action: string, checked: boolean) => 
   formContext.form.setFieldValue("permissions", permissions);
 };
 
+const toggleScopePermission = (subject: string, scope: string) => {
+  const permissions = [...(formContext.form.state.values.permissions || [])];
+  const permIndex = permissions.findIndex((p: any) => p.subject === subject);
+  const scopeActions = getScopeActionsForSubject(subject);
+
+  if (permIndex > -1) {
+    const alreadySelected = permissions[permIndex].action.includes(scope);
+    permissions[permIndex].action = permissions[permIndex].action.filter((a: string) => !scopeActions.includes(a));
+    if (!alreadySelected) {
+      permissions[permIndex].action.push(scope);
+    }
+    if (permissions[permIndex].action.length === 0) {
+      permissions.splice(permIndex, 1);
+    }
+  } else {
+    permissions.push({ subject, action: [scope] });
+  }
+  formContext.form.setFieldValue("permissions", permissions);
+};
+
 const selectAllPermissions = () => {
-  const allPerms = subjects.map(s => ({
-    subject: s,
-    action: getActionsForSubject(s)
-  }));
+  const allPerms = subjects.map(s => {
+    const actions = getRegularActions(s);
+    const scopeActions = getScopeActionsForSubject(s);
+    if (scopeActions.length > 0) actions.push(scopeActions[scopeActions.length - 1]);
+    return { subject: s, action: actions };
+  });
   formContext.form.setFieldValue("permissions", allPerms);
 };
 

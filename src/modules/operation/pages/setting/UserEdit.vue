@@ -52,7 +52,13 @@ const initialValues = computed(() => {
   return {
     username: data.username || "",
     role: data.role?._id || data.role || "",
-    region: data.region?._id || data.region || "",
+    region: Array.isArray(data.region)
+      ? data.region.map((r: any) => r._id || r)
+      : data.region?._id
+        ? [data.region._id]
+        : data.region
+          ? [data.region]
+          : [],
   };
 });
 

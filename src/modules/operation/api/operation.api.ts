@@ -490,6 +490,14 @@ export function fetch_contact_by_id(id: string) {
   return getApi("/contact").addAuthenticationHeader().get(`/${id}`);
 }
 
+export function fetch_unlinked_drivers(name?: string) {
+  return getApi("/contact").addAuthenticationHeader().get("/drivers/unlinked", name ? { params: { name } } : {});
+}
+
+export function link_driver_to_contact(driverId: string, data: any) {
+  return getApi("/contact").addAuthenticationHeader().post(`/drivers/${driverId}/link`, data);
+}
+
 export function generate_invoice(data: any) {
   return getApi("").addAuthenticationHeader().patch("/shipment/generateInvoice", data);
 }

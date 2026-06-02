@@ -277,6 +277,7 @@ export const fleet_navs: Navs[] = [
         children: [
           { path: "/fleet/fuel-entries/add", name: "Add Fuel Entry", show: false },
           { path: "/fleet/fuel-entries/edit/$id", name: "Edit Fuel Entry", show: false },
+          { path: "/fleet/fuel-entries/$id", name: "Fuel Entry Details", show: false },
         ],
       },
       {
@@ -287,6 +288,7 @@ export const fleet_navs: Navs[] = [
         children: [
           { path: "/fleet/meter-entries/add", name: "Add Meter Entry", show: false },
           { path: "/fleet/meter-entries/edit/$id", name: "Edit Meter Entry", show: false },
+          { path: "/fleet/meter-entries/$id", name: "Meter Entry Details", show: false },
         ],
       },
       {
@@ -297,6 +299,7 @@ export const fleet_navs: Navs[] = [
         children: [
           { path: "/fleet/vehicle-expenses/add", name: "Add Vehicle Expense", show: false },
           { path: "/fleet/vehicle-expenses/edit/$id", name: "Edit Vehicle Expense", show: false },
+          { path: "/fleet/vehicle-expenses/$id", name: "Vehicle Expense Details", show: false },
         ],
       },
       {
@@ -307,6 +310,7 @@ export const fleet_navs: Navs[] = [
         children: [
           { path: "/fleet/recurring-rules/add", name: "Add Recurring Rule", show: false },
           { path: "/fleet/recurring-rules/edit/$id", name: "Edit Recurring Rule", show: false },
+          { path: "/fleet/recurring-rules/$id", name: "Recurring Rule Details", show: false },
         ],
       },
     ],

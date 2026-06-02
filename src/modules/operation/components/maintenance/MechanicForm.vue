@@ -1,5 +1,5 @@
 <template>
-  <Form :id="formId" :values="initialValues" :onSubmit="handleSubmit">
+  <Form :id="formId" :values="normalizedValues" :onSubmit="handleSubmit">
     <template #default="{ form }">
       <Colapsable
         title="Mechanic Information"
@@ -113,6 +113,20 @@
               required,
             }"
           />
+
+          <SelectInput
+            name="region"
+            label="Region"
+            url="/region/myRegions"
+            label_key="name"
+            value_key="_id"
+            :attributes="{ placeholder: 'Select region' }"
+            :options="
+              props.initialValues.region?.name
+                ? [{ label: props.initialValues.region.name, value: props.initialValues.region._id }]
+                : []
+            "
+          />
         </div>
       </Colapsable>
 
@@ -125,7 +139,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { ref, watch, computed } from "vue";
 import Form from "@/components/form/Form.vue";
 import Input from "@/components/form/Input.vue";
 import SelectInput from "@/components/form/SelectInput.vue";
@@ -141,6 +155,11 @@ const props = defineProps<{
 }>();
 
 const isInternal = ref(props.initialValues.isInternal !== false);
+
+const normalizedValues = computed(() => ({
+  ...props.initialValues,
+  region: props.initialValues.region?._id || props.initialValues.region || "",
+}));
 
 const handleInternalToggle = (val: boolean, form: any) => {
   isInternal.value = val;
