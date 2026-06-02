@@ -57,7 +57,7 @@ const columns: TableColumn[] = [
   { key: "createdAt", label: "Date", field: "createdAt" },
   { key: "route", label: "Route", field: "shipment.route.routeName" },
   { key: "type", label: "Type", field: "vehicle.plateNumber" },
-  { key: "bankAccount", label: "Bank Account", field: "depositedBankAccount" },
+  { key: "bankAccount", label: "Bank Account", field: (row: any) => `${row.depositedBankName?.name ?? "N/A"} - ${row.depositedBankAccount ?? "N/A"}` },
   { key: "amount", label: "Amount", field: "amount" },
   { key: "status", label: "Status", field: "status" },
   { key: "remark", label: "Remark", field: "remark" },

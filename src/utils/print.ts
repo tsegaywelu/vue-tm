@@ -86,7 +86,7 @@ export const printSummary = (
         <tr>
           ${columns
             .map((col) => {
-              let val = getSafe(row, (col.field || col.key) as string);
+              let val = typeof col.field === "function" ? col.field(row) : getSafe(row, (col.field || col.key) as string);
               if (col.key === "date" || col.key === "createdAt" || col.field === "date" || col.field === "createdAt") val = formatDate(val);
               if (typeof val === "number" && !isNaN(val)) val = val.toLocaleString();
               return `<td>${val}</td>`;
