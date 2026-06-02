@@ -57,6 +57,7 @@ const columns: TableColumn[] = [
   { key: "createdAt", label: "Date", field: "createdAt" },
   { key: "route", label: "Route", field: "shipment.route.routeName" },
   { key: "type", label: "Type", field: "vehicle.plateNumber" },
+  { key: "bankAccount", label: "Bank Account", field: "depositedBankAccount" },
   { key: "amount", label: "Amount", field: "amount" },
   { key: "status", label: "Status", field: "status" },
   { key: "remark", label: "Remark", field: "remark" },
