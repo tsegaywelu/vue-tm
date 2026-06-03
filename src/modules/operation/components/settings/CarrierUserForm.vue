@@ -54,7 +54,7 @@
     />
 
     <SelectInput
-      name="region"
+      name="regions"
       label="Region"
       url="/region/myRegions"
       label_key="name"

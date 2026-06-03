@@ -579,7 +579,7 @@ const handleSubmit = async (values: any) => {
   };
 
   if (values.group === "DRIVER") {
-    payload.driver = {
+    payload.driverInfo = {
       driverLicenceNumber: values.driverLicenceNumber,
       drivingLicenceExpirationDate:
         values.drivingLicenceExpirationDate || null,
@@ -589,7 +589,7 @@ const handleSubmit = async (values: any) => {
   }
 
   if (values.group === "MECHANIC") {
-    payload.mechanic = {
+    payload.mechanicInfo = {
       certification: values.certification,
       experience: values.experience ? Number(values.experience) : null,
     };
