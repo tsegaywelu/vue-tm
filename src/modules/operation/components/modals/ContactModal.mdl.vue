@@ -9,16 +9,18 @@
   >
     <template #center="{ form }">
       <div class="flex flex-col gap-4">
+        <!-- Profile picture (hidden for Path B — contact info comes from the driver) -->
         <FileInput
+          v-if="!isPathB"
           name="profilePicture"
           label="Profile Picture"
           imageOnly
           accept="image/*"
         />
 
-        <!-- Basic Info -->
+        <!-- Name + Group row -->
         <div class="grid grid-cols-2 gap-4">
-          <div>
+          <div v-if="!isPathB">
             <Input
               name="name"
               label="Full Name"
@@ -26,25 +28,7 @@
               placeholder="e.g. John Doe"
             />
           </div>
-          <div>
-            <Input
-              name="email"
-              label="Email"
-              placeholder="e.g. john@example.com"
-            />
-          </div>
-        </div>
-
-        <div class="grid grid-cols-2 gap-4">
-          <div>
-            <Input
-              name="phone"
-              label="Phone"
-              :validation="{ required }"
-              placeholder="e.g. 0912345678"
-            />
-          </div>
-          <div>
+          <div :class="{ 'col-span-2': isPathB }">
             <SelectInput
               name="group"
               label="Group"
@@ -55,33 +39,64 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-4">
-          <div>
-            <Input
-              name="jobTitle"
-              label="Job Title"
-              placeholder="e.g. Driver Coordinator"
-            />
+        <!-- Basic fields (hidden for Path B) -->
+        <template v-if="!isPathB">
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <Input
+                name="email"
+                label="Email"
+                placeholder="e.g. john@example.com"
+              />
+            </div>
+            <div>
+              <Input
+                name="phone"
+                label="Phone"
+                :validation="{ required }"
+                placeholder="e.g. 0912345678"
+              />
+            </div>
           </div>
-          <div>
-            <Input
-              name="employeeNumber"
-              label="Employee Number"
-              placeholder="e.g. EMP123"
-            />
+
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <Input
+                name="jobTitle"
+                label="Job Title"
+                placeholder="e.g. Driver Coordinator"
+              />
+            </div>
+            <div>
+              <Input
+                name="employeeNumber"
+                label="Employee Number"
+                placeholder="e.g. EMP123"
+              />
+            </div>
           </div>
-        </div>
 
-        <div>
-          <Input name="dateOfBirth" label="Date of Birth" type="date" />
-        </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <Input name="dateOfBirth" label="Date of Birth" type="date" />
+            </div>
+            <div>
+              <SelectInput
+                name="region"
+                label="Region"
+                url="/region/myRegions"
+                label_key="name"
+                value_key="_id"
+                :attributes="{ placeholder: 'Select region' }"
+              />
+            </div>
+          </div>
+        </template>
 
-        <!-- Hidden inputs based on form values using Subscribe -->
+        <!-- Dynamic sections -->
         <component
           :is="form.Subscribe"
-          :selector="
-            (state: any) => [state.values.group, state.values.loginAccess]
-          "
+          :selector="(state: any) => [state.values.group, state.values.loginAccess]"
         >
           <template #default="[group, loginAccess]">
             <!-- Driver Specifics -->
@@ -89,33 +104,122 @@
               v-if="group === 'DRIVER'"
               class="border border-grey-100 p-4 rounded-xl bg-grey-25 mt-2 flex flex-col gap-4"
             >
-              <h4 class="font-bold text-grey-900 text-sm">
-                Driver Specific Information
-              </h4>
-              <div class="grid grid-cols-2 gap-4">
-                <div>
-                  <Input
-                    name="driverLicenceNumber"
-                    label="Licence Number"
-                    placeholder="e.g. DL12345"
-                  />
-                </div>
-                <div>
-                  <Input
-                    name="drivingLicenceExpirationDate"
-                    label="Licence Expiry Date"
-                    type="date"
-                  />
-                </div>
-              </div>
-              <div>
-                <SelectInput
-                  name="driverType"
-                  label="Driver Type"
-                  :options="driverTypeOptions"
-                  :attributes="{ placeholder: 'Select type' }"
+              <h4 class="font-bold text-grey-900 text-sm">Driver Specific Information</h4>
+
+              <!-- Is Employee toggle (only for create, not edit) -->
+              <div v-if="!contact" class="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="isEmployedToggle"
+                  :checked="isEmployed"
+                  @change="(e: any) => onIsEmployedChange(e.target.checked)"
+                  class="h-4 w-4 rounded border-grey-300 text-primary focus:ring-primary cursor-pointer"
                 />
+                <label for="isEmployedToggle" class="font-bold text-grey-700 text-sm cursor-pointer">Is Employee?</label>
               </div>
+
+              <!-- Driver form fields (employee path OR Path A: new non-employee) -->
+              <template v-if="isEmployed || (!isEmployed && !isExistingDriver)">
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <Input
+                      name="driverLicenceNumber"
+                      label="Licence Number"
+                      placeholder="e.g. DL12345"
+                    />
+                  </div>
+                  <div>
+                    <Input
+                      name="drivingLicenceExpirationDate"
+                      label="Licence Expiry Date"
+                      type="date"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <SelectInput
+                    name="driverType"
+                    label="Driver Type"
+                    :options="driverTypeOptions"
+                    :attributes="{ placeholder: 'Select type' }"
+                  />
+                </div>
+              </template>
+
+              <!-- Non-employee secondary choice -->
+              <template v-if="!isEmployed && !contact">
+                <div class="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    id="isExistingDriverToggle"
+                    :checked="isExistingDriver"
+                    @change="(e: any) => onIsExistingDriverChange(e.target.checked)"
+                    class="h-4 w-4 rounded border-grey-300 text-primary focus:ring-primary cursor-pointer"
+                  />
+                  <label for="isExistingDriverToggle" class="font-bold text-grey-700 text-sm cursor-pointer">Driver already in system?</label>
+                </div>
+
+                <!-- Path B: search and pick existing driver -->
+                <div v-if="isExistingDriver" class="flex flex-col gap-3">
+                  <div class="relative">
+                    <label class="block text-xs font-bold text-grey-700 mb-1">Search Driver</label>
+                    <input
+                      type="text"
+                      v-model="driverSearchQuery"
+                      @input="onDriverSearch"
+                      placeholder="Type driver name..."
+                      class="w-full border border-grey-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
+                    />
+                    <div v-if="isSearchingDrivers" class="absolute right-3 top-7">
+                      <i class="mdi mdi-loading mdi-spin text-primary text-sm"></i>
+                    </div>
+
+                    <!-- Results dropdown -->
+                    <div
+                      v-if="driverSearchResults.length > 0"
+                      class="absolute z-10 w-full mt-1 bg-white border border-grey-100 rounded-xl shadow-lg overflow-hidden"
+                    >
+                      <div
+                        v-for="driver in driverSearchResults"
+                        :key="driver._id"
+                        @click="selectSearchedDriver(driver)"
+                        class="flex flex-col gap-0.5 px-3 py-2 hover:bg-grey-50 cursor-pointer border-b border-grey-50 last:border-0"
+                      >
+                        <span class="text-sm font-bold text-grey-900">{{ driver.name }}</span>
+                        <div class="flex gap-3">
+                          <span class="text-xs text-grey-500">{{ driver.phoneNumber }}</span>
+                          <span class="text-xs text-grey-400">{{ driver.driverLicenceNumber }}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <p
+                      v-if="driverSearchQuery.length >= 2 && !isSearchingDrivers && driverSearchResults.length === 0 && !selectedDriver"
+                      class="text-xs text-grey-400 mt-1"
+                    >
+                      No unlinked drivers found.
+                    </p>
+                  </div>
+
+                  <!-- Selected driver chip -->
+                  <div
+                    v-if="selectedDriver"
+                    class="flex items-center justify-between bg-primary/5 border border-primary/20 rounded-lg px-3 py-2"
+                  >
+                    <div>
+                      <p class="text-sm font-bold text-grey-900">{{ selectedDriver.name }}</p>
+                      <p class="text-xs text-grey-500">{{ selectedDriver.phoneNumber }} · {{ selectedDriver.driverLicenceNumber }}</p>
+                    </div>
+                    <button
+                      type="button"
+                      @click="selectedDriver = null; driverSearchQuery = ''"
+                      class="text-xs text-error-500 font-bold hover:underline"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                </div>
+              </template>
             </div>
 
             <!-- Mechanic Specifics -->
@@ -123,9 +227,7 @@
               v-if="group === 'MECHANIC'"
               class="border border-grey-100 p-4 rounded-xl bg-grey-25 mt-2 flex flex-col gap-4"
             >
-              <h4 class="font-bold text-grey-900 text-sm">
-                Mechanic Specific Information
-              </h4>
+              <h4 class="font-bold text-grey-900 text-sm">Mechanic Specific Information</h4>
               <div class="grid grid-cols-2 gap-4">
                 <div>
                   <Input
@@ -216,6 +318,20 @@
                     Generate Random
                   </button>
                 </div>
+
+                <!-- Region field: only for Path B (existing non-employee driver) -->
+                <div v-if="isPathB" class="col-span-2">
+                  <SelectInput
+                    name="region"
+                    label="Region"
+                    url="/region/myRegions"
+                    label_key="name"
+                    value_key="_id"
+                    :attributes="{ placeholder: 'Select region' }"
+                  />
+                </div>
+
+                <!-- Role field: only for OTHER group -->
                 <div v-if="group === 'OTHER'" class="col-span-2">
                   <SelectInput
                     name="role"
@@ -234,7 +350,7 @@
       </div>
     </template>
 
-    <template #bottom="{ form }">
+    <template #bottom>
       <div class="flex justify-end gap-3">
         <Button size="md" variant="outline" @click="closeModal(false)">
           Cancel
@@ -259,24 +375,87 @@ import { closeModal } from "@customizer/modal-x";
 import Button from "@/components/common/Button.vue";
 import FileInput from "@/components/form/FileInput.vue";
 import SubmitButton from "@/components/form/SubmitButton.vue";
-import { add_contact, update_contact } from "../../api/operation.api";
+import {
+  add_contact,
+  update_contact,
+  fetch_unlinked_drivers,
+  link_driver_to_contact,
+} from "../../api/operation.api";
 import { useMutation } from "@tanstack/vue-query";
 
 const props = defineProps<{ data?: { contact?: any } }>();
-
 const contact = computed(() => props.data?.contact);
-
 const API_URL = import.meta.env.VITE_API_URL;
-
 const showPassword = ref(false);
 
+// ── Non-employee driver flow state ──────────────────────────
+const isEmployed = ref(true);
+const isExistingDriver = ref(false);
+const selectedDriver = ref<any>(null);
+const driverSearchQuery = ref("");
+const driverSearchResults = ref<any[]>([]);
+const isSearchingDrivers = ref(false);
+
+// Path B = non-employee + existing driver in system
+const isPathB = computed(() => !isEmployed.value && isExistingDriver.value);
+
+const onIsEmployedChange = (checked: boolean) => {
+  isEmployed.value = checked;
+  if (checked) {
+    isExistingDriver.value = false;
+    selectedDriver.value = null;
+    driverSearchQuery.value = "";
+    driverSearchResults.value = [];
+  }
+};
+
+const onIsExistingDriverChange = (checked: boolean) => {
+  isExistingDriver.value = checked;
+  selectedDriver.value = null;
+  driverSearchQuery.value = "";
+  driverSearchResults.value = [];
+};
+
+let searchTimeout: ReturnType<typeof setTimeout> | null = null;
+
+const onDriverSearch = () => {
+  if (searchTimeout) clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(async () => {
+    const query = driverSearchQuery.value.trim();
+    if (query.length < 2) {
+      driverSearchResults.value = [];
+      return;
+    }
+    isSearchingDrivers.value = true;
+    try {
+      const res = await fetch_unlinked_drivers(query);
+      if (res.success) {
+        const data = res.data as any;
+        driverSearchResults.value = Array.isArray(data)
+          ? data
+          : data?.result || data?.data || [];
+      }
+    } finally {
+      isSearchingDrivers.value = false;
+    }
+  }, 400);
+};
+
+const selectSearchedDriver = (driver: any) => {
+  selectedDriver.value = driver;
+  driverSearchResults.value = [];
+  driverSearchQuery.value = "";
+};
+
+// ── Form helpers ─────────────────────────────────────────────
 function copyPassword(form: any) {
   const password = form.getFieldValue("password");
   if (password) navigator.clipboard.writeText(password);
 }
 
 function generatePassword(form: any) {
-  const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  const charset =
+    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
   const password = Array(10)
     .fill(0)
     .map(() => charset.charAt(Math.floor(Math.random() * charset.length)))
@@ -284,6 +463,7 @@ function generatePassword(form: any) {
   form.setFieldValue("password", password);
 }
 
+// ── Initial form values ───────────────────────────────────────
 const initialFormValues = computed(() => {
   if (contact.value) {
     return {
@@ -308,6 +488,7 @@ const initialFormValues = computed(() => {
       username: contact.value.username || "",
       password: "",
       role: contact.value.role || "",
+      region: contact.value.region?._id || contact.value.region || "",
       profilePicture: contact.value.profilePicture
         ? `${API_URL}/${contact.value.profilePicture.replace(/\\/g, "/")}`
         : null,
@@ -330,6 +511,7 @@ const initialFormValues = computed(() => {
     username: "",
     password: "",
     role: "",
+    region: "",
   };
 });
 
@@ -346,16 +528,44 @@ const driverTypeOptions = [
 
 const toast = useToastStore();
 
-const createMutation = useMutation({
-  mutationFn: add_contact,
-});
-
+const createMutation = useMutation({ mutationFn: add_contact });
 const updateMutation = useMutation({
   mutationFn: ({ id, data }: { id: string; data: any }) =>
     update_contact(id, data),
 });
+const linkMutation = useMutation({
+  mutationFn: ({ driverId, data }: { driverId: string; data: any }) =>
+    link_driver_to_contact(driverId, data),
+});
 
+// ── Submit handler ────────────────────────────────────────────
 const handleSubmit = async (values: any) => {
+  // ── Path B: link an existing non-employee driver ──────────
+  if (isPathB.value) {
+    if (!selectedDriver.value) {
+      toast.error("Please select a driver from the search results");
+      return;
+    }
+    const body: any = { loginAccess: values.loginAccess || false };
+    if (values.loginAccess) {
+      body.username = values.username;
+      body.password = values.password;
+      if (values.region) body.region = values.region;
+    }
+    const res = await linkMutation.mutateAsync({
+      driverId: selectedDriver.value._id,
+      data: body,
+    });
+    if (res.success || res.status === 200 || res.status === 201) {
+      toast.success("Contact created and linked to driver successfully!");
+      closeModal(true);
+    } else {
+      toast.error(res.error || "Failed to link driver contact");
+    }
+    return;
+  }
+
+  // ── Path A (new non-employee) or Employee: POST /contact ──
   const payload: any = {
     name: values.name,
     email: values.email,
@@ -365,18 +575,21 @@ const handleSubmit = async (values: any) => {
     employeeNumber: values.employeeNumber,
     dateOfBirth: values.dateOfBirth || null,
     loginAccess: values.loginAccess || false,
+    ...(values.region && { region: values.region }),
   };
 
   if (values.group === "DRIVER") {
-    payload.driver = {
+    payload.driverInfo = {
       driverLicenceNumber: values.driverLicenceNumber,
-      drivingLicenceExpirationDate: values.drivingLicenceExpirationDate || null,
+      drivingLicenceExpirationDate:
+        values.drivingLicenceExpirationDate || null,
       driverType: values.driverType,
+      isEmployed: isEmployed.value,
     };
   }
 
   if (values.group === "MECHANIC") {
-    payload.mechanic = {
+    payload.mechanicInfo = {
       certification: values.certification,
       experience: values.experience ? Number(values.experience) : null,
     };
@@ -384,15 +597,10 @@ const handleSubmit = async (values: any) => {
 
   if (values.loginAccess) {
     payload.username = values.username;
-    if (values.password) {
-      payload.password = values.password;
-    }
-    if (values.group === "OTHER" && values.role) {
-      payload.role = values.role;
-    }
+    if (values.password) payload.password = values.password;
+    if (values.group === "OTHER" && values.role) payload.role = values.role;
   }
 
-  // To support profile picture upload, we pass as FormData if a picture is selected
   const formData = new FormData();
   Object.keys(payload).forEach((key) => {
     if (typeof payload[key] === "object" && payload[key] !== null) {
