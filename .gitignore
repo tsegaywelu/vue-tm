@@ -26,3 +26,8 @@ CLAUDE.md
 *.sw?
 
 .claude/
+
+# Playwright
+playwright-report/
+test-results/
+print_instructions.md

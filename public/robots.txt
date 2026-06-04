@@ -1,0 +1,21 @@
+# Block all AI scrapers/crawlers from reading any page on the site
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: Applebot-Extended
+Disallow: /
+
+# Block general search engine crawlers (Google, Bing, etc.) from indexing private app paths
+User-agent: *
+Disallow: /login
+Disallow: /unauthorized
+Disallow: /operation
+Disallow: /shipper
+Disallow: /fleet
+Disallow: /dashboard
