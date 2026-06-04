@@ -310,6 +310,13 @@ const handleUpdateShipment = async (values: any, context: any) => {
     queryClient.invalidateQueries({ queryKey: ["shipment", shipmentId] });
     queryClient.invalidateQueries({ queryKey: ["shipment-list"] });
     queryClient.invalidateQueries({ queryKey: ["order-list"] });
+    queryClient.invalidateQueries({ queryKey: ["/shipment/paymentRequestedInvoices"] });
+    queryClient.invalidateQueries({
+      predicate: (query) =>
+        Array.isArray(query.queryKey) &&
+        query.queryKey[0] === "invoice-report" &&
+        query.queryKey[2] === shipment.value?.paymentDetail?.reference,
+    });
     const basePath = authStore.is_shipper
       ? "/shipper/shipments"
       : "/operation/shipments";

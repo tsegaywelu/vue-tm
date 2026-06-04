@@ -478,13 +478,12 @@
               type="button"
               class="absolute top-0 right-0 text-primary text-[10px] font-black uppercase tracking-wider hover:underline z-10"
               @click="
-                form.setFieldValue(
-                  'totalPrice',
-                  String(+calculateTotalPrice(form.state.values)),
-                )
+                usingCalculatedPrice
+                  ? (form.setFieldValue('totalPrice', String(props.initialValues.totalPrice || '')), usingCalculatedPrice = false)
+                  : (form.setFieldValue('totalPrice', String(+calculateTotalPrice(form.state.values))), usingCalculatedPrice = true)
               "
             >
-              Use Calculated Price from Contract
+              {{ usingCalculatedPrice ? 'Use Edited Value' : 'Use Calculated Price from Contract' }}
             </button>
             <Input
               name="totalPrice"
@@ -596,6 +595,7 @@ const selectedVehicle = ref<any>(null);
 const formRef = ref<any>(null);
 const filteredPricingType = ref<any>(null);
 const pricingWarning = ref("");
+const usingCalculatedPrice = ref(props.mode === "add");
 
 const tripTypeOptions = [
   { label: "Round Trip", value: TripType.RoundTrip },
@@ -803,8 +803,10 @@ onMounted(async () => {
     }
 
     if (order_record && props.initialValues.waypoint) {
-      // Small delay to ensure refs are updated before triggering logic
       handleWaypointChange(props.initialValues.waypoint, null);
+      if (props.initialValues.totalPrice) {
+        formRef.value?.form.setFieldValue("totalPrice", String(props.initialValues.totalPrice));
+      }
     }
   }
 

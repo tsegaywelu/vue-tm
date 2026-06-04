@@ -13,7 +13,7 @@
     <div
       v-for="stat in stats"
       :key="stat.label"
-      class="stat-card flex items-center gap-1.5 px-4 py-2 rounded-full border border-grey-100 transition-all cursor-pointer"
+      class="stat-card shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-full border border-grey-100 transition-all cursor-pointer"
       @click="$emit('click', stat)"
     >
       <span class="text-grey-600 font-medium">{{ stat.label }}</span>

@@ -124,6 +124,7 @@ const queryClient = useQueryClient();
 const toast = useToastStore();
 const auth = useAuthStore();
 const invoiceId = route.params.id as string;
+const invoiceReference = route.query.reference as string | undefined;
 
 const tabs = computed(() => (route.meta.tabs || []) as any[]);
 const activeTab = computed(
@@ -134,7 +135,7 @@ const activeTab = computed(
 );
 
 const { data: response, isLoading } = useQuery({
-  queryKey: ["invoice-report", invoiceId],
+  queryKey: ["invoice-report", invoiceId, invoiceReference],
   queryFn: () => fetch_invoice_details(invoiceId),
   enabled: !!invoiceId,
 });

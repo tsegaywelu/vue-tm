@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import { useForm } from "@tanstack/vue-form";
 import { useMutation } from "@tanstack/vue-query";
 import { useAuthStore } from "@/store/authStore";
 import { useToastStore } from "@/store/toastStore";
@@ -12,6 +11,7 @@ import Input from "@/components/form/Input.vue";
 import { icons } from "@/utils/icons";
 import PasswordInput from "@/components/form/PasswordInput.vue";
 import SubmitButton from "@/components/form/SubmitButton.vue";
+import { required } from "@/utils/validations";
 
 const router = useRouter();
 const auth_store = useAuthStore();
@@ -102,7 +102,9 @@ async function submitLogin(values: any) {
             <div class="p-4 bg-white rounded-3xl shadow-soft">
               <i class="h-12 w-auto block" v-html="icons['raaz-logo']"></i>
             </div>
-            <span class="text-lg font-extrabold text-grey-800 tracking-tight">ChiNet TMS</span>
+            <span class="text-lg font-extrabold text-grey-800 tracking-tight"
+              >ChiNet TMS</span
+            >
           </div>
           <h2 class="text-4xl font-extrabold text-grey-900 tracking-tight">
             Welcome Back
@@ -147,6 +149,7 @@ async function submitLogin(values: any) {
           class="space-y-6"
         >
           <Input
+            :validation="{ required }"
             name="username"
             label="Username"
             :attributes="{ placeholder: 'Enter your username' }"

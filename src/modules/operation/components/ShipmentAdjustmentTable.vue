@@ -11,13 +11,11 @@
       <div
         class="h-full flex items-center border-r border-gray-200 pr-2 mr-2 w-48"
       >
-        <Select
-          class="[&_.input-focus]:shadow-none! [&_.input-focus]:border-none [&_.input-focus]:min-h-full min-w-48"
+        <SearchFieldSelect
           v-model="selectedSearchField"
+          pagination-id="shipment-adjustment-list"
           :options="searchFieldOptions"
-          label_key="label"
-          value_key="value"
-          :clearable="false"
+          select-class="[&_.input-focus]:shadow-none! [&_.input-focus]:border-none [&_.input-focus]:min-h-full min-w-48"
         />
       </div>
     </template>
@@ -70,8 +68,8 @@
 import { computed, ref } from "vue";
 import Table from "@/components/common/Table.vue";
 import type { TableColumn } from "@/components/common/Table.vue";
-import { usePagination } from "@/composables/usePagination";
-import Select from "@/components/common/Select.vue";
+import { usePagination, useTableLastMeta } from "@/composables/usePagination";
+import SearchFieldSelect from "@/components/common/SearchFieldSelect.vue";
 
 const searchFieldOptions = [
   { label: "Plate Number", value: "vehiclePlateNumber" },
@@ -83,7 +81,10 @@ const searchFieldOptions = [
   { label: "Shipper Receive Voucher", value: "shipperReceiveVoucher" },
   { label: "Transporter Name", value: "transporterName" },
 ];
-const selectedSearchField = ref("vehiclePlateNumber");
+const lastMeta = useTableLastMeta("shipment-adjustment-list");
+const selectedSearchField = ref(
+  (lastMeta.value.searchField as string | undefined) || "vehiclePlateNumber",
+);
 
 const columns: TableColumn[] = [
   {
@@ -118,9 +119,7 @@ const { response, refetch } = usePagination({
     return {
       ...(state.search
         ? {
-            [selectedSearchField.value]: {
-              regexAny: state.search,
-            },
+            [selectedSearchField.value]: state.search,
           }
         : {}),
       q: undefined,
