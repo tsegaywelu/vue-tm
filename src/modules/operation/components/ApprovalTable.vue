@@ -38,9 +38,11 @@
     search_placeholder="Search by Ref. Number..."
     :on_sm_screen_column_span="{
       advanceNumber: 2,
+      shipmentCode: 2,
       payableType: 2,
       paidTo: 2,
       route: 2,
+      total: 2,
       actions: 2,
     }"
   >

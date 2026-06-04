@@ -16,12 +16,11 @@
             url="/insurance-provider"
             label_key="name"
             value_key="_id"
+            searchable
+            :params="(state) => ({ q: undefined, name: state.search })"
             :validation="{ required }"
           />
-          <VehicleInput
-            name="vehicle"
-            :validation="{ required }"
-          />
+          <VehicleInput name="vehicle" :validation="{ required }" />
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -29,11 +28,17 @@
             name="prePaymentDate"
             label="Pre Payment Date"
             :validation="{ required }"
+            :attributes="{
+              placeholder: 'Select Pre Payment Date',
+            }"
           />
           <DateInput
             name="prePaymentMatureDate"
             label="Pre Payment Mature Date"
             :validation="{ required }"
+            :attributes="{
+              placeholder: 'Select Pre Payment Mature Date',
+            }"
           />
         </div>
 
@@ -147,7 +152,7 @@ const handleSubmit = async (values: any) => {
   // Convert array to string as per legacy pattern
   const categories = (values.insuranceCategoryAmount || []).map((c: any) => ({
     type: c.type,
-    amount: Number(c.amount)
+    amount: Number(c.amount),
   }));
   formData.append("insuranceCategoryAmount", JSON.stringify(categories));
 

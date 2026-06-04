@@ -55,13 +55,11 @@
               Edit
             </Button>
             <Button
-              variant="primary"
+              variant="outline"
               size="md"
               @click="handlePrint"
             >
-              <template #leading>
-                <i class="mdi mdi-printer text-lg"></i>
-              </template>
+              <i class="*:size-4 mr-1" v-html="icons.printer" />
               Print
             </Button>
           </div>
@@ -86,6 +84,7 @@ import { fetch_store_requisition_details } from "../../api/inventory.api";
 import Status from "@/components/common/Status.vue";
 import Button from "@/components/Button.vue";
 import { dateFormatter } from "@/utils/utils";
+import { icons } from "@/utils/icons";
 import { useAuthStore } from "@/store/authStore";
 import { printStoreRequisition } from "../../utils/printStoreRequisition";
 

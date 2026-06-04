@@ -5,6 +5,8 @@
     :rows="response"
     search_placeholder="Search by reference..."
     @row_click="handleAction($event, 'view')"
+    :hide_on_sm_screen="['shipments', 'paymentRequestedDate', 'paymentRequestedBy', 'paymentApprovedBy', 'paymentCollectedBy', 'crv', 'csi', 'remark']"
+    :on_sm_screen_column_span="{ reference: 2, totalAmount: 2, shipperName: 2, status: 2 }"
   >
     <template #cell-reference="{ value }">
       <span class="font-bold">{{ value || "-" }}</span>
@@ -68,15 +70,17 @@
     </template>
 
     <template #after-search>
-      <PaymentCollectionFilters
-        @change="handleFilterChange"
-        pagination-id="payment-collection-list"
-      />
+      <div class="flex items-center gap-4 overflow-x-auto">
+        <PaymentCollectionFilters
+          @change="handleFilterChange"
+          pagination-id="payment-collection-list"
+        />
+      </div>
     </template>
 
     <template #cell-actions="{ row }">
       <div class="flex items-center justify-end">
-        <Dropdown>
+        <Dropdown title="Actions">
           <template #default="{ close }">
             <DropDownItem
               v-if="row.status === 'payment_approved'"

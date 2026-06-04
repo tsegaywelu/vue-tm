@@ -6,10 +6,12 @@
     search_placeholder="Search by reference..."
     v-model:search_value="searchTerm"
     @row_click="handleAction($event, 'view')"
+    :hide_on_sm_screen="['paymentRequestedDate', 'paymentRequestedBy']"
+    :on_sm_screen_column_span="{ reference: 2, shipments: 2, totalAmount: 2, status: 2 }"
   >
     <template #after-search>
       <div
-        class="items-center gap-4 inline-flex border-l border-grey-100 overflow-x-auto px-3"
+        class="items-center gap-4 hidden sm:flex border-l border-grey-100 overflow-x-auto px-3"
       >
         <i v-html="icons.filter" />
         <InvoiceReportFilters
@@ -54,7 +56,7 @@
 
     <template #cell-actions="{ row }">
       <div class="flex items-center justify-center w-full">
-        <Dropdown>
+        <Dropdown title="Actions">
           <template #default="{ close }">
             <DropDownItem
               v-permission="'PAYMENT_REQUEST:update'"

@@ -4,6 +4,8 @@
     :columns="columns"
     :rows="response"
     search_placeholder="Search bonus routes..."
+    :hide_on_sm_screen="['description', 'createdAt']"
+    :on_sm_screen_column_span="{ route: 2, amount: 2 }"
   >
     <template #cell-route="{ row }">
       {{ row.route?.routeName || (row.route?.origin?.name + ' - ' + row.route?.destination?.name) }}

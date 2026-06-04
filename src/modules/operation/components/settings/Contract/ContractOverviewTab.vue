@@ -23,24 +23,24 @@
 
     <!-- Routes Section -->
     <div class="flex flex-col gap-4">
-      <div class="flex items-center justify-between px-1">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between px-1 gap-3">
         <div class="flex items-center gap-3">
           <h2 class="text-xl font-bold text-gray-900">Contract Routes</h2>
           <span class="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-xs font-bold">
             {{ filteredRoutes.length }} / {{ contract?.routes?.length || 0 }} Routes
           </span>
         </div>
-        <div class="flex items-center gap-3">
-          <div class="relative">
+        <div class="flex items-center gap-2">
+          <div class="relative flex-1 sm:flex-none">
             <i class="mdi mdi-magnify absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
             <input
               v-model="routeSearch"
               type="text"
               placeholder="Filter by route..."
-              class="pl-8 pr-3 py-2 text-sm border border-gray-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 w-48"
+              class="pl-8 pr-3 py-2 text-sm border border-gray-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 w-full sm:w-48"
             />
           </div>
-          <Button variant="primary" size="md" @click="openAddRouteModal">
+          <Button variant="primary" size="md" class="shrink-0" @click="openAddRouteModal">
             + Add Route
           </Button>
         </div>

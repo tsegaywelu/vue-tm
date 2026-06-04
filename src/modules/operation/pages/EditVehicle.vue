@@ -56,13 +56,14 @@ const labels = computed<Record<string, string>>(() => {
     region: v.region?.name || "",
     transporter: v.transporter?.name || "",
     insurance_insurer: v.insuranceInformation?.insurer?.name || "",
-    driver: d ? `${d.firstName} ${d.middleName || ""} ${d.lastName || ""}`.trim() : "",
+    driver: d
+      ? `${d.firstName} ${d.middleName || ""} ${d.lastName || ""}`.trim()
+      : "",
   };
 });
 
 const toDate = (iso: string | undefined) =>
   iso ? new Date(iso).toISOString().split("T")[0] : "";
-
 
 const mappedValues = computed(() => {
   if (!vehicle.value) return {};
@@ -120,6 +121,6 @@ const mutation = useMutation({
 });
 
 const handleSubmit = async (values: any) => {
-  mutation.mutate(values);
+  await mutation.mutateAsync(values);
 };
 </script>

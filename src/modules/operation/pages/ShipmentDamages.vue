@@ -29,18 +29,21 @@
   </BottomSheet>
 
   <Teleport defer to="#page-actions">
-    <Button
-      v-permission="'SHIPMENT_DAMAGE:create'"
-      variant="primary"
-      size="md"
-      @click="openAddDamageModal"
-    >
-      <template #leftIcon>
-        <i class="mdi mdi-plus text-lg"></i>
-      </template>
-      Add Damage Report
-    </Button>
+    <div class="hidden sm:flex">
+      <Button v-permission="'SHIPMENT_DAMAGE:create'" variant="primary" size="md" @click="openAddDamageModal">
+        Add Damage Report
+      </Button>
+    </div>
   </Teleport>
+
+  <!-- Mobile FAB -->
+  <button
+    v-permission="'SHIPMENT_DAMAGE:create'"
+    class="sm:hidden fixed bottom-6 right-6 z-40 size-14 rounded-full bg-primary text-white shadow-xl flex items-center justify-center"
+    @click="openAddDamageModal"
+  >
+    <i class="*:size-6" v-html="icons.plus"></i>
+  </button>
 
   <Teleport to="#extra-page-data">
     <StatsCards
@@ -77,6 +80,7 @@
     :row_alignment="{ amount: 'right', actions: 'right' }"
     :head_alignment="{ amount: 'right', actions: 'right' }"
     :search_placeholder="dynamicSearchPlaceholder"
+    :on_sm_screen_column_span="{ vehicle: 2, shipment: 2, damageInfo: 2, amount: 3, status: 3, actions: 2 }"
   >
     <template #search-prefix>
       <div

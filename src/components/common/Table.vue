@@ -221,7 +221,7 @@
         <div
           v-for="n in loadingRowCount"
           :key="n"
-          class="grid gap-3 p-4 bg-white rounded-xl border border-greybg-grey-25 shadow-[0px_0px_24px_0px_#0000000A] grid-cols-2"
+          class="grid gap-3 p-4 bg-white rounded-xl border border-gray-100 shadow-[0px_0px_24px_0px_#0000000A] grid-cols-2"
         >
           <div
             v-for="c in tanstackColumns"
@@ -266,6 +266,7 @@
             :alignment="row_alignment"
             :col_style="col_style"
             :on_sm_screen_row_alignment="on_sm_screen_row_alignment"
+            :sm_row_alignment="sm_row_alignment"
             :on_sm_screen_column_span="on_sm_screen_column_span"
             :hide_on_sm_screen="hide_on_sm_screen"
             :show_labels_in_card="show_labels_in_card"
@@ -396,6 +397,9 @@ export interface TableProps<T> {
   };
   on_sm_screen_row_alignment?: {
     [key in keyof T | (string & {})]?: number;
+  };
+  sm_row_alignment?: {
+    [key in keyof T | (string & {})]?: "left" | "center" | "right";
   };
   on_sm_screen_column_span?: {
     [key in keyof T | (string & {})]?: number;

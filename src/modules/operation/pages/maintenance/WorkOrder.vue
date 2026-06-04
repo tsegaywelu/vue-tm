@@ -1,15 +1,24 @@
 <template>
   <Teleport to="#page-actions" defer>
-    <Button
-      v-permission="'WORK_ORDER:create'"
-      @click="router.push('/maintenance/work-order/add')"
-    >
-      <template #leading>
-        <div class="size-5" v-html="all_icons.plus"></div>
-      </template>
-      New Work Order
-    </Button>
+    <div class="hidden sm:flex">
+      <Button
+        v-permission="'WORK_ORDER:create'"
+        @click="router.push('/maintenance/work-order/add')"
+      >
+        <template #leading>
+          <div class="size-5" v-html="all_icons.plus"></div>
+        </template>
+        New Work Order
+      </Button>
+    </div>
   </Teleport>
+  <button
+    v-permission="'WORK_ORDER:create'"
+    class="sm:hidden fixed bottom-6 right-6 z-40 size-14 rounded-full bg-primary text-white shadow-xl flex items-center justify-center"
+    @click="router.push('/maintenance/work-order/add')"
+  >
+    <i class="*:size-6" v-html="all_icons.plus"></i>
+  </button>
   <WorkOrderTable @action="handleWorkOrderAction" />
 </template>
 

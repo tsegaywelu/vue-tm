@@ -10,74 +10,74 @@
       enter-from-class="panel-enter-from"
       enter-to-class="panel-enter-to"
     >
-    <div
-      class="bg-white flex flex-col overflow-auto"
-      :class="[
-        modalStyle === 'full'
-          ? 'max-h-[90dvh] sm:max-h-none sm:h-full sm:border-l sm:border-gray-100 shadow-2xl'
-          : 'max-h-[90dvh] sm:max-h-none h-auto shadow-2xl',
-        'w-full max-w-full sm:max-w-161.5',
-        'rounded-t-3xl sm:rounded-[40px]',
-        containerClass,
-      ]"
-    >
-      <!-- Mobile drag handle -->
-      <div class="sm:hidden flex justify-center pt-3 pb-1 shrink-0">
-        <div class="w-12 h-1.5 bg-grey-300 rounded-full" />
-      </div>
-
-      <!-- Header -->
       <div
-        class="border-b border-gray-100 p-6 flex justify-between items-start gap-1 shrink-0"
+        class="bg-white flex flex-col overflow-auto"
+        :class="[
+          modalStyle === 'full'
+            ? 'max-h-[90dvh] sm:max-h-none sm:h-full sm:border-l sm:border-gray-100 shadow-2xl mt-auto'
+            : 'max-h-[90dvh] sm:max-h-none h-auto shadow-2xl',
+          'w-full max-w-full sm:max-w-161.5',
+          'rounded-t-3xl sm:rounded-[40px]',
+          containerClass,
+        ]"
       >
-        <div class="flex items-start flex-col gap-1 text-left">
-          <h1 class="text-xl font-bold text-gray-900 leading-tight">
-            {{ title }}
-          </h1>
-          <span v-if="subtitle" class="text-sm text-gray-500 text-left">{{
-            subtitle
-          }}</span>
-        </div>
-        <button
-          type="button"
-          @click="handleClose"
-          class="rounded-full w-11 h-11 grid place-items-center shrink-0 hover:bg-gray-100 active:shadow-none transition-colors"
-          style="
-            box-shadow:
-              4px 4px 44px 0px #0000000d,
-              -4px -4px 44px 0px #0000000d;
-          "
-        >
-          <i v-html="icons.times"></i>
-        </button>
-      </div>
-
-      <!-- Content wrapper -->
-      <Form
-        :values="values"
-        ref="formRef"
-        :id="formId"
-        :enable_unsaved_guard="false"
-        :on-submit="formSubmitHandler"
-        v-bind="formProps"
-        class="flex-1 flex flex-col overflow-hidden"
-        #default="{ form }"
-      >
-        <!-- Body -->
-        <div class="p-6 flex-1 flex flex-col gap-4 overflow-auto">
-          <slot :form="form" name="center" />
+        <!-- Mobile drag handle -->
+        <div class="sm:hidden flex justify-center pt-3 pb-1 shrink-0">
+          <div class="w-12 h-1.5 bg-grey-300 rounded-full" />
         </div>
 
-        <!-- Footer -->
+        <!-- Header -->
         <div
-          v-if="$slots.bottom"
-          class="p-6 border-t border-[#DFE1E7] shrink-0 modal-footer"
-          :class="bottomClass"
+          class="border-b border-gray-100 p-6 flex justify-between items-start gap-1 shrink-0"
         >
-          <slot :form="form" name="bottom" />
+          <div class="flex items-start flex-col gap-1 text-left">
+            <h1 class="text-xl font-bold text-gray-900 leading-tight">
+              {{ title }}
+            </h1>
+            <span v-if="subtitle" class="text-sm text-gray-500 text-left">{{
+              subtitle
+            }}</span>
+          </div>
+          <button
+            type="button"
+            @click="handleClose"
+            class="rounded-full w-11 h-11 grid place-items-center shrink-0 hover:bg-gray-100 active:shadow-none transition-colors"
+            style="
+              box-shadow:
+                4px 4px 44px 0px #0000000d,
+                -4px -4px 44px 0px #0000000d;
+            "
+          >
+            <i v-html="icons.times"></i>
+          </button>
         </div>
-      </Form>
-    </div>
+
+        <!-- Content wrapper -->
+        <Form
+          :values="values"
+          ref="formRef"
+          :id="formId"
+          :enable_unsaved_guard="false"
+          :on-submit="formSubmitHandler"
+          v-bind="formProps"
+          class="flex-1 flex flex-col overflow-hidden"
+          #default="{ form }"
+        >
+          <!-- Body -->
+          <div class="p-6 flex-1 flex flex-col gap-4 overflow-auto">
+            <slot :form="form" name="center" />
+          </div>
+
+          <!-- Footer -->
+          <div
+            v-if="$slots.bottom"
+            class="p-6 border-t border-[#DFE1E7] shrink-0 modal-footer"
+            :class="bottomClass"
+          >
+            <slot :form="form" name="bottom" />
+          </div>
+        </Form>
+      </div>
     </Transition>
   </div>
 </template>
@@ -90,7 +90,9 @@ import { openModal, closeModal } from "@customizer/modal-x";
 
 // Set at setup time — runs synchronously before first render, no layout shift
 document.body.style.overflow = "hidden";
-onUnmounted(() => { document.body.style.overflow = ""; });
+onUnmounted(() => {
+  document.body.style.overflow = "";
+});
 
 const props = defineProps({
   title: { type: String, required: true },
@@ -169,8 +171,12 @@ async function handleClose() {
   transform: translateY(0);
 }
 @media (min-width: 640px) {
-  .panel-enter-from { transform: translateX(100%); }
-  .panel-enter-to   { transform: translateX(0); }
+  .panel-enter-from {
+    transform: translateX(100%);
+  }
+  .panel-enter-to {
+    transform: translateX(0);
+  }
 }
 
 @media (max-width: 639px) {

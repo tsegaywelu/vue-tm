@@ -86,6 +86,7 @@ const props = withDefaults(defineProps<CheckTableProps<T>>(), {
   clickable_rows: true,
   hide_on_sm_screen: () => [],
   action_cell: "actions",
+  show_labels_in_card: true,
 });
 
 const emit = defineEmits<{

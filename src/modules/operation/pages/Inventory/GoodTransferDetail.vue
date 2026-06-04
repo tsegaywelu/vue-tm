@@ -65,10 +65,8 @@
             >
               Edit
             </Button>
-            <Button variant="primary" size="md" @click="handlePrint">
-              <template #leading>
-                <i class="mdi mdi-printer text-lg"></i>
-              </template>
+            <Button variant="outline" size="md" @click="handlePrint">
+              <i class="*:size-4 mr-1" v-html="icons.printer" />
               Print
             </Button>
           </div>
@@ -93,6 +91,7 @@ import { dateFormatter } from "@/utils/utils";
 import { openModal } from "@customizer/modal-x";
 import { useAuthStore } from "@/store/authStore";
 import { printGoodTransfer } from "../../utils/printGoodTransfer";
+import { icons } from "@/utils/icons";
 
 // Tabs
 import GoodTransferOverviewTab from "../../components/inventory/GoodTransferOverviewTab.vue";

@@ -1,13 +1,62 @@
 <template>
-  <Teleport to="#page-actions" defer>
-    <Button v-permission="'TRANSPORTER:create'" size="md" variant="primary" @click="handleOpenAddModal">
-      New Transporter
-    </Button>
+  <!-- Mobile: filter icon next to page title -->
+  <Teleport to="#page-title-actions" defer>
+    <button
+      class="size-8 rounded-xl border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors"
+      @click="mobileSearchOpen = true"
+    >
+      <i class="*:size-4" v-html="icons.filterOptions"></i>
+    </button>
   </Teleport>
 
-  <Table :columns="columns" :rows="response" @row_click="navigateToDetails" search_placeholder="Search transporters...">
+  <!-- Mobile: search field picker sheet -->
+  <BottomSheet v-model="mobileSearchOpen" title="Search By">
+    <div class="flex flex-col py-2 px-4 gap-1">
+      <button
+        v-for="opt in filterFieldOptions"
+        :key="opt.value"
+        class="flex items-center justify-between py-3 px-2 hover:bg-gray-50 rounded-xl transition-colors"
+        @click="
+          selectedSearchField = opt.value;
+          mobileSearchOpen = false;
+        "
+      >
+        <span class="font-medium">{{ opt.label }}</span>
+        <i
+          v-if="selectedSearchField === opt.value"
+          class="*:size-4 text-primary"
+          v-html="icons.check"
+        ></i>
+      </button>
+    </div>
+  </BottomSheet>
+
+  <Teleport to="#page-actions" defer>
+    <div class="hidden sm:flex">
+      <Button v-permission="'TRANSPORTER:create'" size="md" variant="primary" @click="handleOpenAddModal">
+        New Transporter
+      </Button>
+    </div>
+  </Teleport>
+
+  <!-- Mobile FAB -->
+  <button
+    v-permission="'TRANSPORTER:create'"
+    class="sm:hidden fixed bottom-6 right-6 z-40 size-14 rounded-full bg-primary text-white shadow-xl flex items-center justify-center"
+    @click="handleOpenAddModal"
+  >
+    <i class="*:size-6" v-html="icons.plus"></i>
+  </button>
+
+  <Table
+    :columns="columns"
+    :rows="response"
+    @row_click="navigateToDetails"
+    :search_placeholder="dynamicSearchPlaceholder"
+    :on_sm_screen_column_span="{ name: 2, tradeName: 2, email: 2, address: 2, actions: 2 }"
+  >
     <template #search-prefix>
-      <div class="h-full flex items-center border-r border-gray-200 pr-2 mr-2 w-44">
+      <div class="hidden sm:flex h-full items-center border-r border-gray-200 pr-2 mr-2 w-44">
         <Select
           v-model="selectedSearchField"
           class="[&_.input-focus]:shadow-none! [&_.input-focus]:border-none [&_.input-focus]:min-h-full min-w-44"
@@ -66,7 +115,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import Button from "@/components/common/Button.vue";
 import { usePagination } from "@/composables/usePagination";
@@ -75,6 +124,8 @@ import Dropdown from "@/components/common/Dropdown.vue";
 import DropDownItem from "@/components/common/DropDownItem.vue";
 import Table, { type TableColumn } from "@/components/common/Table.vue";
 import Select from "@/components/common/Select.vue";
+import BottomSheet from "@/components/BottomSheet.vue";
+import { icons } from "@/utils/icons";
 
 const router = useRouter();
 
@@ -86,6 +137,12 @@ const filterFieldOptions = [
 ];
 
 const selectedSearchField = ref("name");
+const mobileSearchOpen = ref(false);
+
+const dynamicSearchPlaceholder = computed(() => {
+  const opt = filterFieldOptions.find((o) => o.value === selectedSearchField.value);
+  return opt ? `Search by ${opt.label}...` : "Search transporters...";
+});
 
 const { response, refetch, isLoading } = usePagination({
   id: "transporters-list",

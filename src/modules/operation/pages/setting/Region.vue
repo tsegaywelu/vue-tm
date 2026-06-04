@@ -1,12 +1,22 @@
 <template>
   <div class="flex flex-col h-full">
     <!-- Page Actions (Teleported) -->
+    <!-- Mobile FAB -->
+    <button
+      v-permission="'REGION:create'"
+      class="fixed bottom-6 right-6 sm:hidden z-50 w-14 h-14 rounded-full bg-primary text-white shadow-xl flex items-center justify-center active:scale-95 transition-transform"
+      @click="router.push('/setting/region/add')"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+      </svg>
+    </button>
     <Teleport to="#page-actions" defer>
       <Button
         v-permission="'REGION:create'"
         variant="primary"
         size="md"
-        class="flex items-center gap-2"
+        class="hidden sm:flex items-center gap-2"
         @click="router.push('/setting/region/add')"
       >
         <i v-html="icons.plus" />

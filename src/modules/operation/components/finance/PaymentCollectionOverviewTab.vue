@@ -32,7 +32,49 @@
 
       <div class="flex flex-col gap-4">
         <h3 class="text-lg font-bold text-gray-900 px-1">Associated Shipments</h3>
-        <div class="overflow-x-auto rounded-xl border border-gray-200">
+
+        <!-- Mobile card list -->
+        <div class="sm:hidden flex flex-col divide-y divide-gray-100 rounded-xl border border-gray-200 bg-white overflow-hidden">
+          <div v-if="!invoice?.shipments?.length" class="px-4 py-10 text-center text-sm text-gray-500 italic">
+            No shipments associated with this invoice.
+          </div>
+          <div
+            v-for="(shipment, index) in invoice?.shipments"
+            :key="shipment._id"
+            class="px-4 py-3 grid grid-cols-6 gap-x-2 gap-y-1.5"
+          >
+            <div class="col-span-1">
+              <span class="text-xs font-bold text-gray-400">#{{ index + 1 }}</span>
+            </div>
+            <div class="col-span-5 text-right">
+              <span class="text-xs text-gray-500">{{ dateFormatter(shipment.dispatchDate) }}</span>
+            </div>
+            <div class="col-span-3">
+              <span class="text-sm font-bold text-gray-900">{{ shipment.vehicle?.plateNumber || '-' }}</span>
+            </div>
+            <div class="col-span-3 text-right">
+              <span class="text-sm font-bold text-primary">{{ currencyFormatter(shipment.totalPrice || 0) }}</span>
+            </div>
+            <div class="col-span-4">
+              <span class="text-xs font-medium text-gray-600">{{ shipment.route?.origin || '-' }} → {{ shipment.route?.destination || '-' }}</span>
+            </div>
+            <div class="col-span-2 text-right">
+              <span class="text-xs text-gray-400 uppercase tracking-wide">QTY</span>
+              <span class="text-xs text-gray-600 ml-1">{{ shipment.order?.totalRequest || '-' }}</span>
+            </div>
+            <div v-if="shipment.shipmentCode" class="col-span-6">
+              <span class="text-xs text-gray-400 uppercase tracking-wide">Code</span>
+              <span class="text-xs font-medium text-primary ml-1">{{ shipment.shipmentCode }}</span>
+            </div>
+          </div>
+          <div v-if="invoice?.shipments?.length" class="px-4 py-3 bg-gray-50 flex items-center justify-between">
+            <span class="text-sm font-bold text-gray-700">TOTAL</span>
+            <span class="text-sm font-bold text-gray-900">{{ currencyFormatter(invoice.shipments.reduce((sum: number, s: any) => sum + (s.totalPrice || 0), 0)) }}</span>
+          </div>
+        </div>
+
+        <!-- Desktop table -->
+        <div class="hidden sm:block overflow-x-auto rounded-xl border border-gray-200">
           <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
               <tr>

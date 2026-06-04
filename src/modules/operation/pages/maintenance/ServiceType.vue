@@ -1,12 +1,20 @@
 <template>
   <Teleport to="#page-actions" defer>
-    <Button @click="router.push('/maintenance/service-type/add')">
-      <template #leading>
-        <div class="size-5" v-html="all_icons.plus"></div>
-      </template>
-      New Service Type
-    </Button>
+    <div class="hidden sm:flex">
+      <Button @click="router.push('/maintenance/service-type/add')">
+        <template #leading>
+          <div class="size-5" v-html="all_icons.plus"></div>
+        </template>
+        New Service Type
+      </Button>
+    </div>
   </Teleport>
+  <button
+    class="sm:hidden fixed bottom-6 right-6 z-40 size-14 rounded-full bg-primary text-white shadow-xl flex items-center justify-center"
+    @click="router.push('/maintenance/service-type/add')"
+  >
+    <i class="*:size-6" v-html="all_icons.plus"></i>
+  </button>
   <ServiceTypeTable @action="handleServiceTypeAction" />
 </template>
 

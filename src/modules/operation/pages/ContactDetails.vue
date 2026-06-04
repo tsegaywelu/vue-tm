@@ -5,39 +5,34 @@
 
   <div v-else-if="contact" class="flex flex-col gap-6">
     <!-- Header Section -->
-    <div class="bg-grey-25 rounded-[32px] p-6 md:p-10 border border-grey-100 flex flex-col md:flex-row items-center justify-between gap-8">
-      <div class="flex items-center gap-8">
-        <div class="size-24 md:size-32 rounded-full bg-white flex items-center justify-center shadow-lg border border-grey-100 p-2 overflow-hidden">
-          <div
-            v-if="!contact.profilePicture"
-            class="h-full w-full rounded-full bg-primary-100 flex items-center justify-center text-primary-700 font-bold text-4xl uppercase"
-          >
-            {{ contact.name?.charAt(0)?.toUpperCase() }}
-          </div>
+    <div class="bg-grey-25 rounded-[32px] p-4 md:p-10 border border-grey-100 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 md:gap-8">
+      <div class="flex items-center gap-4 md:gap-8">
+        <div class="size-16 md:size-32 rounded-full bg-white flex items-center justify-center shadow-lg border border-grey-100 overflow-hidden shrink-0">
           <img
-            v-else
+            v-if="contact.profilePicture"
             :src="getProfilePictureURL(contact.profilePicture)"
             alt="Profile"
             class="w-full h-full object-cover rounded-full"
           />
+          <i v-else class="*:size-8 md:*:size-14 text-grey-400" v-html="icons.customers"></i>
         </div>
-        <div class="flex flex-col gap-1">
-          <h2 class="text-3xl md:text-4xl font-black text-grey-900 tracking-tight">
+        <div class="flex flex-col gap-1 min-w-0">
+          <h2 class="text-xl md:text-4xl font-black text-grey-900 tracking-tight truncate">
             {{ contact.name }}
           </h2>
-          <div class="flex flex-wrap items-center gap-2 mt-1">
-            <span class="px-3 py-1 bg-primary/10 text-primary text-xs font-bold rounded-full uppercase tracking-wider">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="px-2 py-0.5 md:px-3 md:py-1 bg-primary/10 text-primary text-xs font-bold rounded-full uppercase">
               {{ contact.group || 'OTHER' }}
             </span>
             <span
               v-if="contact.user"
-              class="px-3 py-1 bg-green-50 text-green-700 text-xs font-bold rounded-full uppercase tracking-wider"
+              class="px-2 py-0.5 md:px-3 md:py-1 bg-green-50 text-green-700 text-xs font-bold rounded-full uppercase"
             >
               Login Access Enabled
             </span>
             <span
               v-else
-              class="px-3 py-1 bg-grey-100 text-grey-600 text-xs font-bold rounded-full uppercase tracking-wider"
+              class="px-2 py-0.5 md:px-3 md:py-1 bg-grey-100 text-grey-600 text-xs font-bold rounded-full uppercase"
             >
               Login Access Disabled
             </span>
@@ -134,6 +129,7 @@ import { computed } from "vue";
 import { useRoute } from "vue-router";
 import { useQuery } from "@tanstack/vue-query";
 import { fetch_contact_by_id } from "../api/operation.api";
+import { icons } from "@/utils/icons";
 
 const route = useRoute();
 const contactId = route.params.id as string;

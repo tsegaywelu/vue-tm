@@ -9,8 +9,8 @@
     :initial-labels="initialLabels"
     :on-submit="handleUpdateTyre"
   >
-    <template #submit-btn="{ form }">
-      <Button size="md" variant="outline" @click="router.back()">
+    <template #submit-btn>
+      <Button size="md" variant="secondary" @click="router.back()">
         Cancel
       </Button>
       <SubmitButton> Save Changes </SubmitButton>
@@ -25,7 +25,7 @@ import TyreForm from "../../components/tyre-details/TyreForm.vue";
 import { fetch_tyre_by_id, update_tyre } from "../../api/tyre.api";
 import { useToastStore } from "@/store/toastStore";
 import SubmitButton from "@/components/form/SubmitButton.vue";
-import Button from "@/components/Button.vue";
+import Button from "@/components/common/Button.vue";
 import { useMutation, useQuery } from "@tanstack/vue-query";
 import { type Tyre } from "../../operation.types";
 
@@ -54,10 +54,17 @@ const initialValues = computed(() => {
 });
 
 const initialLabels = computed(() => {
-  if (!tyre.value?.vehicle) return {};
-  return {
-    [tyre.value.vehicle._id]: tyre.value.vehicle.plateNumber,
-  };
+  const labels: Record<string, string> = {};
+  if (tyre.value?.vehicle) {
+    labels[tyre.value.vehicle._id] = tyre.value.vehicle.plateNumber;
+  }
+  if (tyre.value?.tyrePosition) {
+    labels[tyre.value.tyrePosition] = tyre.value.tyrePosition
+      .split("_")
+      .map((w: string) => w.charAt(0) + w.slice(1).toLowerCase())
+      .join(" ");
+  }
+  return labels;
 });
 
 const mutation = useMutation({

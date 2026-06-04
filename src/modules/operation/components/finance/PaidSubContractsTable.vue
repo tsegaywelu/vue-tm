@@ -1,15 +1,40 @@
 <template>
+  <Teleport defer to="#page-title-actions">
+    <button
+      class="sm:hidden size-8 rounded-xl border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors"
+      @click="showSearchSheet = true"
+    >
+      <i v-html="icons.filterOptions"></i>
+    </button>
+  </Teleport>
+
+  <BottomSheet v-model="showSearchSheet" title="Search By">
+    <div class="flex flex-col gap-2 pb-4">
+      <button
+        v-for="option in searchFieldOptions"
+        :key="option.value"
+        class="flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-colors"
+        :class="selectedSearchField === option.value ? 'bg-primary/10 text-primary font-medium' : 'hover:bg-gray-50 text-gray-700'"
+        @click="selectedSearchField = option.value; showSearchSheet = false"
+      >
+        {{ option.label }}
+      </button>
+    </div>
+  </BottomSheet>
+
   <Table
     id="paid-sub-contracts-list"
     :columns="columns"
     :rows="response"
     v-model:search_value="searchTerm"
     :search_placeholder="dynamicSearchPlaceholder"
+    :hide_on_sm_screen="['transporter', 'dispatchDate', 'routeName', 'advanceAmount', 'grossProfit', 'transporterPrice']"
+    :on_sm_screen_column_span="{ shipmentCode: 2, plateNumber: 2, driverName: 2, totalPrice: 2 }"
     @row_click="handleAction($event, 'view')"
   >
     <template #search-prefix>
       <div
-        class="h-full flex items-center border-r border-gray-200 pr-2 mr-2 w-48"
+        class="hidden sm:flex h-full items-center border-r border-gray-200 pr-2 mr-2 w-48"
       >
         <Select
           class="[&_.input-focus]:shadow-none! [&_.input-focus]:border-none [&_.input-focus]:min-h-full min-w-48"
@@ -76,10 +101,7 @@
     </template>
 
     <template #after-search>
-      <div
-        class="items-center gap-4 inline-flex border-l border-grey-100 overflow-x-auto px-3"
-      >
-        <i v-html="icons.filter" />
+      <div class="flex items-center gap-4 overflow-x-auto">
         <PaidSubContractsFilters
           @change="handleFilterChange"
           pagination-id="paid-sub-contracts-list"
@@ -107,6 +129,7 @@
 import { computed, ref } from "vue";
 import Table from "@/components/common/Table.vue";
 import Select from "@/components/common/Select.vue";
+import BottomSheet from "@/components/BottomSheet.vue";
 import { icons } from "@/utils/icons";
 import { usePagination } from "@/composables/usePagination";
 import type { TableColumn } from "@/components/common/Table.vue";
@@ -147,6 +170,7 @@ const searchFieldOptions = [
 ];
 
 const selectedSearchField = ref("shipmentCode");
+const showSearchSheet = ref(false);
 const searchTerm = ref("");
 
 const dynamicSearchPlaceholder = computed(() => {

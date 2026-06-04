@@ -1,17 +1,22 @@
 <template>
   <div class="flex flex-col gap-8">
     <!-- Transfer Voucher Header -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <SelectInput
-        name="srv"
-        label="Store Requisition (SRV)"
-        url="/store-requisition-vouchers"
-        label_key="referenceNumber"
-        value_key="_id"
-        searchable
-        :validation="{ required }"
-        @select="handleSRVSelect"
-      />
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- SRV — full width, primary driver -->
+      <div class="md:col-span-2">
+        <SelectInput
+          name="srv"
+          label="Store Requisition (SRV)"
+          url="/store-requisition-vouchers"
+          label_key="referenceNumber"
+          value_key="_id"
+          searchable
+          :validation="{ required }"
+          @select="handleSRVSelect"
+        />
+      </div>
+
+      <!-- Type + Issued To Body — natural pair -->
       <SelectInput
         name="type"
         label="Type"
@@ -32,6 +37,7 @@
         :validation="{ required }"
       />
 
+      <!-- Conditional issued-to + Supplier -->
       <component
         v-if="formContext?.form"
         :is="formContext.form.Subscribe"
@@ -66,6 +72,7 @@
         searchable
       />
 
+      <!-- Classification + Invoice numbers -->
       <Input name="classification" label="Classification" />
       <Input name="creditSalesInvoiceNumber" label="Credit Sales Invoice No" />
       <Input name="cashSalesInvoiceNumber" label="Cash Sales Invoice No" />

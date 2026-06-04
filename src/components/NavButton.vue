@@ -67,7 +67,7 @@ watchEffect(() => {
 </script>
 
 <template>
-  <div role="button" class="shadow-none flex flex-col gap-1 w-full">
+  <div role="button" class="shadow-none flex flex-col gap-1 w-full" :data-nav-active="(is_active || is_inner_active) || undefined">
     <button
       tabindex="0"
       @click="handle_click"
@@ -114,54 +114,23 @@ watchEffect(() => {
       </span>
     </button>
 
-    <Transition
-      name="expand"
-      @enter="
-        (el: Element) =>
-          ((el as HTMLElement).style.height = el.scrollHeight + 'px')
-      "
-      @after-enter="
-        (el: Element) => ((el as HTMLElement).style.height = 'auto')
-      "
-      @leave="
-        (el: Element) =>
-          ((el as HTMLElement).style.height = el.scrollHeight + 'px')
-      "
-      @before-leave="(el: Element) => (el as HTMLElement).offsetHeight"
-      @leave-to="(el: Element) => ((el as HTMLElement).style.height = '0')"
+    <div
+      v-if="is_open && !is_nav_closed"
+      class="overflow-hidden pl-4"
     >
       <div
-        v-if="is_open && !is_nav_closed"
-        class="overflow-hidden transition-all pl-4 duration-300 ease-in-out"
+        v-if="children_showable.length"
+        class="flex flex-col gap-1 border-l border-grey-300 py-1 px-2"
       >
-        <div
-          v-if="children_showable.length"
-          class="flex flex-col gap-1 border-l border-grey-300 py-1 px-2"
-        >
-          <NavButton
-            v-for="(child, index) in children_showable"
-            :key="index"
-            :nav="child"
-            :nested="true"
-            @nav_item_click="$emit('nav_item_click')"
-          />
-        </div>
+        <NavButton
+          v-for="(child, index) in children_showable"
+          :key="index"
+          :nav="child"
+          :nested="true"
+          @nav_item_click="$emit('nav_item_click')"
+        />
       </div>
-    </Transition>
+    </div>
   </div>
 </template>
 
-<style scoped>
-.expand-enter-active,
-.expand-leave-active {
-  transition:
-    height 0.3s ease-in-out,
-    opacity 0.3s ease-in-out;
-}
-
-.expand-enter-from,
-.expand-leave-to {
-  height: 0;
-  opacity: 0;
-}
-</style>

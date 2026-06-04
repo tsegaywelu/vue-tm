@@ -4,6 +4,7 @@
     :columns="columns"
     :rows="response"
     search_placeholder="Search by plate number..."
+    :on_sm_screen_column_span="{ vehicle: 2, transporter: 3, leaseDirection: 2, settlementStatus: 2, createdAt: 2, total: 3 }"
     @row_click="handleAction($event, 'view')"
   >
     <template #cell-vehicle="{ row }">
@@ -47,14 +48,11 @@
     </template>
 
     <template #after-search>
-      <div
-        class="items-center gap-4 inline-flex border-l border-grey-100 overflow-x-auto px-3"
-      >
-        <i v-html="icons.filter" />
+      <div class="items-center gap-4 flex overflow-x-auto">
         <Form
           id="receivable-lease-filter"
           @change="handleFilterChange"
-          class="[&_.input-focus]:bg-grey-25 flex-1 flex max-h-16 h-16 min-h-16 *:w-[220px] *:shrink-0 px-2 gap-2 overflow-auto"
+          class="[&_.input-focus]:bg-grey-25 flex-1 flex max-h-16 h-16 min-h-16 *:w-[220px] *:shrink-0 gap-2 overflow-auto"
         >
           <SelectInput
             :show_validation_status="false"
@@ -78,7 +76,7 @@
 
     <template #cell-actions="{ row }">
       <div class="flex items-center justify-end">
-        <Dropdown>
+        <Dropdown title="Actions">
           <template #default="{ close }">
             <DropDownItem
               v-permission="'TRANSACTION:read'"

@@ -21,10 +21,12 @@
     id="issue-reports-list"
     :columns="columns"
     :rows="response"
+    :hide_on_sm_screen="['severity', 'location', 'createdAt']"
+    :on_sm_screen_column_span="{ driver: 2, type: 2, status: 3 }"
   >
     <template #after-search>
       <div
-        class="items-center gap-4 inline-flex border-l border-grey-100 overflow-x-auto px-3"
+        class="items-center gap-4 hidden sm:flex border-l border-grey-100 overflow-x-auto px-3"
       >
         <i v-html="icons.filter" />
         <IssueReportFilters @change="handleFilterChange" />

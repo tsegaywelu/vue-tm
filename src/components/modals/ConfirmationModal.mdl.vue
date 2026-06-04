@@ -77,7 +77,7 @@
 
         <button
           @click="cancel"
-          class="w-full py-4 rounded-2xl text-sm font-bold bg-gray-50 text-gray-500 hover:bg-gray-100 transition-all"
+          class="w-full py-4 rounded-2xl text-sm font-bold mb-8 bg-gray-50 text-gray-500 hover:bg-gray-100 transition-all"
         >
           {{ data.cancelText || "Cancel" }}
         </button>
@@ -132,7 +132,9 @@ import { closeModal } from "@customizer/modal-x";
 
 // Set at setup time — runs synchronously before first render, no layout shift
 document.body.style.overflow = "hidden";
-onUnmounted(() => { document.body.style.overflow = ""; });
+onUnmounted(() => {
+  document.body.style.overflow = "";
+});
 
 export type ReturnType =
   | boolean

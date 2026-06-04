@@ -275,8 +275,16 @@ export const fleet_navs: Navs[] = [
         show: true,
         permission: { subject: "VEHICLE", actions: ["view"] },
         children: [
-          { path: "/fleet/fuel-entries/add", name: "Add Fuel Entry", show: false },
-          { path: "/fleet/fuel-entries/edit/$id", name: "Edit Fuel Entry", show: false },
+          {
+            path: "/fleet/fuel-entries/add",
+            name: "Add Fuel Entry",
+            show: false,
+          },
+          {
+            path: "/fleet/fuel-entries/edit/$id",
+            name: "Edit Fuel Entry",
+            show: false,
+          },
         ],
       },
       {
@@ -285,8 +293,16 @@ export const fleet_navs: Navs[] = [
         show: true,
         permission: { subject: "VEHICLE", actions: ["view"] },
         children: [
-          { path: "/fleet/meter-entries/add", name: "Add Meter Entry", show: false },
-          { path: "/fleet/meter-entries/edit/$id", name: "Edit Meter Entry", show: false },
+          {
+            path: "/fleet/meter-entries/add",
+            name: "Add Meter Entry",
+            show: false,
+          },
+          {
+            path: "/fleet/meter-entries/edit/$id",
+            name: "Edit Meter Entry",
+            show: false,
+          },
         ],
       },
       {
@@ -295,8 +311,16 @@ export const fleet_navs: Navs[] = [
         show: true,
         permission: { subject: "VEHICLE", actions: ["view"] },
         children: [
-          { path: "/fleet/vehicle-expenses/add", name: "Add Vehicle Expense", show: false },
-          { path: "/fleet/vehicle-expenses/edit/$id", name: "Edit Vehicle Expense", show: false },
+          {
+            path: "/fleet/vehicle-expenses/add",
+            name: "Add Vehicle Expense",
+            show: false,
+          },
+          {
+            path: "/fleet/vehicle-expenses/edit/$id",
+            name: "Edit Vehicle Expense",
+            show: false,
+          },
         ],
       },
       {
@@ -305,8 +329,16 @@ export const fleet_navs: Navs[] = [
         show: true,
         permission: { subject: "VEHICLE", actions: ["view"] },
         children: [
-          { path: "/fleet/recurring-rules/add", name: "Add Recurring Rule", show: false },
-          { path: "/fleet/recurring-rules/edit/$id", name: "Edit Recurring Rule", show: false },
+          {
+            path: "/fleet/recurring-rules/add",
+            name: "Add Recurring Rule",
+            show: false,
+          },
+          {
+            path: "/fleet/recurring-rules/edit/$id",
+            name: "Edit Recurring Rule",
+            show: false,
+          },
         ],
       },
     ],
@@ -391,9 +423,16 @@ export const maintenance_navs: Navs[] = [
       },
       {
         path: "/vehicle-damages",
-        name: "Vehicle Damages",
+        name: "VehicleDamages",
         show: true,
         permission: { subject: "INSURANCE", actions: ["view"] },
+        children: [
+          {
+            path: "/vehicle-damages/$id",
+            name: "Vehicle Damage Details",
+            show: false,
+          },
+        ],
       },
       {
         path: "/insurances/$id",
@@ -931,12 +970,6 @@ export const setting_navs: Navs[] = [
     icon: "settings",
     show: true,
     children: [
-      {
-        name: "Change Password",
-        path: "/setting/change-password",
-        show: true,
-        children: [],
-      },
       {
         name: "User and Role",
         path: "/setting/user-and-role",

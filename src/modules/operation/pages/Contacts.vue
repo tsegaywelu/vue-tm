@@ -4,11 +4,23 @@
       v-permission="'CONTACT:create'"
       size="md"
       variant="primary"
+      class="hidden sm:flex"
       @click="openContactModal(null)"
     >
       New Contact
     </Button>
   </Teleport>
+
+  <!-- Floating action button — mobile only -->
+  <button
+    v-permission="'CONTACT:create'"
+    class="fixed bottom-6 right-6 sm:hidden z-50 w-14 h-14 rounded-full bg-primary text-white shadow-xl flex items-center justify-center active:scale-95 transition-transform"
+    @click="openContactModal(null)"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+    </svg>
+  </button>
 
   <div class="flex flex-col gap-4">
     <!-- Contacts Table -->
@@ -19,6 +31,8 @@
       :loading="isLoading"
       search_placeholder="Search contacts..."
       @row_click="navigateToDetails"
+      :hide_on_sm_screen="['jobTitle']"
+      :on_sm_screen_column_span="{ contactInfo: 2, group: 2, loginAccess: 2 }"
       :head_alignment="{
         contactInfo: 'left',
       }"

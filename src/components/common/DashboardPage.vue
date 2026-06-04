@@ -26,17 +26,22 @@
         v-if="route.meta?.tabsTeleportTo"
         defer
       >
+        <div class="relative">
+          <div
+            class="flex items-center gap-3 overflow-x-auto no-scrollbar whitespace-nowrap border-b border-gray-200 mb-2"
+          >
+            <Tabs :tabs="tabs" v-model="activeTab" />
+          </div>
+          <div class="pointer-events-none absolute inset-y-0 right-0 w-10 bg-linear-to-l from-white to-transparent sm:hidden"></div>
+        </div>
+      </Teleport>
+      <div v-else class="relative">
         <div
-          class="flex items-center gap-3 overflow-x-auto no-scrollbar whitespace-nowrap border-b border-gray-200 mb-2"
+          class="flex items-center gap-3 overflow-x-auto no-scrollbar whitespace-nowrap border-b border-gray-200"
         >
           <Tabs :tabs="tabs" v-model="activeTab" />
         </div>
-      </Teleport>
-      <div
-        v-else
-        class="flex items-center gap-3 overflow-x-auto no-scrollbar whitespace-nowrap border-b border-gray-200"
-      >
-        <Tabs :tabs="tabs" v-model="activeTab" />
+        <div class="pointer-events-none absolute inset-y-0 right-0 w-10 bg-linear-to-l from-white to-transparent sm:hidden"></div>
       </div>
     </template>
 

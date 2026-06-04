@@ -2,7 +2,7 @@
   <div
     :title="computedLabel"
     :class="[
-      'flex max-w-36 w-36 items-center gap-1.5 border text-sm px-2 h-9 rounded-full transition-all duration-200 select-none shrink-0 overflow-hidden',
+      'flex flex-1 min-w-0 sm:flex-none sm:w-36 sm:max-w-36 items-center gap-1.5 border text-sm px-2 h-9 rounded-full transition-all duration-200 select-none overflow-hidden',
       statusStyles.class,
     ]"
   >
@@ -12,7 +12,7 @@
         borderColor: statusStyles.dotColor,
       }"
     ></div>
-    <span class="truncate min-w-0 w-36 flex-1 text-center">
+    <span class="truncate min-w-0 sm:w-36 flex-1 text-center">
       <slot>{{ computedLabel }}</slot>
     </span>
   </div>

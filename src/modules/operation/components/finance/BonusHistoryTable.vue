@@ -4,6 +4,8 @@
     :columns="columns"
     :rows="response"
     search_placeholder="Search by driver name..."
+    :hide_on_sm_screen="['metricBreakdown', 'routeBonus', 'collectedAt']"
+    :on_sm_screen_column_span="{ driver: 2, monthYear: 2, totalAmount: 2, status: 3 }"
     @row_click="handleAction($event, 'view')"
   >
     <template #cell-driver="{ row }">

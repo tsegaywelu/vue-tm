@@ -21,7 +21,7 @@
     >
       <div
         v-if="show_labels_in_card && topRightCell.label"
-        class="text-xs text-gray-400 mb-1 block mr-2"
+        class="text-[11px] uppercase text-gray-500 font-semibold tracking-wide mb-1 block mr-2"
       >
         {{ topRightCell.label }}
       </div>
@@ -89,6 +89,7 @@ const props = defineProps<{
   alignment?: { [key in keyof T | (string & {})]?: "left" | "center" | "right" };
   col_style?: { [key in keyof T | (string & {})]?: string };
   on_sm_screen_row_alignment?: { [key in keyof T | (string & {})]?: number };
+  sm_row_alignment?: { [key in keyof T | (string & {})]?: "left" | "center" | "right" };
   on_sm_screen_column_span?: { [key in keyof T | (string & {})]?: number };
   hide_on_sm_screen?: (keyof T | (string & {}))[];
   show_labels_in_card?: boolean;
@@ -113,8 +114,8 @@ const getSlotData = (cell: Cell<T, any>) => {
 };
 
 const getAlignmentClass = (key: string) => {
-  const align = props.alignment?.[key] || "left";
-  const styles = {
+  const align = props.sm_row_alignment?.[key] || props.alignment?.[key] || "left";
+  const styles: Record<string, string> = {
     left: "items-start text-left",
     center: "items-center text-center",
     right: "items-end text-right",

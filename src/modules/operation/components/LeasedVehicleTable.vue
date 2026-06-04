@@ -4,6 +4,8 @@
     :columns="columns"
     :rows="response"
     search_placeholder="Search by plate number..."
+    :hide_on_sm_screen="['date', 'leaseDirection', 'settlementStatus']"
+    :on_sm_screen_column_span="{ plateNumber: 2, transporter: 2, amount: 1, status: 2 }"
     @row_click="handleAction($event, 'view')"
   >
     <template #cell-plateNumber="{ row }">

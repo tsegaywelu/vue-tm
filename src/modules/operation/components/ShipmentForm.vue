@@ -517,7 +517,7 @@
       </Colapsable>
 
       <!-- Action Footer -->
-      <div class="pt-10 flex justify-end gap-4">
+      <div class="pt-10 flex flex-col sm:flex-row justify-end gap-3 *:w-full sm:*:w-auto *:min-h-[52px] sm:*:min-h-0 *:text-base sm:*:text-sm *:rounded-2xl sm:*:rounded-xl">
         <slot :form="form" name="submit-btn"></slot>
       </div>
     </template>

@@ -4,6 +4,8 @@
     :columns="columns"
     :rows="response"
     search_placeholder="Search packagings..."
+    :hide_on_sm_screen="['createdAt']"
+    :on_sm_screen_column_span="{ name: 2 }"
   >
     <template #cell-name="{ row }">
       {{ row.name }}

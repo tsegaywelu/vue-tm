@@ -3,6 +3,7 @@
     url="/advance-payment/settledAdvance"
     pagination-id="aggregated-advance-list"
     :columns="columns"
+    :column-span="{ advanceNumber: 2, driver: 2, route: 2, plateNumber: 2, total: 2, status: 2 }"
   />
 </template>
 

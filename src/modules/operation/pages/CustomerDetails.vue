@@ -1,38 +1,35 @@
 <template>
-  <div v-if="isLoading" class="flex justify-center py-20">
-    <i class="mdi mdi-loading mdi-spin text-4xl text-primary"></i>
-  </div>
-
-  <div v-else-if="customer" class="flex flex-col gap-6">
-    <!-- Header Info Card -->
+  <div class="flex flex-col gap-6">
+    <!-- Header Info Card — conditional on data, but the wrapper below is always present -->
     <div
-      class="bg-grey-25 rounded-[32px] p-6 md:p-10 border border-grey-100 flex flex-col md:flex-row items-center justify-between gap-8"
+      v-if="customer"
+      class="bg-grey-25 rounded-[32px] p-4 md:p-10 border border-grey-100 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 md:gap-8"
     >
-      <div class="flex items-center gap-8">
+      <div class="flex items-center gap-4 md:gap-8">
         <div
-          class="size-24 md:size-32 rounded-full bg-white flex items-center justify-center shadow-lg border border-grey-100 overflow-hidden"
+          class="size-16 md:size-32 rounded-full bg-white flex items-center justify-center shadow-lg border border-grey-100 overflow-hidden shrink-0"
         >
           <img
             v-if="customer.logo"
             :src="`${API_URL}/${customer.logo.replace(/\\/g, '/')}`"
             class="w-full h-full object-cover rounded-2xl"
           />
-          <i v-else class="mdi mdi-account-box text-5xl text-grey-400"></i>
+          <i v-else class="*:size-8 md:*:size-14 text-grey-400" v-html="icons.customers"></i>
         </div>
-        <div class="flex flex-col gap-1">
+        <div class="flex flex-col gap-1 min-w-0">
           <h2
-            class="text-3xl md:text-4xl font-black text-grey-900 tracking-tight"
+            class="text-xl md:text-4xl font-black text-grey-900 tracking-tight truncate"
           >
             {{ customer.name }}
           </h2>
-          <div class="flex items-center gap-2">
+          <div class="flex flex-wrap items-center gap-2">
             <span
-              class="px-3 py-1 bg-primary/10 text-primary text-xs font-bold rounded-full uppercase"
+              class="px-2 py-0.5 md:px-3 md:py-1 bg-primary/10 text-primary text-xs font-bold rounded-full uppercase"
             >
               {{ customer.tradeName }}
             </span>
             <span
-              class="px-3 py-1 bg-grey-100 text-grey-600 text-xs font-bold rounded-full uppercase"
+              class="px-2 py-0.5 md:px-3 md:py-1 bg-grey-100 text-grey-600 text-xs font-bold rounded-full uppercase"
             >
               {{ customer.customerCode || customer.shipperCode }}
             </span>
@@ -41,17 +38,25 @@
       </div>
     </div>
 
-    <!-- Active Tab Panel -->
-    <div class="bg-white rounded-[32px] p-6 border border-grey-100">
+    <!-- Tab teleport target — unconditional so DashboardPage always finds it -->
+    <div id="customer-detail-tabs"></div>
+
+    <!-- Loading state -->
+    <div v-if="isLoading" class="flex justify-center py-20">
+      <i class="mdi mdi-loading mdi-spin text-4xl text-primary"></i>
+    </div>
+
+    <!-- Content card -->
+    <div v-else-if="customer" class="bg-white rounded-[32px] p-4 md:p-6 border border-grey-100">
       <!-- Basic Details -->
       <div
         v-if="activeTab === 'basic'"
-        class="flex flex-col gap-6 animate-fade-in"
+        class="flex flex-col gap-4 md:gap-6 animate-fade-in"
       >
-        <h3 class="text-xl font-bold text-grey-900">
+        <h3 class="text-lg md:text-xl font-bold text-grey-900">
           Basic Shipper Information
         </h3>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
           <div
             class="flex flex-col gap-1 p-4 bg-grey-25 rounded-2xl border border-grey-100"
           >
@@ -272,6 +277,7 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import { useRoute } from "vue-router";
+import { icons } from "@/utils/icons";
 import { useQuery } from "@tanstack/vue-query";
 import BaseTable, { type TableColumn } from "@/components/common/Table.vue";
 import Status from "@/components/common/Status.vue";

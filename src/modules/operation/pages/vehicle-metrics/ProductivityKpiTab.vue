@@ -1,10 +1,23 @@
 <template>
   <div>
+    <!-- Export: icon button on mobile -->
+    <Teleport to="#page-title-actions" defer>
+      <button
+        class="sm:hidden size-10 rounded-lg bg-grey-75 border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors"
+        @click="handleExport"
+      >
+        <i class="*:size-6" v-html="icons.excell"></i>
+        <i class="*:size-3" v-html="icons.longArrow"></i>
+      </button>
+    </Teleport>
+    <!-- Export: full button on desktop -->
     <Teleport to="#page-actions" defer>
-      <Button size="md" variant="secondary" @click="handleExport">
-        <i class="mdi mdi-file-excel-outline text-lg"></i>
-        <span>Export</span>
-      </Button>
+      <div class="hidden sm:flex">
+        <Button size="md" variant="secondary" @click="handleExport">
+          <i class="mdi mdi-file-excel-outline text-lg"></i>
+          <span>Export</span>
+        </Button>
+      </div>
     </Teleport>
 
     <Teleport to="#extra-page-data" defer>
@@ -70,6 +83,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from "vue";
+import { icons } from "@/utils/icons";
 import { usePagination } from "@/composables/usePagination";
 import Table from "@/components/common/Table.vue";
 import type { TableColumn } from "@/components/common/Table.vue";

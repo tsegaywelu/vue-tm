@@ -5,9 +5,12 @@
     :columns="columns"
     :rows="response"
     :search_placeholder="dynamicSearchPlaceholder"
+    :hide_on_sm_screen="['items', 'preparedBy']"
+    :on_sm_screen_column_span="{ date: 2, referenceNumber: 2, type: 2, status: 2 }"
+    @row_click="(row) => handleAction(row, 'view')"
   >
     <template #search-prefix>
-      <div class="h-full flex items-center border-r border-gray-200 pr-2 mr-2 w-48">
+      <div class="hidden sm:flex h-full items-center border-r border-gray-200 pr-2 mr-2 w-48">
         <Select
           class="[&_.input-focus]:shadow-none! [&_.input-focus]:border-none [&_.input-focus]:min-h-full min-w-48"
           v-model="selectedSearchField"
@@ -141,5 +144,7 @@ const handleAction = (row: any, action: string) => {
 
 defineExpose({
   refetch,
+  selectedSearchField,
+  searchFieldOptions,
 });
 </script>

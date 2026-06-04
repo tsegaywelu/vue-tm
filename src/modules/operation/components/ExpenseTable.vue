@@ -5,6 +5,8 @@
     :rows="response"
     v-model:search_value="searchTerm"
     search_placeholder="Search by plate number..."
+    :hide_on_sm_screen="['totalFuelCost', 'totalMaintenanceCost', 'totalTyreCost', 'totalInsuranceCost']"
+    :on_sm_screen_column_span="{ plateNumber: 2, totalExpenses: 3 }"
     @row_click="handleAction($event, 'view')"
   >
     <template #cell-plateNumber="{ value }">

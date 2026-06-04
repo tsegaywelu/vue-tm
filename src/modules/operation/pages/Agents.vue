@@ -4,16 +4,30 @@
       v-permission="'AGENT:create'"
       size="md"
       variant="primary"
+      class="hidden sm:flex"
       @click="navigateToAddAgent"
     >
       New Agent
     </Button>
   </Teleport>
 
+  <!-- Floating action button — mobile only -->
+  <button
+    v-permission="'AGENT:create'"
+    class="fixed bottom-6 right-6 sm:hidden z-50 w-14 h-14 rounded-full bg-primary text-white shadow-xl flex items-center justify-center active:scale-95 transition-transform"
+    @click="navigateToAddAgent"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+    </svg>
+  </button>
+
   <Table
     :columns="columns"
     :rows="response"
     :loading="isLoading"
+    :hide_on_sm_screen="['tradeName', 'contactInfo']"
+    :on_sm_screen_column_span="{ name: 2, status: 2, location: 1 }"
     @row_click="navigateToEditAgent"
   >
     <template #cell-name="{ row }">

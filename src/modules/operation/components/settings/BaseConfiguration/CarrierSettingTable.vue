@@ -3,6 +3,8 @@
     id="carrier-setting-list"
     :columns="columns"
     :rows="response"
+    :hide_on_sm_screen="['movementAlertEndHour', 'createdAt']"
+    :on_sm_screen_column_span="{ movementAlertStartHour: 2, speedAlertThreshold: 2 }"
   >
     <template #cell-movementAlertStartHour="{ row }">
       {{ row.movementAlertStartHour }}:00

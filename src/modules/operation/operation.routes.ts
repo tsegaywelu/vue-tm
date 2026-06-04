@@ -317,6 +317,7 @@ export const operation_routes: RouteRecordRaw[] = [
         { label: "Order", value: "order" },
         { label: "Shipment", value: "shipment" },
       ],
+      tabsTeleportTo: "#customer-detail-tabs",
     },
   },
   {
@@ -446,6 +447,7 @@ export const operation_routes: RouteRecordRaw[] = [
         { label: "Driver History", value: "drivers" },
         { label: "Tyre History", value: "tyres" },
       ],
+      tabsTeleportTo: "#vehicle-details-tabs",
     },
   },
   {
@@ -1398,15 +1400,6 @@ export const operation_routes: RouteRecordRaw[] = [
           permission: "USER",
           title: "Register User",
           description: "Create a new user account.",
-        },
-      },
-      {
-        path: "change-password",
-        name: "operation_setting_change_password",
-        component: () => import("./pages/setting/ChangePassword.vue"),
-        meta: {
-          title: "Change Password",
-          description: "Update your account password.",
         },
       },
       {

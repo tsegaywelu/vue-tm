@@ -138,7 +138,7 @@ const handleTaskChange = async (taskId: string, item: TaskItem) => {
             <div class="size-4" v-html="icons.close"></div>
           </button>
         </div>
-        <div class="p-4 grid grid-cols-5 gap-6">
+        <div class="p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <Select
             label="Service Task"
             v-model="task.serviceTask"

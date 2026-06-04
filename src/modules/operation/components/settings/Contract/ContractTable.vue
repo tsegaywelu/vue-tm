@@ -5,6 +5,8 @@
     :columns="columns"
     :rows="response"
     search_placeholder="Search contracts..."
+    :hide_on_sm_screen="['createdAt']"
+    :on_sm_screen_column_span="{ shipper: 2, carrier: 2 }"
     @row_click="(row) => handleAction(row, 'view')"
   >
     <template #cell-shipper="{ row }">

@@ -4,6 +4,8 @@
     :columns="columns"
     :rows="response"
     search_placeholder="Search by name..."
+    :hide_on_sm_screen="['address', 'description', 'createdAt']"
+    :on_sm_screen_column_span="{ name: 2, telephone: 2 }"
   >
     <template #cell-createdAt="{ row }">
       {{ new Date(row.createdAt).toLocaleDateString() }}

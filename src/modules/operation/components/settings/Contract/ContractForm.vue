@@ -197,7 +197,7 @@ function removeRouteFromContract(idx: number) {
     description="Select a route and configure pricing per waypoint."
     :open="false"
   >
-    <div class="grid grid-cols-2 md:grid-cols-2 gap-6 mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
       <!-- Counterparty select: Shipper (carrier mode) or Carrier (shipper mode) -->
       <SelectInput
         :name="counterpartyFieldName"
@@ -355,7 +355,7 @@ function removeRouteFromContract(idx: number) {
     </div>
   </InputParent>
 
-  <div class="flex justify-end pt-4 gap-4">
+  <div class="pt-4 flex flex-col sm:flex-row justify-end gap-3 *:w-full sm:*:w-auto *:min-h-[52px] sm:*:min-h-0 *:text-base sm:*:text-sm *:rounded-2xl sm:*:rounded-xl">
     <slot
       name="actions"
       :addedRoutes="addedRoutes"

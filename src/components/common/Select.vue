@@ -340,6 +340,8 @@ onMounted(() => {
     (props.display_value && props.searchable)
   ) {
     searchResult.value = val?.item.label || props.display_value;
+  } else if (props.searchable && props.initial_labels?.[currentSelectedValue.value]) {
+    searchResult.value = props.initial_labels[currentSelectedValue.value];
   }
 });
 

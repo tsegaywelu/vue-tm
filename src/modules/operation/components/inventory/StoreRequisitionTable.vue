@@ -5,11 +5,13 @@
     :columns="columns"
     :rows="response"
     :search_placeholder="dynamicSearchPlaceholder"
+    :hide_on_sm_screen="['items', 'requiredDate', 'preparedBy']"
+    :on_sm_screen_column_span="{ date: 2, referenceNumber: 2, status: 2 }"
     @row_click="(row) => handleAction(row, 'view')"
   >
     <template #search-prefix>
       <div
-        class="h-full flex items-center border-r border-gray-200 pr-2 mr-2 w-48"
+        class="hidden sm:flex h-full items-center border-r border-gray-200 pr-2 mr-2 w-48"
       >
         <Select
           class="[&_.input-focus]:shadow-none! [&_.input-focus]:border-none [&_.input-focus]:min-h-full min-w-48"
@@ -23,11 +25,11 @@
     </template>
 
     <template #after-search>
-      <div class="flex-1">
+      <div class="flex items-center overflow-x-auto">
         <Select
           size="xs"
           label="Status"
-          class="[&_.input-focus]:bg-grey-25 flex-1 flex max-h-16 h-16 min-h-16 *:w-[220px] *:shrink-0 px-2 gap-2 overflow-auto"
+          class="[&_.input-focus]:bg-grey-25 min-w-[180px]"
           v-model="activeFilters.status"
           :options="statusOptions"
           label_key="label"
@@ -217,5 +219,7 @@ const handleAction = (row: any, action: string) => {
 
 defineExpose({
   refetch,
+  selectedSearchField,
+  searchFieldOptions,
 });
 </script>

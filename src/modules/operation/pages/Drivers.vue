@@ -1,7 +1,20 @@
 <template>
   <Teleport to="#page-actions" defer>
-    <Button v-permission="'DRIVER:create'" size="md" variant="primary" @click="addDriver"> New Driver </Button>
+    <div class="hidden sm:flex">
+      <Button v-permission="'DRIVER:create'" size="md" variant="primary" @click="addDriver"> New Driver </Button>
+    </div>
   </Teleport>
+
+  <!-- FAB -->
+  <button
+    v-permission="'DRIVER:create'"
+    class="fixed bottom-6 right-6 sm:hidden z-50 w-14 h-14 rounded-full bg-primary text-white flex items-center justify-center shadow-lg active:scale-95 transition-transform"
+    @click="addDriver"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+    </svg>
+  </button>
 
   <div class="flex flex-col gap-4">
     <!-- Drivers Table -->
@@ -12,6 +25,8 @@
       :loading="isLoading"
       search_placeholder="Search drivers..."
       @row_click="navigateToDetails"
+      :hide_on_sm_screen="['employmentInfo', 'licenseTin', 'employmentDates']"
+      :on_sm_screen_column_span="{ driverInfo: 2, driverStatus: 2, actions: 2 }"
       :head_alignment="{
         driverInfo: 'left',
         employmentInfo: 'left',

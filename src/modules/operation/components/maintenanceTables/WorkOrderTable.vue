@@ -1,4 +1,27 @@
 <template>
+  <Teleport defer to="#page-title-actions">
+    <button
+      class="sm:hidden size-8 rounded-xl border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors"
+      @click="showSearchSheet = true"
+    >
+      <i class="*:size-4" v-html="icons.filterOptions"></i>
+    </button>
+  </Teleport>
+
+  <BottomSheet v-model="showSearchSheet" title="Search By">
+    <div class="flex flex-col gap-2 p-4">
+      <button
+        v-for="option in searchFieldOptions"
+        :key="option.value"
+        class="flex items-center gap-3 p-3 rounded-xl text-left transition-colors"
+        :class="selectedSearchField === option.value ? 'bg-primary/10 text-primary font-medium' : 'hover:bg-gray-50'"
+        @click="selectedSearchField = option.value; showSearchSheet = false"
+      >
+        {{ option.label }}
+      </button>
+    </div>
+  </BottomSheet>
+
   <Table
     :row_alignment="{
       vehicle: 'left',
@@ -25,9 +48,11 @@
     :columns="columns"
     :rows="response"
     :search_placeholder="dynamicSearchPlaceholder"
+    :hide_on_sm_screen="['contacts', 'workType', 'workArea', 'partsCost']"
+    :on_sm_screen_column_span="{ vehicle: 2, date: 2, statusAction: 3 }"
   >
     <template #search-prefix>
-      <div class="h-full flex items-center border-r border-gray-200 pr-2 mr-2">
+      <div class="h-full hidden sm:flex items-center border-r border-gray-200 pr-2 mr-2">
         <Select
           class="[&_.input-focus]:shadow-none! [&_.input-focus]:border-none [&_.input-focus]:min-h-full min-w-48"
           v-model="selectedSearchField"
@@ -164,6 +189,7 @@ import Dropdown from "@/components/common/Dropdown.vue";
 import DropDownItem from "@/components/common/DropDownItem.vue";
 import Status from "@/components/common/Status.vue";
 import Select from "@/components/common/Select.vue";
+import BottomSheet from "@/components/BottomSheet.vue";
 import { icons } from "@/utils/icons";
 import { usePagination } from "@/composables/usePagination";
 import type { WorkOrder } from "../../operation.types";
@@ -191,6 +217,7 @@ const searchFieldOptions = [
 
 const selectedSearchField = ref("firstName");
 const searchTerm = ref("");
+const showSearchSheet = ref(false);
 
 const dynamicSearchPlaceholder = computed(() => {
   const option = searchFieldOptions.find(

@@ -5,7 +5,7 @@
     :on-submit="handleCreateTyre"
   >
     <template #submit-btn="{ form }">
-      <Button size="md" variant="outline" @click="form.reset()">
+      <Button size="md" variant="secondary" @click="form.reset()">
         Discard Changes
       </Button>
       <SubmitButton> Create Tyre </SubmitButton>
@@ -19,7 +19,7 @@ import TyreForm from "../../components/tyre-details/TyreForm.vue";
 import { create_tyre } from "../../api/tyre.api";
 import { useToastStore } from "@/store/toastStore";
 import SubmitButton from "@/components/form/SubmitButton.vue";
-import Button from "@/components/Button.vue";
+import Button from "@/components/common/Button.vue";
 import { useMutation } from "@tanstack/vue-query";
 
 const mutation = useMutation({

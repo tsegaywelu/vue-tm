@@ -49,6 +49,11 @@ const userRole = computed(
   () => user.value?.role?.name || user.value?.type || "",
 );
 
+function handleChangePassword() {
+  dropdownOpen.value = false;
+  setTimeout(() => openModal("ChangePasswordModal", {}), 250);
+}
+
 async function handleLogout() {
   dropdownOpen.value = false;
   const confirmed = await openModal("ConfirmationModal", {
@@ -61,6 +66,7 @@ async function handleLogout() {
 }
 
 function handleClickOutside(e: MouseEvent) {
+  if (isMobile.value) return;
   if (dropdownRef.value && !dropdownRef.value.contains(e.target as Node)) {
     dropdownOpen.value = false;
   }
@@ -189,6 +195,26 @@ onUnmounted(() =>
             </div>
             <div class="py-1">
               <button
+                class="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                @click.stop="handleChangePassword"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="w-4 h-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"
+                  />
+                </svg>
+                Change Password
+              </button>
+              <button
                 class="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors"
                 @click="handleLogout"
               >
@@ -223,6 +249,26 @@ onUnmounted(() =>
                 {{ userRole }}
               </p>
             </div>
+            <button
+              class="w-full flex items-center gap-3 py-3 text-sm text-gray-700"
+              @click="handleChangePassword"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-5 h-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"
+                />
+              </svg>
+              Change Password
+            </button>
             <button
               class="w-full flex items-center gap-3 py-3 text-sm text-red-600"
               @click="handleLogout"

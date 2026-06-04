@@ -54,6 +54,7 @@
             name="vehicleType"
             :validation="{ required }"
             :attributes="{ placeholder: 'Select type' }"
+            :display_value="props.labels?.vehicleType"
           />
 
           <SelectInput
@@ -62,6 +63,7 @@
             url="/group"
             label_key="name"
             value_key="_id"
+            :display_value="props.labels?.vehicleGroup"
             :attributes="{ placeholder: 'Select group' }"
           />
 
@@ -71,6 +73,7 @@
             url="/type"
             label_key="name"
             value_key="_id"
+            :display_value="props.labels?.type"
             :attributes="{ placeholder: 'Select category' }"
           />
 
@@ -80,6 +83,7 @@
             url="/vehicle-model"
             label_key="name"
             value_key="_id"
+            :display_value="props.labels?.vehicleModel"
             :attributes="{ placeholder: 'Select model' }"
           />
 
@@ -89,12 +93,14 @@
             url="/maker"
             label_key="name"
             value_key="_id"
+            :display_value="props.labels?.maker"
             :attributes="{ placeholder: 'Select maker' }"
           />
 
           <RegionInput
             name="region"
             :attributes="{ placeholder: 'Select region' }"
+            :display_value="props.labels?.region"
           />
 
           <DateInput
@@ -158,6 +164,7 @@
             "
             value_key="_id"
             :validation="{ required }"
+            :display_value="props.labels?.driver"
             :attributes="{ placeholder: 'Select driver' }"
           />
 
@@ -183,6 +190,7 @@
               value_key="_id"
               searchable
               :validation="{ required }"
+              :display_value="props.labels?.transporter"
               :attributes="{ placeholder: 'Select transporter' }"
             />
           </component>
@@ -373,6 +381,7 @@
             label_key="name"
             value_key="_id"
             searchable
+            :display_value="props.labels?.insurance_insurer"
             :attributes="{ placeholder: 'Select insurer' }"
           />
         </div>
@@ -397,7 +406,9 @@
         />
       </Colapsable>
 
-      <div class="pt-10 flex justify-end gap-4">
+      <div
+        class="pt-10 flex flex-col sm:flex-row justify-end gap-3 *:w-full sm:*:w-auto *:min-h-[52px] sm:*:min-h-0 *:text-base sm:*:text-sm *:rounded-2xl sm:*:rounded-xl"
+      >
         <slot name="actions" :form="form"></slot>
       </div>
     </template>
@@ -410,7 +421,6 @@ import Input from "@/components/form/Input.vue";
 import SelectInput from "@/components/form/SelectInput.vue";
 import VehicleTypeInput from "@/components/common/inputs/VehicleTypeInput.vue";
 import RegionInput from "@/components/common/inputs/RegionInput.vue";
-import DriverInput from "@/components/common/inputs/DriverInput.vue";
 import DateInput from "@/components/form/DateInput.vue";
 import ToggleInput from "@/components/form/ToggleInput.vue";
 import TextareaInput from "@/components/form/TextareaInput.vue";
@@ -421,10 +431,6 @@ import {
   dateGreaterThanOrEqalToToday,
   required,
 } from "@/utils/validations";
-import { ref } from "vue";
-import Button from "@/components/common/Button.vue";
-import { openModal } from "@customizer/modal-x";
-import { getStaticUrl } from "@/utils/utils";
 
 const props = defineProps<{
   formId: string;
@@ -432,12 +438,7 @@ const props = defineProps<{
   initialValues: Record<string, any>;
   labels?: Record<string, string>;
   onSubmit: (values: any) => Promise<void> | void;
-  labels?: Record<string, string>;
 }>();
-
-const triggerFileInput = () => {
-  // Logic handled by component
-};
 
 const ownershipOptions = [
   { label: "Owned", value: "Owned" },
@@ -456,6 +457,12 @@ const nonOperationalOptions = [
   { value: "accident", label: "Accident" },
   { value: "retired", label: "Retired" },
   { value: "sold", label: "Sold" },
+];
+
+const operationalRoleOptions = [
+  { value: "SHIPMENT", label: "Shipment" },
+  { value: "LEASE_OUT", label: "Lease Out" },
+  { value: "OTHER", label: "Other" },
 ];
 
 const validateLeaseStartDate = (value: any, _msg: any, form: any) => {
@@ -478,7 +485,7 @@ const validateLeaseEndDate = (value: any, _msg: any, form: any) => {
   return [true, ""];
 };
 
-const handleSubmit = (values: any) => {
+const handleSubmit = async (values: any) => {
   // Build the nested objects as expected by the API
   const insuranceInformation = {
     insuredDate: values.insurance_insuredDate,
@@ -581,6 +588,6 @@ const handleSubmit = (values: any) => {
     });
   }
 
-  props.onSubmit(formData);
+  await props.onSubmit(formData);
 };
 </script>

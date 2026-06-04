@@ -4,6 +4,8 @@
     :columns="columns"
     :rows="response"
     search_placeholder="Search by name..."
+    :hide_on_sm_screen="['uom', 'createdAt']"
+    :on_sm_screen_column_span="{ name: 2, itemGroup: 2, inventoryType: 2, quantity: 2 }"
   >
     <template #cell-itemGroup="{ row }">
       <span class="font-medium text-gray-700">

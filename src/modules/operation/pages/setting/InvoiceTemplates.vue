@@ -1,10 +1,19 @@
 <template>
   <div class="flex flex-col h-full">
+    <!-- Mobile FAB -->
+    <button
+      class="fixed bottom-6 right-6 sm:hidden z-50 w-14 h-14 rounded-full bg-primary text-white shadow-xl flex items-center justify-center active:scale-95 transition-transform"
+      @click="router.push('/setting/invoice-templates/new')"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+      </svg>
+    </button>
     <Teleport to="#page-actions" defer>
       <Button
         variant="primary"
         size="md"
-        class="flex items-center gap-2"
+        class="hidden sm:flex items-center gap-2"
         @click="router.push('/setting/invoice-templates/new')"
       >
         <i v-html="icons.plus" />
@@ -20,6 +29,14 @@
         :loading="isLoading"
         search_placeholder="Search templates..."
       >
+        <template #cell-shipperId="{ value }">
+          <span class="font-medium text-gray-800">{{ value?.name || '-' }}</span>
+        </template>
+
+        <template #cell-carrier="{ value }">
+          <span class="font-medium text-gray-800">{{ value?.name || '-' }}</span>
+        </template>
+
         <template #cell-productType="{ value }">
           <span class="text-xs px-2 py-0.5 rounded-full font-medium"
             :class="{
@@ -28,12 +45,6 @@
               'bg-gray-100 text-gray-600': value === 'ALL',
             }">
             {{ { IN_BOUND: 'In Bound', OUT_BOUND: 'Out Bound', ALL: 'All' }[value] ?? value }}
-          </span>
-        </template>
-
-        <template #cell-shipper="{ row }">
-          <span class="font-medium text-gray-800">
-            {{ row.shipperName || row.shipper?.name || row.shipperId || '-' }}
           </span>
         </template>
 
@@ -46,7 +57,7 @@
             <button
               class="p-1.5 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-primary transition-colors"
               title="Edit"
-              @click.stop="router.push(`/setting/invoice-templates/${row.shipperId}/${row.productType}`)"
+              @click.stop="router.push(`/setting/invoice-templates/${row.shipperId?._id || row.shipperId}/${row.productType}`)"
             >
               <i v-html="icons.edit" />
             </button>
@@ -89,7 +100,8 @@ const { response, isLoading, refetch } = usePagination<any>({
 
 const columns: TableColumn<any>[] = [
   { key: "name", label: "Template Name", field: "name" },
-  { key: "shipper", label: "Shipper", field: "shipper" },
+  { key: "shipperId", label: "Shipper", field: "shipperId" },
+  { key: "carrier", label: "Carrier", field: "carrier" },
   { key: "productType", label: "Product Type", field: "productType" },
   { key: "updatedAt", label: "Last Updated", field: "updatedAt" },
   { key: "actions", label: "", field: "", cellAlign: "right" },
@@ -103,7 +115,7 @@ const handleDelete = async (row: any) => {
     action: "delete",
   });
   if (!confirmed) return;
-  const res = await delete_invoice_template(row.shipperId, row.productType);
+  const res = await delete_invoice_template(row.shipperId?._id || row.shipperId, row.productType);
   if (res.success) {
     toast.success("Template deleted");
     refetch();

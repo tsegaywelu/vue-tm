@@ -3,24 +3,37 @@
     <!-- Add/Edit Form -->
     <div
       ref="formContainer"
-      class="bg-grey-25 rounded-3xl p-6 border border-grey-100"
+      class="bg-grey-25 rounded-3xl p-4 md:p-6 border border-grey-100 mt-2"
     >
-      <h3 class="text-lg font-bold text-grey-900 mb-4">
-        {{ selectedItem ? `Edit ${activeTabLabel}` : `Add ${activeTabLabel}` }}
-      </h3>
+      <div
+        class="flex items-center justify-between mb-4 cursor-pointer sm:cursor-default"
+        @click="formOpen = !formOpen"
+      >
+        <h3 class="text-lg font-bold text-grey-900">
+          {{ selectedItem ? `Edit ${activeTabLabel}` : `Add ${activeTabLabel}` }}
+        </h3>
+        <span class="sm:hidden size-9 flex items-center justify-center rounded-xl bg-white border border-grey-100 text-grey-500 shrink-0">
+          <svg class="size-5 transition-transform duration-200" :class="{ 'rotate-180': formOpen }" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="6 9 12 15 18 9" />
+          </svg>
+        </span>
+      </div>
+      <div :class="!formOpen ? 'hidden sm:block' : ''">
       <Form
         :id="`form-${activeTab}`"
         @submit="handleSubmit"
         :values="initialValues"
       >
         <template #default="{ form }">
-          <div class="flex flex-col md:flex-row gap-4 items-end">
-            <Input
-              name="name"
-              :label="`${activeTabLabel} Name`"
-              :placeholder="`e.g. ${activeTabPlaceholder}`"
-            />
-            <div class="shrink-0 ml-auto flex gap-2">
+          <div class="flex flex-col md:flex-row gap-4 md:items-end">
+            <div class="flex-1">
+              <Input
+                name="name"
+                :label="`${activeTabLabel} Name`"
+                :placeholder="`e.g. ${activeTabPlaceholder}`"
+              />
+            </div>
+            <div class="grid grid-cols-2 md:flex gap-2 *:min-h-[52px] md:*:min-h-0 *:text-base md:*:text-sm *:rounded-2xl md:*:rounded-xl">
               <Button size="md" variant="outline" @click="resetForm(form)">
                 Reset
               </Button>
@@ -31,14 +44,12 @@
           </div>
         </template>
       </Form>
+      </div>
     </div>
 
     <!-- List Table -->
-    <div class="rounded-3xl p-6 border border-grey-100 bg-white">
-      <h3 class="text-lg font-bold text-grey-900 mb-4">
-        {{ activeTabLabel }} List
-      </h3>
-      <Table :columns="columns" :rows="response">
+    <div class="md:rounded-3xl md:p-6 md:border md:border-grey-100 bg-white">
+      <Table :columns="columns" :rows="response" :hide_on_sm_screen="['createdAt']" :on_sm_screen_column_span="{ name: 2, actions: 2 }">
         <template #cell-name="{ row }">
           <span class="font-bold text-grey-900">{{ row.name }}</span>
         </template>
@@ -97,6 +108,7 @@ const activeTabPlaceholder = computed(() => {
 
 const formContainer = ref<HTMLElement | null>(null);
 const selectedItem = ref<any>(null);
+const formOpen = ref(false);
 const initialValues = ref({ name: "" });
 
 const markerPagination = usePagination({
@@ -150,10 +162,10 @@ watch(activeTab, () => {
 
 const handleEdit = (row: any) => {
   selectedItem.value = row;
+  formOpen.value = true;
   initialValues.value = {
     name: row.name || "",
   };
-
   formContainer.value?.scrollIntoView({ behavior: "smooth" });
 };
 

@@ -22,7 +22,8 @@
     :columns="columns"
     :rows="response"
     search_placeholder="Search by serial number..."
-    @row_click="handleRowClick"  
+    :on_sm_screen_column_span="{ serialNumber: 2, status: 2, price: 3, tyrePosition: 3 }"
+    @row_click="handleRowClick"
   >
     <template #cell-serialNumber="{ row }">
       <span class="font-medium text-gray-900">{{ row.serialNumber || '-' }}</span>

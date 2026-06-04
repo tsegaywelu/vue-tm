@@ -4,6 +4,8 @@
     :columns="columns"
     :rows="response"
     search_placeholder="Search by username..."
+    :hide_on_sm_screen="['roleType', 'region']"
+    :on_sm_screen_column_span="{ username: 2, roleName: 2 }"
     :row_alignment="{
       username: 'left',
       roleName: 'left',

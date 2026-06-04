@@ -27,12 +27,13 @@
     id="vehicle-list"
     :columns="columns"
     :rows="response"
+    :search_placeholder="`Search by ${selectedSearchFieldLabel}...`"
+    :hide_on_sm_screen="['sideNumber', 'type', 'ownership', 'vehicleGroup', 'mileageSinceService', 'lastServiceDate']"
+    :on_sm_screen_column_span="{ plateNumber: 2, vehicleType: 2, driver: 3, status: 2 }"
     @row_click="(row) => $router.push(`/vehicles/${row._id}`)"
   >
     <template #search-prefix>
-      <div
-        class="h-full flex items-center border-r border-gray-200 pr-2 mr-2 w-48"
-      >
+      <div class="h-full hidden sm:flex items-center border-r border-gray-200 pr-2 mr-2 w-48">
         <Select
           v-model="selectedSearchField"
           class="[&_.input-focus]:shadow-none! [&_.input-focus]:border-none [&_.input-focus]:min-h-full min-w-48"
@@ -46,9 +47,9 @@
 
     <template #after-search>
       <div
-        class="items-center gap-4 inline-flex border-l border-grey-100 overflow-x-auto px-3"
+        class="items-center gap-4 inline-flex sm:border-l sm:border-grey-100 overflow-x-auto sm:px-3"
       >
-        <i v-html="icons.filter" />
+        <i class="hidden sm:block" v-html="icons.filter" />
         <VehicleFilters
           @change="handleFilterChange"
           pagination-id="vehicle-list"
@@ -191,6 +192,9 @@ const props = defineProps<{
 
 const emit = defineEmits(["action"]);
 const selectedSearchField = ref("vehiclePlateNumber");
+const selectedSearchFieldLabel = computed(
+  () => filterFieldOptions.find((o) => o.value === selectedSearchField.value)?.label ?? "Plate Number"
+);
 
 const columns: TableColumn[] = [
   { key: "plateNumber", label: "Plate Number", field: "plateNumber" },
@@ -235,5 +239,5 @@ const handleFilterChange = (newFilters: any) => {
   activeFilters.value = { ...newFilters };
 };
 
-defineExpose({ refetch });
+defineExpose({ refetch, selectedSearchField, filterFieldOptions });
 </script>

@@ -35,7 +35,7 @@
             :attributes="{
               placeholder: 'Select position',
             }"
-            :options="currentTyrePositions"
+            :options="tyrePositionOptions"
             :validation="{
               required,
             }"
@@ -144,7 +144,7 @@
       </Colapsable>
 
       <!-- Action Footer -->
-      <div class="pt-10 flex justify-end gap-4">
+      <div class="pt-10 flex flex-col sm:flex-row justify-end gap-3 *:w-full sm:*:w-auto *:min-h-[52px] sm:*:min-h-0 *:text-base sm:*:text-sm *:rounded-2xl sm:*:rounded-xl">
         <slot :form="form" name="submit-btn"></slot>
       </div>
     </template>
@@ -171,24 +171,15 @@ const props = defineProps<{
 
 const isTrailer = ref(props.initialValues.trailer || false);
 
-const tyrePositions = [
-  { value: "FRONT_LEFT", label: "Front Left" },
-  { value: "FRONT_RIGHT", label: "Front Right" },
-  { value: "FRONT_RIGHT_OUTER", label: "Front Right Outer" },
-  { value: "FRONT_RIGHT_INNER", label: "Front Right Inner" },
-  { value: "FRONT_LEFT_OUTER", label: "Front Left Outer" },
-  { value: "FRONT_LEFT_INNER", label: "Front Left Inner" },
-  { value: "MID_LEFT_INNER", label: "Mid Left Inner" },
-  { value: "MID_LEFT_OUTER", label: "Mid Left Outer" },
-  { value: "MID_RIGHT_INNER", label: "Mid Right Inner" },
-  { value: "MID_RIGHT_OUTER", label: "Mid Right Outer" },
-  { value: "REAR_LEFT_INNER", label: "Rear Left Inner" },
-  { value: "REAR_LEFT_OUTER", label: "Rear Left Outer" },
-  { value: "REAR_RIGHT_INNER", label: "Rear Right Inner" },
-  { value: "REAR_RIGHT_OUTER", label: "Rear Right Outer" },
-  { value: "PRIMARY_SQUART", label: "Primary Squart" },
-  { value: "SECONDARY_SQUART", label: "Secondary Squart" },
-];
+
+const tyrePositionOptions = computed(() => {
+  const base = currentTyrePositions.value;
+  const initial = props.initialValues?.tyrePosition;
+  if (!initial || base.some((o) => o.value === initial)) return base;
+  const label = props.initialLabels?.[initial] ||
+    initial.split("_").map((w: string) => w.charAt(0) + w.slice(1).toLowerCase()).join(" ");
+  return [{ value: initial, label }, ...base];
+});
 
 const currentTyrePositions = computed(() => {
   if (isTrailer.value) {

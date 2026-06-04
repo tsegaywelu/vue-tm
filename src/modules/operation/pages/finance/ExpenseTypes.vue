@@ -1,15 +1,24 @@
 <template>
   <Teleport to="#page-actions" defer>
-    <Button
-      variant="primary"
-      size="md"
-      class="flex items-center gap-2"
-      @click="router.push('/finance/expense-types/add')"
-    >
-      <i v-html="icons.plus" />
-      Add Expense Type
-    </Button>
+    <div class="hidden sm:flex">
+      <Button
+        variant="primary"
+        size="md"
+        class="flex items-center gap-2"
+        @click="router.push('/finance/expense-types/add')"
+      >
+        <i v-html="icons.plus" />
+        Add Expense Type
+      </Button>
+    </div>
   </Teleport>
+
+  <button
+    class="sm:hidden fixed bottom-6 right-6 z-40 size-14 rounded-full bg-primary text-white shadow-xl flex items-center justify-center"
+    @click="router.push('/finance/expense-types/add')"
+  >
+    <i class="*:size-6" v-html="icons.plus"></i>
+  </button>
 
   <ExpenseTypeTable
     ref="tableRef"

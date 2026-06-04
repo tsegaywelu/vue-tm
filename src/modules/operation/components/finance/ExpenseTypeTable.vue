@@ -4,6 +4,8 @@
     :columns="columns"
     :rows="response"
     search_placeholder="Search by name..."
+    :hide_on_sm_screen="['typicalPrice', 'createdAt']"
+    :on_sm_screen_column_span="{ name: 2, scope: 2, description: 3 }"
     @row_click="handleAction($event, 'view')"
   >
     <template #cell-name="{ value }">

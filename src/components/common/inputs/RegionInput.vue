@@ -25,5 +25,6 @@ const props = defineProps<{
   params?: any;
   attributes?: any;
   parent_class_name?: string;
+  display_value?: string;
 }>();
 </script>

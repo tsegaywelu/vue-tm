@@ -1,18 +1,39 @@
 <template>
+  <!-- Tab 1: New Infraction button -->
+  <Teleport v-if="activeTab === 'infractions'" to="#page-actions" defer>
+    <div class="hidden sm:flex">
+      <Button
+        v-permission="'INFRACTION:create'"
+        size="md"
+        variant="primary"
+        @click="handleOpenAddModal"
+      >
+        New Infraction
+      </Button>
+    </div>
+  </Teleport>
+
   <div class="flex flex-col gap-6">
     <!-- Tab 1: Infractions List -->
     <div v-if="activeTab === 'infractions'">
-      <Teleport to="#page-actions" defer>
-        <Button
-          v-permission="'INFRACTION:create'"
-          size="md"
-          variant="primary"
-          @click="handleOpenAddModal"
-        >
-          New Infraction
-        </Button>
-      </Teleport>
-      <Table :columns="columns" :rows="response" @row_click="navigateToDetails">
+      <!-- FAB -->
+      <button
+        v-permission="'INFRACTION:create'"
+        class="fixed bottom-6 right-6 sm:hidden z-50 w-14 h-14 rounded-full bg-primary text-white flex items-center justify-center shadow-lg active:scale-95 transition-transform"
+        @click="handleOpenAddModal"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+        </svg>
+      </button>
+
+      <Table
+        :columns="columns"
+        :rows="response"
+        @row_click="navigateToDetails"
+        :hide_on_sm_screen="['shipment', 'createdAt']"
+        :on_sm_screen_column_span="{ driverData: 2, totalFine: 1, status: 2, actions: 2 }"
+      >
         <template #cell-createdAt="{ row }">
           <span class="font-bold text-grey-900">{{
             dateFormatter(row.createdAt)
@@ -45,46 +66,31 @@
               <template #default="{ close }">
                 <DropDownItem
                   label="View Details"
-                  @click="
-                    close();
-                    navigateToDetails(row);
-                  "
+                  @click="close(); navigateToDetails(row);"
                 />
                 <DropDownItem
                   v-if="row.status === 'approved'"
                   v-permission="'INFRACTION:pay'"
                   label="Mark as Paid"
-                  @click="
-                    close();
-                    handleAction(row, 'mark-paid');
-                  "
+                  @click="close(); handleAction(row, 'mark-paid');"
                 />
                 <DropDownItem
                   v-if="row.status !== 'paid' && row.status !== 'rejected'"
                   v-permission="'INFRACTION:update'"
                   label="Edit"
-                  @click="
-                    close();
-                    handleEdit(row);
-                  "
+                  @click="close(); handleEdit(row);"
                 />
                 <DropDownItem
                   v-if="row.status === 'pending'"
                   v-permission="'INFRACTION:approve'"
                   label="Approve"
-                  @click="
-                    close();
-                    handleAction(row, 'approve');
-                  "
+                  @click="close(); handleAction(row, 'approve');"
                 />
                 <DropDownItem
                   v-if="row.status === 'pending'"
                   v-permission="'INFRACTION:reject'"
                   label="Reject"
-                  @click="
-                    close();
-                    handleAction(row, 'reject');
-                  "
+                  @click="close(); handleAction(row, 'reject');"
                 />
               </template>
             </Dropdown>
@@ -97,50 +103,57 @@
     <div v-if="activeTab === 'types'" class="flex flex-col gap-6">
       <div
         ref="formContainer"
-        class="bg-grey-25 rounded-3xl p-6 border border-grey-100"
+        class="bg-grey-25 rounded-3xl p-4 md:p-6 border border-grey-100 mt-2"
       >
-        <h3 class="text-lg font-bold text-grey-900 mb-4">
-          {{ selectedType ? "Edit Infraction Type" : "Add Infraction Type" }}
-        </h3>
-        <Form
-          id="add-infraction-type"
-          @submit="handleTypeSubmit"
-          :values="typeInitialValues"
+        <div
+          class="flex items-center justify-between mb-4 cursor-pointer sm:cursor-default"
+          @click="formOpen = !formOpen"
         >
-          <template #default="{ form }">
-            <div class="flex flex-col md:flex-row gap-4 items-end">
-              <div class="flex-1">
-                <Input
-                  name="name"
-                  label="Type Name"
-                  placeholder="e.g. Over Speeding"
-                />
+          <h3 class="text-lg font-bold text-grey-900">
+            {{ selectedType ? "Edit Infraction Type" : "Add Infraction Type" }}
+          </h3>
+          <span class="sm:hidden size-9 flex items-center justify-center rounded-xl bg-white border border-grey-100 text-grey-500 shrink-0">
+            <svg class="size-5 transition-transform duration-200" :class="{ 'rotate-180': formOpen }" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </span>
+        </div>
+        <div :class="!formOpen ? 'hidden sm:block' : ''">
+          <Form
+            id="add-infraction-type"
+            @submit="handleTypeSubmit"
+            :values="typeInitialValues"
+          >
+            <template #default="{ form }">
+              <div class="flex flex-col md:flex-row gap-4 md:items-end">
+                <div class="flex-1">
+                  <Input
+                    name="name"
+                    label="Type Name"
+                    placeholder="e.g. Over Speeding"
+                  />
+                </div>
+                <div class="grid grid-cols-2 md:flex gap-2 *:min-h-[52px] md:*:min-h-0 *:text-base md:*:text-sm *:rounded-2xl md:*:rounded-xl">
+                  <Button size="md" variant="outline" @click="resetTypeForm(form)">
+                    Reset
+                  </Button>
+                  <SubmitButton>
+                    {{ selectedType ? "Update" : "Create" }}
+                  </SubmitButton>
+                </div>
               </div>
-              <div class="shrink-0 flex gap-2">
-                <Button
-                  size="md"
-                  variant="outline"
-                  @click="resetTypeForm(form)"
-                >
-                  Reset
-                </Button>
-                <SubmitButton>
-                  {{ selectedType ? "Update" : "Create" }}
-                </SubmitButton>
-              </div>
-            </div>
-          </template>
-        </Form>
+            </template>
+          </Form>
+        </div>
       </div>
 
-      <div class="rounded-3xl p-6 border border-grey-100 bg-white">
-        <h3 class="text-lg font-bold text-grey-900 mb-4">
-          Infraction Types List
-        </h3>
+      <div class="md:rounded-3xl md:p-6 md:border md:border-grey-100 bg-white">
         <Table
           :columns="typeColumns"
           :rows="typesResponse"
           :loading="typesLoading"
+          :hide_on_sm_screen="['createdAt']"
+          :on_sm_screen_column_span="{ name: 2, actions: 2 }"
         >
           <template #cell-name="{ row }">
             <span class="font-bold text-grey-900">{{ row.name }}</span>
@@ -282,6 +295,7 @@ const navigateToDetails = (row: any) => {
 
 // Infraction Types Management
 const formContainer = ref<HTMLElement | null>(null);
+const formOpen = ref(false);
 const selectedType = ref<any>(null);
 const typeInitialValues = ref({ name: "" });
 
@@ -314,10 +328,8 @@ const updateTypeMutation = useMutation({
 
 const handleTypeEdit = (row: any) => {
   selectedType.value = row;
-  typeInitialValues.value = {
-    name: row.name || "",
-  };
-
+  typeInitialValues.value = { name: row.name || "" };
+  formOpen.value = true;
   formContainer.value?.scrollIntoView({ behavior: "smooth" });
 };
 
@@ -337,7 +349,7 @@ const handleTypeSubmit = async (values: any) => {
       toast.success("Infraction Type updated successfully");
       refetchTypes();
       selectedType.value = null;
-      typeInitialValues.value = { name: "" }; 
+      typeInitialValues.value = { name: "" };
     } else {
       toast.error(res.error || "Failed to update infraction type");
     }

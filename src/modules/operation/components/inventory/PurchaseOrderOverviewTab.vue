@@ -49,16 +49,37 @@
 
       <div class="flex flex-col gap-4">
         <h3 class="text-lg font-bold text-gray-900 px-1">Order Items</h3>
-        <div class="overflow-x-auto rounded-xl border border-gray-200">
+
+        <!-- Mobile card list -->
+        <div class="sm:hidden flex flex-col divide-y divide-gray-100 rounded-xl border border-gray-200 bg-white overflow-hidden">
+          <div v-if="!purchaseOrder?.items?.length" class="px-4 py-10 text-center text-sm text-gray-500 italic">
+            No items in this order.
+          </div>
+          <div v-for="(item, index) in purchaseOrder?.items" :key="index" class="px-4 py-3 grid grid-cols-6 gap-x-2 gap-y-1.5">
+            <div class="col-span-1"><span class="text-xs font-bold text-gray-400">#{{ index + 1 }}</span></div>
+            <div class="col-span-5 text-right"><span class="text-xs text-gray-500">{{ item.item?.uom || '-' }}</span></div>
+            <div class="col-span-4"><span class="text-sm font-bold text-gray-900">{{ item.item?.name || '-' }}</span></div>
+            <div class="col-span-2 text-right"><span class="text-xs text-gray-500">Qty</span><span class="text-sm font-semibold text-gray-900 ml-1">{{ item.quantity }}</span></div>
+            <div class="col-span-3"><span class="text-xs text-gray-500">Unit</span><span class="text-sm text-gray-700 ml-1">{{ currencyFormatter(item.price) }}</span></div>
+            <div class="col-span-3 text-right"><span class="text-sm font-bold text-primary">{{ currencyFormatter(item.totalPrice) }}</span></div>
+          </div>
+          <div v-if="purchaseOrder?.items?.length" class="px-4 py-3 bg-primary/5 flex items-center justify-between">
+            <span class="text-sm font-bold text-primary">Grand Total</span>
+            <span class="text-base font-black text-primary">{{ currencyFormatter(purchaseOrder?.grandTotal) }}</span>
+          </div>
+        </div>
+
+        <!-- Desktop table -->
+        <div class="hidden sm:block overflow-x-auto rounded-xl border border-gray-200">
           <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
               <tr class="bg-primary/90 text-white">
                 <th class="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider">No</th>
                 <th class="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider">Item Description</th>
                 <th class="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider">U/M</th>
-                <th class="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-right">Qty</th>
-                <th class="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-right">Unit Price</th>
-                <th class="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-right">Total</th>
+                <th class="px-4 py-3 text-right text-xs font-bold uppercase tracking-wider">Qty</th>
+                <th class="px-4 py-3 text-right text-xs font-bold uppercase tracking-wider">Unit Price</th>
+                <th class="px-4 py-3 text-right text-xs font-bold uppercase tracking-wider">Total</th>
                 <th class="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider">Remark</th>
               </tr>
             </thead>

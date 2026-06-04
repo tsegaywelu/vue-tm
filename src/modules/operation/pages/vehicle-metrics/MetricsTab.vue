@@ -1,12 +1,25 @@
 <template>
   <div>
-    <Teleport to="#page-actions" defer>
-      <Button size="md" variant="secondary" @click="handleExport">
-        <i class="mdi mdi-file-excel-outline text-lg"></i>
-        <span>Export</span>
-      </Button>
+    <!-- Export: icon button on mobile -->
+    <Teleport to="#page-title-actions" defer>
+      <button
+        class="sm:hidden size-10 rounded-lg bg-grey-75 border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors"
+        @click="handleExport"
+      >
+        <i class="*:size-6" v-html="icons.excell"></i>
+        <i class="*:size-3" v-html="icons.longArrow"></i>
+      </button>
     </Teleport>
-    <Table :show_pagination="false" :columns="columns" :rows="filteredMetricsData" client_sort client_search>
+    <!-- Export: full button on desktop -->
+    <Teleport to="#page-actions" defer>
+      <div class="hidden sm:flex">
+        <Button size="md" variant="secondary" @click="handleExport">
+          <i class="mdi mdi-file-excel-outline text-lg"></i>
+          <span>Export</span>
+        </Button>
+      </div>
+    </Teleport>
+    <Table :show_pagination="false" :columns="columns" :rows="filteredMetricsData" client_sort client_search :on_sm_screen_column_span="{ plateNumber: 2, totalCost: 2 }">
       <template #after-search>
         <VehicleMetricsFilter
           show-vehicle-use
@@ -85,6 +98,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from "vue";
+import { icons } from "@/utils/icons";
 import { usePagination } from "@/composables/usePagination";
 import Table from "@/components/common/Table.vue";
 import type { TableColumn } from "@/components/common/Table.vue";

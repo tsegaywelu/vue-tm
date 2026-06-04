@@ -4,6 +4,8 @@
     :columns="columns"
     :rows="response"
     search_placeholder="Search by title..."
+    :hide_on_sm_screen="['message', 'createdAt']"
+    :on_sm_screen_column_span="{ title: 2, targetAudience: 2 }"
   >
     <template #cell-title="{ row }">
       <div class="font-medium text-gray-900">{{ row.title }}</div>

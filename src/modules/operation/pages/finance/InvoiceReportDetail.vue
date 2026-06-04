@@ -74,19 +74,18 @@
             >
               Approve
             </Button>
-            <Button variant="outline" size="md" @click="handleExport">
+            <Button variant="outline" size="md" class="hidden sm:flex" @click="handleExport">
               <template #leading>
                 <i class="mdi mdi-microsoft-excel text-lg text-green-600"></i>
               </template>
               Export
             </Button>
-            <!-- Print button hidden until print layout is finalized -->
-            <!-- <Button variant="outline" size="md" @click="handlePrint">
-              <template #leading>
-                <i class="mdi mdi-printer text-lg"></i>
-              </template>
-              Print
-            </Button> -->
+            <button
+              class="sm:hidden size-9 rounded-xl border border-gray-200 flex items-center justify-center text-green-600 hover:bg-gray-50 transition-colors"
+              @click="handleExport"
+            >
+              <i v-html="icons.excell"></i>
+            </button>
           </div>
         </div>
       </div>
@@ -111,6 +110,7 @@ import Status from "@/components/common/Status.vue";
 import Button from "@/components/Button.vue";
 import { dateFormatter } from "@/utils/utils";
 import { exportInvoiceToExcel } from "@/utils/excel";
+import { icons } from "@/utils/icons";
 import { exportInvoiceWithTemplate } from "@/utils/invoice-template-export";
 import { fetch_invoice_template } from "../../api/invoice-template.api";
 import { useToastStore } from "@/store/toastStore";

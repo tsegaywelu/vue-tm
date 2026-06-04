@@ -15,6 +15,7 @@
     id="service-types-list"
     :columns="columns"
     :rows="response"
+    :on_sm_screen_column_span="{ name: 2, description: 3 }"
   >
     <template #cell-name="{ row }">
       <span class="font-medium text-gray-900">{{ row.name }}</span>

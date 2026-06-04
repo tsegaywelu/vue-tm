@@ -50,7 +50,7 @@
           "
         >
           <template #default="[operationalAdvance, advanceType]">
-            <div class="grid grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <SelectInput
                 name="operationalAdvance"
                 label="Is Advance Operational?"
@@ -83,7 +83,7 @@
             <!-- Operational: shipment search + derived fields -->
             <div
               v-if="operationalAdvance === 'true'"
-              class="grid grid-cols-2 gap-4 bg-gray-50 p-4 rounded-lg mt-2"
+              class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-gray-50 p-4 rounded-lg mt-2"
             >
               <SelectInput
                 name="shipment"
@@ -171,7 +171,7 @@
           >
             ✕
           </button>
-          <div class="grid grid-cols-2 gap-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <SelectInput
               :name="`fuel_${index}_paymentType`"
               label="Payment Type"
@@ -249,7 +249,7 @@
           >
             ✕
           </button>
-          <div class="grid grid-cols-2 gap-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <SelectInput
               :name="`pd_${index}_category`"
               label="Category"
@@ -307,7 +307,7 @@
           >
             ✕
           </button>
-          <div class="grid grid-cols-2 gap-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <SelectInput
               :name="`other_${index}_expenseType`"
               label="Reason"

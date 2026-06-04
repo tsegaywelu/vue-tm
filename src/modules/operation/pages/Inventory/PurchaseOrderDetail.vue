@@ -57,13 +57,11 @@
               Void
             </Button>
             <Button
-              variant="primary"
+              variant="outline"
               size="md"
               @click="handlePrint"
             >
-              <template #leading>
-                <i class="mdi mdi-printer text-lg"></i>
-              </template>
+              <i class="*:size-4 mr-1" v-html="icons.printer" />
               Print
             </Button>
           </div>
@@ -120,6 +118,7 @@ import { dateFormatter } from "@/utils/utils";
 import { useToastStore } from "@/store/toastStore";
 import { useAuthStore } from "@/store/authStore";
 import { printPurchaseOrder } from "../../utils/printPurchaseOrder";
+import { icons } from "@/utils/icons";
 
 // Tabs
 import PurchaseOrderOverviewTab from "../../components/inventory/PurchaseOrderOverviewTab.vue";

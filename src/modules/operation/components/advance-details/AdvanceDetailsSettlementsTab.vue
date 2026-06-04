@@ -49,6 +49,7 @@
         :hide_actions="true"
         :show_pagination="false"
         :clickable_rows="false"
+        :on_sm_screen_column_span="{ type: 2, category: 2, amount: 2, approvedAmount: 2, status: 2, photos: 2, actions: 2 }"
       >
         <template #cell-type="{ value }">
           <span class="font-semibold text-gray-800 capitalize">{{
@@ -382,19 +383,18 @@ const hasPhotos = (row: any) => {
 };
 
 const getAttachmentsCount = (row: any) => {
-  let count = 0;
-  if (row.attachments) count += row.attachments.length;
-  if (row.attachment) count += 1;
-  return count - 1;
+  const all = [...(row.attachments || [])];
+  if (row.attachment) all.push(row.attachment);
+  return new Set(all).size;
 };
 
 const openPhotos = (row: any) => {
   const attachments = [...(row.attachments || [])];
   if (row.attachment) attachments.push(row.attachment);
 
-  const fileURL = attachments[0];
-  if (fileURL) {
-    openModal("FileViewerModal", { fileURL: resolveFileUrl(fileURL) });
+  const files = [...new Set(attachments)].map(resolveFileUrl).filter(Boolean);
+  if (files.length) {
+    openModal("FileViewerModal", { files });
   }
 };
 

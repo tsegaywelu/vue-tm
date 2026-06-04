@@ -4,11 +4,16 @@
       v-permission="'VEHICLE:update'"
       variant="primary"
       size="md"
+      class="hidden sm:flex"
       @click="$router.push(`/vehicles/edit/${vehicleId}`)"
     >
       Edit Vehicle
     </Button>
   </Teleport>
+
+  <!-- Tab target — always rendered so Teleport can find it -->
+  <div id="vehicle-details-tabs"></div>
+
   <div v-if="isLoading" class="flex justify-center py-20">
     <i class="mdi mdi-loading mdi-spin text-4xl text-primary"></i>
   </div>
@@ -16,17 +21,16 @@
   <div v-else-if="vehicle" class="flex flex-col gap-6">
     <!-- Header Info Card -->
     <div
-      class="bg-grey-25 rounded-[32px] p-6 md:p-10 border border-grey-100 flex flex-col md:flex-row items-center justify-between gap-8"
+      class="bg-grey-25 rounded-[32px] p-4 md:p-10 border border-grey-100 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 md:gap-8"
     >
-      <div class="flex items-center gap-8">
+      <div class="flex items-center gap-4 md:gap-8">
         <div
-          class="size-24 md:size-32 rounded-full bg-white flex items-center justify-center shadow-lg border border-grey-100 p-4"
+          class="size-16 md:size-32 rounded-full bg-white flex items-center justify-center shadow-lg border border-grey-100 shrink-0"
         >
           <div class="text-primary">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              width="64"
-              height="64"
+              class="w-8 h-8 md:w-16 md:h-16"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -41,24 +45,24 @@
             </svg>
           </div>
         </div>
-        <div class="flex flex-col gap-1">
+        <div class="flex flex-col gap-1 min-w-0">
           <h2
-            class="text-3xl md:text-4xl font-black text-grey-900 tracking-tight"
+            class="text-xl md:text-4xl font-black text-grey-900 tracking-tight truncate"
           >
             {{ vehicle.plateNumber }}
           </h2>
-          <div class="flex items-center gap-2">
+          <div class="flex flex-wrap items-center gap-2">
             <span
-              class="px-3 py-1 bg-primary/10 text-primary text-xs font-bold rounded-full uppercase"
+              class="px-2 py-0.5 md:px-3 md:py-1 bg-primary/10 text-primary text-xs font-bold rounded-full uppercase"
               >{{ vehicle.vehicleType?.name }}</span
             >
             <span
-              class="px-3 py-1 bg-grey-100 text-grey-600 text-xs font-bold rounded-full uppercase"
+              class="px-2 py-0.5 md:px-3 md:py-1 bg-grey-100 text-grey-600 text-xs font-bold rounded-full uppercase"
               >{{ vehicle.ownership }}</span
             >
             <span
               v-if="vehicle.operationalRole"
-              class="px-3 py-1 text-xs font-bold rounded-full uppercase"
+              class="px-2 py-0.5 md:px-3 md:py-1 text-xs font-bold rounded-full uppercase"
               :class="{
                 'bg-blue-100 text-blue-700': vehicle.operationalRole === 'SHIPMENT',
                 'bg-amber-100 text-amber-700': vehicle.operationalRole === 'NON_SHIPMENT',

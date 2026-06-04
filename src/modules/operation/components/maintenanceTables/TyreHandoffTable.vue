@@ -21,6 +21,8 @@
     id="tyre-handoffs-list"
     :columns="columns"
     :rows="response"
+    :hide_on_sm_screen="['vehicle', 'assignedTo', 'createdAt']"
+    :on_sm_screen_column_span="{ serialNumber: 2, eventType: 2, status: 3 }"
   >
     <template #cell-serialNumber="{ row }">
       <span class="font-medium text-gray-900">{{

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from "vue";
+import { ref, computed, watch, onMounted, onUnmounted } from "vue";
 import { icons } from "@/utils/icons";
 import { raaz_icons } from "@/utils/raaz_icons";
 import NavButton from "@/components/NavButton.vue";
@@ -35,9 +35,9 @@ const emit = defineEmits<{
 const is_desktop = ref(window.innerWidth > 1280);
 const is_hovered = ref(false);
 
-// Desktop: hover-driven. Mobile: is_open prop-driven.
-const show_expanded = computed(
-  () => props.is_open || (is_desktop.value && is_hovered.value),
+// Desktop: hover-driven only. Mobile: is_open prop-driven only.
+const show_expanded = computed(() =>
+  is_desktop.value ? is_hovered.value : props.is_open,
 );
 
 const update_media = () => {
@@ -88,6 +88,47 @@ async function handleLogout() {
 const close_nav = () => {
   if (!is_desktop.value) emit("close");
 };
+
+const navScrollRef = ref<HTMLElement | null>(null);
+
+const scrollToActive = () => {
+  requestAnimationFrame(() => {
+    const container = navScrollRef.value;
+    const activeEl = container?.querySelector(
+      "[data-nav-active]",
+    ) as HTMLElement | null;
+    if (!container || !activeEl) return;
+    const containerRect = container.getBoundingClientRect();
+    const elRect = activeEl.getBoundingClientRect();
+    const top =
+      elRect.top -
+      containerRect.top +
+      container.scrollTop -
+      containerRect.height / 2 +
+      elRect.height / 2;
+    container.scrollTo({ top, behavior: "instant" });
+  });
+};
+
+// Mobile: scroll to active every time the sidebar opens
+watch(
+  () => props.is_open,
+  (opened) => {
+    if (opened) scrollToActive();
+  },
+);
+
+// Desktop: save scroll position on collapse, restore on expand
+let savedScrollTop = 0;
+watch(is_hovered, (hovered) => {
+  if (!hovered) {
+    savedScrollTop = navScrollRef.value?.scrollTop ?? 0;
+  } else {
+    requestAnimationFrame(() => {
+      if (navScrollRef.value) navScrollRef.value.scrollTo({ top: savedScrollTop, behavior: "instant" });
+    });
+  }
+});
 </script>
 
 <template>
@@ -101,9 +142,13 @@ const close_nav = () => {
     :class="
       is_desktop
         ? 'relative overflow-visible'
-        : 'fixed inset-0 z-20 backdrop-blur-xs xl:bg-transparent transition-all duration-150 flex'
+        : 'fixed inset-0 z-20 backdrop-blur-xs xl:bg-transparent flex'
     "
-    :style="!is_desktop ? { transform: is_open ? 'translateX(0)' : 'translateX(-100%)' } : {}"
+    :style="
+      !is_desktop
+        ? { transform: is_open ? 'translateX(0)' : 'translateX(-100%)' }
+        : {}
+    "
     @click="!is_desktop && $emit('close')"
   >
     <!-- Panel -->
@@ -115,9 +160,9 @@ const close_nav = () => {
         'w-full max-w-70 shadow-lg': !is_desktop,
         // Desktop: always absolute so it overlays content when expanded
         'absolute inset-y-0 left-0 z-50': is_desktop,
-        // Width + shadow animate; transition only runs on xl (disabled on small screens)
-        'xl:transition-[width,box-shadow] xl:duration-300 xl:ease-in-out': is_desktop,
-        'w-72 shadow-2xl shadow-gray-300/50 rounded-r-3xl': is_desktop && show_expanded,
+        // No width animation on desktop — instant expand so scroll-to-active works correctly
+        'w-72 shadow-2xl shadow-gray-300/50 rounded-r-3xl':
+          is_desktop && show_expanded,
         'w-22 shadow-none': is_desktop && !show_expanded,
       }"
       @mouseenter="is_desktop && (is_hovered = true)"
@@ -125,7 +170,7 @@ const close_nav = () => {
     >
       <!-- Header -->
       <div
-        class="flex items-center gap-2 border-b-[0.5px] border-grey-100 transition-all duration-300"
+        class="flex items-center gap-2 border-b-[0.5px] border-grey-100"
         :class="
           show_expanded
             ? 'p-4 h-18'
@@ -170,6 +215,7 @@ const close_nav = () => {
 
       <!-- Navigation -->
       <div
+        ref="navScrollRef"
         class="flex-1 overflow-y-auto"
         :class="show_expanded ? 'px-2' : 'px-0 flex flex-col items-center'"
       >

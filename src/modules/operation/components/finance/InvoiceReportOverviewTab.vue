@@ -1004,9 +1004,9 @@
 
       <!-- Associated Shipments table -->
       <div class="flex flex-col gap-4">
-        <div class="flex items-center justify-between px-1">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-1">
           <h3 class="text-lg font-bold text-gray-900">Associated Shipments</h3>
-          <div class="relative w-64">
+          <div class="relative w-full sm:w-64">
             <i
               class="mdi mdi-magnify absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xl"
             ></i>
@@ -1019,7 +1019,113 @@
           </div>
         </div>
 
-        <div class="overflow-x-auto rounded-xl border border-gray-200">
+        <!-- Mobile card list -->
+        <div class="sm:hidden flex flex-col divide-y divide-gray-100 rounded-xl border border-gray-200 bg-white overflow-hidden">
+          <div v-if="!filteredShipments.length" class="px-4 py-10 text-center text-sm text-gray-500 italic">
+            {{ searchQuery ? "No shipments match your search." : "No shipments associated with this invoice." }}
+          </div>
+          <div
+            v-for="(shipment, index) in filteredShipments"
+            :key="shipment._id"
+            class="px-4 py-3 grid grid-cols-6 gap-x-2 gap-y-1.5 cursor-pointer hover:bg-gray-50 transition-colors"
+            @click="$router.push(`/operation/shipments/${shipment._id}`)"
+          >
+            <!-- Row: index + date -->
+            <div class="col-span-1 flex items-center">
+              <span class="text-xs font-bold text-gray-400">#{{ index + 1 }}</span>
+            </div>
+            <div class="col-span-5 flex items-center justify-end">
+              <span class="text-xs text-gray-500">{{ formatDate(shipment.dispatchDate) }}</span>
+            </div>
+            <!-- Row: plate + amount -->
+            <div class="col-span-3">
+              <span class="text-sm font-bold text-gray-900">{{ shipment.vehicle?.plateNumber || "-" }}</span>
+              <span v-if="shipment.vehicle?.trailerPlate" class="text-xs text-gray-400 ml-1">/ {{ shipment.vehicle.trailerPlate }}</span>
+            </div>
+            <div class="col-span-3 text-right">
+              <span class="text-sm font-bold text-primary">{{ currencyFormatter(shipment.totalPrice || 0) }}</span>
+            </div>
+            <!-- Row: route -->
+            <div class="col-span-6">
+              <span class="text-xs font-medium text-gray-600">{{ shipment.route?.origin || "-" }} → {{ shipment.route?.destination || "-" }}</span>
+            </div>
+            <!-- Row: driver -->
+            <div v-if="shipment.driver || shipment.driverName" class="col-span-6">
+              <span class="text-xs text-gray-500">{{ formatDriverName(shipment.driverName || `${shipment.driver?.firstName || ''} ${shipment.driver?.lastName || ''}`) }}</span>
+            </div>
+            <!-- IN_BOUND specific rows -->
+            <template v-if="isInbound">
+              <div v-if="shipment.agent?.name || shipment.productType" class="col-span-3">
+                <span class="text-xs text-gray-400 uppercase tracking-wide">Supplier</span>
+                <span class="text-xs text-gray-600 ml-1">{{ shipment.productType === 'SITE_TRANSFER' ? 'Site Transfer' : (shipment.agent?.name || '-') }}</span>
+              </div>
+              <div v-if="shipment.vehicleTypeName" class="col-span-3 text-right">
+                <span class="text-xs text-gray-400 uppercase tracking-wide">Truck Type</span>
+                <span class="text-xs text-gray-600 ml-1">{{ formatVehicleType(shipment.vehicleTypeName) }}</span>
+              </div>
+              <div v-if="shipment.order?.allocationNumber" class="col-span-3">
+                <span class="text-xs text-gray-400 uppercase tracking-wide">Alloc</span>
+                <span class="text-xs text-gray-600 ml-1">{{ shipment.order.allocationNumber }}</span>
+              </div>
+              <div v-if="shipment.order?.totalRequest" class="col-span-3 text-right">
+                <span class="text-xs text-gray-400 uppercase tracking-wide">QTY</span>
+                <span class="text-xs text-gray-600 ml-1">{{ shipment.order.totalRequest }}</span>
+              </div>
+              <div v-if="shipment.agentReceiveVoucher" class="col-span-6">
+                <span class="text-xs text-gray-400 uppercase tracking-wide">GRN</span>
+                <span class="text-xs text-gray-600 ml-1">{{ shipment.agentReceiveVoucher }}</span>
+              </div>
+            </template>
+            <!-- OUT_BOUND specific rows -->
+            <template v-else>
+              <div v-if="shipment.order?.agent?.name" class="col-span-3">
+                <span class="text-xs text-gray-400 uppercase tracking-wide">Distributor</span>
+                <span class="text-xs text-gray-600 ml-1">{{ shipment.order.agent.name }}</span>
+              </div>
+              <div class="col-span-3 text-right">
+                <span class="text-xs text-gray-400 uppercase tracking-wide">Ownership</span>
+                <span class="text-xs text-gray-600 ml-1">{{ shipment.vehicle?.ownership === 'Owned' ? 'Own' : 'Sub' }}</span>
+              </div>
+              <div v-if="shipment.order?.totalRequest" class="col-span-3">
+                <span class="text-xs text-gray-400 uppercase tracking-wide">Loaded QTY</span>
+                <span class="text-xs text-gray-600 ml-1">{{ shipment.order.totalRequest }}</span>
+              </div>
+              <div v-if="shipment.CKRFCode" class="col-span-3 text-right">
+                <span class="text-xs text-gray-400 uppercase tracking-wide">CKRF</span>
+                <span class="text-xs text-gray-600 ml-1">{{ shipment.CKRFCode }}</span>
+              </div>
+              <div v-if="shipment.shipperIssueVoucher" class="col-span-6">
+                <span class="text-xs text-gray-400 uppercase tracking-wide">FPIV</span>
+                <span class="text-xs text-gray-600 ml-1">{{ shipment.shipperIssueVoucher }}</span>
+              </div>
+              <div v-if="shipment.agentReceiveVoucher" class="col-span-6">
+                <span class="text-xs text-gray-400 uppercase tracking-wide">Receive Voucher</span>
+                <span class="text-xs text-gray-600 ml-1">{{ shipment.agentReceiveVoucher }}</span>
+              </div>
+              <template v-if="shipment.tripType === 'round_trip'">
+                <div v-if="shipment.agentIssueVoucher" class="col-span-6">
+                  <span class="text-xs text-gray-400 uppercase tracking-wide">Container Issue</span>
+                  <span class="text-xs text-gray-600 ml-1">{{ shipment.agentIssueVoucher }}</span>
+                </div>
+                <div v-if="shipment.shipperReceiveVoucher" class="col-span-6">
+                  <span class="text-xs text-gray-400 uppercase tracking-wide">Container Receive</span>
+                  <span class="text-xs text-gray-600 ml-1">{{ shipment.shipperReceiveVoucher }}</span>
+                </div>
+              </template>
+            </template>
+            <!-- Remark (both types) -->
+            <div v-if="shipment.remark" class="col-span-6">
+              <span class="text-xs text-gray-400 italic">{{ shipment.remark }}</span>
+            </div>
+          </div>
+          <div v-if="filteredShipments.length" class="px-4 py-3 bg-gray-50 flex items-center justify-between">
+            <span class="text-sm font-bold text-gray-700">TOTAL</span>
+            <span class="text-sm font-bold text-gray-900">{{ currencyFormatter(filteredShipments.reduce((sum: number, s: any) => sum + (s.totalPrice || 0), 0)) }}</span>
+          </div>
+        </div>
+
+        <!-- Desktop table -->
+        <div class="hidden sm:block overflow-x-auto rounded-xl border border-gray-200">
           <!-- IN_BOUND / SITE_TRANSFER table -->
           <table v-if="isInbound" class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">

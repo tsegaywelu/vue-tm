@@ -29,7 +29,7 @@
             <!-- Read-only context (shown once a shipment is picked) -->
             <div
               v-if="shipmentId"
-              class="grid grid-cols-2 gap-4 bg-gray-50 p-4 rounded-lg mt-2"
+              class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-gray-50 p-4 rounded-lg mt-2"
             >
               <Input
                 name="driverName"

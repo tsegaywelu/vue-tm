@@ -1,98 +1,130 @@
 <template>
+  <!-- Mobile: filter icon in page title area -->
+  <Teleport to="#page-title-actions" defer>
+    <button
+      class="sm:hidden size-10 rounded-lg bg-grey-75 border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors"
+      @click="filterOpen = true"
+    >
+      <i class="*:size-4" v-html="icons.filter"></i>
+    </button>
+  </Teleport>
+
+  <!-- Desktop: filter selects in page actions -->
+  <Teleport to="#page-actions" defer>
+    <div class="hidden sm:flex">
+      <Form
+        id="goals-filter"
+        @change="
+          (values) => {
+            if (values.year) filterParams.year = values.year;
+            if (values.month) filterParams.month = values.month;
+          }
+        "
+        class="flex gap-3 items-end [&_.input-focus]:bg-grey-25"
+        :values="{ year: filterParams.year, month: filterParams.month }"
+      >
+        <div class="w-36">
+          <SelectInput label="Year" name="year" :options="yearOptions" size="xs" />
+        </div>
+        <div class="w-36">
+          <SelectInput label="Month" name="month" :options="monthOptions" size="xs" />
+        </div>
+      </Form>
+    </div>
+  </Teleport>
+
   <div class="flex flex-col gap-6">
     <div
       ref="formContainer"
-      class="bg-grey-25 rounded-3xl p-6 border border-grey-100"
+      class="bg-grey-25 rounded-3xl p-4 md:p-6 border border-grey-100 mt-2"
     >
-      <h3 class="text-lg font-bold text-grey-900 mb-4">
-        {{
-          selectedType
-            ? `Edit Goal for ${selectedType.name}`
-            : "Set Vehicle Type Goal"
-        }}
-      </h3>
+      <div
+        class="flex items-center justify-between mb-4 cursor-pointer sm:cursor-default"
+        @click="formOpen = !formOpen"
+      >
+        <h3 class="text-lg font-bold text-grey-900">
+          {{
+            selectedType
+              ? `Edit Goal for ${selectedType.name}`
+              : "Set Vehicle Type Goal"
+          }}
+        </h3>
+        <span class="sm:hidden size-9 flex items-center justify-center rounded-xl bg-white border border-grey-100 text-grey-500 shrink-0">
+          <svg class="size-5 transition-transform duration-200" :class="{ 'rotate-180': formOpen }" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="6 9 12 15 18 9" />
+          </svg>
+        </span>
+      </div>
+      <div :class="!formOpen ? 'hidden sm:block' : ''">
       <Form
         id="add-vehicle-type-goal"
         @submit="handleSubmit"
         :values="initialValues"
       >
         <template #default="{ form }">
-          <div class="flex flex-col gap-4">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+          <div class="flex flex-col md:flex-row gap-4 md:items-end">
+            <div class="flex-1">
               <Input
                 name="targetDistanceKm"
                 label="Distance (km)"
                 type="number"
                 placeholder="e.g. 5000"
               />
+            </div>
+            <div class="flex-1">
               <Input
                 name="targetFuelEfficiency"
                 label="Fuel Efficiency"
                 type="number"
                 placeholder="e.g. 10.5"
               />
+            </div>
+            <div class="flex-1">
               <Input
                 name="targetShipmentCount"
                 label="Shipment Count"
                 type="number"
                 placeholder="e.g. 20"
               />
-              <div class="flex justify-end gap-2">
-                <Button size="md" variant="outline" @click="resetForm(form)">
-                  Reset
-                </Button>
-                <SubmitButton>
-                  {{ selectedType ? "Update" : "Create" }}
-                </SubmitButton>
-              </div>
+            </div>
+            <div class="grid grid-cols-2 md:flex gap-2 *:min-h-[52px] md:*:min-h-0 *:text-base md:*:text-sm *:rounded-2xl md:*:rounded-xl">
+              <Button size="md" variant="outline" @click="resetForm(form)">
+                Reset
+              </Button>
+              <SubmitButton>
+                {{ selectedType ? "Update" : "Create" }}
+              </SubmitButton>
             </div>
           </div>
         </template>
       </Form>
+      </div>
     </div>
 
-    <div class="rounded-3xl p-6 border border-grey-100 bg-white">
-      <div
-        class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4"
-      >
-        <h3 class="text-lg font-bold text-grey-900">Vehicle Type Goals List</h3>
-        <!-- Filter Area -->
-        <Form
-          id="goals-filter"
-          @change="
-            (values) => {
-              if (values.year) filterParams.year = values.year;
-              if (values.month) filterParams.month = values.month;
-            }
-          "
-          class="flex gap-4 items-end [&_.input-focus]:bg-grey-25"
-          :values="{ year: filterParams.year, month: filterParams.month }"
-        >
-          <div class="w-40">
-            <SelectInput
-              label="Year"
-              name="year"
-              :options="yearOptions"
-              size="xs"
-            />
-          </div>
-          <div class="w-40">
-            <SelectInput
-              label="Month"
-              name="month"
-              :options="monthOptions"
-              size="xs"
-            />
-          </div>
-        </Form>
+    <BottomSheet v-model="filterOpen" title="Filter">
+      <div class="flex flex-col gap-4 p-2">
+        <BaseSelect
+          label="Year"
+          v-model="filterParams.year"
+          :options="yearOptions"
+        />
+        <BaseSelect
+          label="Month"
+          v-model="filterParams.month"
+          :options="monthOptions"
+        />
       </div>
+    </BottomSheet>
 
+    <div class="md:rounded-3xl md:p-6 md:border md:border-grey-100 bg-white">
       <Table
         client_search
         client_sort
         :columns="columns"
         :rows="response"
         :loading="isLoading"
+        :hide_on_sm_screen="['targetDistanceKm', 'targetFuelEfficiency', 'targetShipmentCount']"
+        :on_sm_screen_column_span="{ name: 2, period: 2, actions: 2 }"
       >
         <template #cell-name="{ row }">
           <span class="font-bold text-grey-900">{{ row.name }}</span>
@@ -149,6 +181,9 @@ import Input from "@/components/form/Input.vue";
 import SelectInput from "@/components/form/SelectInput.vue";
 import SubmitButton from "@/components/form/SubmitButton.vue";
 import Button from "@/components/common/Button.vue";
+import BaseSelect from "@/components/common/Select.vue";
+import BottomSheet from "@/components/BottomSheet.vue";
+import { icons } from "@/utils/icons";
 import { usePagination } from "@/composables/usePagination";
 import { useMutation } from "@tanstack/vue-query";
 import { useToastStore } from "@/store/toastStore";
@@ -195,6 +230,8 @@ const columns: TableColumn<any>[] = [
 ];
 
 const selectedType = ref<any>(null);
+const formOpen = ref(false);
+const filterOpen = ref(false);
 const initialValues = ref({
   vehicleTypeId: "",
   year: currentYear,
@@ -241,6 +278,7 @@ const formContainer = ref<HTMLElement | null>(null);
 
 const handleEdit = (row: any) => {
   selectedType.value = row;
+  formOpen.value = true;
   initialValues.value = {
     vehicleTypeId: row._id || "",
     year: row.year || filterParams.value.year,

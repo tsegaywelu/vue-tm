@@ -4,6 +4,8 @@
     :columns="columns"
     :rows="response"
     search_placeholder="Search route requests..."
+    :hide_on_sm_screen="['origin', 'destination', 'waypoint', 'carriers']"
+    :on_sm_screen_column_span="{ routeName: 2, status: 2 }"
   >
     <template #cell-routeName="{ row }">
       {{ row.routeName }}

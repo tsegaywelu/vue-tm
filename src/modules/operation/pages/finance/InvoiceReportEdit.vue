@@ -1,5 +1,5 @@
 <template>
-  <div class="h-full flex flex-col gap-4">
+  <div class="h-full flex flex-col gap-3 sm:gap-4">
     <div v-if="isLoading" class="flex justify-center py-20">
       <i class="mdi mdi-loading mdi-spin text-4xl text-primary"></i>
     </div>
@@ -7,7 +7,7 @@
     <template v-else-if="originalInvoice">
       <!-- Header -->
       <div
-        class="bg-white flex flex-col md:flex-row md:items-center justify-between px-3 md:px-4 py-4 md:py-3 rounded-[20px] gap-4 shadow-sm border border-gray-100"
+        class="bg-white flex flex-col md:flex-row md:items-center justify-between px-3 md:px-4 py-3 rounded-[20px] gap-3 shadow-sm border border-gray-100"
       >
         <div class="flex items-center gap-4">
           <div
@@ -25,10 +25,8 @@
           </div>
         </div>
 
-        <div class="flex gap-2">
-          <Button variant="outline" size="md" @click="router.back()"
-            >Cancel</Button
-          >
+        <div class="hidden sm:flex gap-2">
+          <Button variant="outline" size="md" @click="router.back()">Cancel</Button>
           <Button
             variant="primary"
             size="md"
@@ -41,11 +39,11 @@
       </div>
 
       <div class="flex-1 min-h-0 overflow-y-auto pb-20">
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-6">
           <!-- Basic Information -->
           <div class="lg:col-span-1">
             <div
-              class="bg-white rounded-[20px] p-6 shadow-sm border border-gray-100 flex flex-col gap-5"
+              class="bg-white rounded-[20px] p-3 sm:p-6 shadow-sm border border-gray-100 flex flex-col gap-3 sm:gap-5"
             >
               <h3
                 class="text-lg font-bold text-gray-900 border-b border-gray-50 pb-3"
@@ -118,7 +116,7 @@
           <!-- Associated Shipments -->
           <div class="lg:col-span-2">
             <div
-              class="bg-white rounded-[20px] p-6 shadow-sm border border-gray-100 flex flex-col gap-5"
+              class="bg-white rounded-[20px] p-3 sm:p-6 shadow-sm border border-gray-100 flex flex-col gap-3 sm:gap-5"
             >
               <h3
                 class="text-lg font-bold text-gray-900 border-b border-gray-50 pb-3"
@@ -148,76 +146,61 @@
                 />
               </div>
 
-              <!-- Shipments table -->
-              <div class="overflow-x-auto rounded-xl border border-gray-100">
+              <!-- Mobile card list -->
+              <div class="sm:hidden flex flex-col divide-y divide-gray-100 rounded-xl border border-gray-100 bg-white overflow-hidden">
+                <div v-if="!allShipments.length" class="px-4 py-10 text-center text-sm text-gray-400 italic">
+                  No shipments added yet.
+                </div>
+                <div
+                  v-for="shipment in allShipments"
+                  :key="shipment._id"
+                  class="px-4 py-3 flex items-center gap-3"
+                >
+                  <div class="flex-1 min-w-0 flex flex-col gap-1">
+                    <span class="text-sm font-medium text-primary truncate">{{ shipment.shipmentCode }}</span>
+                    <div class="flex items-center gap-2">
+                      <Status :variant="shipment.paymentDetail?.paymentStatus || 'pending'" type="wrapped" size="sm">
+                        {{ shipment.paymentDetail?.paymentStatus || 'Pending' }}
+                      </Status>
+                      <span class="text-sm font-bold text-gray-900">{{ currencyFormatter(shipment.totalPrice || 0) }}</span>
+                    </div>
+                  </div>
+                  <button
+                    @click="removeShipment(shipment._id)"
+                    class="text-red-400 hover:text-red-600 transition-colors shrink-0"
+                  >
+                    <i v-html="icons.delete"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Desktop table -->
+              <div class="hidden sm:block overflow-x-auto rounded-xl border border-gray-100">
                 <table class="min-w-full divide-y divide-gray-100">
                   <thead class="bg-gray-50">
                     <tr>
-                      <th
-                        class="px-4 py-3 text-left text-[11px] font-bold text-gray-400 uppercase tracking-wider"
-                      >
-                        Code
-                      </th>
-                      <th
-                        class="px-4 py-3 text-left text-[11px] font-bold text-gray-400 uppercase tracking-wider"
-                      >
-                        Status
-                      </th>
-                      <th
-                        class="px-4 py-3 text-right text-[11px] font-bold text-gray-400 uppercase tracking-wider"
-                      >
-                        Amount
-                      </th>
-                      <th
-                        class="px-4 py-3 text-center text-[11px] font-bold text-gray-400 uppercase tracking-wider"
-                      >
-                        Actions
-                      </th>
+                      <th class="px-4 py-3 text-left text-[11px] font-bold text-gray-400 uppercase tracking-wider">Code</th>
+                      <th class="px-4 py-3 text-left text-[11px] font-bold text-gray-400 uppercase tracking-wider">Status</th>
+                      <th class="px-4 py-3 text-right text-[11px] font-bold text-gray-400 uppercase tracking-wider">Amount</th>
+                      <th class="px-4 py-3 text-center text-[11px] font-bold text-gray-400 uppercase tracking-wider">Actions</th>
                     </tr>
                   </thead>
                   <tbody class="bg-white divide-y divide-gray-50">
                     <tr v-if="!allShipments.length">
-                      <td
-                        colspan="4"
-                        class="px-4 py-10 text-center text-sm text-gray-400 italic"
-                      >
+                      <td colspan="4" class="px-4 py-10 text-center text-sm text-gray-400 italic">
                         No shipments added yet.
                       </td>
                     </tr>
-                    <tr
-                      v-for="shipment in allShipments"
-                      :key="shipment._id"
-                      class="hover:bg-gray-50 transition-colors"
-                    >
-                      <td
-                        class="px-4 py-4 whitespace-nowrap text-sm font-medium text-primary"
-                      >
-                        {{ shipment.shipmentCode }}
-                      </td>
+                    <tr v-for="shipment in allShipments" :key="shipment._id" class="hover:bg-gray-50 transition-colors">
+                      <td class="px-4 py-4 whitespace-nowrap text-sm font-medium text-primary">{{ shipment.shipmentCode }}</td>
                       <td class="px-4 py-4 whitespace-nowrap">
-                        <Status
-                          :variant="
-                            shipment.paymentDetail?.paymentStatus || 'pending'
-                          "
-                          type="wrapped"
-                          size="sm"
-                        >
-                          {{
-                            shipment.paymentDetail?.paymentStatus || "Pending"
-                          }}
+                        <Status :variant="shipment.paymentDetail?.paymentStatus || 'pending'" type="wrapped" size="sm">
+                          {{ shipment.paymentDetail?.paymentStatus || 'Pending' }}
                         </Status>
                       </td>
-                      <td
-                        class="px-4 py-4 whitespace-nowrap text-sm font-bold text-gray-900 text-right"
-                      >
-                        {{ currencyFormatter(shipment.totalPrice || 0) }}
-                      </td>
+                      <td class="px-4 py-4 whitespace-nowrap text-sm font-bold text-gray-900 text-right">{{ currencyFormatter(shipment.totalPrice || 0) }}</td>
                       <td class="px-4 py-4 whitespace-nowrap text-center">
-                        <button
-                          @click="removeShipment(shipment._id)"
-                          class="text-red-400 hover:text-red-600 transition-colors"
-                          title="Remove shipment"
-                        >
+                        <button @click="removeShipment(shipment._id)" class="text-red-400 hover:text-red-600 transition-colors" title="Remove shipment">
                           <i v-html="icons.delete"></i>
                         </button>
                       </td>
@@ -228,6 +211,19 @@
             </div>
           </div>
         </div>
+      </div>
+      <!-- Mobile sticky bottom bar -->
+      <div class="sm:hidden fixed bottom-0 left-0 right-0 z-20 bg-white border-t border-gray-100 px-4 py-3 flex gap-3 shadow-[0_-4px_12px_rgba(0,0,0,0.06)]">
+        <Button variant="outline" size="md" class="flex-1" @click="router.back()">Cancel</Button>
+        <Button
+          variant="primary"
+          size="md"
+          class="flex-1"
+          :isLoading="updateMutation.isPending.value"
+          @click="handleSubmit"
+        >
+          Save Changes
+        </Button>
       </div>
     </template>
   </div>

@@ -1,15 +1,38 @@
 <template>
+  <Teleport defer to="#page-title-actions">
+    <button
+      class="sm:hidden size-8 rounded-xl border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors"
+      @click="showSearchSheet = true"
+    >
+      <i v-html="icons.filterOptions"></i>
+    </button>
+  </Teleport>
+
+  <BottomSheet v-model="showSearchSheet" title="Search By">
+    <div class="flex flex-col gap-2 pb-4">
+      <button
+        v-for="option in searchFieldOptions"
+        :key="option.value"
+        class="flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-colors"
+        :class="selectedSearchField === option.value ? 'bg-primary/10 text-primary font-medium' : 'hover:bg-gray-50 text-gray-700'"
+        @click="selectedSearchField = option.value; showSearchSheet = false"
+      >
+        {{ option.label }}
+      </button>
+    </div>
+  </BottomSheet>
+
   <Table
     id="payable-list"
     :columns="columns"
     :rows="response"
     v-model:search_value="searchTerm"
     :search_placeholder="dynamicSearchPlaceholder"
-    @row_click="handleAction($event, 'view')"
+    :on_sm_screen_column_span="{ advanceNumber: 2, shipmentCode: 2, status: 2, payableType: 3, paidTo: 3, route: 3, totalFuelAdvances: 3, totalPerDiemExpenses: 3, totalOtherExpenses: 3, transporterPrice: 3, purchaseCost: 3, total: 3 }"
   >
     <template #search-prefix>
       <div
-        class="h-full flex items-center border-r border-gray-200 pr-2 mr-2 w-48"
+        class="hidden sm:flex h-full items-center border-r border-gray-200 pr-2 mr-2 w-48"
       >
         <Select
           class="[&_.input-focus]:shadow-none! [&_.input-focus]:border-none [&_.input-focus]:min-h-full min-w-48"
@@ -104,9 +127,8 @@
 
     <template #after-search>
       <div
-        class="items-center gap-4 inline-flex border-l border-grey-100 overflow-x-auto px-3"
+        class="items-center gap-4 flex overflow-x-auto"
       >
-        <i v-html="icons.filter" />
         <PayableFilters
           @change="handleFilterChange"
           pagination-id="payable-list"
@@ -116,7 +138,7 @@
 
     <template #cell-actions="{ row }">
       <div class="flex items-center justify-end">
-        <Dropdown>
+        <Dropdown title="Actions">
           <template #default="{ close }">
             <!-- <DropDownItem
               v-if="canAction(row, 'reject')"
@@ -187,6 +209,7 @@ import { usePagination } from "@/composables/usePagination";
 import { openModal } from "@customizer/modal-x";
 import type { TableColumn } from "@/components/common/Table.vue";
 import PayableFilters from "./PayableFilters.vue";
+import BottomSheet from "@/components/BottomSheet.vue";
 import { formatType, getPaidTo } from "./payableUtils";
 import { currencyFormatter, dateFormatter } from "@/utils/utils";
 
@@ -240,6 +263,7 @@ const searchFieldOptions = [
 ];
 
 const selectedSearchField = ref("vehiclePlateNumber");
+const showSearchSheet = ref(false);
 const searchTerm = ref("");
 
 const dynamicSearchPlaceholder = computed(() => {

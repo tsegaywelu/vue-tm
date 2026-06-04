@@ -13,10 +13,13 @@
       </svg>
     </div>
 
+    <!-- Mobile: horizontal scroll row | Desktop: vertical stack -->
+    <div class="flex flex-row gap-8 overflow-x-auto pb-2 xl:flex-col xl:gap-3 xl:overflow-x-visible xl:pb-0">
+
     <div
       v-for="col in filteredColumns"
       :key="col.id"
-      class="group/col relative"
+      class="group/col relative shrink-0 w-[260px] xl:shrink xl:w-auto"
     >
       <div
         class="rounded-xl border border-gray-200 bg-white shadow-sm p-3 flex flex-col gap-2"
@@ -241,8 +244,18 @@
       </div>
       </div>
 
-      <!-- Insert-after button — visible on card hover -->
-      <div class="flex justify-center h-3 opacity-0 group-hover/col:opacity-100 transition-opacity">
+      <!-- Mobile: button on right edge between cards, always visible -->
+      <button
+        class="xl:hidden absolute -right-[18px] top-1/2 -translate-y-1/2 z-10 flex items-center justify-center w-6 h-6 rounded-full border border-primary-300 bg-white text-primary-600 shadow hover:bg-primary-50 transition-colors"
+        title="Insert column after"
+        @click="insertColumnAfter(realIndex(col))"
+      >
+        <svg width="10" height="10" viewBox="0 0 10 10" stroke="currentColor" fill="none" stroke-width="2">
+          <path d="M5 1v8M1 5h8"/>
+        </svg>
+      </button>
+      <!-- Desktop: button below card, visible on hover -->
+      <div class="hidden xl:flex justify-center h-3 opacity-0 group-hover/col:opacity-100 transition-opacity">
         <button
           class="absolute -bottom-3.5 z-10 flex items-center justify-center w-6 h-6 rounded-full border border-primary-300 bg-white text-primary-600 shadow hover:bg-primary-50 transition-colors"
           title="Insert column after"
@@ -255,16 +268,18 @@
       </div>
     </div>
 
-    <!-- Add column button -->
+    <!-- Add column button — inline on mobile, full-width below on desktop -->
     <button
-      class="rounded-xl border-2 border-dashed border-gray-200 py-3 text-sm text-gray-400 hover:border-primary-300 hover:text-primary-600 transition-colors flex items-center justify-center gap-2"
+      class="shrink-0 w-[140px] self-start xl:w-full xl:self-auto rounded-xl border-2 border-dashed border-gray-200 py-3 text-sm text-gray-400 hover:border-primary-300 hover:text-primary-600 transition-colors flex items-center justify-center gap-2"
       @click="addColumn"
     >
       <svg width="14" height="14" viewBox="0 0 14 14" stroke="currentColor" fill="none" stroke-width="2">
         <path d="M7 2v10M2 7h10"/>
       </svg>
-      Add Column
+      <span class="xl:inline">Add Column</span>
     </button>
+
+    </div><!-- end row -->
   </div>
 </template>
 

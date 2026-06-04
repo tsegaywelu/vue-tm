@@ -7,6 +7,7 @@
     form-id="damageReportForm"
     :values="formValues"
     :submit-handler="handleSubmit"
+    containerClass="mt-auto!"
   >
     <template #center="{ form }">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -15,6 +16,8 @@
           name="shipment"
           label="Select Shipment"
           url="/shipment"
+          searchable
+          :params="(state) => ({ q: undefined, shipmentCode: state.search })"
           label_key="shipmentCode"
           value_key="_id"
           :validation="{ required }"
@@ -71,9 +74,7 @@
           ]
         "
       >
-        <template
-          #default="[items, vehicleParts, vatInclusive]"
-        >
+        <template #default="[items, vehicleParts, vatInclusive]">
           <div
             class="mt-8 flex flex-col items-end gap-2 bg-gray-50 p-6 rounded-2xl"
           >
@@ -163,7 +164,6 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import { closeModal } from "@customizer/modal-x";
 import { useMutation, useQueryClient } from "@tanstack/vue-query";
 import FormModalParent from "@/components/modals/FormModalParent.vue";
 import Input from "@/components/form/Input.vue";
@@ -263,7 +263,6 @@ function getSubtotal(items: any[]) {
     ) || 0
   );
 }
-
 
 async function handleSubmit(values: any) {
   const itemsSubtotal = getSubtotal(values.items);

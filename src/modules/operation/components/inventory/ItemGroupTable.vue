@@ -4,6 +4,8 @@
     :columns="columns"
     :rows="response"
     search_placeholder="Search by name..."
+    :hide_on_sm_screen="['description', 'createdAt']"
+    :on_sm_screen_column_span="{ name: 2, category: 2 }"
   >
     <template #cell-category="{ row }">
       <span class="font-medium text-gray-700">

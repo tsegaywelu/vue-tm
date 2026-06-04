@@ -4,6 +4,8 @@
     :columns="columns"
     :rows="response"
     search_placeholder="Search multipliers..."
+    :hide_on_sm_screen="['minValue', 'maxValue', 'description', 'createdAt']"
+    :on_sm_screen_column_span="{ metric: 2, multiplier: 2 }"
   >
     <template #cell-metric="{ row }">
       {{ formatMetric(row.metric) }}

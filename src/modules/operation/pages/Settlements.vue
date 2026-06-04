@@ -4,7 +4,7 @@
     pagination-id="settlement-list"
     :extra-params="{ status: 'PAID' }"
     :columns="columns"
-    :column-span="{ advanceNumber: 2, driver: 2, route: 2, status: 2 }"
+    :column-span="{ advanceNumber: 2, driver: 2, route: 2, plateNumber: 2, total: 2, status: 2 }"
   />
 </template>
 
