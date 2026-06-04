@@ -101,6 +101,7 @@ export function printPurchaseOrder(order: any, currentUser: any) {
         <th style="text-align: right; width: 60px;">Qty</th>
         <th style="text-align: right; width: 100px;">Unit Price</th>
         <th style="text-align: right; width: 100px;">Total Price</th>
+        <th style="text-align: right; width: 100px;">Remark</th>
       </tr>
     </thead>
     <tbody>
@@ -114,6 +115,7 @@ export function printPurchaseOrder(order: any, currentUser: any) {
         <td style="text-align: right;">${item.quantity || 0}</td>
         <td style="text-align: right;">${currencyFormatter(item.price || 0)}</td>
         <td style="text-align: right; font-weight: 700;">${currencyFormatter(item.totalPrice || 0)}</td>
+        <td style="text-align: right;">${item.remark || "-"}</td>
       </tr>`,
         )
         .join("")}

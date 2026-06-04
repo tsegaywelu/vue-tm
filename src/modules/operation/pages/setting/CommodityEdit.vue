@@ -52,9 +52,7 @@ const shipperLabels = computed(() => {
   if (!response.value?.data) return {};
   const data = (response.value.data as any).result || response.value.data;
   if (data.shipper && typeof data.shipper === "object") {
-    return {
-      [data.shipper._id]: data.shipper.name || "",
-    };
+    return { [data.shipper._id]: data.shipper.name || "" };
   }
   return {};
 });

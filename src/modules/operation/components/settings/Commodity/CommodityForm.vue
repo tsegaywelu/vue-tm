@@ -15,6 +15,7 @@
             :initial_labels="shipperLabels"
             :validation="{ required }"
             :attributes="{ placeholder: 'Select shipper' }"
+            :options="labels?.shipper ? [{ label: labels.shipper, value: initialValues.shipper }] : []"
           />
           <Input
             name="name"
@@ -44,6 +45,7 @@ import { required } from "@/utils/validations";
 defineProps<{
   formId: string;
   initialValues: Record<string, any>;
+  labels?: Record<string, string>;
   onSubmit: (values: any) => Promise<void> | void;
   shipperLabels?: Record<string, string>;
 }>();

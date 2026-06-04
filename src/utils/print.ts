@@ -57,8 +57,8 @@ export const printSummary = (
     thead { display: table-header-group; }
     tr { page-break-inside: avoid; break-inside: avoid; }
     @media print {
+      body { padding: 0; }
       .signature-footer { page-break-inside: avoid; break-inside: avoid; margin-top: 40px; }
-      body { padding-bottom: 0; }
       @page { margin: 1.5cm; }
     }
   </style>
