@@ -47,7 +47,7 @@ watch(
       >
         <div
           v-if="modelValue"
-          class="fixed bottom-0 left-0 right-0 w-full bg-surface rounded-t-3xl shadow-2xl flex flex-col max-h-[90dvh] pb-6 z-501"
+          class="fixed bottom-0 left-0 right-0 w-full bg-surface rounded-t-3xl shadow-2xl border-t border-transparent dark:border-white/10 dark:shadow-[0_-8px_30px_rgba(255,255,255,0.06)] flex flex-col max-h-[90dvh] pb-6 z-501"
           @click.stop
         >
           <!-- Drag handle -->

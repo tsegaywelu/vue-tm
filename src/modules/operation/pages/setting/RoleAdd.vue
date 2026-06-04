@@ -1,5 +1,5 @@
 <template>
-  <DashboardPage title="Add New Role" subtitle="Create a new role with specific permissions">
+  <div class="w-full">
     <Form
       id="add-role-form"
       :values="initialValues"
@@ -7,7 +7,7 @@
     >
       <div class="flex flex-col gap-6">
         <RoleForm />
-        <div class="flex justify-end gap-3">
+        <div class="flex flex-col sm:flex-row justify-end gap-3 *:w-full sm:*:w-auto *:min-h-[52px] sm:*:min-h-0 *:text-base sm:*:text-sm *:rounded-2xl sm:*:rounded-xl">
           <Button size="md" variant="outline" @click="router.back()">
             Discard
           </Button>
@@ -15,7 +15,7 @@
         </div>
       </div>
     </Form>
-  </DashboardPage>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -23,7 +23,6 @@ import { useRouter } from "vue-router";
 import { useMutation, useQueryClient } from "@tanstack/vue-query";
 import RoleForm from "../../components/settings/CarrierRoleForm.vue";
 import Form from "@/components/form/Form.vue";
-import DashboardPage from "@/components/common/DashboardPage.vue";
 import { create_role } from "../../api/settings.api";
 import { useToastStore } from "@/store/toastStore";
 import Button from "@/components/Button.vue";

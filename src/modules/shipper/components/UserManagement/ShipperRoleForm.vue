@@ -31,12 +31,12 @@
 
     <!-- Permissions Section -->
     <div class="mt-4">
-      <div class="flex items-center justify-between mb-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
-          <h3 class="text-lg font-bold text-gray-900">Permissions</h3>
-          <p class="text-sm text-gray-500">Grant specific access to system modules.</p>
+          <h3 class="text-lg font-bold text-base-text">Permissions</h3>
+          <p class="text-sm text-dim-text">Grant specific access to system modules.</p>
         </div>
-        <div class="flex gap-2">
+        <div class="flex items-center gap-2 shrink-0">
           <button
             type="button"
             @click="selectAllPermissions"
@@ -44,11 +44,11 @@
           >
             Select All
           </button>
-          <span class="text-gray-300">|</span>
+          <span class="text-line-strong">|</span>
           <button
             type="button"
             @click="clearAllPermissions"
-            class="text-xs font-bold text-error-500 hover:underline"
+            class="text-xs font-bold text-error hover:underline"
           >
             Clear All
           </button>
@@ -59,10 +59,10 @@
         <div
           v-for="subject in subjects"
           :key="subject"
-          class="p-4 bg-surface rounded-2xl border border-gray-100 hover:border-primary/20 transition-all group"
+          class="p-4 bg-surface rounded-2xl border border-line hover:border-primary/45 transition-all group"
         >
           <div class="flex items-center justify-between mb-3">
-            <span class="text-xs font-black text-gray-400 group-hover:text-primary transition-colors uppercase tracking-widest">
+            <span class="text-xs font-black text-faint-text group-hover:text-primary transition-colors uppercase tracking-widest">
               {{ subject.replace(/_/g, ' ') }}
             </span>
           </div>
@@ -70,15 +70,15 @@
             <label
               v-for="action in getActionsForSubject(subject)"
               :key="action"
-              class="flex items-center gap-2 px-2 py-1.5 rounded-lg border border-gray-50 hover:bg-surface-hover cursor-pointer transition-all"
+              class="flex items-center gap-2 px-2 py-1.5 rounded-lg border border-line bg-surface-muted hover:bg-surface-hover cursor-pointer transition-all"
             >
               <input
                 type="checkbox"
                 :checked="isPermissionChecked(subject, action)"
                 @change="(e) => togglePermission(subject, action, (e.target as HTMLInputElement).checked)"
-                class="size-4 rounded border-gray-300 text-primary focus:ring-primary"
+                class="size-4 rounded border-line-strong bg-surface text-primary focus:ring-primary"
               />
-              <span class="text-[10px] font-bold text-gray-600 capitalize">
+              <span class="text-[10px] font-bold text-dim-text capitalize">
                 {{ action.replace(/_/g, ' ') }}
               </span>
             </label>

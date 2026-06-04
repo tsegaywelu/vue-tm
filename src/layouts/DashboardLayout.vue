@@ -128,7 +128,7 @@ onUnmounted(() => {
             :class="
               is_chat_open
                 ? 'text-primary bg-primary/10 hover:bg-primary/20'
-                : 'text-gray-500 bg-gray-100 hover:bg-gray-200'
+                : 'text-dim-text bg-surface-muted hover:bg-surface-hover border border-line'
             "
             @click="toggle_chat"
           >

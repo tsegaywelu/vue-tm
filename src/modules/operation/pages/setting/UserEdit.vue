@@ -11,7 +11,7 @@
     >
       <div class="flex flex-col gap-6">
         <CarrierUserForm is-edit :labels="labels" />
-        <div class="flex justify-end gap-3">
+        <div class="flex flex-col sm:flex-row justify-end gap-3 *:w-full sm:*:w-auto *:min-h-[52px] sm:*:min-h-0 *:text-base sm:*:text-sm *:rounded-2xl sm:*:rounded-xl">
           <Button size="md" variant="outline" @click="router.back()">
             Cancel
           </Button>

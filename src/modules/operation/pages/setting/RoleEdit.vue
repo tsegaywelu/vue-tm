@@ -1,5 +1,5 @@
 <template>
-  <DashboardPage title="Edit Role" subtitle="Modify existing role permissions">
+  <div class="w-full">
     <div v-if="isLoading" class="flex justify-center py-10">
       <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
     </div>
@@ -11,7 +11,7 @@
     >
       <div class="flex flex-col gap-6">
         <RoleForm />
-        <div class="flex justify-end gap-3">
+        <div class="flex flex-col sm:flex-row justify-end gap-3 *:w-full sm:*:w-auto *:min-h-[52px] sm:*:min-h-0 *:text-base sm:*:text-sm *:rounded-2xl sm:*:rounded-xl">
           <Button size="md" variant="outline" @click="router.back()">
             Cancel
           </Button>
@@ -19,7 +19,7 @@
         </div>
       </div>
     </Form>
-  </DashboardPage>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -28,7 +28,6 @@ import { useRoute, useRouter } from "vue-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/vue-query";
 import RoleForm from "../../components/settings/CarrierRoleForm.vue";
 import Form from "@/components/form/Form.vue";
-import DashboardPage from "@/components/common/DashboardPage.vue";
 import { fetch_role_details, update_role } from "../../api/settings.api";
 import { useToastStore } from "@/store/toastStore";
 import SubmitButton from "@/components/form/SubmitButton.vue";

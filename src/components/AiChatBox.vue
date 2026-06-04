@@ -71,7 +71,7 @@ function onKeydown(e: KeyboardEvent) {
 
 <template>
   <div
-    class="flex flex-col h-full bg-white overflow-hidden print-hide"
+    class="flex flex-col h-full bg-surface text-base-text border border-line overflow-hidden print-hide"
   >
     <!-- Header -->
     <div
@@ -152,22 +152,22 @@ function onKeydown(e: KeyboardEvent) {
         v-if="chatStore.isLoadingHistory"
         class="flex-1 flex items-center justify-center h-full py-12"
       >
-        <div class="flex flex-col items-center gap-2 text-gray-400">
-          <span class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style="animation-delay:0ms"></span>
+        <div class="flex flex-col items-center gap-2 text-dim-text">
+          <span class="w-1.5 h-1.5 bg-dim-text rounded-full animate-bounce" style="animation-delay:0ms"></span>
           <span class="text-xs">Loading history...</span>
         </div>
       </div>
 
       <div
         v-else-if="messages.length === 0"
-        class="flex-1 flex flex-col items-center justify-center text-center text-gray-400 gap-3 h-full py-12"
+        class="flex-1 flex flex-col items-center justify-center text-center text-dim-text gap-3 h-full py-12"
       >
         <div
-          class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center"
+          class="w-12 h-12 rounded-full bg-surface-muted border border-line flex items-center justify-center"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            class="w-6 h-6 text-gray-400"
+            class="w-6 h-6 text-dim-text"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -181,8 +181,8 @@ function onKeydown(e: KeyboardEvent) {
           </svg>
         </div>
         <div>
-          <p class="text-sm font-medium text-gray-500">How can I help you?</p>
-          <p class="text-xs text-gray-400 mt-1">
+          <p class="text-sm font-medium text-base-text">How can I help you?</p>
+          <p class="text-xs text-dim-text mt-1">
             Ask me about shipments, orders, or vehicles.
           </p>
         </div>
@@ -198,7 +198,7 @@ function onKeydown(e: KeyboardEvent) {
         </div>
         <div v-else-if="msg.role === 'assistant'" class="flex justify-start">
           <div
-            class="chat-md max-w-[85%] bg-gray-100 text-gray-800 rounded-2xl rounded-tl-sm px-3.5 py-2.5 text-sm leading-relaxed"
+            class="chat-md max-w-[85%] bg-surface-hover text-base-text rounded-2xl rounded-tl-sm px-3.5 py-2.5 text-sm leading-relaxed border border-line"
             v-html="renderMd(msg.content ?? '')"
           />
         </div>
@@ -206,18 +206,18 @@ function onKeydown(e: KeyboardEvent) {
 
       <div v-if="isSending" class="flex justify-start">
         <div
-          class="bg-gray-100 rounded-2xl rounded-tl-sm px-4 py-3 flex items-center gap-1"
+          class="bg-surface-hover border border-line rounded-2xl rounded-tl-sm px-4 py-3 flex items-center gap-1"
         >
           <span
-            class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"
+            class="w-1.5 h-1.5 bg-dim-text rounded-full animate-bounce"
             style="animation-delay: 0ms"
           ></span>
           <span
-            class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"
+            class="w-1.5 h-1.5 bg-dim-text rounded-full animate-bounce"
             style="animation-delay: 150ms"
           ></span>
           <span
-            class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"
+            class="w-1.5 h-1.5 bg-dim-text rounded-full animate-bounce"
             style="animation-delay: 300ms"
           ></span>
         </div>
@@ -225,15 +225,15 @@ function onKeydown(e: KeyboardEvent) {
     </div>
 
     <!-- Input -->
-    <div class="px-3 py-3 border-t border-gray-100 shrink-0">
+    <div class="px-3 py-3 border-t border-line shrink-0">
       <div
-        class="flex items-end gap-2 bg-gray-50 rounded-xl border border-line px-3 py-2 focus-within:border-primary transition-colors"
+        class="flex items-end gap-2 bg-surface-muted rounded-xl border border-line px-3 py-2 focus-within:border-primary transition-colors"
       >
         <textarea
           v-model="inputText"
           placeholder="Type a message..."
           rows="1"
-          class="flex-1 focus:shadow-none active:shadow-none! bg-transparent text-sm text-gray-800 placeholder-gray-400 resize-none outline-none max-h-24 leading-relaxed"
+          class="flex-1 focus:shadow-none active:shadow-none! bg-transparent text-sm text-base-text placeholder-dim-text resize-none outline-none max-h-24 leading-relaxed"
           :disabled="isSending"
           @keydown="onKeydown"
         ></textarea>
@@ -242,7 +242,7 @@ function onKeydown(e: KeyboardEvent) {
           :class="
             inputText.trim()
               ? 'bg-primary text-white hover:bg-primary/90'
-              : 'bg-gray-200 text-gray-400'
+              : 'bg-surface-hover text-faint-text'
           "
           :disabled="!inputText.trim() || isSending"
           @click="send"
@@ -263,7 +263,7 @@ function onKeydown(e: KeyboardEvent) {
           </svg>
         </button>
       </div>
-      <p class="text-[10px] text-gray-400 text-center mt-1.5">
+      <p class="text-[10px] text-faint-text text-center mt-1.5">
         Enter to send · Shift+Enter for newline
       </p>
     </div>
@@ -279,15 +279,17 @@ function onKeydown(e: KeyboardEvent) {
 .chat-md :deep(strong) { font-weight: 600; }
 .chat-md :deep(em) { font-style: italic; }
 .chat-md :deep(code) {
-  background: #e5e7eb;
+  background: var(--color-surface-hover);
+  color: var(--color-base-text);
   border-radius: 3px;
   padding: 0.1em 0.35em;
   font-size: 0.85em;
   font-family: ui-monospace, monospace;
 }
 .chat-md :deep(pre) {
-  background: #1f2937;
-  color: #f9fafb;
+  background: var(--color-surface-muted);
+  color: var(--color-base-text);
+  border: 1px solid var(--color-line);
   border-radius: 8px;
   padding: 0.75em 1em;
   overflow-x: auto;
@@ -299,16 +301,16 @@ function onKeydown(e: KeyboardEvent) {
   color: inherit;
 }
 .chat-md :deep(blockquote) {
-  border-left: 3px solid #d1d5db;
+  border-left: 3px solid var(--color-line-strong);
   margin: 0.4em 0;
   padding-left: 0.75em;
-  color: #6b7280;
+  color: var(--color-dim-text);
 }
 .chat-md :deep(h1),
 .chat-md :deep(h2),
 .chat-md :deep(h3) { font-weight: 600; margin: 0.4em 0 0.2em; }
-.chat-md :deep(a) { color: #2563eb; text-decoration: underline; }
-.chat-md :deep(hr) { border: none; border-top: 1px solid #e5e7eb; margin: 0.5em 0; }
+.chat-md :deep(a) { color: var(--color-primary); text-decoration: underline; }
+.chat-md :deep(hr) { border: none; border-top: 1px solid var(--color-line); margin: 0.5em 0; }
 .chat-md :deep(table) {
   width: 100%;
   border-collapse: collapse;
@@ -317,13 +319,13 @@ function onKeydown(e: KeyboardEvent) {
 }
 .chat-md :deep(th),
 .chat-md :deep(td) {
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--color-line);
   padding: 0.35em 0.6em;
   text-align: left;
 }
 .chat-md :deep(th) {
-  background: #e5e7eb;
+  background: var(--color-surface-hover);
   font-weight: 600;
 }
-.chat-md :deep(tr:nth-child(even) td) { background: #f9fafb; }
+.chat-md :deep(tr:nth-child(even) td) { background: var(--color-surface-muted); }
 </style>
