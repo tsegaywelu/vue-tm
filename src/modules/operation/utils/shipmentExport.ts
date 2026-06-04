@@ -55,6 +55,7 @@ export function exportToExcel(shipments: any[]) {
     "Request Date",
     "Actual Loading Date",
     "Date of Arrival at Destination",
+    "Date of Offloading at Destination",
     "Truck Type",
     "Supplier Name",
     "Material Type",
@@ -75,6 +76,7 @@ export function exportToExcel(shipments: any[]) {
     requestDate: formatDateTime(shipment.dispatchDate),
     actualLoadingDate: formatDateTime(shipment.statusTime?.departedTime),
     arrivalAtDestination: formatDateTime(shipment.statusTime?.arrivedAtDestinationTime),
+    offloadedAtDestination: formatDateTime(shipment.statusTime?.offloadedAtDestinationTime),
     truckType: shipment.vehicleType?.name || "",
     supplierName: shipment?.agent
       ? shipment.agent?.name
