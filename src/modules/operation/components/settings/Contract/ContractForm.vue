@@ -332,7 +332,7 @@ function removeRouteFromContract(idx: number) {
       <div
         v-for="(r, idx) in addedRoutes"
         :key="r.fakeId"
-        class="mb-4 p-4 bg-white rounded-lg border border-gray-100 flex justify-between items-center shadow-sm"
+        class="mb-4 p-4 bg-surface rounded-lg border border-gray-100 flex justify-between items-center shadow-sm"
       >
         <div class="space-y-1">
           <p class="font-medium text-sm text-gray-900">{{ r.routeName }}</p>

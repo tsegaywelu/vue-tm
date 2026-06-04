@@ -6,7 +6,7 @@
 
         <div class="flex items-center gap-4">
           <div
-            class="flex items-center gap-2 bg-white rounded-2xl border border-grey-100 px-4 py-2 shadow-sm"
+            class="flex items-center gap-2 bg-surface rounded-2xl border border-grey-100 px-4 py-2 shadow-sm"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

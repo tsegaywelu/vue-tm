@@ -10,7 +10,7 @@
     >
       <div class="flex items-center gap-8">
         <div
-          class="size-24 md:size-32 rounded-full bg-white flex items-center justify-center shadow-lg border border-grey-100 p-4"
+          class="size-24 md:size-32 rounded-full bg-surface flex items-center justify-center shadow-lg border border-grey-100 p-4"
         >
           <div class="text-primary">
             <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">

@@ -99,7 +99,7 @@
           Offense & Penalty Breakdown
         </h3>
         <div
-          class="overflow-hidden border border-grey-100 rounded-2xl bg-white"
+          class="overflow-hidden border border-grey-100 rounded-2xl bg-surface"
         >
           <table class="min-w-full divide-y divide-grey-100 text-sm">
             <thead class="bg-grey-50 text-grey-700 font-semibold text-left">

@@ -85,7 +85,7 @@ onUnmounted(() => {
 
 <template>
   <div
-    class="grid transition-all duration-300 ease-in-out bg-[#fafafa] h-full w-full overflow-hidden"
+    class="grid transition-all duration-300 ease-in-out bg-page h-full w-full overflow-hidden"
     :class="grid_cols_class"
   >
     <Sidebar

@@ -97,7 +97,7 @@ function remove(id: string) {
         <div
           v-for="(serial, index) in serials"
           :key="serial.fakeId"
-          class="flex items-end gap-4 p-4 bg-white rounded-xl border border-gray-100 relative"
+          class="flex items-end gap-4 p-4 bg-surface rounded-xl border border-gray-100 relative"
         >
           <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
             <Input

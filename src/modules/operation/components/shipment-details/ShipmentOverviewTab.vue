@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col gap-4">
     <div
-      class="rounded-2xl px-3 md:px-5 py-4 bg-white flex flex-col gap-6 shadow-sm border border-gray-100"
+      class="rounded-2xl px-3 md:px-5 py-4 bg-surface flex flex-col gap-6 shadow-sm border border-gray-100"
     >
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
         <InfoWrapper title="Trip Information">
@@ -101,7 +101,7 @@
                 :class="
                   index === statusTimeline.length - 1
                     ? 'border-blue-500 bg-blue-50/30 shadow-md ring-4 ring-blue-50'
-                    : 'border-gray-100 bg-white shadow-sm'
+                    : 'border-gray-100 bg-surface shadow-sm'
                 "
               >
                 <div class="flex items-center gap-2">

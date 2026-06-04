@@ -73,10 +73,10 @@ const variantStyles: Record<ButtonVariant, string> = {
   default: "primary-gradient text-white",
   primary: "primary-gradient text-white",
   outline: "border border-primary text-primary bg-transparent",
-  secondary: "secondary-gradient text-gray-900 border border-gray-200",
+  secondary: "secondary-gradient text-base-text border border-line-strong",
   destructive: "destructive-gradient text-white",
   link: "text-primary hover:underline bg-transparent",
-  ghost: "bg-transparent hover:bg-gray-100",
+  ghost: "bg-transparent hover:bg-surface-hover",
   inactive:
     "bg-[#B7B7B7] text-white border border-[#B7B7B7] shadow-none cursor-not-allowed opacity-50",
 };

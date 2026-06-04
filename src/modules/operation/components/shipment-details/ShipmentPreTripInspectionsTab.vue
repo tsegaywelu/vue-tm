@@ -3,7 +3,7 @@
     <!-- Loading state -->
     <div
       v-if="isLoading"
-      class="flex flex-col items-center justify-center p-12 min-h-[300px] bg-white rounded-2xl border border-gray-100 shadow-sm gap-4"
+      class="flex flex-col items-center justify-center p-12 min-h-[300px] bg-surface rounded-2xl border border-gray-100 shadow-sm gap-4"
     >
       <div class="w-12 h-12 border-4 border-blue-500/20 border-t-blue-600 rounded-full animate-spin"></div>
       <p class="text-sm font-medium text-gray-500">Loading pre-trip inspections...</p>
@@ -12,7 +12,7 @@
     <!-- Empty state -->
     <div
       v-else-if="!inspections || inspections.length === 0"
-      class="flex flex-col items-center justify-center p-12 min-h-[300px] bg-white rounded-2xl border border-gray-100 shadow-sm gap-4 text-center"
+      class="flex flex-col items-center justify-center p-12 min-h-[300px] bg-surface rounded-2xl border border-gray-100 shadow-sm gap-4 text-center"
     >
       <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center text-gray-400 border border-gray-100/80">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -30,7 +30,7 @@
       <div
         v-for="(inspection, index) in inspections"
         :key="inspection._id || index"
-        class="flex flex-col gap-6 p-6 bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300"
+        class="flex flex-col gap-6 p-6 bg-surface rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300"
       >
         <!-- Inspection Top Header (Overview Details) -->
         <div class="flex flex-col md:flex-row justify-between gap-4 border-b border-gray-50 pb-5">
@@ -63,7 +63,7 @@
           <div
             v-for="(item, i) in getInspectionCards(inspection)"
             :key="i"
-            class="flex flex-col justify-between p-4 bg-gray-50/40 hover:bg-white rounded-xl border border-gray-100/60 hover:border-gray-200 hover:shadow-sm transition-all duration-200 gap-4 group"
+            class="flex flex-col justify-between p-4 bg-gray-50/40 hover:bg-surface rounded-xl border border-gray-100/60 hover:border-gray-200 hover:shadow-sm transition-all duration-200 gap-4 group"
           >
             <!-- Sub-card header: Label & Status Badge -->
             <div class="flex justify-between items-start gap-2">

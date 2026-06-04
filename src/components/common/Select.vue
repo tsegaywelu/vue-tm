@@ -33,7 +33,7 @@
             <span
               v-for="val in modelValue"
               :key="val"
-              class="inline-flex items-center gap-0.5 bg-gray-100 text-gray-700 rounded-full px-2 py-0.5 whitespace-nowrap shrink-0"
+              class="inline-flex items-center gap-0.5 bg-surface-muted text-base-text rounded-full px-2 py-0.5 whitespace-nowrap shrink-0"
               :class="dropdownTextClass"
             >
               {{ getLabelForValue(val) }}
@@ -87,7 +87,7 @@
               tabindex="-1"
               v-if="isValidSelection(modelValue)"
               @click.stop.prevent="clearSelection()"
-              class="text-xs whitespace-nowrap text-dark"
+              class="text-xs whitespace-nowrap text-dim-text"
             >
               <i class="*:size-5" v-html="icons.close"></i>
             </button>
@@ -100,7 +100,7 @@
         <div
           v-if="open"
           ref="dropdownRef"
-          class="fixed z-9999 bg-white border border-gray-100 shadow-lg max-h-64 overflow-y-auto flex flex-col gap-1 py-2 px-2"
+          class="fixed z-9999 bg-surface border border-line shadow-lg max-h-64 overflow-y-auto flex flex-col gap-1 py-2 px-2"
           :class="dropdownRoundedClass"
           :style="dropdownStyle"
         >
@@ -122,9 +122,9 @@
             "
             @click.stop="selectOption(option)"
             @mouseenter="highlightedIndex = idx"
-            class="flex items-center justify-between cursor-pointer rounded-md hover:bg-gray-50 p-2"
+            class="flex items-center justify-between cursor-pointer rounded-md hover:bg-surface-hover p-2"
             :class="{
-              'bg-gray-100': isSelected(option, modelValue),
+              'bg-surface-muted': isSelected(option, modelValue),
               'bg-primary/10':
                 highlightedIndex === idx && !isSelected(option, modelValue),
               'bg-primary/15':

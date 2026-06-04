@@ -25,13 +25,13 @@
       <transition name="dropdown">
         <div
           v-if="is_open"
-          class="flex flex-col gap-1 isolate absolute bottom-[120%] p-1 left-1/2 -translate-x-1/2 bg-[#F9F9F9] shadow-sm rounded-xl z-[999] border border-gray-100"
+          class="flex flex-col gap-1 isolate absolute bottom-[120%] p-1 left-1/2 -translate-x-1/2 bg-surface-muted shadow-sm rounded-xl z-999 border border-line"
         >
           <button
             v-for="el in options"
             :key="el"
             @click="setPageSize(el)"
-            class="text-xs hover:bg-white rounded-full w-8 h-8 font-bold flex items-center justify-center transition-colors"
+            class="text-xs hover:bg-surface rounded-full w-8 h-8 font-bold flex items-center justify-center transition-colors"
           >
             {{ el }}
           </button>

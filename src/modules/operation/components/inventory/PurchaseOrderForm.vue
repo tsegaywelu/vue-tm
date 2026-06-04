@@ -83,7 +83,7 @@
                     Taxation Settings
                   </h4>
                   <div
-                    class="flex flex-col gap-6 p-6 bg-white rounded-2xl border border-gray-100"
+                    class="flex flex-col gap-6 p-6 bg-surface rounded-2xl border border-gray-100"
                   >
                     <Checkbox
                       name="includeVAT"
@@ -114,7 +114,7 @@
                     Order Summary
                   </h4>
                   <div
-                    class="bg-white rounded-2xl p-6 space-y-4 border border-gray-100 shadow-sm"
+                    class="bg-surface rounded-2xl p-6 space-y-4 border border-gray-100 shadow-sm"
                   >
                     <component
                       v-if="formContext?.form"

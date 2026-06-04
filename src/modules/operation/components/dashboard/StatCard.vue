@@ -1,7 +1,7 @@
 <template>
   <div
     class="relative flex flex-col justify-between p-5 rounded-2xl overflow-hidden min-w-[220px] flex-1 cursor-pointer transition-all duration-200"
-    :class="isActive ? 'text-white shadow-lg' : 'bg-white text-gray-800 border border-gray-100 shadow-sm hover:shadow-md'"
+    :class="isActive ? 'text-white shadow-lg' : 'bg-surface text-gray-800 border border-gray-100 shadow-sm hover:shadow-md'"
     :style="isActive ? activeStyle : ''"
   >
     <!-- background pattern for active card -->
@@ -16,7 +16,7 @@
     <div class="flex items-center justify-between mb-3 relative z-10">
       <div
         class="flex items-center justify-center w-9 h-9 rounded-full"
-        :class="isActive ? 'bg-white/20' : 'bg-indigo-50'"
+        :class="isActive ? 'bg-surface/20' : 'bg-indigo-50'"
       >
         <span class="mdi mdi-package-variant-closed text-lg" :class="isActive ? 'text-white' : 'text-indigo-600'" />
       </div>

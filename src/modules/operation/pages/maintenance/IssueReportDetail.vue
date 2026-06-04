@@ -10,7 +10,7 @@
     <template v-else-if="issueReport">
       <!-- Header Section -->
       <div
-        class="bg-white flex flex-col md:flex-row md:items-center justify-between px-3 md:px-4 py-4 md:py-3 rounded-[20px] gap-4 shadow-sm border border-gray-100"
+        class="bg-surface flex flex-col md:flex-row md:items-center justify-between px-3 md:px-4 py-4 md:py-3 rounded-[20px] gap-4 shadow-sm border border-gray-100"
       >
         <div class="flex flex-col gap-2 flex-1">
           <div class="flex items-center gap-4">
@@ -91,7 +91,7 @@
       </div>
     </template>
 
-    <div v-else class="flex flex-col items-center justify-center py-20 bg-white rounded-[20px] border border-gray-100 shadow-sm">
+    <div v-else class="flex flex-col items-center justify-center py-20 bg-surface rounded-[20px] border border-gray-100 shadow-sm">
       <i class="mdi mdi-alert-circle-outline text-6xl text-gray-300"></i>
       <h2 class="mt-4 text-xl font-bold text-gray-800">Issue Report Not Found</h2>
       <p class="mt-2 text-gray-500">The requested report could not be found or has been removed.</p>

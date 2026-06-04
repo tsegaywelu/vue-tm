@@ -1,5 +1,5 @@
 <template>
-  <div class="generate-invoice p-6 bg-white rounded-2xl shadow-sm border border-grey-100 min-h-screen">
+  <div class="generate-invoice p-6 bg-surface rounded-2xl shadow-sm border border-grey-100 min-h-screen">
     <div v-if="isLoading" class="flex justify-center items-center h-64">
       <div class="loader ease-linear rounded-full border-4 border-t-4 border-primary h-12 w-12 animate-spin"></div>
     </div>

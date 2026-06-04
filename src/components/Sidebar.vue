@@ -3,6 +3,7 @@ import { ref, computed, onMounted, onUnmounted } from "vue";
 import { icons } from "@/utils/icons";
 import { raaz_icons } from "@/utils/raaz_icons";
 import NavButton from "@/components/NavButton.vue";
+import LogoAnimation from "@/components/LogoAnimation.vue";
 import {
   getNavigationRegistry,
   filterNavsByPermission,
@@ -95,7 +96,7 @@ const close_nav = () => {
 <template>
   <div
     @click="$emit('close')"
-    class="transition-all duration-150 fixed inset-0 z-20 top-0 left-0 xl:relative xl:rounded-4xl flex-1 backdrop-blur-xs xl:bg-white h-full overflow-hidden"
+    class="transition-all duration-150 fixed inset-0 z-20 top-0 left-0 xl:relative xl:rounded-4xl flex-1 backdrop-blur-xs xl:bg-surface h-full overflow-hidden"
     :class="[
       is_open ? 'translate-x-0' : '-translate-x-full',
       'xl:translate-x-0!',
@@ -103,11 +104,11 @@ const close_nav = () => {
   >
     <div
       @click.stop
-      class="w-full xl:w-full h-full flex flex-col gap-5 bg-white shadow-grey-200/50"
+      class="w-full xl:w-full h-full flex flex-col gap-5 bg-surface shadow-grey-200/50"
     >
       <!-- Sidebar Header -->
       <div
-        class="flex items-center gap-2 border-b-[0.5px] border-grey-100 transition-all duration-300"
+        class="flex items-center gap-2 border-b-[0.5px] border-line transition-all duration-300"
         :class="
           is_open ? 'p-4 h-18' : 'p-1 flex flex-col justify-between gap-3 py-4'
         "
@@ -117,33 +118,29 @@ const close_nav = () => {
           :class="is_open ? 'h-10' : 'h-10 w-full'"
         >
           <!-- Expanded: wide wordmark -->
-          <img
+          <LogoAnimation
             v-if="is_open"
-            src="@/assets/rlogo.png"
-            class="h-full w-40 object-contain transition-all duration-300"
-            alt="TMS Logo"
-            style="filter: brightness(0)"
+            class="h-full text-primary dark:text-base-text transition-all duration-300"
           />
-          <!-- Collapsed: same icon as login page -->
-          <div v-else class="p-1 bg-primary/10 rounded-lg">
-            <i
-              class="*:h-10 *:w-10 block text-primary"
-              v-html="all_icons['raaz-logo']"
-            ></i>
-          </div>
+          <!-- Collapsed: icon only -->
+          <LogoAnimation
+            v-else
+            :show_text="false"
+            class="h-10 text-primary"
+          />
         </div>
 
         <button
           v-if="is_open"
           @click="$emit('toggle')"
-          class="grid place-items-center p-0 size-8 variant-ghost ml-auto rounded-full hover:bg-grey-50"
+          class="grid place-items-center p-0 size-8 variant-ghost ml-auto rounded-full hover:bg-surface-hover"
         >
           <i class="*:size-6 text-grey-500" v-html="all_icons.nav"></i>
         </button>
         <button
           v-else
           @click="$emit('toggle')"
-          class="grid place-items-center p-0 size-12 variant-ghost mx-auto mt-2 rounded-full hover:bg-grey-50"
+          class="grid place-items-center p-0 size-12 variant-ghost mx-auto mt-2 rounded-full hover:bg-surface-hover"
         >
           <i class="*:size-6 text-grey-500" v-html="all_icons.nav"></i>
         </button>
@@ -189,9 +186,9 @@ const close_nav = () => {
       </div>
 
       <!-- Sticky profile -->
-      <div class="shrink-0 border-t border-grey-100 p-3">
+      <div class="shrink-0 border-t border-line p-3">
         <button
-          class="w-full flex items-center gap-3 rounded-2xl p-2 hover:bg-grey-50 transition-colors"
+          class="w-full flex items-center gap-3 rounded-2xl p-2 hover:bg-surface-hover transition-colors"
           :class="is_open ? '' : 'justify-center'"
           @click="handleLogout"
         >
@@ -204,17 +201,17 @@ const close_nav = () => {
             v-if="is_open"
             class="flex flex-col items-start leading-tight min-w-0 flex-1"
           >
-            <span class="text-sm font-semibold text-gray-800 truncate">{{
+            <span class="text-sm font-semibold text-base-text truncate">{{
               userName
             }}</span>
-            <span v-if="userRole" class="text-[10px] text-gray-400 truncate">{{
+            <span v-if="userRole" class="text-[10px] text-faint-text truncate">{{
               userRole
             }}</span>
           </div>
           <svg
             v-if="is_open"
             xmlns="http://www.w3.org/2000/svg"
-            class="w-4 h-4 text-gray-400 shrink-0"
+            class="w-4 h-4 text-faint-text shrink-0"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"

@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col gap-2.5 p-4 min-w-[320px] bg-white rounded-xl">
+  <div class="flex flex-col gap-2.5 p-4 min-w-[320px] bg-surface rounded-xl">
     <div
       v-if="progress === 0"
       class="flex items-center gap-2.5 text-xs font-semibold text-gray-800"

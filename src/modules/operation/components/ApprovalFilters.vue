@@ -71,7 +71,7 @@
       <!-- DatePicker Dropdown -->
       <div
         v-if="showDatePicker"
-        class="absolute top-full right-0 mt-3 p-4 bg-white rounded-[2.5rem] shadow-2xl z-[150] border border-gray-100 flex gap-6"
+        class="absolute top-full right-0 mt-3 p-4 bg-surface rounded-[2.5rem] shadow-2xl z-[150] border border-gray-100 flex gap-6"
       >
         <!-- Quick Select Shortcuts -->
         <div class="flex flex-col gap-2 min-w-[140px] pt-2">

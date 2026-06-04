@@ -4,7 +4,7 @@
     @close="closeModal()"
   >
     <div
-      class="bg-white rounded-[28px] shadow-2xl w-full max-w-4xl overflow-hidden flex flex-col"
+      class="bg-surface rounded-[28px] shadow-2xl w-full max-w-4xl overflow-hidden flex flex-col"
       style="max-height: 85vh"
     >
       <!-- Header -->
@@ -63,7 +63,7 @@
         <!-- Loading State -->
         <div
           v-if="isLoading"
-          class="absolute inset-0 z-20 flex items-center justify-center bg-white/80 backdrop-blur-sm"
+          class="absolute inset-0 z-20 flex items-center justify-center bg-surface/80 backdrop-blur-sm"
         >
           <div class="flex flex-col items-center gap-3">
             <div
@@ -78,7 +78,7 @@
         <!-- Error State -->
         <div
           v-if="error"
-          class="absolute inset-0 z-20 flex items-center justify-center bg-white"
+          class="absolute inset-0 z-20 flex items-center justify-center bg-surface"
         >
           <div class="flex flex-col items-center gap-3 text-center px-6">
             <div
@@ -112,7 +112,7 @@
         <!-- No Data State -->
         <div
           v-if="!isLoading && !error && noData"
-          class="absolute inset-0 z-20 flex items-center justify-center bg-white"
+          class="absolute inset-0 z-20 flex items-center justify-center bg-surface"
         >
           <div class="flex flex-col items-center gap-2 text-center px-6">
             <div
@@ -145,7 +145,7 @@
         <!-- Legend -->
         <div
           v-if="!isLoading && !error && !noData"
-          class="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-4 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full shadow-lg text-xs text-gray-700 z-10"
+          class="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-4 bg-surface/90 backdrop-blur-sm px-4 py-2 rounded-full shadow-lg text-xs text-gray-700 z-10"
         >
           <span class="flex items-center gap-1.5">
             <span

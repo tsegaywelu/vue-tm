@@ -1,10 +1,10 @@
 <template>
   <div
-    class="flex flex-col rounded-[20px] overflow-hidden bg-white mb-6 border border-gray-100"
+    class="flex flex-col rounded-[20px] overflow-hidden bg-surface mb-6 border border-line"
     style="box-shadow: 0px 0px 24px 0px #00000014"
   >
     <div
-      class="rounded-t-[20px] flex items-center justify-between p-5 border-b border-[#ECECEC] bg-grey-25"
+      class="rounded-t-[20px] flex items-center justify-between p-5 border-b border-line bg-surface-muted"
       @click="isExpanded = !isExpanded"
     >
       <div class="text-left">
@@ -17,7 +17,7 @@
       </div>
       <button
         type="button"
-        class="size-10 rounded-full flex items-center justify-center bg-white border border-gray-100 shadow-sm group-hover:border-primary/30 group-hover:text-primary transition-all duration-300"
+        class="size-10 rounded-full flex items-center justify-center bg-surface border border-line shadow-sm group-hover:border-primary/30 group-hover:text-primary transition-all duration-300"
       >
         <div
           class="transition-all duration-300 transform"

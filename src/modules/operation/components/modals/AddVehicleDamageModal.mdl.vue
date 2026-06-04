@@ -143,7 +143,7 @@
               </div>
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
                 <div
-                  class="flex flex-col gap-0.5 p-3 bg-white rounded-xl border border-gray-100"
+                  class="flex flex-col gap-0.5 p-3 bg-surface rounded-xl border border-gray-100"
                 >
                   <span
                     class="text-gray-400 text-xs uppercase font-semibold tracking-wide"
@@ -163,7 +163,7 @@
                   </span>
                 </div>
                 <div
-                  class="flex flex-col gap-0.5 p-3 bg-white rounded-xl border border-primary/20 shadow-sm"
+                  class="flex flex-col gap-0.5 p-3 bg-surface rounded-xl border border-primary/20 shadow-sm"
                 >
                   <span
                     class="text-primary text-xs uppercase font-bold tracking-wider"

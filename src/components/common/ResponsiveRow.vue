@@ -2,14 +2,14 @@
   <div
     @click="onClick"
     :class="[
-      'grid p-4 bg-white rounded-3xl items-center transition-colors grid-cols-3',
+      'grid p-4 bg-surface rounded-3xl items-center transition-colors grid-cols-3',
       $attrs.onClick ? 'cursor-pointer' : '',
       typeof get_row_card_class_name === 'function' ? get_row_card_class_name(row.original) : '',
       class_name,
     ]"
     style="
-      background-image: linear-gradient(45deg, #0001, #fff 50%, #fff);
-      border: 1px solid var(--Border-Colors-Light-Grey, #f9f9f9);
+      background-image: linear-gradient(45deg, #0001, var(--color-surface) 50%, var(--color-surface));
+      border: 1px solid var(--color-line);
       box-shadow: 0px 0px 10px 0px #0000001b;
     "
   >
@@ -51,7 +51,7 @@
     >
       <span
         v-if="show_labels_in_card && pos.cellItem.label"
-        class="text-[10px] uppercase text-gray-400 font-medium"
+        class="text-[10px] uppercase text-faint-text font-medium"
       >
         {{ pos.cellItem.label }}
       </span>
@@ -69,7 +69,7 @@
           :name="`cell-${pos.cellItem.cell.column.id}`"
           v-bind="getSlotData(pos.cellItem.cell)"
         >
-          <span class="font-medium text-gray-800">{{
+          <span class="font-medium text-base-text">{{
             pos.cellItem.cell.getValue() ?? "N/A"
           }}</span>
         </slot>

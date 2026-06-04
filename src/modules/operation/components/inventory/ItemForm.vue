@@ -102,7 +102,7 @@
                 >Total Price</label
               >
               <div
-                class="h-12 px-4 flex items-center bg-white rounded-xl border border-gray-100 text-gray-500 font-bold"
+                class="h-12 px-4 flex items-center bg-surface rounded-xl border border-gray-100 text-gray-500 font-bold"
               >
                 {{
                   formatCurrency(

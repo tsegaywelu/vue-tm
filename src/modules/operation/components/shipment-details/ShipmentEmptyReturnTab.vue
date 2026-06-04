@@ -3,7 +3,7 @@
     <!-- Loader -->
     <div
       v-if="isLoading"
-      class="flex items-center justify-center p-12 min-h-[300px] bg-white rounded-2xl border border-gray-100 shadow-sm"
+      class="flex items-center justify-center p-12 min-h-[300px] bg-surface rounded-2xl border border-gray-100 shadow-sm"
     >
       <div
         class="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"
@@ -14,7 +14,7 @@
     <div v-else-if="!isAdding && !isEditing" class="flex flex-col gap-6">
       <!-- Empty State / Create Header -->
       <div
-        class="flex justify-between items-center bg-white p-4 rounded-2xl border border-gray-100 shadow-sm"
+        class="flex justify-between items-center bg-surface p-4 rounded-2xl border border-gray-100 shadow-sm"
       >
         <div class="flex flex-col">
           <h3 class="font-bold text-gray-900 text-base leading-tight">
@@ -36,7 +36,7 @@
       <!-- No Data Recorded -->
       <div
         v-if="emptyReturnsList.length === 0"
-        class="flex flex-col items-center justify-center p-12 min-h-[250px] bg-white rounded-2xl border border-gray-100 shadow-sm gap-4 text-center select-none"
+        class="flex flex-col items-center justify-center p-12 min-h-[250px] bg-surface rounded-2xl border border-gray-100 shadow-sm gap-4 text-center select-none"
       >
         <div
           class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center text-gray-400 border border-gray-100/80"
@@ -58,7 +58,7 @@
         <div
           v-for="item in emptyReturnsList"
           :key="item._id"
-          class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm flex flex-col gap-5 select-none hover:border-gray-200 transition"
+          class="bg-surface rounded-2xl border border-gray-100 p-6 shadow-sm flex flex-col gap-5 select-none hover:border-gray-200 transition"
         >
           <div
             class="flex justify-between items-start border-b border-gray-50 pb-4"
@@ -137,7 +137,7 @@
     <!-- Create / Edit Form Mode -->
     <div
       v-else
-      class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm flex flex-col gap-5 select-none h-fit w-full"
+      class="bg-surface rounded-2xl border border-gray-100 p-6 shadow-sm flex flex-col gap-5 select-none h-fit w-full"
     >
       <div class="flex items-center gap-3 border-b border-gray-50 pb-4">
         <div

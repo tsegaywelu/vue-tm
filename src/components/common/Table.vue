@@ -11,7 +11,7 @@
       <div class="flex items-center gap-4 flex-1 w-full max-w-full">
         <div
           v-if="!hide_search"
-          class="w-full max-w-1/2 input-focus rounded-[36px] flex items-center gap-2.5 border pl-2 pr-4 border-gray-100 overflow-hidden"
+          class="w-full max-w-1/2 input-focus rounded-[36px] flex items-center gap-2.5 border pl-2 pr-4 border-line overflow-hidden bg-surface"
         >
           <slot name="search-prefix"></slot>
           <div
@@ -65,7 +65,7 @@
           <tr
             v-for="headerGroup in table.getHeaderGroups()"
             :key="headerGroup.id"
-            class="h-16 text-black/70 font-semibold text-sm"
+            class="h-16 text-base-text/70 font-semibold text-sm"
           >
             <th
               v-if="!hide_numbers"
@@ -123,20 +123,20 @@
             <tr v-for="n in loadingRowCount" :key="n">
               <td
                 v-if="!hide_numbers"
-                class="h-[88px] border-b border-gray-100"
+                class="h-[88px] border-b border-line"
               >
                 <div
-                  class="h-4 animate-pulse bg-gray-100 rounded-full w-[90%] mx-auto"
+                  class="h-4 animate-pulse bg-surface-muted rounded-full w-[90%] mx-auto"
                 ></div>
               </td>
               <td
                 v-for="col in tanstackColumns"
                 :key="col.id"
-                class="h-[88px] border-b border-gray-100"
+                class="h-[88px] border-b border-line"
                 :class="col_style?.[col.id]"
               >
                 <div
-                  class="h-4 animate-pulse bg-gray-100 rounded-full w-[90%] mx-auto"
+                  class="h-4 animate-pulse bg-surface-muted rounded-full w-[90%] mx-auto"
                 ></div>
               </td>
             </tr>
@@ -157,7 +157,7 @@
               >
                 <td
                   v-if="!hide_numbers"
-                  class="border-b border-gray-100 text-gray-500 w-16"
+                  class="border-b border-line text-dim-text w-16"
                 >
                   {{ (currentPage - 1) * itemsPerPage + idx + 1 }}
                 </td>
@@ -167,7 +167,7 @@
                     .filter((c) => c.column.id !== '_index')"
                   :key="cell.id"
                   :class="[
-                    'border-b border-gray-100 px-4 text-black',
+                    'border-b border-line px-4 text-base-text',
                     cell.column.columnDef.meta?.cellClass,
                     col_style?.[cell.column.id],
                   ]"
@@ -188,7 +188,7 @@
                       :column="cell.column.columnDef.meta?.originalColumn"
                       :value="cell.getValue()"
                     >
-                      <span class="text-gray-900">{{
+                      <span class="text-base-text">{{
                         cell.getValue() ?? "N/A"
                       }}</span>
                     </slot>
@@ -218,7 +218,7 @@
         <div
           v-for="n in loadingRowCount"
           :key="n"
-          class="grid gap-3 p-4 bg-white rounded-xl border border-greybg-grey-25 shadow-[0px_0px_24px_0px_#0000000A] grid-cols-2"
+          class="grid gap-3 p-4 bg-surface rounded-xl border border-line shadow-[0px_0px_24px_0px_#0000000A] grid-cols-2"
         >
           <div
             v-for="c in tanstackColumns"

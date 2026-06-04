@@ -4,6 +4,7 @@ import { useRouter } from "vue-router";
 import { useAuthStore } from "@/store/authStore";
 import { icons } from "@/utils/icons";
 import { openModal } from "@customizer/modal-x";
+import ThemePicker from "@/components/ThemePicker.vue";
 
 const emit = defineEmits<{ (e: "toggle_nav"): void }>();
 const slots = useSlots();
@@ -70,7 +71,7 @@ onUnmounted(() =>
 
 <template>
   <header
-    class="flex items-center justify-between bg-white xl:rounded-4xl p-2 xl:px-4 min-h-16 xl:min-h-17 shadow-xs"
+    class="flex items-center justify-between bg-surface xl:rounded-4xl p-2 xl:px-4 min-h-16 xl:min-h-17 shadow-xs"
   >
     <div class="flex items-center gap-3">
       <!-- Mobile Toggle -->
@@ -85,7 +86,7 @@ onUnmounted(() =>
       <button
         v-if="canGoBack"
         @click="router.back()"
-        class="flex items-center gap-2 p-2 rounded-full hover:bg-grey-50 transition-colors shrink-0"
+        class="flex items-center gap-2 p-2 rounded-full hover:bg-surface-hover transition-colors shrink-0"
         title="Go back"
       >
         <svg
@@ -114,7 +115,7 @@ onUnmounted(() =>
       </span>
 
       <!-- Page Title Slot -->
-      <div class="text-grey-900 font-bold text-lg xl:text-xl">
+      <div class="text-base-text font-bold text-lg xl:text-xl">
         <slot name="title"></slot>
       </div>
     </div>
@@ -123,10 +124,12 @@ onUnmounted(() =>
     <div class="flex items-center gap-3">
       <slot name="actions"></slot>
 
+      <ThemePicker />
+
       <!-- Profile dropdown -->
       <div ref="dropdownRef" class="relative">
         <button
-          class="flex items-center gap-2 rounded-xl p-1 hover:bg-gray-100 transition-colors"
+          class="flex items-center gap-2 rounded-xl p-1 hover:bg-surface-hover transition-colors"
           @click="dropdownOpen = !dropdownOpen"
         >
           <div
@@ -136,18 +139,18 @@ onUnmounted(() =>
           </div>
           <div class="hidden xl:flex flex-col items-start leading-tight">
             <span
-              class="text-sm font-semibold text-gray-800 max-w-[120px] truncate"
+              class="text-sm font-semibold text-base-text max-w-[120px] truncate"
               >{{ userName }}</span
             >
             <span
               v-if="userRole"
-              class="text-[10px] text-gray-400 max-w-[120px] truncate"
+              class="text-[10px] text-faint-text max-w-[120px] truncate"
               >{{ userRole }}</span
             >
           </div>
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            class="hidden xl:block w-3.5 h-3.5 text-gray-400 transition-transform duration-200"
+            class="hidden xl:block w-3.5 h-3.5 text-faint-text transition-transform duration-200"
             :class="dropdownOpen ? 'rotate-180' : ''"
             fill="none"
             viewBox="0 0 24 24"
@@ -172,14 +175,14 @@ onUnmounted(() =>
         >
           <div
             v-if="dropdownOpen"
-            class="absolute right-0 top-full mt-2 w-52 bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden z-50 origin-top-right"
+            class="absolute right-0 top-full mt-2 w-52 bg-surface rounded-2xl shadow-lg border border-line overflow-hidden z-50 origin-top-right"
           >
             <!-- User info header -->
-            <div class="px-4 py-3 border-b border-gray-100">
-              <p class="text-sm font-semibold text-gray-800 truncate">
+            <div class="px-4 py-3 border-b border-line">
+              <p class="text-sm font-semibold text-base-text truncate">
                 {{ userName }}
               </p>
-              <p v-if="userRole" class="text-xs text-gray-400 truncate">
+              <p v-if="userRole" class="text-xs text-faint-text truncate">
                 {{ userRole }}
               </p>
             </div>

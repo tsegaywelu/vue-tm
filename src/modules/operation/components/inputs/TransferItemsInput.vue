@@ -243,7 +243,7 @@ function handleItemSelect(item: TransferItem, opt: any) {
                   />
                   <div
                     v-else
-                    class="h-12 px-4 flex items-center bg-white rounded-xl border border-gray-200 text-gray-900 font-medium"
+                    class="h-12 px-4 flex items-center bg-surface rounded-xl border border-gray-200 text-gray-900 font-medium"
                   >
                     {{ item.itemName || "Loading..." }}
                   </div>
@@ -280,7 +280,7 @@ function handleItemSelect(item: TransferItem, opt: any) {
                     >Total Price</label
                   >
                   <div
-                    class="h-12 px-4 flex items-center bg-white rounded-xl border border-gray-200 text-gray-900 font-bold"
+                    class="h-12 px-4 flex items-center bg-surface rounded-xl border border-gray-200 text-gray-900 font-bold"
                   >
                     {{
                       currencyFormatter(
@@ -365,7 +365,7 @@ function handleItemSelect(item: TransferItem, opt: any) {
               <button
                 v-if="items.length > 1"
                 type="button"
-                class="absolute -top-2 -right-2 size-6 bg-white border border-gray-100 text-error-600 rounded-full shadow-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-error-50"
+                class="absolute -top-2 -right-2 size-6 bg-surface border border-gray-100 text-error-600 rounded-full shadow-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-error-50"
                 @click="removeItem(item.fakeId)"
               >
                 <i v-html="icons.delete" class="*:size-3" />

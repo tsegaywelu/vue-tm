@@ -1,13 +1,13 @@
 <template>
   <div
-    class="flex flex-col gap-4 px-5 py-4 bg-white rounded-3xl max-w-[2000px] mx-auto min-h-screen animate-fade-in"
+    class="flex flex-col gap-4 px-5 py-4 bg-surface rounded-3xl max-w-[2000px] mx-auto min-h-screen animate-fade-in"
   >
     <div class="flex justify-between items-center">
       <div class="flex flex-col">
-        <h1 v-if="title" class="text-2xl font-bold text-gray-800">
+        <h1 v-if="title" class="text-2xl font-bold text-base-text">
           {{ title }}
         </h1>
-        <p v-if="description" class="text-gray-600">
+        <p v-if="description" class="text-dim-text">
           {{ description }}
         </p>
       </div>
@@ -24,14 +24,14 @@
         defer
       >
         <div
-          class="flex items-center gap-3 overflow-x-auto no-scrollbar whitespace-nowrap border-b border-gray-200 mb-2"
+          class="flex items-center gap-3 overflow-x-auto no-scrollbar whitespace-nowrap border-b border-line-strong mb-2"
         >
           <Tabs :tabs="tabs" v-model="activeTab" />
         </div>
       </Teleport>
       <div
         v-else
-        class="flex items-center gap-3 overflow-x-auto no-scrollbar whitespace-nowrap border-b border-gray-200"
+        class="flex items-center gap-3 overflow-x-auto no-scrollbar whitespace-nowrap border-b border-line-strong"
       >
         <Tabs :tabs="tabs" v-model="activeTab" />
       </div>

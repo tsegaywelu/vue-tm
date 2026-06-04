@@ -10,7 +10,7 @@
     >
       <div class="flex items-center gap-8">
         <div
-          class="size-24 md:size-32 rounded-full bg-white flex items-center justify-center shadow-lg border border-grey-100 overflow-hidden"
+          class="size-24 md:size-32 rounded-full bg-surface flex items-center justify-center shadow-lg border border-grey-100 overflow-hidden"
         >
           <img
             v-if="customer.logo"
@@ -42,7 +42,7 @@
     </div>
 
     <!-- Active Tab Panel -->
-    <div class="bg-white rounded-[32px] p-6 border border-grey-100">
+    <div class="bg-surface rounded-[32px] p-6 border border-grey-100">
       <!-- Basic Details -->
       <div
         v-if="activeTab === 'basic'"

@@ -2,7 +2,7 @@
   <div class="flex flex-col gap-6 p-4">
     <div
       v-if="(!transactions || transactions.length === 0) && !isLoading"
-      class="flex flex-col items-center justify-center p-12 min-h-[300px] bg-white rounded-2xl border border-gray-100 shadow-sm gap-4 text-center"
+      class="flex flex-col items-center justify-center p-12 min-h-[300px] bg-surface rounded-2xl border border-gray-100 shadow-sm gap-4 text-center"
     >
       <div
         class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center text-gray-400 border border-gray-100/80"
@@ -34,7 +34,7 @@
 
     <div
       v-else
-      class="bg-white rounded-2xl border border-gray-100 p-2 shadow-sm overflow-hidden flex flex-col min-h-0"
+      class="bg-surface rounded-2xl border border-gray-100 p-2 shadow-sm overflow-hidden flex flex-col min-h-0"
     >
       <Table
         id="settlement-transactions-table"

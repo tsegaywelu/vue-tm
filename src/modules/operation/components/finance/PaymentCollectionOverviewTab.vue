@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col gap-4">
     <div
-      class="rounded-2xl px-3 md:px-5 py-6 bg-white flex flex-col gap-8 shadow-sm border border-gray-100"
+      class="rounded-2xl px-3 md:px-5 py-6 bg-surface flex flex-col gap-8 shadow-sm border border-gray-100"
     >
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         <InfoWrapper title="Invoice Information">
@@ -45,7 +45,7 @@
                 <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Price</th>
               </tr>
             </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
+            <tbody class="bg-surface divide-y divide-gray-200">
               <tr v-if="!invoice?.shipments?.length">
                 <td colspan="7" class="px-4 py-10 text-center text-sm text-gray-500 italic">
                   No shipments associated with this invoice.

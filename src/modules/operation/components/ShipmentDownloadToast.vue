@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col gap-2.5 p-4 min-w-[320px] bg-white rounded-xl">
+  <div class="flex flex-col gap-2.5 p-4 min-w-[320px] bg-surface rounded-xl">
     <!-- Header: Spinner or Progress -->
     <div
       v-if="progress === 0"

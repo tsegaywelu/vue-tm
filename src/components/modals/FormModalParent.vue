@@ -13,10 +13,10 @@
     @close="handleClose"
   >
     <div
-      class="bg-white flex flex-col max-h-full transition-all duration-150 ease-in-out overflow-auto"
+      class="bg-surface flex flex-col max-h-full transition-all duration-150 ease-in-out overflow-auto"
       :class="[
         modalStyle === 'full'
-          ? 'h-full border-l border-gray-100 shadow-2xl'
+          ? 'h-full border-l border-line shadow-2xl'
           : 'h-auto rounded-[40px] shadow-2xl',
         'w-full max-w-[646px]',
         containerClass,
@@ -25,20 +25,20 @@
     >
       <!-- Header -->
       <div
-        class="border-b border-gray-100 p-6 flex justify-between items-start gap-1 shrink-0"
+        class="border-b border-line p-6 flex justify-between items-start gap-1 shrink-0"
       >
         <div class="flex items-start flex-col gap-1 text-left">
-          <h1 class="text-xl font-bold text-gray-900 leading-tight">
+          <h1 class="text-xl font-bold text-base-text leading-tight">
             {{ title }}
           </h1>
-          <span v-if="subtitle" class="text-sm text-gray-500 text-left">{{
+          <span v-if="subtitle" class="text-sm text-dim-text text-left">{{
             subtitle
           }}</span>
         </div>
         <button
           type="button"
           @click="handleClose"
-          class="rounded-full w-11 h-11 grid place-items-center shrink-0 hover:bg-gray-100 active:shadow-none transition-colors"
+          class="rounded-full w-11 h-11 grid place-items-center shrink-0 hover:bg-surface-hover active:shadow-none transition-colors"
           style="
             box-shadow:
               4px 4px 44px 0px #0000000d,

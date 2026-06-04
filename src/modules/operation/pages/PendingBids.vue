@@ -7,7 +7,7 @@
     </div>
 
     <!-- Placeholder Content -->
-    <div class="flex-1 flex flex-col items-center justify-center bg-white rounded-[3rem] border-2 border-dashed border-gray-100 p-12 overflow-hidden shadow-sm">
+    <div class="flex-1 flex flex-col items-center justify-center bg-surface rounded-[3rem] border-2 border-dashed border-gray-100 p-12 overflow-hidden shadow-sm">
       <div class="size-24 rounded-full bg-blue-50 flex items-center justify-center mb-6 animate-pulse">
         <div class="size-12 text-primary" v-html="raaz_icons.shipment"></div>
       </div>

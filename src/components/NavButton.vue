@@ -23,9 +23,9 @@ const is_open = ref(false);
 
 const route_style = {
   true: "rounded-[36px] text-white",
-  false: "rounded-3xl border-transparent hover:bg-grey-50",
+  false: "rounded-3xl border-transparent hover:bg-surface-hover",
   trueInner: "rounded-[36px] bg-primary/5 text-primary",
-  innerActive: "!text-primary bg-grey-50",
+  innerActive: "!text-primary bg-surface-hover",
   notNested: "primary-gradient shadow-lg shadow-primary/20",
 };
 

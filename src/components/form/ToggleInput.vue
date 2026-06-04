@@ -20,7 +20,7 @@
           :class="
             isToggledOn(field.state.value)
               ? 'primary-gradient bg-blue-600'
-              : 'bg-[#F5F7F1]'
+              : 'bg-surface-muted'
           "
         >
           <div

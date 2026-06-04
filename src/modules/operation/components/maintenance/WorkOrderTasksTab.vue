@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col gap-4">
     <div
-      class="rounded-2xl px-3 md:px-5 py-6 bg-white flex flex-col gap-6 shadow-sm border border-gray-100"
+      class="rounded-2xl px-3 md:px-5 py-6 bg-surface flex flex-col gap-6 shadow-sm border border-gray-100"
     >
       <h3 class="text-lg font-bold text-gray-900 px-1">Service Tasks</h3>
       
@@ -17,7 +17,7 @@
               <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Required Parts</th>
             </tr>
           </thead>
-          <tbody class="bg-white divide-y divide-gray-200">
+          <tbody class="bg-surface divide-y divide-gray-200">
             <tr v-if="!workOrder?.tasks?.length">
               <td colspan="6" class="px-6 py-10 text-center text-sm text-gray-500 italic">
                 No tasks assigned to this work order.

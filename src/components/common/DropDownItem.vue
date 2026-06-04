@@ -4,7 +4,7 @@
     :class="[
       variant === 'danger'
         ? 'hover:bg-red-50 text-red-600'
-        : 'hover:bg-gray-50 text-gray-700',
+        : 'hover:bg-surface-hover text-base-text',
       $attrs.class
     ]"
     @click="$emit('click', $event)"

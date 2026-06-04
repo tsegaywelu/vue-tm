@@ -41,7 +41,7 @@
         <div
           v-for="(edu, index) in driver.educationalBackground"
           :key="index"
-          class="bg-white rounded-2xl p-4 shadow-sm border border-grey-100 flex flex-col gap-1"
+          class="bg-surface rounded-2xl p-4 shadow-sm border border-grey-100 flex flex-col gap-1"
         >
           <span class="text-xs font-medium text-grey-500 uppercase tracking-wider">{{ edu.type }}</span>
           <span class="text-sm font-bold text-grey-900">{{ edu.institutionName }}</span>
@@ -61,7 +61,7 @@
         <div
           v-for="(work, index) in driver.workExperience"
           :key="index"
-          class="bg-white rounded-2xl p-4 shadow-sm border border-grey-100 flex flex-col gap-1"
+          class="bg-surface rounded-2xl p-4 shadow-sm border border-grey-100 flex flex-col gap-1"
         >
           <span class="text-xs font-medium text-grey-500 uppercase tracking-wider">{{ work.position }}</span>
           <span class="text-sm font-bold text-grey-900">{{ work.companyName }}</span>

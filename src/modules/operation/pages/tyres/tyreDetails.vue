@@ -2,7 +2,7 @@
   <div class="h-full flex flex-col gap-4">
     <!-- Header Section -->
     <div
-      class="bg-white flex flex-col md:flex-row md:items-center justify-between px-3 md:px-4 py-4 md:py-3 rounded-[20px] gap-4 shadow-sm border border-gray-100"
+      class="bg-surface flex flex-col md:flex-row md:items-center justify-between px-3 md:px-4 py-4 md:py-3 rounded-[20px] gap-4 shadow-sm border border-gray-100"
     >
       <div class="flex flex-col gap-2 flex-1">
         <h1 class="font-bold text-2xl leading-tight text-gray-900">
@@ -52,7 +52,7 @@
 
     <!-- Tabs List -->
     <!-- <div
-      class="rounded-[20px] bg-white px-3 md:px-5 py-2.5 flex items-center gap-3 overflow-x-auto no-scrollbar whitespace-nowrap shadow-sm border border-gray-100"
+      class="rounded-[20px] bg-surface px-3 md:px-5 py-2.5 flex items-center gap-3 overflow-x-auto no-scrollbar whitespace-nowrap shadow-sm border border-gray-100"
     >
       <Button
         v-for="tab in tabs"
