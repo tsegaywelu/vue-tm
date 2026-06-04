@@ -243,7 +243,7 @@ function handleItemSelect(item: TransferItem, opt: any) {
                   />
                   <div
                     v-else
-                    class="h-12 px-4 flex items-center bg-surface rounded-xl border border-gray-200 text-gray-900 font-medium"
+                    class="h-12 px-4 flex items-center bg-surface rounded-xl border border-line text-gray-900 font-medium"
                   >
                     {{ item.itemName || "Loading..." }}
                   </div>
@@ -253,7 +253,7 @@ function handleItemSelect(item: TransferItem, opt: any) {
                 <template v-if="item.hasSerials">
                   <div class="flex flex-col gap-1.5">
                     <label class="text-sm font-medium text-gray-700">Quantity</label>
-                    <div class="h-12 px-4 flex items-center bg-gray-50 rounded-xl border border-gray-200 text-gray-500 font-medium">
+                    <div class="h-12 px-4 flex items-center bg-gray-50 rounded-xl border border-line text-gray-500 font-medium">
                       {{ item.serials.length }}
                     </div>
                   </div>
@@ -280,7 +280,7 @@ function handleItemSelect(item: TransferItem, opt: any) {
                     >Total Price</label
                   >
                   <div
-                    class="h-12 px-4 flex items-center bg-surface rounded-xl border border-gray-200 text-gray-900 font-bold"
+                    class="h-12 px-4 flex items-center bg-surface rounded-xl border border-line text-gray-900 font-bold"
                   >
                     {{
                       currencyFormatter(

@@ -2,7 +2,7 @@
   <!-- Mobile trigger: teleported next to page title -->
   <Teleport to="#page-title-actions" defer>
     <button
-      class="sm:hidden size-8 rounded-xl border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors"
+      class="sm:hidden size-8 rounded-xl border border-line flex items-center justify-center text-faint-text hover:bg-surface-hover transition-colors"
       @click="mobileMenuOpen = true"
     >
       <i class="*:size-4" v-html="icons.filterOptions"></i>
@@ -75,7 +75,7 @@
   <BottomSheet v-model="mobileMenuOpen" title="Options">
     <div class="flex flex-col py-2">
       <button
-        class="flex items-center gap-3 px-4 py-3.5 hover:bg-gray-50 transition-colors text-left"
+        class="flex items-center gap-3 px-4 py-3.5 hover:bg-surface-hover transition-colors text-left"
         @click="mobileMenuOpen = false; mobileDateOpen = true"
       >
         <i class="*:size-5 shrink-0 text-gray-500" v-html="icons.calender"></i>
@@ -88,14 +88,14 @@
         <button v-if="dateRange.start" type="button" class="*:size-4 text-primary/60 shrink-0" v-html="icons.close" @click.stop.prevent="dateRange = { start: '', end: '' }"></button>
       </button>
       <button
-        class="flex items-center gap-3 px-4 py-3.5 hover:bg-gray-50 transition-colors text-left"
+        class="flex items-center gap-3 px-4 py-3.5 hover:bg-surface-hover transition-colors text-left"
         @click="mobileMenuOpen = false; mobileDownloadOpen = true"
       >
         <i class="*:size-5 shrink-0 text-gray-500" v-html="icons.export"></i>
         <span class="font-medium text-gray-900">Download</span>
       </button>
       <button
-        class="flex items-center gap-3 px-4 py-3.5 hover:bg-gray-50 transition-colors text-left"
+        class="flex items-center gap-3 px-4 py-3.5 hover:bg-surface-hover transition-colors text-left"
         @click="mobileMenuOpen = false; mobileSearchOpen = true"
       >
         <i class="*:size-5 shrink-0 text-gray-500" v-html="icons.filter"></i>
@@ -113,28 +113,28 @@
   <BottomSheet v-model="mobileDownloadOpen" title="Download">
     <div class="flex flex-col py-2 px-4 gap-1">
       <button
-        class="flex items-center gap-3 py-3 px-2 hover:bg-gray-50 rounded-xl transition-colors"
+        class="flex items-center gap-3 py-3 px-2 hover:bg-surface-hover rounded-xl transition-colors"
         @click="handleDownload('Raw Material'); mobileDownloadOpen = false"
       >
         <i class="*:size-5" v-html="icons.excell"></i>
         <span class="font-medium">Raw Material</span>
       </button>
       <button
-        class="flex items-center gap-3 py-3 px-2 hover:bg-gray-50 rounded-xl transition-colors"
+        class="flex items-center gap-3 py-3 px-2 hover:bg-surface-hover rounded-xl transition-colors"
         @click="handleDownload('Full Product'); mobileDownloadOpen = false"
       >
         <i class="*:size-5" v-html="icons.excell"></i>
         <span class="font-medium">Full Product</span>
       </button>
       <button
-        class="flex items-center gap-3 py-3 px-2 hover:bg-gray-50 rounded-xl transition-colors"
+        class="flex items-center gap-3 py-3 px-2 hover:bg-surface-hover rounded-xl transition-colors"
         @click="handleDownload('All'); mobileDownloadOpen = false"
       >
         <i class="*:size-5" v-html="icons.excell"></i>
         <span class="font-medium">All</span>
       </button>
       <button
-        class="flex items-center gap-3 py-3 px-2 hover:bg-gray-50 rounded-xl transition-colors"
+        class="flex items-center gap-3 py-3 px-2 hover:bg-surface-hover rounded-xl transition-colors"
         @click="handleDownload('Report'); mobileDownloadOpen = false"
       >
         <i class="*:size-5" v-html="icons.excell"></i>
@@ -149,7 +149,7 @@
       <button
         v-for="opt in shipmentTableRef?.searchFieldOptions"
         :key="opt.value"
-        class="flex items-center justify-between py-3 px-2 hover:bg-gray-50 rounded-xl transition-colors"
+        class="flex items-center justify-between py-3 px-2 hover:bg-surface-hover rounded-xl transition-colors"
         @click="shipmentTableRef.selectedSearchField = opt.value; mobileSearchOpen = false"
       >
         <span class="font-medium">{{ opt.label }}</span>

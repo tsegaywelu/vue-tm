@@ -2,7 +2,7 @@
   <Table :columns="columns" :rows="response">
     <template #cell-logo="{ row }">
       <div
-        class="size-10 rounded-lg bg-gray-100 flex items-center justify-center overflow-hidden border border-gray-200"
+        class="size-10 rounded-lg bg-gray-100 flex items-center justify-center overflow-hidden border border-line"
       >
         <img
           v-if="row.carrier?.logo"

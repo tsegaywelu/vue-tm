@@ -7,7 +7,7 @@
       </div>
     </div>
 
-    <div v-if="damage.vehiclePartsAndPrices?.length" class="overflow-x-auto rounded-xl border border-gray-200">
+    <div v-if="damage.vehiclePartsAndPrices?.length" class="overflow-x-auto rounded-xl border border-line">
       <table class="w-full text-left text-sm text-gray-600">
         <thead class="bg-gray-50 text-gray-700 text-xs uppercase font-semibold">
           <tr>
@@ -17,7 +17,7 @@
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-100">
-          <tr v-for="(part, index) in damage.vehiclePartsAndPrices" :key="index" class="hover:bg-gray-50 transition-colors">
+          <tr v-for="(part, index) in damage.vehiclePartsAndPrices" :key="index" class="hover:bg-surface-hover transition-colors">
             <td class="px-6 py-4 font-medium text-gray-900">
               {{ part.vehiclePart || 'Unknown Part' }}
             </td>

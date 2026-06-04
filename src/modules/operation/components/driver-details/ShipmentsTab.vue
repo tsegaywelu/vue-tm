@@ -1,8 +1,8 @@
 <template>
   <div class="flex flex-col gap-6">
-    <div class="bg-grey-25 rounded-3xl p-6 border border-grey-100">
+    <div class="bg-surface-muted rounded-3xl p-6 border border-line">
       <div class="flex items-center justify-between mb-6">
-        <h3 class="text-lg font-bold text-grey-900">Shipment History</h3>
+        <h3 class="text-lg font-bold text-base-text">Shipment History</h3>
       </div>
 
       <Table
@@ -41,7 +41,7 @@
         }"
       >
         <template #cell-shipmentCode="{ value }">
-          <span class="font-bold text-grey-900">{{ value }}</span>
+          <span class="font-bold text-base-text">{{ value }}</span>
         </template>
 
         <template #cell-status="{ value }">
@@ -90,15 +90,15 @@
           <span class="text-base" v-if="row.driver">
             {{ row.driver.firstName }} {{ row.driver.lastName }}
           </span>
-          <span v-else class="text-gray-400 italic text-sm">Not Assigned</span>
+          <span v-else class="text-faint-text italic text-sm">Not Assigned</span>
         </template>
 
         <template #cell-total="{ row }">
           <div class="flex flex-col text-right">
-            <span class="text-base font-semibold text-grey-900">
+            <span class="text-base font-semibold text-base-text">
               {{ numberFormatter(row.waypointDistance) }} km
             </span>
-            <span class="text-xs text-gray-500" v-if="row.pricingType">
+            <span class="text-xs text-dim-text" v-if="row.pricingType">
               {{ row.pricingType?.type }} ({{ currencyFormatter(+row.pricingType?.amount) }})
             </span>
           </div>

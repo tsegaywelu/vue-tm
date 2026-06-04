@@ -161,7 +161,7 @@
                       openPhotos(row);
                       close();
                     "
-                    class="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors gap-2"
+                    class="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-surface-hover transition-colors gap-2"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"

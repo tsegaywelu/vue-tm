@@ -5,7 +5,7 @@
     >
       <h3 class="text-lg font-bold text-gray-900 px-1">Service Tasks</h3>
       
-      <div class="overflow-x-auto rounded-xl border border-gray-200">
+      <div class="overflow-x-auto rounded-xl border border-line">
         <table class="min-w-full divide-y divide-gray-200">
           <thead class="bg-gray-50">
             <tr>
@@ -23,7 +23,7 @@
                 No tasks assigned to this work order.
               </td>
             </tr>
-            <tr v-for="(task, index) in workOrder?.tasks" :key="index" class="hover:bg-gray-50 transition-colors">
+            <tr v-for="(task, index) in workOrder?.tasks" :key="index" class="hover:bg-surface-hover transition-colors">
               <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">
                 {{ task.serviceTask?.name || '-' }}
               </td>

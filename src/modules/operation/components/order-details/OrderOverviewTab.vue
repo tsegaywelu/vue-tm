@@ -28,7 +28,7 @@
               </div>
             </div>
           </div>
-          <div class="grid border-t py-4 mt-4 border-gray-200 grid-cols-1 sm:grid-cols-2 px-2 gap-4">
+          <div class="grid border-t py-4 mt-4 border-line grid-cols-1 sm:grid-cols-2 px-2 gap-4">
             <DataLabel
               label="Trip Type"
               :value="formatStatus(order?.tripType)"

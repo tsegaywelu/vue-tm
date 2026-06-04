@@ -2,7 +2,7 @@
   <div class="flex flex-col gap-4">
     <Teleport to="#page-title-actions" defer>
       <button
-        class="sm:hidden size-8 rounded-xl border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors"
+        class="sm:hidden size-8 rounded-xl border border-line flex items-center justify-center text-faint-text hover:bg-surface-hover transition-colors"
         @click="handlePrint"
       >
         <i class="*:size-4" v-html="icons.printer" />

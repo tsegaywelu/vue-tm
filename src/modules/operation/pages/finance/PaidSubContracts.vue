@@ -18,13 +18,13 @@
 
   <Teleport defer to="#page-title-actions">
     <button
-      class="sm:hidden size-8 rounded-xl flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors"
+      class="sm:hidden size-8 rounded-xl flex items-center justify-center text-faint-text hover:bg-surface-hover transition-colors"
       @click="handleExport"
     >
       <i v-html="icons.excell"></i>
     </button>
     <button
-      class="sm:hidden size-8 rounded-xl flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors"
+      class="sm:hidden size-8 rounded-xl flex items-center justify-center text-faint-text hover:bg-surface-hover transition-colors"
       @click="showFilterSheet = true"
     >
       <i v-html="icons.calender"></i>

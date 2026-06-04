@@ -39,7 +39,7 @@
               </span>
             </div>
           </div>
-          <div class="grid border-t py-4 mt-4 border-gray-200 grid-cols-1 sm:grid-cols-3 px-2">
+          <div class="grid border-t py-4 mt-4 border-line grid-cols-1 sm:grid-cols-3 px-2">
             <ShipmentDataLabel
               label="Route Name"
               :value="shipment?.route?.routeName"

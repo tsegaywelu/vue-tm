@@ -3,7 +3,7 @@
     <!-- Trigger -->
     <button
       type="button"
-      class="w-full text-sm border border-gray-200 rounded-lg px-2 py-1.5 bg-white focus:outline-none focus:ring-2 focus:ring-primary-300 flex items-center justify-between text-left gap-1 min-w-0"
+      class="w-full text-sm border border-line rounded-lg px-2 py-1.5 bg-white focus:outline-none focus:ring-2 focus:ring-primary-300 flex items-center justify-between text-left gap-1 min-w-0"
       @click="open = !open"
     >
       <span class="truncate flex-1" :class="modelValue ? 'text-gray-800' : 'text-gray-400'">
@@ -22,7 +22,7 @@
     <Teleport to="body">
       <div
         v-if="open"
-        class="fixed z-9999 bg-white border border-gray-200 rounded-xl shadow-xl overflow-hidden"
+        class="fixed z-9999 bg-white border border-line rounded-xl shadow-xl overflow-hidden"
         :style="dropdownStyle"
       >
         <!-- Search -->
@@ -32,7 +32,7 @@
             v-model="search"
             type="text"
             placeholder="Search fields..."
-            class="w-full text-xs border border-gray-200 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-primary-300"
+            class="w-full text-xs border border-line rounded-lg px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-primary-300"
             @click.stop
           />
         </div>
@@ -42,7 +42,7 @@
           <div
             v-for="f in filteredFields"
             :key="f.value"
-            class="flex items-center justify-between gap-2 px-3 py-2 cursor-pointer transition-colors hover:bg-gray-50"
+            class="flex items-center justify-between gap-2 px-3 py-2 cursor-pointer transition-colors hover:bg-surface-hover"
             :class="{ 'bg-primary-50': f.value === modelValue }"
             @mousedown.prevent="select(f.value)"
             @mouseenter="(e) => onOptionHover(e, f.value)"

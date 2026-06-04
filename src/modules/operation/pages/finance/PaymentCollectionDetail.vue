@@ -10,7 +10,7 @@
     <template v-else-if="invoice">
       <!-- Header Section -->
       <div
-        class="bg-surface flex flex-col md:flex-row md:items-center justify-between px-3 md:px-4 py-4 md:py-3 rounded-[20px] gap-4 shadow-sm border border-gray-100"
+        class="bg-surface flex flex-col md:flex-row md:items-center justify-between px-3 md:px-4 py-4 md:py-3 rounded-[20px] gap-4 shadow-sm border border-line"
       >
         <div class="flex flex-col gap-2 flex-1">
           <div class="flex items-center gap-4">
@@ -18,19 +18,19 @@
               <i class="mdi mdi-cash-register text-2xl"></i>
             </div>
             <div>
-              <h1 class="font-bold text-2xl leading-tight text-gray-900">
+              <h1 class="font-bold text-2xl leading-tight text-base-text">
                 Collection #{{ invoice.reference || invoice.shipments?.[0]?.paymentDetail?.reference || '-------' }}
               </h1>
               <div class="flex flex-col md:flex-row md:items-center gap-1 md:gap-4">
-                <span class="text-sm text-gray-600">
+                <span class="text-sm text-dim-text">
                   Requested By:
-                  <span class="font-bold text-black text-sm ml-1">
+                  <span class="font-bold text-base-text text-sm ml-1">
                     {{ invoice.paymentRequestedBy?.username || invoice.shipments?.[0]?.paymentDetail?.paymentRequestedBy?.username || '-' }}
                   </span>
                 </span>
-                <span class="text-sm text-gray-600">
+                <span class="text-sm text-dim-text">
                   Approved By:
-                  <span class="font-bold text-black text-sm ml-1">
+                  <span class="font-bold text-base-text text-sm ml-1">
                     {{ invoice.paymentApprovedBy?.username || '-' }}
                   </span>
                 </span>
@@ -61,7 +61,7 @@
               Export
             </Button>
             <button
-              class="sm:hidden size-9 rounded-xl border border-gray-200 flex items-center justify-center text-green-600 hover:bg-gray-50 transition-colors"
+              class="sm:hidden size-9 rounded-xl border border-line flex items-center justify-center text-green-600 hover:bg-surface-muted transition-colors"
               @click="handleExport"
             >
               <i v-html="icons.excell"></i>
@@ -86,9 +86,9 @@
       <!-- Collect Modal -->
       <ModalWrapper v-if="showCollectModal" @close="showCollectModal = false" class="flex items-center justify-center p-4">
         <div class="bg-surface rounded-[30px] shadow-2xl w-full max-w-[500px] flex flex-col overflow-hidden animate-in fade-in zoom-in duration-200">
-          <div class="p-6 border-b border-gray-100 flex justify-between items-center">
-            <h2 class="text-xl font-bold text-gray-900">Collect Payment</h2>
-            <button @click="showCollectModal = false" class="text-gray-400 hover:text-gray-600 transition-colors">
+          <div class="p-6 border-b border-line flex justify-between items-center">
+            <h2 class="text-xl font-bold text-base-text">Collect Payment</h2>
+            <button @click="showCollectModal = false" class="text-faint-text hover:text-dim-text transition-colors">
               <i class="mdi mdi-close text-2xl"></i>
             </button>
           </div>
@@ -96,25 +96,25 @@
           <div class="p-6 flex flex-col gap-5">
             <div class="grid grid-cols-2 gap-4">
               <div class="flex flex-col gap-1.5">
-                <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider ml-1">CRV</label>
-                <input v-model="collectForm.crv" type="text" placeholder="Enter CRV" class="bg-gray-50 border-none rounded-2xl px-4 py-3 outline-none focus:ring-2 focus:ring-primary/20 text-sm transition-all" />
+                <label class="text-[11px] font-bold text-dim-text uppercase tracking-wider ml-1">CRV</label>
+                <input v-model="collectForm.crv" type="text" placeholder="Enter CRV" class="bg-surface-muted border-none rounded-2xl px-4 py-3 outline-none focus:ring-2 focus:ring-primary/20 text-sm transition-all" />
               </div>
               <div class="flex flex-col gap-1.5">
-                <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider ml-1">CSI</label>
-                <input v-model="collectForm.csi" type="text" placeholder="Enter CSI" class="bg-gray-50 border-none rounded-2xl px-4 py-3 outline-none focus:ring-2 focus:ring-primary/20 text-sm transition-all" />
+                <label class="text-[11px] font-bold text-dim-text uppercase tracking-wider ml-1">CSI</label>
+                <input v-model="collectForm.csi" type="text" placeholder="Enter CSI" class="bg-surface-muted border-none rounded-2xl px-4 py-3 outline-none focus:ring-2 focus:ring-primary/20 text-sm transition-all" />
               </div>
             </div>
             <div class="flex flex-col gap-1.5">
-              <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider ml-1">Payment Date <span class="text-red-500">*</span></label>
-              <input v-model="collectForm.paymentCollectedDate" type="date" class="bg-gray-50 border-none rounded-2xl px-4 py-3 outline-none focus:ring-2 focus:ring-primary/20 text-sm transition-all" />
+              <label class="text-[11px] font-bold text-dim-text uppercase tracking-wider ml-1">Payment Date <span class="text-red-500">*</span></label>
+              <input v-model="collectForm.paymentCollectedDate" type="date" class="bg-surface-muted border-none rounded-2xl px-4 py-3 outline-none focus:ring-2 focus:ring-primary/20 text-sm transition-all" />
             </div>
             <div class="flex flex-col gap-1.5">
-              <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider ml-1">Remark</label>
-              <textarea v-model="collectForm.remarkCarrier" placeholder="Optional remarks..." class="bg-gray-50 border-none rounded-2xl px-4 py-3 outline-none focus:ring-2 focus:ring-primary/20 text-sm h-24 resize-none transition-all"></textarea>
+              <label class="text-[11px] font-bold text-dim-text uppercase tracking-wider ml-1">Remark</label>
+              <textarea v-model="collectForm.remarkCarrier" placeholder="Optional remarks..." class="bg-surface-muted border-none rounded-2xl px-4 py-3 outline-none focus:ring-2 focus:ring-primary/20 text-sm h-24 resize-none transition-all"></textarea>
             </div>
           </div>
 
-          <div class="p-6 bg-gray-50 flex justify-end gap-3">
+          <div class="p-6 bg-surface-muted flex justify-end gap-3">
             <Button variant="outline" size="md" @click="showCollectModal = false" class="!rounded-2xl">Cancel</Button>
             <Button variant="primary" size="md" :isLoading="collectMutation.isPending" @click="handleCollect" class="!rounded-2xl shadow-lg shadow-primary/20">Confirm Collection</Button>
           </div>

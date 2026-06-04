@@ -10,7 +10,7 @@
 
     <div
       v-if="filePath && !readOnly"
-      class="absolute top-2 right-2 flex items-center gap-1 bg-surface/60 backdrop-blur-sm rounded-lg p-1 border border-gray-200/50 shadow-sm z-10"
+      class="absolute top-2 right-2 flex items-center gap-1 bg-surface/60 backdrop-blur-sm rounded-lg p-1 border border-line/50 shadow-sm z-10"
     >
       <button
         class="relative flex items-center justify-center h-8 min-w-[32px] px-2 rounded-md hover:bg-surface text-gray-600 transition-colors shadow-sm"

@@ -30,7 +30,7 @@
           class="flex items-center justify-between gap-1.5 rounded-lg px-2 py-1 text-left transition-all"
           :class="activeIndex === i
             ? 'bg-blue-50 ring-1 ring-blue-200'
-            : 'hover:bg-gray-50'"
+            : 'hover:bg-surface-hover'"
           @click="toggleSegment(i)"
         >
           <div class="flex items-center gap-1.5 min-w-0">

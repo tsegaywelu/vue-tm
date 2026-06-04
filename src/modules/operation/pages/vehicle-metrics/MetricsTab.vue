@@ -3,7 +3,7 @@
     <!-- Export: icon button on mobile -->
     <Teleport to="#page-title-actions" defer>
       <button
-        class="sm:hidden size-10 rounded-lg bg-grey-75 border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors"
+        class="sm:hidden size-10 rounded-lg bg-grey-75 border-line flex items-center justify-center text-faint-text hover:bg-surface-hover transition-colors"
         @click="handleExport"
       >
         <i class="*:size-6" v-html="icons.excell"></i>

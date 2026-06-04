@@ -1,7 +1,7 @@
 <template>
   <Teleport defer to="#page-title-actions">
     <button
-      class="sm:hidden size-8 rounded-xl border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors"
+      class="sm:hidden size-8 rounded-xl border border-line flex items-center justify-center text-faint-text hover:bg-surface-hover transition-colors"
       @click="showSearchSheet = true"
     >
       <i v-html="icons.filterOptions"></i>
@@ -14,7 +14,7 @@
         v-for="option in searchFieldOptions"
         :key="option.value"
         class="flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-colors"
-        :class="selectedSearchField === option.value ? 'bg-primary/10 text-primary font-medium' : 'hover:bg-gray-50 text-gray-700'"
+        :class="selectedSearchField === option.value ? 'bg-primary/10 text-primary font-medium' : 'hover:bg-surface-hover text-gray-700'"
         @click="selectedSearchField = option.value; showSearchSheet = false"
       >
         {{ option.label }}
@@ -32,7 +32,7 @@
   >
     <template #search-prefix>
       <div
-        class="hidden sm:flex h-full items-center border-r border-gray-200 pr-2 mr-2 w-48"
+        class="hidden sm:flex h-full items-center border-r border-line pr-2 mr-2 w-48"
       >
         <Select
           class="[&_.input-focus]:shadow-none! [&_.input-focus]:border-none [&_.input-focus]:min-h-full min-w-48"

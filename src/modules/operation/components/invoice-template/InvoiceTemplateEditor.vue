@@ -40,7 +40,7 @@
         >
         <div class="ml-auto sm:ml-0 flex items-center gap-2">
           <button
-            class="text-sm px-4 py-2 rounded-xl border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors"
+            class="text-sm px-4 py-2 rounded-xl border border-line text-gray-600 hover:bg-surface-hover transition-colors"
             @click="router.back()"
           >
             Cancel

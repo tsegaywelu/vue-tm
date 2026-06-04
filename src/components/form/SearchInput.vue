@@ -8,7 +8,7 @@
       <button
         type="button"
         @click="isOpen = !isOpen"
-        class="h-full px-4 flex items-center gap-2 border-r border-gray-200 text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors rounded-l-2xl whitespace-nowrap min-w-[120px] justify-between"
+        class="h-full px-4 flex items-center gap-2 border-r border-line text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors rounded-l-2xl whitespace-nowrap min-w-[120px] justify-between"
       >
         {{ selected_label }}
         <div class="size-4 opacity-60 ml-auto" v-html="icons.leftAngle" style="transform: rotate(-90deg);"></div>

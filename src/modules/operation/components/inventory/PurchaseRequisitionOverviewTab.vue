@@ -33,7 +33,7 @@
         <h3 class="text-lg font-bold text-gray-900 px-1">Requisition Items</h3>
 
         <!-- Mobile card list -->
-        <div class="sm:hidden flex flex-col divide-y divide-gray-100 rounded-xl border border-gray-200 bg-white overflow-hidden">
+        <div class="sm:hidden flex flex-col divide-y divide-gray-100 rounded-xl border border-line bg-white overflow-hidden">
           <div v-if="!requisition?.items?.length" class="px-4 py-10 text-center text-sm text-gray-500 italic">
             No items in this requisition.
           </div>
@@ -47,7 +47,7 @@
         </div>
 
         <!-- Desktop table -->
-        <div class="hidden sm:block overflow-x-auto rounded-xl border border-gray-200">
+        <div class="hidden sm:block overflow-x-auto rounded-xl border border-line">
           <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50 text-white">
               <tr class="bg-primary/90 text-white">
@@ -66,7 +66,7 @@
                   No items in this requisition.
                 </td>
               </tr>
-              <tr v-for="(item, index) in requisition?.items" :key="index" class="hover:bg-gray-50 transition-colors">
+              <tr v-for="(item, index) in requisition?.items" :key="index" class="hover:bg-surface-hover transition-colors">
                 <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">{{ index + 1 }}</td>
                 <td class="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ item.item?.name || '-' }}</td>
                 <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-600">{{ item.item?.uom || '-' }}</td>

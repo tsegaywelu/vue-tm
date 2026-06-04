@@ -103,7 +103,7 @@
 
         <div
           v-if="!routeData.waypoints || routeData.waypoints.length === 0"
-          class="text-center py-10 text-gray-500 bg-surface rounded-3xl border border-dashed border-gray-200"
+          class="text-center py-10 text-gray-500 bg-surface rounded-3xl border border-dashed border-line"
         >
           No waypoints defined for this route.
         </div>

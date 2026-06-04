@@ -124,10 +124,10 @@ const handleTaskChange = async (taskId: string, item: TaskItem) => {
       <div
         v-for="(task, index) in tasks"
         :key="task.fakeId"
-        class="border border-gray-200 rounded-lg overflow-hidden"
+        class="border border-line rounded-lg overflow-hidden"
       >
         <div
-          class="bg-gray-50 px-4 py-3 flex justify-between items-center border-b border-gray-200"
+          class="bg-gray-50 px-4 py-3 flex justify-between items-center border-b border-line"
         >
           <span class="font-semibold text-gray-700">Task {{ index + 1 }}</span>
           <button

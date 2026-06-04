@@ -102,7 +102,7 @@
           <template #default="[parts, laborCost, excess, partsContribution]">
             <div class="bg-gray-50 p-6 rounded-2xl space-y-3">
               <div
-                class="grid grid-cols-2 md:grid-cols-4 gap-4 pb-3 border-b border-gray-200"
+                class="grid grid-cols-2 md:grid-cols-4 gap-4 pb-3 border-b border-line"
               >
                 <div class="flex flex-col gap-0.5">
                   <span

@@ -58,13 +58,13 @@
   <Teleport defer to="#page-title-actions" v-if="currentTab === 'shipment' || currentTab === 'settlement'">
     <button
       v-if="currentTab === 'shipment'"
-      class="sm:hidden size-8 rounded-xl flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors"
+      class="sm:hidden size-8 rounded-xl flex items-center justify-center text-faint-text hover:bg-surface-hover transition-colors"
       @click="showActionsSheet = true"
     >
       <i v-html="icons.export"></i>
     </button>
     <button
-      class="sm:hidden size-8 rounded-xl flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors"
+      class="sm:hidden size-8 rounded-xl flex items-center justify-center text-faint-text hover:bg-surface-hover transition-colors"
       @click="showFilterSheet = true"
     >
       <i v-html="icons.calender"></i>
@@ -83,21 +83,21 @@
     <div class="flex flex-col">
       <template v-if="currentTab === 'shipment'">
         <button
-          class="flex items-center gap-3 px-5 py-4 text-base font-medium text-gray-700 hover:bg-gray-50 border-b border-gray-100 text-left w-full"
+          class="flex items-center gap-3 px-5 py-4 text-base font-medium text-gray-700 hover:bg-surface-hover border-b border-gray-100 text-left w-full"
           @click="() => { handleExport('raw'); showActionsSheet = false; }"
         >
           <i v-html="icons.excell" class="shrink-0 *:size-5"></i>
           Export Raw Material
         </button>
         <button
-          class="flex items-center gap-3 px-5 py-4 text-base font-medium text-gray-700 hover:bg-gray-50 border-b border-gray-100 text-left w-full"
+          class="flex items-center gap-3 px-5 py-4 text-base font-medium text-gray-700 hover:bg-surface-hover border-b border-gray-100 text-left w-full"
           @click="() => { handleExport('full'); showActionsSheet = false; }"
         >
           <i v-html="icons.excell" class="shrink-0 *:size-5"></i>
           Export Full Product
         </button>
         <button
-          class="flex items-center gap-3 px-5 py-4 text-base font-medium text-gray-700 hover:bg-gray-50 border-b border-gray-100 text-left w-full"
+          class="flex items-center gap-3 px-5 py-4 text-base font-medium text-gray-700 hover:bg-surface-hover border-b border-gray-100 text-left w-full"
           @click="() => { handleExport('all'); showActionsSheet = false; }"
         >
           <i v-html="icons.excell" class="shrink-0 *:size-5"></i>

@@ -1,5 +1,5 @@
 <template>
-  <div class="overflow-auto rounded-xl border border-gray-200 bg-gray-50 p-3">
+  <div class="overflow-auto rounded-xl border border-line bg-gray-50 p-3">
     <table class="text-xs border-collapse" style="min-width: 100%">
       <!-- Column widths -->
       <colgroup>

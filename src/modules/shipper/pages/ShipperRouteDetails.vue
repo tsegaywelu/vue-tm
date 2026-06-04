@@ -20,7 +20,7 @@
               <span
                 v-for="carrier in routeData.carriers"
                 :key="carrier._id"
-                class="px-2 py-0.5 bg-gray-100 text-gray-700 text-xs font-bold rounded-md border border-gray-200"
+                class="px-2 py-0.5 bg-gray-100 text-gray-700 text-xs font-bold rounded-md border border-line"
               >
                 {{ carrier.name }}
               </span>
@@ -78,7 +78,7 @@
 
         <div
           v-if="!routeData.waypoint || routeData.waypoint.length === 0"
-          class="text-center py-10 text-gray-500 bg-surface rounded-3xl border border-dashed border-gray-200"
+          class="text-center py-10 text-gray-500 bg-surface rounded-3xl border border-dashed border-line"
         >
           No waypoints defined for this route.
         </div>

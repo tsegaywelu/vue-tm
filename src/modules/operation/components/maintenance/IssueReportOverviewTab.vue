@@ -53,7 +53,7 @@
       <!-- Attached Picture -->
       <div v-if="issueReport.picture" class="bg-surface p-6 rounded-[20px] border border-gray-100 shadow-sm flex flex-col gap-4">
         <h3 class="text-lg font-bold text-gray-900 border-b border-gray-50 pb-2">Evidence / Picture</h3>
-        <div class="relative group w-full max-w-2xl overflow-hidden rounded-xl border border-gray-200 bg-gray-50">
+        <div class="relative group w-full max-w-2xl overflow-hidden rounded-xl border border-line bg-gray-50">
           <img 
             :src="getImageUrl(issueReport.picture)" 
             alt="Issue Evidence" 

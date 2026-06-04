@@ -41,7 +41,7 @@
   <Teleport defer to="#page-title-actions">
     <div class="sm:hidden flex items-center gap-1">
       <button
-        class="size-8 rounded-xl border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors"
+        class="size-8 rounded-xl border border-line flex items-center justify-center text-faint-text hover:bg-surface-hover transition-colors"
         @click="mobilePrintOpen = true"
       >
         <i class="*:size-4" v-html="icons.file"></i>
@@ -49,14 +49,14 @@
       <button
         v-if="advance?.status !== 'SETTLED'"
         :disabled="!isEligibleForSettlement"
-        class="size-8 rounded-xl border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors disabled:opacity-40"
+        class="size-8 rounded-xl border border-line flex items-center justify-center text-faint-text hover:bg-surface-hover transition-colors disabled:opacity-40"
         @click="handleSettle"
       >
         <i class="*:size-4" v-html="icons.circleCheck"></i>
       </button>
       <button
         v-if="advance?.status"
-        class="size-8 rounded-xl border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors"
+        class="size-8 rounded-xl border border-line flex items-center justify-center text-faint-text hover:bg-surface-hover transition-colors"
         @click="handleCreateSettlement"
       >
         <i class="*:size-4" v-html="icons.tinAdd"></i>

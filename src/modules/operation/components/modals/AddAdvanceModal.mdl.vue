@@ -104,7 +104,7 @@
         <div
           v-for="(_, index) in fuelAdvancesList"
           :key="'fuel-' + index"
-          class="border border-gray-200 p-4 rounded-lg flex flex-col gap-4 relative"
+          class="border border-line p-4 rounded-lg flex flex-col gap-4 relative"
         >
           <button
             v-if="fuelAdvancesList.length > 1"
@@ -182,7 +182,7 @@
         <div
           v-for="(_, index) in perDiemExpensesList"
           :key="'pd-' + index"
-          class="border border-gray-200 p-4 rounded-lg flex flex-col gap-4 relative"
+          class="border border-line p-4 rounded-lg flex flex-col gap-4 relative"
         >
           <button
             v-if="perDiemExpensesList.length > 1"
@@ -240,7 +240,7 @@
         <div
           v-for="(_, index) in otherExpensesList"
           :key="'other-' + index"
-          class="border border-gray-200 p-4 rounded-lg flex flex-col gap-4 relative"
+          class="border border-line p-4 rounded-lg flex flex-col gap-4 relative"
         >
           <button
             v-if="otherExpensesList.length > 1"

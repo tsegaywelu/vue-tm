@@ -199,7 +199,7 @@ onUnmounted(() =>
             </div>
             <div class="py-1">
               <button
-                class="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                class="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-surface-hover transition-colors"
                 @click.stop="handleChangePassword"
               >
                 <svg

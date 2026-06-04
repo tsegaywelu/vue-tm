@@ -37,7 +37,7 @@
             @click="selectHour(h)"
             :class="[
               'w-10 h-10 flex items-center justify-center rounded-lg transition-colors text-sm',
-              hours === h ? 'bg-primary text-white' : 'hover:bg-gray-50 text-gray-800',
+              hours === h ? 'bg-primary text-white' : 'hover:bg-surface-hover text-gray-800',
             ]"
           >
             {{ h.toString().padStart(2, '0') }}
@@ -58,7 +58,7 @@
             @click="selectMinute(m)"
             :class="[
               'w-10 h-10 flex items-center justify-center rounded-lg transition-colors text-sm',
-              minutes === m ? 'bg-primary text-white' : 'hover:bg-gray-50 text-gray-800',
+              minutes === m ? 'bg-primary text-white' : 'hover:bg-surface-hover text-gray-800',
             ]"
           >
             {{ m.toString().padStart(2, '0') }}

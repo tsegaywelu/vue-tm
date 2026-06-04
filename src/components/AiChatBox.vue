@@ -227,7 +227,7 @@ function onKeydown(e: KeyboardEvent) {
     <!-- Input -->
     <div class="px-3 py-3 border-t border-gray-100 shrink-0">
       <div
-        class="flex items-end gap-2 bg-gray-50 rounded-xl border border-gray-200 px-3 py-2 focus-within:border-primary transition-colors"
+        class="flex items-end gap-2 bg-gray-50 rounded-xl border border-line px-3 py-2 focus-within:border-primary transition-colors"
       >
         <textarea
           v-model="inputText"

@@ -151,7 +151,7 @@ function remove(id: string) {
                     >Total Price</label
                   >
                   <div
-                    class="h-12 px-4 flex items-center bg-surface rounded-xl border border-gray-200 text-gray-900 font-bold"
+                    class="h-12 px-4 flex items-center bg-surface rounded-xl border border-line text-gray-900 font-bold"
                   >
                     {{
                       currencyFormatter(

@@ -108,7 +108,7 @@ function getPreviewUrl(file: any) {
         <!-- Image Only / Avatar Mode -->
         <div v-if="imageOnly" class="relative group w-fit">
           <div
-            class="size-24 rounded-2xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center overflow-hidden transition-all bg-gray-50/50 hover:border-primary/50 hover:bg-gray-50"
+            class="size-24 rounded-2xl border-2 border-dashed border-line flex flex-col items-center justify-center overflow-hidden transition-all bg-gray-50/50 hover:border-primary/50 hover:bg-surface-hover"
             :class="[
               isDragging ? 'border-primary bg-primary/5' : '',
               field.state.value ? 'border-solid border-primary/20' : '',
@@ -168,7 +168,7 @@ function getPreviewUrl(file: any) {
           :class="[
             isDragging
               ? 'border-primary bg-primary/5'
-              : 'border-gray-200 hover:border-primary/50 hover:bg-gray-50/50',
+              : 'border-line hover:border-primary/50 hover:bg-surface-hover/50',
           ]"
           @dragover.prevent="isDragging = true"
           @dragleave.prevent="isDragging = false"

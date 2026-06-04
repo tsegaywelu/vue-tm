@@ -70,7 +70,7 @@
             <label
               v-for="action in getActionsForSubject(subject)"
               :key="action"
-              class="flex items-center gap-2 px-2 py-1.5 rounded-lg border border-gray-50 hover:bg-gray-50 cursor-pointer transition-all"
+              class="flex items-center gap-2 px-2 py-1.5 rounded-lg border border-gray-50 hover:bg-surface-hover cursor-pointer transition-all"
             >
               <input
                 type="checkbox"

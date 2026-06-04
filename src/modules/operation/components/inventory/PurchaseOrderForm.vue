@@ -61,7 +61,7 @@
         <template #default="[pr]">
           <div
             v-if="!pr"
-            class="py-10 text-center border-2 border-dashed border-gray-200 rounded-2xl text-gray-400"
+            class="py-10 text-center border-2 border-dashed border-line rounded-2xl text-gray-400"
           >
             Select a Purchase Requisition to see items
           </div>

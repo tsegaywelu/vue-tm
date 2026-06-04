@@ -19,44 +19,44 @@
     </template>
 
     <template #cell-totalAmount="{ value }">
-      <span class="font-bold text-gray-900">
+      <span class="font-bold text-base-text">
         {{ currencyFormatter(value) }}
       </span>
     </template>
 
     <template #cell-shipperName="{ row }">
-      <span class="font-medium text-gray-700">
+      <span class="font-medium text-dim-text">
         {{ row.shipper?.name || "-" }}
       </span>
     </template>
 
     <template #cell-paymentRequestedDate="{ value }">
-      <span class="text-sm text-gray-600">
+      <span class="text-sm text-dim-text">
         {{ dateFormatter(value) }}
       </span>
     </template>
 
     <template #cell-paymentRequestedBy="{ row }">
-      <span class="font-medium text-gray-700">
+      <span class="font-medium text-dim-text">
         {{ row.paymentRequestedBy?.username || "-" }}
       </span>
     </template>
 
     <template #cell-paymentApprovedBy="{ row }">
-      <span class="font-medium text-gray-700">
+      <span class="font-medium text-dim-text">
         {{ row.paymentApprovedBy?.username || "-" }}
       </span>
     </template>
 
     <template #cell-paymentCollectedBy="{ row }">
-      <span class="font-medium text-gray-700">
+      <span class="font-medium text-dim-text">
         {{ row.paymentCollectedByCarrier?.username || "-" }}
       </span>
     </template>
 
     <template #cell-remark="{ row }">
       <span
-        class="text-sm text-gray-600 truncate max-w-[150px] inline-block"
+        class="text-sm text-dim-text truncate max-w-[150px] inline-block"
         :title="row.remarkCarrier || row.remark || '-'"
       >
         {{ row.remarkCarrier || row.remark || "-" }}

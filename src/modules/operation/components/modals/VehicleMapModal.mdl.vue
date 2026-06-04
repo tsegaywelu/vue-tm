@@ -72,7 +72,7 @@
         >
           <div class="flex flex-col items-center gap-3">
             <div
-              class="size-10 border-4 border-gray-200 border-t-orange-500 rounded-full animate-spin"
+              class="size-10 border-4 border-line border-t-orange-500 rounded-full animate-spin"
             ></div>
             <span class="text-sm text-gray-500 font-medium"
               >Loading route data…</span

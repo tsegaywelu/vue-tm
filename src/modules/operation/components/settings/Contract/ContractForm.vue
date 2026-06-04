@@ -275,7 +275,7 @@ function removeRouteFromContract(idx: number) {
       </div>
 
       <!-- Waypoints area -->
-      <div class="pt-4 border-t border-gray-200">
+      <div class="pt-4 border-t border-line">
         <div
           v-if="routeLoading"
           class="flex items-center justify-center gap-3 py-8 text-sm text-gray-400"
@@ -330,7 +330,7 @@ function removeRouteFromContract(idx: number) {
   >
     <div
       v-if="addedRoutes.length > 0"
-      class="bg-gray-50 p-6 rounded-lg border border-gray-200"
+      class="bg-gray-50 p-6 rounded-lg border border-line"
     >
       <h3 class="text-sm font-semibold text-gray-800 mb-4">Added Routes</h3>
       <div

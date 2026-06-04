@@ -4,14 +4,14 @@
     <Teleport to="#page-title-actions" defer>
       <button
         v-if="activeTab === 'driverAdvances'"
-        class="sm:hidden size-8 rounded-xl border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors"
+        class="sm:hidden size-8 rounded-xl border border-line flex items-center justify-center text-faint-text hover:bg-surface-hover transition-colors"
         @click="$router.push('/operation/advance-summary')"
       >
         <i class="*:size-4" v-html="icons.file"></i>
       </button>
       <button
         v-else-if="activeTab === 'transporterAdvances'"
-        class="sm:hidden size-8 rounded-xl border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors"
+        class="sm:hidden size-8 rounded-xl border border-line flex items-center justify-center text-faint-text hover:bg-surface-hover transition-colors"
         @click="$router.push('/operation/prepayment-summary')"
       >
         <i class="*:size-4" v-html="icons.file"></i>

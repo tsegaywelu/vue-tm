@@ -67,7 +67,7 @@ const FlowColumn = {
         { class: "flex flex-col gap-1" },
         props.steps.map((step, i) =>
           h("div", { key: i, class: "flex flex-col" }, [
-            h("div", { class: "flex items-center gap-2 py-1.5 px-2 rounded-lg hover:bg-gray-50 transition-colors" }, [
+            h("div", { class: "flex items-center gap-2 py-1.5 px-2 rounded-lg hover:bg-surface-hover transition-colors" }, [
               h("div", {
                 class: "w-2 h-2 rounded-full flex-shrink-0",
                 style: { background: step.color },

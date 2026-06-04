@@ -37,16 +37,16 @@
         v-if="isPDF || isImage"
         class="flex justify-center items-center gap-2 py-3 border-b border-gray-100 bg-gray-50/50"
       >
-        <button @click="zoomIn" class="px-3 py-1.5 bg-white border border-gray-200 hover:bg-gray-50 rounded-lg text-sm font-medium transition-colors text-gray-700 shadow-sm flex items-center gap-1.5">
+        <button @click="zoomIn" class="px-3 py-1.5 bg-white border border-line hover:bg-surface-hover rounded-lg text-sm font-medium transition-colors text-gray-700 shadow-sm flex items-center gap-1.5">
           <span class="text-lg leading-none">+</span><span class="hidden sm:inline">Zoom In</span>
         </button>
-        <button @click="zoomOut" class="px-3 py-1.5 bg-white border border-gray-200 hover:bg-gray-50 rounded-lg text-sm font-medium transition-colors text-gray-700 shadow-sm flex items-center gap-1.5">
+        <button @click="zoomOut" class="px-3 py-1.5 bg-white border border-line hover:bg-surface-hover rounded-lg text-sm font-medium transition-colors text-gray-700 shadow-sm flex items-center gap-1.5">
           <span class="text-lg leading-none">−</span><span class="hidden sm:inline">Zoom Out</span>
         </button>
-        <button @click="rotate" class="px-3 py-1.5 bg-white border border-gray-200 hover:bg-gray-50 rounded-lg text-sm font-medium transition-colors text-gray-700 shadow-sm flex items-center gap-1.5">
+        <button @click="rotate" class="px-3 py-1.5 bg-white border border-line hover:bg-surface-hover rounded-lg text-sm font-medium transition-colors text-gray-700 shadow-sm flex items-center gap-1.5">
           <span>↻</span><span class="hidden sm:inline">Rotate</span>
         </button>
-        <button @click="reset" class="px-3 py-1.5 bg-white border border-gray-200 hover:bg-gray-50 rounded-lg text-sm font-medium transition-colors text-gray-700 shadow-sm flex items-center gap-1.5">
+        <button @click="reset" class="px-3 py-1.5 bg-white border border-line hover:bg-surface-hover rounded-lg text-sm font-medium transition-colors text-gray-700 shadow-sm flex items-center gap-1.5">
           <span>↺</span><span class="hidden sm:inline">Reset</span>
         </button>
       </div>
@@ -58,7 +58,7 @@
           v-if="totalFiles > 1"
           @click="prev"
           :disabled="currentIndex === 0"
-          class="absolute left-4 z-10 bg-white/90 hover:bg-white border border-gray-200 rounded-full p-2 shadow-md transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+          class="absolute left-4 z-10 bg-white/90 hover:bg-white border border-line rounded-full p-2 shadow-md transition-all disabled:opacity-30 disabled:cursor-not-allowed"
         >
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
@@ -70,7 +70,7 @@
           v-if="totalFiles > 1"
           @click="next"
           :disabled="currentIndex === totalFiles - 1"
-          class="absolute right-4 z-10 bg-white/90 hover:bg-white border border-gray-200 rounded-full p-2 shadow-md transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+          class="absolute right-4 z-10 bg-white/90 hover:bg-white border border-line rounded-full p-2 shadow-md transition-all disabled:opacity-30 disabled:cursor-not-allowed"
         >
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />

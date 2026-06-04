@@ -116,7 +116,7 @@
             </div>
 
             <div
-              class="mt-4 pt-4 border-t border-gray-200 w-full flex flex-col items-end"
+              class="mt-4 pt-4 border-t border-line w-full flex flex-col items-end"
             >
               <div
                 class="text-[10px] text-primary uppercase font-black tracking-[0.2em] mb-1"

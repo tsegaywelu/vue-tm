@@ -37,7 +37,7 @@
               v-model="routeSearch"
               type="text"
               placeholder="Filter by route..."
-              class="pl-8 pr-3 py-2 text-sm border border-gray-200 rounded-xl bg-surface focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 w-full sm:w-48"
+              class="pl-8 pr-3 py-2 text-sm border border-line rounded-xl bg-surface focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 w-full sm:w-48"
             />
           </div>
           <Button variant="primary" size="md" class="shrink-0" @click="openAddRouteModal">
@@ -53,7 +53,7 @@
           class="relative bg-surface rounded-[32px] p-6 shadow-sm border border-gray-100 flex flex-col gap-6"
         >
           <!-- Icon actions -->
-          <div class="absolute top-4 right-4 flex items-center gap-1 bg-surface/60 backdrop-blur-sm rounded-lg p-1 border border-gray-200/50 shadow-sm z-10">
+          <div class="absolute top-4 right-4 flex items-center gap-1 bg-surface/60 backdrop-blur-sm rounded-lg p-1 border border-line/50 shadow-sm z-10">
             <button
               type="button"
               class="flex items-center justify-center size-8 rounded-md hover:bg-surface text-gray-600 transition-colors shadow-sm"
@@ -100,7 +100,7 @@
                 <span
                   v-for="c in routeObj.commodities"
                   :key="c._id"
-                  class="px-2 py-0.5 bg-surface border border-gray-200 rounded-lg text-[10px] font-medium text-gray-700"
+                  class="px-2 py-0.5 bg-surface border border-line rounded-lg text-[10px] font-medium text-gray-700"
                 >
                   {{ c.name }}
                 </span>
@@ -113,7 +113,7 @@
                 <span
                   v-for="p in routeObj.packagings"
                   :key="p._id"
-                  class="px-2 py-0.5 bg-surface border border-gray-200 rounded-lg text-[10px] font-medium text-gray-700"
+                  class="px-2 py-0.5 bg-surface border border-line rounded-lg text-[10px] font-medium text-gray-700"
                 >
                   {{ p.name }}
                 </span>

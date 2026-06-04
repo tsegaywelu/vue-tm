@@ -10,7 +10,7 @@
     @row_click="(row) => handleAction(row, 'view')"
   >
     <template #search-prefix>
-      <div class="hidden sm:flex h-full items-center border-r border-gray-200 pr-2 mr-2 w-48">
+      <div class="hidden sm:flex h-full items-center border-r border-line pr-2 mr-2 w-48">
         <SearchFieldSelect
           v-model="selectedSearchField"
           pagination-id="purchase-requisitions-list"

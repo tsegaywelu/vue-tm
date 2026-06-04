@@ -1,8 +1,8 @@
 <template>
   <div class="flex flex-col gap-6">
-    <div class="bg-grey-25 rounded-3xl p-6 border border-grey-100">
+    <div class="bg-surface-muted rounded-3xl p-6 border border-line">
       <div class="flex items-center justify-between mb-6">
-        <h3 class="text-lg font-bold text-grey-900">Driver Documents</h3>
+        <h3 class="text-lg font-bold text-base-text">Driver Documents</h3>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

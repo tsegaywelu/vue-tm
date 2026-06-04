@@ -33,7 +33,7 @@
     @row_click="(row) => $router.push(`/vehicles/${row._id}`)"
   >
     <template #search-prefix>
-      <div class="h-full hidden sm:flex items-center border-r border-gray-200 pr-2 mr-2 w-48">
+      <div class="h-full hidden sm:flex items-center border-r border-line pr-2 mr-2 w-48">
         <SearchFieldSelect
           v-model="selectedSearchField"
           pagination-id="vehicle-list"

@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col gap-4">
     <!-- Title row toggle -->
-    <div class="rounded-xl border border-gray-200 bg-white p-4 flex flex-col gap-3">
+    <div class="rounded-xl border border-line bg-white p-4 flex flex-col gap-3">
       <div class="flex items-center justify-between">
         <span class="text-sm font-semibold text-gray-700">Title Row</span>
         <label class="relative inline-flex items-center cursor-pointer">
@@ -15,7 +15,7 @@
           :value="modelValue.titleRow.text"
           type="text"
           placeholder="Title text"
-          class="text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-300"
+          class="text-sm border border-line rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-300"
           @input="update('titleRow', { ...modelValue.titleRow, text: ($event.target as HTMLInputElement).value })"
         />
         <StyleRow :modelValue="modelValue.titleRow.style" @update:modelValue="update('titleRow', { ...modelValue.titleRow, style: $event })" />
@@ -23,10 +23,10 @@
     </div>
 
     <!-- Metadata rows builder -->
-    <div class="rounded-xl border border-gray-200 bg-white overflow-hidden">
+    <div class="rounded-xl border border-line bg-white overflow-hidden">
       <!-- Section header (always visible) -->
       <button
-        class="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-50 transition-colors"
+        class="w-full flex items-center justify-between px-4 py-3 hover:bg-surface-hover transition-colors"
         @click="metaOpen = !metaOpen"
       >
         <span class="text-sm font-semibold text-gray-700">Metadata Rows</span>
@@ -79,7 +79,7 @@
           </div>
 
           <!-- Row details (collapsible) -->
-          <div v-show="expandedRows.has(row.id)" class="px-3 pb-3 flex flex-col gap-2 border-t border-gray-200">
+          <div v-show="expandedRows.has(row.id)" class="px-3 pb-3 flex flex-col gap-2 border-t border-line">
             <!-- Label text + value source -->
             <div class="grid grid-cols-2 gap-2 pt-2">
               <div class="flex flex-col gap-1">
@@ -88,7 +88,7 @@
                   :value="row.labelText"
                   type="text"
                   placeholder="Label"
-                  class="text-xs border border-gray-200 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-primary-300"
+                  class="text-xs border border-line rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-primary-300"
                   @input="updateMetaRow(idx, 'labelText', ($event.target as HTMLInputElement).value)"
                 />
               </div>
@@ -96,7 +96,7 @@
                 <label class="text-[10px] text-gray-400 uppercase tracking-wide">Value Source</label>
                 <select
                   :value="row.valueSource"
-                  class="text-xs border border-gray-200 rounded-lg px-2 py-1.5 bg-white focus:outline-none focus:ring-2 focus:ring-primary-300"
+                  class="text-xs border border-line rounded-lg px-2 py-1.5 bg-white focus:outline-none focus:ring-2 focus:ring-primary-300"
                   @change="updateMetaRow(idx, 'valueSource', ($event.target as HTMLSelectElement).value)"
                 >
                   <option value="transporterName">Transporter Name</option>
@@ -116,7 +116,7 @@
                 :value="row.customValue"
                 type="text"
                 placeholder="Static text value"
-                class="text-xs border border-gray-200 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-primary-300"
+                class="text-xs border border-line rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-primary-300"
                 @input="updateMetaRow(idx, 'customValue', ($event.target as HTMLInputElement).value)"
               />
             </div>
@@ -130,7 +130,7 @@
                   type="number"
                   min="1"
                   max="20"
-                  class="text-xs border border-gray-200 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-primary-300"
+                  class="text-xs border border-line rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-primary-300"
                   @input="updateMetaRow(idx, 'colspanLabel', Number(($event.target as HTMLInputElement).value))"
                 />
               </div>
@@ -142,7 +142,7 @@
                   type="number"
                   min="0"
                   max="20"
-                  class="text-xs border border-gray-200 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-primary-300 disabled:opacity-40"
+                  class="text-xs border border-line rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-primary-300 disabled:opacity-40"
                   @input="updateMetaRow(idx, 'colspanValue', Number(($event.target as HTMLInputElement).value))"
                 />
               </div>
@@ -156,7 +156,7 @@
                 type="number"
                 min="1"
                 max="10"
-                class="text-xs border border-gray-200 rounded-lg px-2 py-1.5 w-24 focus:outline-none focus:ring-2 focus:ring-primary-300"
+                class="text-xs border border-line rounded-lg px-2 py-1.5 w-24 focus:outline-none focus:ring-2 focus:ring-primary-300"
                 @input="updateMetaRow(idx, 'rowspanLabel', Number(($event.target as HTMLInputElement).value))"
               />
             </div>
@@ -168,7 +168,7 @@
                 <div class="flex items-center gap-1.5">
                   <span class="text-[10px] text-gray-400 w-6 shrink-0">BG</span>
                   <input type="color" :value="metaHex(row.labelStyle?.bgColor)"
-                    class="w-6 h-6 rounded cursor-pointer border border-gray-200 p-0"
+                    class="w-6 h-6 rounded cursor-pointer border border-line p-0"
                     @change="updateMetaStyle(idx, 'labelStyle', 'bgColor', inputToHex(($event.target as HTMLInputElement).value))" />
                   <button v-if="row.labelStyle?.bgColor" class="text-[10px] text-gray-400 hover:text-red-400"
                     @click="updateMetaStyle(idx, 'labelStyle', 'bgColor', '')">×</button>
@@ -176,7 +176,7 @@
                 <div class="flex items-center gap-1.5">
                   <span class="text-[10px] text-gray-400 w-7 shrink-0">Text</span>
                   <input type="color" :value="metaHex(row.labelStyle?.color)"
-                    class="w-6 h-6 rounded cursor-pointer border border-gray-200 p-0"
+                    class="w-6 h-6 rounded cursor-pointer border border-line p-0"
                     @change="updateMetaStyle(idx, 'labelStyle', 'color', inputToHex(($event.target as HTMLInputElement).value))" />
                   <button v-if="row.labelStyle?.color" class="text-[10px] text-gray-400 hover:text-red-400"
                     @click="updateMetaStyle(idx, 'labelStyle', 'color', '')">×</button>
@@ -184,7 +184,7 @@
                 <div class="flex items-center gap-1.5">
                   <span class="text-[10px] text-gray-400 w-6 shrink-0">Size</span>
                   <input type="number" min="6" max="24" :value="row.labelStyle?.fontSize ?? ''" placeholder="—"
-                    class="w-12 text-xs border border-gray-200 rounded px-1.5 py-0.5 focus:outline-none focus:ring-1 focus:ring-primary-300"
+                    class="w-12 text-xs border border-line rounded px-1.5 py-0.5 focus:outline-none focus:ring-1 focus:ring-primary-300"
                     @input="updateMetaStyle(idx, 'labelStyle', 'fontSize', Number(($event.target as HTMLInputElement).value) || '')" />
                 </div>
               </div>
@@ -197,7 +197,7 @@
                 <div class="flex items-center gap-1.5">
                   <span class="text-[10px] text-gray-400 w-6 shrink-0">BG</span>
                   <input type="color" :value="metaHex(row.valueStyle?.bgColor)"
-                    class="w-6 h-6 rounded cursor-pointer border border-gray-200 p-0"
+                    class="w-6 h-6 rounded cursor-pointer border border-line p-0"
                     @change="updateMetaStyle(idx, 'valueStyle', 'bgColor', inputToHex(($event.target as HTMLInputElement).value))" />
                   <button v-if="row.valueStyle?.bgColor" class="text-[10px] text-gray-400 hover:text-red-400"
                     @click="updateMetaStyle(idx, 'valueStyle', 'bgColor', '')">×</button>
@@ -205,7 +205,7 @@
                 <div class="flex items-center gap-1.5">
                   <span class="text-[10px] text-gray-400 w-7 shrink-0">Text</span>
                   <input type="color" :value="metaHex(row.valueStyle?.color)"
-                    class="w-6 h-6 rounded cursor-pointer border border-gray-200 p-0"
+                    class="w-6 h-6 rounded cursor-pointer border border-line p-0"
                     @change="updateMetaStyle(idx, 'valueStyle', 'color', inputToHex(($event.target as HTMLInputElement).value))" />
                   <button v-if="row.valueStyle?.color" class="text-[10px] text-gray-400 hover:text-red-400"
                     @click="updateMetaStyle(idx, 'valueStyle', 'color', '')">×</button>
@@ -213,7 +213,7 @@
                 <div class="flex items-center gap-1.5">
                   <span class="text-[10px] text-gray-400 w-6 shrink-0">Size</span>
                   <input type="number" min="6" max="24" :value="row.valueStyle?.fontSize ?? ''" placeholder="—"
-                    class="w-12 text-xs border border-gray-200 rounded px-1.5 py-0.5 focus:outline-none focus:ring-1 focus:ring-primary-300"
+                    class="w-12 text-xs border border-line rounded px-1.5 py-0.5 focus:outline-none focus:ring-1 focus:ring-primary-300"
                     @input="updateMetaStyle(idx, 'valueStyle', 'fontSize', Number(($event.target as HTMLInputElement).value) || '')" />
                 </div>
               </div>
@@ -230,7 +230,7 @@
     <StyleSection title="Total Row" :modelValue="modelValue.styles.totalRow" @update:modelValue="updateStyle('totalRow', $event)" />
 
     <!-- Total row config -->
-    <div class="rounded-xl border border-gray-200 bg-white p-4 flex flex-col gap-3">
+    <div class="rounded-xl border border-line bg-white p-4 flex flex-col gap-3">
       <span class="text-sm font-semibold text-gray-700">Total Row</span>
 
       <div class="flex flex-col gap-1">
@@ -239,7 +239,7 @@
           :value="totalRowLabel"
           type="text"
           placeholder="e.g. TOTAL"
-          class="text-xs border border-gray-200 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-primary-300"
+          class="text-xs border border-line rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-primary-300"
           @input="setTotalLabel(($event.target as HTMLInputElement).value)"
         />
       </div>
@@ -415,13 +415,13 @@ const StyleRow = defineComponent({
             value: p.modelValue.fontSize ?? 10,
             min: 8,
             max: 24,
-            class: "w-14 border border-gray-200 rounded px-1.5 py-0.5 text-xs",
+            class: "w-14 border border-line rounded px-1.5 py-0.5 text-xs",
             onInput: (ev: any) => upd("fontSize", Number(ev.target.value)),
           }),
         ]),
         h("select", {
           value: p.modelValue.align ?? "left",
-          class: "text-xs border border-gray-200 rounded px-1.5 py-0.5",
+          class: "text-xs border border-line rounded px-1.5 py-0.5",
           onChange: (ev: any) => upd("align", ev.target.value),
         }, [
           h("option", { value: "left" }, "Left"),
@@ -440,7 +440,7 @@ const StyleSection = defineComponent({
   emits: ["update:modelValue"],
   setup(p, { emit: e, slots }) {
     return () =>
-      h("div", { class: "rounded-xl border border-gray-200 bg-white p-4 flex flex-col gap-3" }, [
+      h("div", { class: "rounded-xl border border-line bg-white p-4 flex flex-col gap-3" }, [
         h("span", { class: "text-sm font-semibold text-gray-700" }, p.title),
         h(StyleRow, { modelValue: p.modelValue, "onUpdate:modelValue": (v: CellStyle) => e("update:modelValue", v) }),
         slots.extra?.(),

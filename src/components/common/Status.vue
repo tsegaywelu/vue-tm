@@ -157,7 +157,7 @@ const statusStyles = computed(() => {
 
   // Default fallback
   return {
-    class: `${baseClass} border-gray-200 bg-gray-50 text-gray-500`,
+    class: `${baseClass} border-line bg-gray-50 text-gray-500`,
     dotColor: "#6b7280",
   };
 });

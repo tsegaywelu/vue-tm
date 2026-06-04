@@ -2,29 +2,29 @@
   <div class="h-full flex flex-col gap-4">
     <!-- Header Section -->
     <div
-      class="bg-surface flex flex-col md:flex-row md:items-center justify-between px-3 md:px-4 py-4 md:py-3 rounded-[20px] gap-4 shadow-sm border border-gray-100"
+      class="bg-surface flex flex-col md:flex-row md:items-center justify-between px-3 md:px-4 py-4 md:py-3 rounded-[20px] gap-4 shadow-sm border border-line"
     >
       <div class="flex flex-col gap-2 flex-1">
-        <h1 class="font-bold text-lg md:text-2xl leading-tight text-gray-900">
+        <h1 class="font-bold text-lg md:text-2xl leading-tight text-base-text">
           {{ shipment?.route?.origin || "-------" }}, ET →
           {{ shipment?.route?.destination || "-------" }}, ET
         </h1>
         <div class="flex flex-col md:flex-row md:items-center gap-1 md:gap-4">
-          <span class="text-sm text-gray-600">
+          <span class="text-sm text-dim-text">
             Shipment Reference
-            <span class="font-bold text-black text-sm ml-1">
+            <span class="font-bold text-base-text text-sm ml-1">
               {{ shipment?.shipmentCode }}
             </span>
           </span>
-          <span v-if="shipment?.shipper?.name" class="text-sm text-gray-600">
+          <span v-if="shipment?.shipper?.name" class="text-sm text-dim-text">
             Shipper
-            <span class="font-bold text-black text-sm ml-1">
+            <span class="font-bold text-base-text text-sm ml-1">
               {{ shipment?.shipper?.name }}
             </span>
           </span>
-          <span v-if="shipment?.orderCode" class="text-sm text-gray-600">
+          <span v-if="shipment?.orderCode" class="text-sm text-dim-text">
             Order
-            <span class="font-bold text-black text-sm ml-1">
+            <span class="font-bold text-base-text text-sm ml-1">
               {{ shipment?.orderCode }}
             </span>
           </span>
@@ -50,11 +50,11 @@
             </Status>
           </div>
           <span
-            class="text-xs md:text-sm text-gray-600"
+            class="text-xs md:text-sm text-dim-text"
             v-if="shipment?.dispatchDate"
           >
             Dispatch Date
-            <span class="font-bold text-black ml-1">
+            <span class="font-bold text-base-text ml-1">
               {{ dateFormatter(shipment?.dispatchDate) }}
             </span>
           </span>

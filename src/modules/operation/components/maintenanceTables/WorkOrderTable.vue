@@ -1,7 +1,7 @@
 <template>
   <Teleport defer to="#page-title-actions">
     <button
-      class="sm:hidden size-8 rounded-xl border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors"
+      class="sm:hidden size-8 rounded-xl border border-line flex items-center justify-center text-faint-text hover:bg-surface-hover transition-colors"
       @click="showSearchSheet = true"
     >
       <i class="*:size-4" v-html="icons.filterOptions"></i>
@@ -14,7 +14,7 @@
         v-for="option in searchFieldOptions"
         :key="option.value"
         class="flex items-center gap-3 p-3 rounded-xl text-left transition-colors"
-        :class="selectedSearchField === option.value ? 'bg-primary/10 text-primary font-medium' : 'hover:bg-gray-50'"
+        :class="selectedSearchField === option.value ? 'bg-primary/10 text-primary font-medium' : 'hover:bg-surface-hover'"
         @click="selectedSearchField = option.value; showSearchSheet = false"
       >
         {{ option.label }}
@@ -52,7 +52,7 @@
     :on_sm_screen_column_span="{ vehicle: 2, date: 2, statusAction: 3 }"
   >
     <template #search-prefix>
-      <div class="h-full hidden sm:flex items-center border-r border-gray-200 pr-2 mr-2">
+      <div class="h-full hidden sm:flex items-center border-r border-line pr-2 mr-2">
         <Select
           class="[&_.input-focus]:shadow-none! [&_.input-focus]:border-none [&_.input-focus]:min-h-full min-w-48"
           v-model="selectedSearchField"

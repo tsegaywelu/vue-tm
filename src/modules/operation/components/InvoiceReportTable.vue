@@ -11,9 +11,8 @@
   >
     <template #after-search>
       <div
-        class="items-center gap-4 hidden sm:flex border-l border-grey-100 overflow-x-auto px-3"
+        class="items-center gap-4 flex overflow-x-auto"
       >
-        <i v-html="icons.filter" />
         <InvoiceReportFilters
           @change="handleFilterChange"
           pagination-id="invoice-report-list"
@@ -31,19 +30,19 @@
     </template>
 
     <template #cell-totalAmount="{ value }">
-      <span class="font-bold text-gray-900">
+      <span class="font-bold text-base-text">
         {{ currencyFormatter(value) }}
       </span>
     </template>
 
     <template #cell-paymentRequestedDate="{ value }">
-      <span class="text-sm text-gray-600">
+      <span class="text-sm text-dim-text">
         {{ dateFormatter(value) }}
       </span>
     </template>
 
     <template #cell-paymentRequestedBy="{ row }">
-      <span class="font-medium text-gray-700">
+      <span class="font-medium text-dim-text">
         {{ row.paymentRequestedBy?.username || "-" }}
       </span>
     </template>

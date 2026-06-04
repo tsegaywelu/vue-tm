@@ -263,7 +263,7 @@
           <tr
             v-for="(s, i) in invoice?.shipments || []"
             :key="s._id"
-            class="cursor-pointer hover:bg-gray-50"
+            class="cursor-pointer hover:bg-surface-muted"
             @click="$router.push(`/operation/shipments/${s._id}`)"
           >
             <td
@@ -721,7 +721,7 @@
           <tr
             v-for="(s, i) in invoice?.shipments || []"
             :key="s._id"
-            class="cursor-pointer hover:bg-gray-50"
+            class="cursor-pointer hover:bg-surface-muted"
             @click="$router.push(`/operation/shipments/${s._id}`)"
           >
             <td
@@ -946,7 +946,7 @@
 
     <!-- ======================== SCREEN LAYOUT (hidden on print) ======================== -->
     <div
-      class="rounded-2xl px-3 md:px-5 py-6 bg-surface flex flex-col gap-8 shadow-sm border border-gray-100 print:hidden"
+      class="rounded-2xl px-3 md:px-5 py-6 bg-surface flex flex-col gap-8 shadow-sm border border-line print:hidden"
     >
       <!-- Summary cards -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -1005,218 +1005,218 @@
       <!-- Associated Shipments table -->
       <div class="flex flex-col gap-4">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-1">
-          <h3 class="text-lg font-bold text-gray-900">Associated Shipments</h3>
+          <h3 class="text-lg font-bold text-base-text">Associated Shipments</h3>
           <div class="relative w-full sm:w-64">
             <i
-              class="mdi mdi-magnify absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xl"
+              class="mdi mdi-magnify absolute left-3 top-1/2 -translate-y-1/2 text-faint-text text-xl"
             ></i>
             <input
               v-model="searchQuery"
               type="text"
-              class="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm transition-shadow"
+              class="w-full pl-10 pr-4 py-2 border border-line rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm transition-shadow"
               placeholder="Search shipments..."
             />
           </div>
         </div>
 
         <!-- Mobile card list -->
-        <div class="sm:hidden flex flex-col divide-y divide-gray-100 rounded-xl border border-gray-200 bg-white overflow-hidden">
-          <div v-if="!filteredShipments.length" class="px-4 py-10 text-center text-sm text-gray-500 italic">
+        <div class="sm:hidden flex flex-col divide-y divide-line rounded-xl border border-line bg-surface overflow-hidden">
+          <div v-if="!filteredShipments.length" class="px-4 py-10 text-center text-sm text-dim-text italic">
             {{ searchQuery ? "No shipments match your search." : "No shipments associated with this invoice." }}
           </div>
           <div
             v-for="(shipment, index) in filteredShipments"
             :key="shipment._id"
-            class="px-4 py-3 grid grid-cols-6 gap-x-2 gap-y-1.5 cursor-pointer hover:bg-gray-50 transition-colors"
+            class="px-4 py-3 grid grid-cols-6 gap-x-2 gap-y-1.5 cursor-pointer hover:bg-surface-muted transition-colors"
             @click="$router.push(`/operation/shipments/${shipment._id}`)"
           >
             <!-- Row: index + date -->
             <div class="col-span-1 flex items-center">
-              <span class="text-xs font-bold text-gray-400">#{{ index + 1 }}</span>
+              <span class="text-xs font-bold text-faint-text">#{{ index + 1 }}</span>
             </div>
             <div class="col-span-5 flex items-center justify-end">
-              <span class="text-xs text-gray-500">{{ formatDate(shipment.dispatchDate) }}</span>
+              <span class="text-xs text-dim-text">{{ formatDate(shipment.dispatchDate) }}</span>
             </div>
             <!-- Row: plate + amount -->
             <div class="col-span-3">
-              <span class="text-sm font-bold text-gray-900">{{ shipment.vehicle?.plateNumber || "-" }}</span>
-              <span v-if="shipment.vehicle?.trailerPlate" class="text-xs text-gray-400 ml-1">/ {{ shipment.vehicle.trailerPlate }}</span>
+              <span class="text-sm font-bold text-base-text">{{ shipment.vehicle?.plateNumber || "-" }}</span>
+              <span v-if="shipment.vehicle?.trailerPlate" class="text-xs text-faint-text ml-1">/ {{ shipment.vehicle.trailerPlate }}</span>
             </div>
             <div class="col-span-3 text-right">
               <span class="text-sm font-bold text-primary">{{ currencyFormatter(shipment.totalPrice || 0) }}</span>
             </div>
             <!-- Row: route -->
             <div class="col-span-6">
-              <span class="text-xs font-medium text-gray-600">{{ shipment.route?.origin || "-" }} → {{ shipment.route?.destination || "-" }}</span>
+              <span class="text-xs font-medium text-dim-text">{{ shipment.route?.origin || "-" }} → {{ shipment.route?.destination || "-" }}</span>
             </div>
             <!-- Row: driver -->
             <div v-if="shipment.driver || shipment.driverName" class="col-span-6">
-              <span class="text-xs text-gray-500">{{ formatDriverName(shipment.driverName || `${shipment.driver?.firstName || ''} ${shipment.driver?.lastName || ''}`) }}</span>
+              <span class="text-xs text-dim-text">{{ formatDriverName(shipment.driverName || `${shipment.driver?.firstName || ''} ${shipment.driver?.lastName || ''}`) }}</span>
             </div>
             <!-- IN_BOUND specific rows -->
             <template v-if="isInbound">
               <div v-if="shipment.agent?.name || shipment.productType" class="col-span-3">
-                <span class="text-xs text-gray-400 uppercase tracking-wide">Supplier</span>
-                <span class="text-xs text-gray-600 ml-1">{{ shipment.productType === 'SITE_TRANSFER' ? 'Site Transfer' : (shipment.agent?.name || '-') }}</span>
+                <span class="text-xs text-faint-text uppercase tracking-wide">Supplier</span>
+                <span class="text-xs text-dim-text ml-1">{{ shipment.productType === 'SITE_TRANSFER' ? 'Site Transfer' : (shipment.agent?.name || '-') }}</span>
               </div>
               <div v-if="shipment.vehicleTypeName" class="col-span-3 text-right">
-                <span class="text-xs text-gray-400 uppercase tracking-wide">Truck Type</span>
-                <span class="text-xs text-gray-600 ml-1">{{ formatVehicleType(shipment.vehicleTypeName) }}</span>
+                <span class="text-xs text-faint-text uppercase tracking-wide">Truck Type</span>
+                <span class="text-xs text-dim-text ml-1">{{ formatVehicleType(shipment.vehicleTypeName) }}</span>
               </div>
               <div v-if="shipment.order?.allocationNumber" class="col-span-3">
-                <span class="text-xs text-gray-400 uppercase tracking-wide">Alloc</span>
-                <span class="text-xs text-gray-600 ml-1">{{ shipment.order.allocationNumber }}</span>
+                <span class="text-xs text-faint-text uppercase tracking-wide">Alloc</span>
+                <span class="text-xs text-dim-text ml-1">{{ shipment.order.allocationNumber }}</span>
               </div>
               <div v-if="shipment.order?.totalRequest" class="col-span-3 text-right">
-                <span class="text-xs text-gray-400 uppercase tracking-wide">QTY</span>
-                <span class="text-xs text-gray-600 ml-1">{{ shipment.order.totalRequest }}</span>
+                <span class="text-xs text-faint-text uppercase tracking-wide">QTY</span>
+                <span class="text-xs text-dim-text ml-1">{{ shipment.order.totalRequest }}</span>
               </div>
               <div v-if="shipment.agentReceiveVoucher" class="col-span-6">
-                <span class="text-xs text-gray-400 uppercase tracking-wide">GRN</span>
-                <span class="text-xs text-gray-600 ml-1">{{ shipment.agentReceiveVoucher }}</span>
+                <span class="text-xs text-faint-text uppercase tracking-wide">GRN</span>
+                <span class="text-xs text-dim-text ml-1">{{ shipment.agentReceiveVoucher }}</span>
               </div>
             </template>
             <!-- OUT_BOUND specific rows -->
             <template v-else>
               <div v-if="shipment.order?.agent?.name" class="col-span-3">
-                <span class="text-xs text-gray-400 uppercase tracking-wide">Distributor</span>
-                <span class="text-xs text-gray-600 ml-1">{{ shipment.order.agent.name }}</span>
+                <span class="text-xs text-faint-text uppercase tracking-wide">Distributor</span>
+                <span class="text-xs text-dim-text ml-1">{{ shipment.order.agent.name }}</span>
               </div>
               <div class="col-span-3 text-right">
-                <span class="text-xs text-gray-400 uppercase tracking-wide">Ownership</span>
-                <span class="text-xs text-gray-600 ml-1">{{ shipment.vehicle?.ownership === 'Owned' ? 'Own' : 'Sub' }}</span>
+                <span class="text-xs text-faint-text uppercase tracking-wide">Ownership</span>
+                <span class="text-xs text-dim-text ml-1">{{ shipment.vehicle?.ownership === 'Owned' ? 'Own' : 'Sub' }}</span>
               </div>
               <div v-if="shipment.order?.totalRequest" class="col-span-3">
-                <span class="text-xs text-gray-400 uppercase tracking-wide">Loaded QTY</span>
-                <span class="text-xs text-gray-600 ml-1">{{ shipment.order.totalRequest }}</span>
+                <span class="text-xs text-faint-text uppercase tracking-wide">Loaded QTY</span>
+                <span class="text-xs text-dim-text ml-1">{{ shipment.order.totalRequest }}</span>
               </div>
               <div v-if="shipment.CKRFCode" class="col-span-3 text-right">
-                <span class="text-xs text-gray-400 uppercase tracking-wide">CKRF</span>
-                <span class="text-xs text-gray-600 ml-1">{{ shipment.CKRFCode }}</span>
+                <span class="text-xs text-faint-text uppercase tracking-wide">CKRF</span>
+                <span class="text-xs text-dim-text ml-1">{{ shipment.CKRFCode }}</span>
               </div>
               <div v-if="shipment.shipperIssueVoucher" class="col-span-6">
-                <span class="text-xs text-gray-400 uppercase tracking-wide">FPIV</span>
-                <span class="text-xs text-gray-600 ml-1">{{ shipment.shipperIssueVoucher }}</span>
+                <span class="text-xs text-faint-text uppercase tracking-wide">FPIV</span>
+                <span class="text-xs text-dim-text ml-1">{{ shipment.shipperIssueVoucher }}</span>
               </div>
               <div v-if="shipment.agentReceiveVoucher" class="col-span-6">
-                <span class="text-xs text-gray-400 uppercase tracking-wide">Receive Voucher</span>
-                <span class="text-xs text-gray-600 ml-1">{{ shipment.agentReceiveVoucher }}</span>
+                <span class="text-xs text-faint-text uppercase tracking-wide">Receive Voucher</span>
+                <span class="text-xs text-dim-text ml-1">{{ shipment.agentReceiveVoucher }}</span>
               </div>
               <template v-if="shipment.tripType === 'round_trip'">
                 <div v-if="shipment.agentIssueVoucher" class="col-span-6">
-                  <span class="text-xs text-gray-400 uppercase tracking-wide">Container Issue</span>
-                  <span class="text-xs text-gray-600 ml-1">{{ shipment.agentIssueVoucher }}</span>
+                  <span class="text-xs text-faint-text uppercase tracking-wide">Container Issue</span>
+                  <span class="text-xs text-dim-text ml-1">{{ shipment.agentIssueVoucher }}</span>
                 </div>
                 <div v-if="shipment.shipperReceiveVoucher" class="col-span-6">
-                  <span class="text-xs text-gray-400 uppercase tracking-wide">Container Receive</span>
-                  <span class="text-xs text-gray-600 ml-1">{{ shipment.shipperReceiveVoucher }}</span>
+                  <span class="text-xs text-faint-text uppercase tracking-wide">Container Receive</span>
+                  <span class="text-xs text-dim-text ml-1">{{ shipment.shipperReceiveVoucher }}</span>
                 </div>
               </template>
             </template>
             <!-- Remark (both types) -->
             <div v-if="shipment.remark" class="col-span-6">
-              <span class="text-xs text-gray-400 italic">{{ shipment.remark }}</span>
+              <span class="text-xs text-faint-text italic">{{ shipment.remark }}</span>
             </div>
           </div>
-          <div v-if="filteredShipments.length" class="px-4 py-3 bg-gray-50 flex items-center justify-between">
-            <span class="text-sm font-bold text-gray-700">TOTAL</span>
-            <span class="text-sm font-bold text-gray-900">{{ currencyFormatter(filteredShipments.reduce((sum: number, s: any) => sum + (s.totalPrice || 0), 0)) }}</span>
+          <div v-if="filteredShipments.length" class="px-4 py-3 bg-surface-muted flex items-center justify-between">
+            <span class="text-sm font-bold text-dim-text">TOTAL</span>
+            <span class="text-sm font-bold text-base-text">{{ currencyFormatter(filteredShipments.reduce((sum: number, s: any) => sum + (s.totalPrice || 0), 0)) }}</span>
           </div>
         </div>
 
         <!-- Desktop table -->
-        <div class="hidden sm:block overflow-x-auto rounded-xl border border-gray-200">
+        <div class="hidden sm:block overflow-x-auto rounded-xl border border-line">
           <!-- IN_BOUND / SITE_TRANSFER table -->
-          <table v-if="isInbound" class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
+          <table v-if="isInbound" class="min-w-full divide-y divide-line">
+            <thead class="bg-surface-muted">
               <tr>
                 <th
-                  class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider"
+                  class="px-4 py-3 text-left text-xs font-bold text-dim-text uppercase tracking-wider"
                 >
                   No
                 </th>
                 <th
-                  class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider"
+                  class="px-4 py-3 text-left text-xs font-bold text-dim-text uppercase tracking-wider"
                 >
                   Business Unit
                 </th>
                 <th
-                  class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider"
+                  class="px-4 py-3 text-left text-xs font-bold text-dim-text uppercase tracking-wider"
                 >
                   Date
                 </th>
                 <th
-                  class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider"
+                  class="px-4 py-3 text-left text-xs font-bold text-dim-text uppercase tracking-wider"
                 >
                   Allocation Num
                 </th>
                 <th
-                  class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider"
+                  class="px-4 py-3 text-left text-xs font-bold text-dim-text uppercase tracking-wider"
                 >
                   Material Type
                 </th>
                 <th
-                  class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider"
+                  class="px-4 py-3 text-left text-xs font-bold text-dim-text uppercase tracking-wider"
                 >
                   Truck Type
                 </th>
                 <th
-                  class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider"
+                  class="px-4 py-3 text-left text-xs font-bold text-dim-text uppercase tracking-wider"
                 >
                   Supplier Name
                 </th>
                 <th
-                  class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider"
+                  class="px-4 py-3 text-left text-xs font-bold text-dim-text uppercase tracking-wider"
                 >
                   Origin
                 </th>
                 <th
-                  class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider"
+                  class="px-4 py-3 text-left text-xs font-bold text-dim-text uppercase tracking-wider"
                 >
                   Destination
                 </th>
                 <th
-                  class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider"
+                  class="px-4 py-3 text-left text-xs font-bold text-dim-text uppercase tracking-wider"
                 >
                   Route
                 </th>
                 <th
-                  class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider"
+                  class="px-4 py-3 text-left text-xs font-bold text-dim-text uppercase tracking-wider"
                 >
                   Truck Plate Number
                 </th>
                 <th
-                  class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider"
+                  class="px-4 py-3 text-left text-xs font-bold text-dim-text uppercase tracking-wider"
                 >
                   Driver Name
                 </th>
                 <th
-                  class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider"
+                  class="px-4 py-3 text-left text-xs font-bold text-dim-text uppercase tracking-wider"
                 >
                   GRN
                 </th>
                 <th
-                  class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider"
+                  class="px-4 py-3 text-left text-xs font-bold text-dim-text uppercase tracking-wider"
                 >
                   QTY
                 </th>
                 <th
-                  class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider"
+                  class="px-4 py-3 text-left text-xs font-bold text-dim-text uppercase tracking-wider"
                 >
                   Tarrif
                 </th>
                 <th
-                  class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider"
+                  class="px-4 py-3 text-left text-xs font-bold text-dim-text uppercase tracking-wider"
                 >
                   Remark
                 </th>
               </tr>
             </thead>
-            <tbody class="bg-surface divide-y divide-gray-200">
+            <tbody class="bg-surface divide-y divide-line">
               <tr v-if="!filteredShipments.length">
                 <td
                   colspan="16"
-                  class="px-4 py-10 text-center text-sm text-gray-500 italic"
+                  class="px-4 py-10 text-center text-sm text-dim-text italic"
                 >
                   {{
                     searchQuery
@@ -1228,22 +1228,22 @@
               <tr
                 v-for="(shipment, index) in filteredShipments"
                 :key="shipment._id"
-                class="hover:bg-gray-50 transition-colors cursor-pointer"
+                class="hover:bg-surface-muted transition-colors cursor-pointer"
                 @click="$router.push(`/operation/shipments/${shipment._id}`)"
               >
-                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
+                <td class="px-4 py-3 whitespace-nowrap text-sm text-base-text">
                   {{ index + 1 }}
                 </td>
-                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                <td class="px-4 py-3 whitespace-nowrap text-sm text-dim-text">
                   {{ shipment.route?.destination || "-" }}
                 </td>
-                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                <td class="px-4 py-3 whitespace-nowrap text-sm text-dim-text">
                   {{ formatDate(shipment.dispatchDate) }}
                 </td>
-                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                <td class="px-4 py-3 whitespace-nowrap text-sm text-dim-text">
                   {{ shipment.order?.allocationNumber || "-" }}
                 </td>
-                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                <td class="px-4 py-3 whitespace-nowrap text-sm text-dim-text">
                   {{
                     shipment.agent
                       ? shipment.agent.name
@@ -1252,32 +1252,32 @@
                         : shipment.productType
                   }}
                 </td>
-                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                <td class="px-4 py-3 whitespace-nowrap text-sm text-dim-text">
                   {{ formatVehicleType(shipment.vehicleTypeName) }}
                 </td>
-                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                <td class="px-4 py-3 whitespace-nowrap text-sm text-dim-text">
                   {{
                     shipment.productType === "SITE_TRANSFER"
                       ? "Site Transfer"
                       : shipment.agent?.name || "-"
                   }}
                 </td>
-                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                <td class="px-4 py-3 whitespace-nowrap text-sm text-dim-text">
                   {{ shipment.route?.origin || "-" }}
                 </td>
-                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                <td class="px-4 py-3 whitespace-nowrap text-sm text-dim-text">
                   {{ shipment.route?.destination || "-" }}
                 </td>
-                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                <td class="px-4 py-3 whitespace-nowrap text-sm text-dim-text">
                   {{ shipment.route?.origin }}_{{ shipment.route?.destination }}
                 </td>
                 <td
-                  class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900"
+                  class="px-4 py-3 whitespace-nowrap text-sm font-medium text-base-text"
                 >
                   {{ shipment.vehicle?.plateNumber || "-" }} /
                   {{ shipment.vehicle?.trailerPlate || "-" }}
                 </td>
-                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                <td class="px-4 py-3 whitespace-nowrap text-sm text-dim-text">
                   {{
                     formatDriverName(
                       shipment.driverName ||
@@ -1285,31 +1285,31 @@
                     )
                   }}
                 </td>
-                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                <td class="px-4 py-3 whitespace-nowrap text-sm text-dim-text">
                   {{ shipment.agentReceiveVoucher || "-" }}
                 </td>
-                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                <td class="px-4 py-3 whitespace-nowrap text-sm text-dim-text">
                   {{ shipment.order?.totalRequest || "-" }}
                 </td>
                 <td
-                  class="px-4 py-3 whitespace-nowrap text-sm font-bold text-gray-900"
+                  class="px-4 py-3 whitespace-nowrap text-sm font-bold text-base-text"
                 >
                   {{ currencyFormatter(shipment.totalPrice || 0) }}
                 </td>
-                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                <td class="px-4 py-3 whitespace-nowrap text-sm text-dim-text">
                   {{ shipment.remark || "-" }}
                 </td>
               </tr>
-              <tr v-if="filteredShipments.length" class="bg-gray-50 font-bold">
+              <tr v-if="filteredShipments.length" class="bg-surface-muted font-bold">
                 <td
                   colspan="14"
-                  class="px-4 py-3 text-sm text-right text-gray-700"
+                  class="px-4 py-3 text-sm text-right text-dim-text"
                 >
                   TOTAL
                 </td>
                 <td
                   colspan="2"
-                  class="px-4 py-3 text-sm font-bold text-gray-900"
+                  class="px-4 py-3 text-sm font-bold text-base-text"
                 >
                   {{
                     currencyFormatter(
@@ -1325,111 +1325,111 @@
           </table>
 
           <!-- OUT_BOUND table -->
-          <table v-else class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
+          <table v-else class="min-w-full divide-y divide-line">
+            <thead class="bg-surface-muted">
               <tr>
                 <th
-                  class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider"
+                  class="px-4 py-3 text-left text-xs font-bold text-dim-text uppercase tracking-wider"
                 >
                   No
                 </th>
                 <th
-                  class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider"
+                  class="px-4 py-3 text-left text-xs font-bold text-dim-text uppercase tracking-wider"
                 >
                   Service Date
                 </th>
                 <th
-                  class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider"
+                  class="px-4 py-3 text-left text-xs font-bold text-dim-text uppercase tracking-wider"
                 >
                   PLATE NUMBER
                 </th>
                 <th
-                  class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider"
+                  class="px-4 py-3 text-left text-xs font-bold text-dim-text uppercase tracking-wider"
                 >
                   Truck Ownership
                 </th>
                 <th
-                  class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider"
+                  class="px-4 py-3 text-left text-xs font-bold text-dim-text uppercase tracking-wider"
                 >
                   GPS Status
                 </th>
                 <th
-                  class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider"
+                  class="px-4 py-3 text-left text-xs font-bold text-dim-text uppercase tracking-wider"
                 >
                   Origin
                 </th>
                 <th
-                  class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider"
+                  class="px-4 py-3 text-left text-xs font-bold text-dim-text uppercase tracking-wider"
                 >
                   Destination
                 </th>
                 <th
-                  class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider"
+                  class="px-4 py-3 text-left text-xs font-bold text-dim-text uppercase tracking-wider"
                 >
                   Distributer Name
                 </th>
                 <th
-                  class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider"
+                  class="px-4 py-3 text-left text-xs font-bold text-dim-text uppercase tracking-wider"
                 >
                   FPIV ({{ shipperName }})
                 </th>
                 <th
-                  class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider"
+                  class="px-4 py-3 text-left text-xs font-bold text-dim-text uppercase tracking-wider"
                 >
                   Loaded Quantity
                 </th>
                 <th
-                  class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider"
+                  class="px-4 py-3 text-left text-xs font-bold text-dim-text uppercase tracking-wider"
                 >
                   Number of Trip
                 </th>
                 <th
-                  class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider"
+                  class="px-4 py-3 text-left text-xs font-bold text-dim-text uppercase tracking-wider"
                 >
                   Receiving Voucher (Agent)
                 </th>
                 <th
-                  class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider"
+                  class="px-4 py-3 text-left text-xs font-bold text-dim-text uppercase tracking-wider"
                 >
                   CKRF
                 </th>
                 <th
-                  class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider"
+                  class="px-4 py-3 text-left text-xs font-bold text-dim-text uppercase tracking-wider"
                 >
                   Container ISSUE Voucher (Agent)
                 </th>
                 <th
-                  class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider"
+                  class="px-4 py-3 text-left text-xs font-bold text-dim-text uppercase tracking-wider"
                 >
                   Container Receiving Voucher ({{ shipperName }})
                 </th>
                 <th
-                  class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider"
+                  class="px-4 py-3 text-left text-xs font-bold text-dim-text uppercase tracking-wider"
                 >
                   Returned Quantity
                 </th>
                 <th
-                  class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider"
+                  class="px-4 py-3 text-left text-xs font-bold text-dim-text uppercase tracking-wider"
                 >
                   Tariff
                 </th>
                 <th
-                  class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider"
+                  class="px-4 py-3 text-left text-xs font-bold text-dim-text uppercase tracking-wider"
                 >
                   Payment Request
                 </th>
                 <th
-                  class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider"
+                  class="px-4 py-3 text-left text-xs font-bold text-dim-text uppercase tracking-wider"
                 >
                   Remark
                 </th>
               </tr>
             </thead>
-            <tbody class="bg-surface divide-y divide-gray-200">
+            <tbody class="bg-surface divide-y divide-line">
               <tr v-if="!filteredShipments.length">
                 <td
                   colspan="19"
-                  class="px-4 py-10 text-center text-sm text-gray-500 italic"
+                  class="px-4 py-10 text-center text-sm text-dim-text italic"
                 >
                   {{
                     searchQuery
@@ -1441,94 +1441,94 @@
               <tr
                 v-for="(shipment, index) in filteredShipments"
                 :key="shipment._id"
-                class="hover:bg-gray-50 transition-colors cursor-pointer"
+                class="hover:bg-surface-muted transition-colors cursor-pointer"
                 @click="$router.push(`/operation/shipments/${shipment._id}`)"
               >
-                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
+                <td class="px-4 py-3 whitespace-nowrap text-sm text-base-text">
                   {{ index + 1 }}
                 </td>
-                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                <td class="px-4 py-3 whitespace-nowrap text-sm text-dim-text">
                   {{ formatDate(shipment.dispatchDate) }}
                 </td>
                 <td
-                  class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900"
+                  class="px-4 py-3 whitespace-nowrap text-sm font-medium text-base-text"
                 >
                   {{ shipment.vehicle?.plateNumber || "-" }} /
                   {{ shipment.vehicle?.trailerPlate || "-" }}
                 </td>
-                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                <td class="px-4 py-3 whitespace-nowrap text-sm text-dim-text">
                   {{
                     shipment.vehicle?.ownership === "Owned"
                       ? "Own"
                       : "Subcontracted"
                   }}
                 </td>
-                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                <td class="px-4 py-3 whitespace-nowrap text-sm text-dim-text">
                   {{ shipment.vehicle?.ownership === "Owned" ? "Yes" : "No" }}
                 </td>
-                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                <td class="px-4 py-3 whitespace-nowrap text-sm text-dim-text">
                   {{ shipment.route?.origin || "-" }}
                 </td>
-                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                <td class="px-4 py-3 whitespace-nowrap text-sm text-dim-text">
                   {{ shipment.route?.origin }}_{{ shipment.route?.destination }}
                 </td>
-                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                <td class="px-4 py-3 whitespace-nowrap text-sm text-dim-text">
                   {{ shipment.order?.agent?.name || "-" }}
                 </td>
-                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                <td class="px-4 py-3 whitespace-nowrap text-sm text-dim-text">
                   {{ shipment.shipperIssueVoucher || "-" }}
                 </td>
-                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                <td class="px-4 py-3 whitespace-nowrap text-sm text-dim-text">
                   {{ shipment.order?.totalRequest || "-" }}
                 </td>
-                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                <td class="px-4 py-3 whitespace-nowrap text-sm text-dim-text">
                   1
                 </td>
-                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                <td class="px-4 py-3 whitespace-nowrap text-sm text-dim-text">
                   {{ shipment.agentReceiveVoucher || "-" }}
                 </td>
-                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                <td class="px-4 py-3 whitespace-nowrap text-sm text-dim-text">
                   {{ shipment.CKRFCode || "-" }}
                 </td>
-                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                <td class="px-4 py-3 whitespace-nowrap text-sm text-dim-text">
                   {{
                     shipment.tripType === "round_trip"
                       ? shipment.agentIssueVoucher
                       : "-"
                   }}
                 </td>
-                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                <td class="px-4 py-3 whitespace-nowrap text-sm text-dim-text">
                   {{
                     shipment.tripType === "round_trip"
                       ? shipment.shipperReceiveVoucher
                       : "-"
                   }}
                 </td>
-                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                <td class="px-4 py-3 whitespace-nowrap text-sm text-dim-text">
                   -
                 </td>
                 <td
-                  class="px-4 py-3 whitespace-nowrap text-sm font-bold text-gray-900"
+                  class="px-4 py-3 whitespace-nowrap text-sm font-bold text-base-text"
                 >
                   {{ currencyFormatter(shipment.totalPrice || 0) }}
                 </td>
-                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
+                <td class="px-4 py-3 whitespace-nowrap text-sm text-base-text">
                   {{ shipment.totalPrice || "-" }}
                 </td>
-                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                <td class="px-4 py-3 whitespace-nowrap text-sm text-dim-text">
                   {{ shipment.remark || "-" }}
                 </td>
               </tr>
-              <tr v-if="filteredShipments.length" class="bg-gray-50 font-bold">
+              <tr v-if="filteredShipments.length" class="bg-surface-muted font-bold">
                 <td
                   colspan="16"
-                  class="px-4 py-3 text-sm text-right text-gray-700"
+                  class="px-4 py-3 text-sm text-right text-dim-text"
                 >
                   TOTAL
                 </td>
                 <td
                   colspan="3"
-                  class="px-4 py-3 text-sm font-bold text-gray-900"
+                  class="px-4 py-3 text-sm font-bold text-base-text"
                 >
                   {{
                     currencyFormatter(

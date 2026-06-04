@@ -58,7 +58,7 @@
         <div
           v-for="item in emptyReturnsList"
           :key="item._id"
-          class="bg-surface rounded-2xl border border-gray-100 p-6 shadow-sm flex flex-col gap-5 select-none hover:border-gray-200 transition"
+          class="bg-surface rounded-2xl border border-gray-100 p-6 shadow-sm flex flex-col gap-5 select-none hover:border-line transition"
         >
           <div
             class="flex justify-between items-start border-b border-gray-50 pb-4"
@@ -81,7 +81,7 @@
                 @click="initEdit(item)"
                 variant="outline"
                 size="sm"
-                class="flex items-center gap-1 border border-gray-200 text-primary-700 hover:bg-primary-50 rounded-xl"
+                class="flex items-center gap-1 border border-line text-primary-700 hover:bg-primary-50 rounded-xl"
               >
                 <i class="mdi mdi-pencil"></i> Edit
               </Button>
@@ -89,7 +89,7 @@
                 @click="handleDelete(item._id)"
                 variant="outline"
                 size="sm"
-                class="flex items-center gap-1 border border-gray-200 text-red-600 hover:bg-red-50 hover:text-red-700 rounded-xl"
+                class="flex items-center gap-1 border border-line text-red-600 hover:bg-red-50 hover:text-red-700 rounded-xl"
               >
                 <i class="mdi mdi-delete"></i> Delete
               </Button>
@@ -217,7 +217,7 @@
             variant="outline"
             size="md"
             @click="cancelForm"
-            class="px-5 border border-gray-200"
+            class="px-5 border border-line"
           >
             Cancel
           </Button>

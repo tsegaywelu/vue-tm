@@ -7,7 +7,7 @@
     <template v-else-if="invoice">
       <!-- Header Section -->
       <div
-        class="bg-surface flex flex-col md:flex-row md:items-center justify-between px-3 md:px-4 py-4 md:py-3 rounded-[20px] gap-4 shadow-sm border border-gray-100"
+        class="bg-surface flex flex-col md:flex-row md:items-center justify-between px-3 md:px-4 py-4 md:py-3 rounded-[20px] gap-4 shadow-sm border border-line"
       >
         <div class="flex flex-col gap-2 flex-1">
           <div class="flex items-center gap-4">
@@ -17,7 +17,7 @@
               <i class="mdi mdi-file-document-outline text-2xl"></i>
             </div>
             <div>
-              <h1 class="font-bold text-2xl leading-tight text-gray-900">
+              <h1 class="font-bold text-2xl leading-tight text-base-text">
                 Invoice #{{
                   invoice.reference ||
                   invoice.shipments?.[0]?.paymentDetail?.reference ||
@@ -27,9 +27,9 @@
               <div
                 class="flex flex-col md:flex-row md:items-center gap-1 md:gap-4"
               >
-                <span class="text-sm text-gray-600">
+                <span class="text-sm text-dim-text">
                   Requested By:
-                  <span class="font-bold text-black text-sm ml-1">
+                  <span class="font-bold text-base-text text-sm ml-1">
                     {{
                       invoice.paymentRequestedBy?.username ||
                       invoice.shipments?.[0]?.paymentDetail?.paymentRequestedBy
@@ -38,9 +38,9 @@
                     }}
                   </span>
                 </span>
-                <span class="text-sm text-gray-600">
+                <span class="text-sm text-dim-text">
                   Date:
-                  <span class="font-bold text-black text-sm ml-1">
+                  <span class="font-bold text-base-text text-sm ml-1">
                     {{
                       dateFormatter(
                         invoice.paymentRequestedDate ||
@@ -81,7 +81,7 @@
               Export
             </Button>
             <button
-              class="sm:hidden size-9 rounded-xl border border-gray-200 flex items-center justify-center text-green-600 hover:bg-gray-50 transition-colors"
+              class="sm:hidden size-9 rounded-xl border border-line flex items-center justify-center text-green-600 hover:bg-surface-hover transition-colors"
               @click="handleExport"
             >
               <i v-html="icons.excell"></i>

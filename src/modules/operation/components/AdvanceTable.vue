@@ -2,7 +2,7 @@
   <!-- Mobile: filter icon next to page title -->
   <Teleport to="#page-title-actions" defer>
     <button
-      class="sm:hidden size-8 rounded-xl border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors"
+      class="sm:hidden size-8 rounded-xl border border-line flex items-center justify-center text-faint-text hover:bg-surface-hover transition-colors"
       @click="mobileSearchOpen = true"
     >
       <i class="*:size-4" v-html="icons.filterOptions"></i>
@@ -15,7 +15,7 @@
       <button
         v-for="opt in props.searchOptions.filter((o) => o.value)"
         :key="opt.value"
-        class="flex items-center justify-between py-3 px-2 hover:bg-gray-50 rounded-xl transition-colors"
+        class="flex items-center justify-between py-3 px-2 hover:bg-surface-hover rounded-xl transition-colors"
         @click="
           selectedStatus = opt.value;
           mobileSearchOpen = false;
@@ -50,7 +50,7 @@
   >
     <template #search-prefix>
       <div
-        class="hidden sm:flex h-full items-center border-r border-gray-200 pr-2 mr-2 w-48"
+        class="hidden sm:flex h-full items-center border-r border-line pr-2 mr-2 w-48"
       >
         <SearchFieldSelect
           v-model="selectedStatus"

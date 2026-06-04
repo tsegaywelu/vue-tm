@@ -6,11 +6,11 @@
   <div v-else-if="driver" class="flex flex-col gap-6">
     <!-- Header Info Card -->
     <div
-      class="bg-grey-25 rounded-[32px] p-6 md:p-10 border border-grey-100 flex flex-col md:flex-row items-center justify-between gap-8"
+      class="bg-surface-muted rounded-[32px] p-6 md:p-10 border border-line flex flex-col md:flex-row items-center justify-between gap-8"
     >
       <div class="flex items-center gap-8">
         <div
-          class="size-24 md:size-32 rounded-full bg-surface flex items-center justify-center shadow-lg border border-grey-100 p-4 overflow-hidden"
+          class="size-24 md:size-32 rounded-full bg-surface flex items-center justify-center shadow-lg border border-line p-4 overflow-hidden"
         >
           <img
             v-if="driver.profilePicture"
@@ -37,7 +37,7 @@
         </div>
         <div class="flex flex-col gap-1">
           <h2
-            class="text-3xl md:text-4xl font-black text-grey-900 tracking-tight"
+            class="text-3xl md:text-4xl font-black text-base-text tracking-tight"
           >
             {{ driver.firstName }} {{ driver.middleName || "" }}
             {{ driver.lastName }}
@@ -49,7 +49,7 @@
               {{ driver.isEmployed ? "Employee" : "Sub Contract" }}
             </span>
             <span
-              class="px-3 py-1 bg-grey-100 text-grey-600 text-xs font-bold rounded-full uppercase"
+              class="px-3 py-1 bg-surface-muted text-dim-text text-xs font-bold rounded-full uppercase"
             >
               {{ driver.employeeNumber || "N/A" }}
             </span>

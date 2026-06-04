@@ -1,8 +1,8 @@
 <template>
   <div class="flex flex-col gap-6">
-    <div class="bg-grey-25 rounded-3xl p-6 border border-grey-100">
+    <div class="bg-surface-muted rounded-3xl p-6 border border-line">
       <div class="flex items-center justify-between mb-6">
-        <h3 class="text-lg font-bold text-grey-900">Settlements (Paid Advances)</h3>
+        <h3 class="text-lg font-bold text-base-text">Settlements (Paid Advances)</h3>
       </div>
 
       <Table
@@ -41,14 +41,14 @@
         }"
       >
         <template #cell-advanceNumber="{ value }">
-          <span class="font-bold text-grey-900">{{ value }}</span>
+          <span class="font-bold text-base-text">{{ value }}</span>
         </template>
 
         <template #cell-driver="{ row }">
           <span class="text-base" v-if="row.driver">
             {{ row.driver?.firstName }} {{ row.driver?.middleName || "" }} {{ row.driver?.lastName || "" }}
           </span>
-          <span v-else class="text-grey-400 italic text-sm">-</span>
+          <span v-else class="text-faint-text italic text-sm">-</span>
         </template>
 
         <template #cell-plateNumber="{ row }">
@@ -110,7 +110,7 @@
         </template>
 
         <template #cell-total="{ row }">
-          <span class="text-base font-semibold text-grey-900">
+          <span class="text-base font-semibold text-base-text">
             {{ currencyFormatter(
               row.amount || (
                 (Array.isArray(row.fuelAdvances) ? row.fuelAdvances.reduce((acc, item) => acc + (item.amount || 0), 0) : 0) +

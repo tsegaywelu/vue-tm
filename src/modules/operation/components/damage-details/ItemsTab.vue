@@ -13,7 +13,7 @@
         <div
           v-for="(item, index) in damage.items"
           :key="index"
-          class="border border-gray-200 rounded-xl p-4 bg-gray-50"
+          class="border border-line rounded-xl p-4 bg-gray-50"
         >
           <div class="font-bold text-gray-900 mb-3">{{ item.item?.name || 'Unknown Item' }}</div>
           <div class="grid grid-cols-2 gap-2 text-sm">
@@ -36,14 +36,14 @@
           </div>
         </div>
         <!-- Grand Total -->
-        <div class="border border-gray-200 rounded-xl p-4 bg-primary/5 flex items-center justify-between">
+        <div class="border border-line rounded-xl p-4 bg-primary/5 flex items-center justify-between">
           <span class="font-bold text-gray-700">Grand Total</span>
           <span class="font-black text-primary text-lg">{{ currencyFormatter(damage.total) }}</span>
         </div>
       </div>
 
       <!-- Desktop Table -->
-      <div class="hidden sm:block overflow-x-auto rounded-xl border border-gray-200">
+      <div class="hidden sm:block overflow-x-auto rounded-xl border border-line">
         <table class="w-full text-left text-sm text-gray-600">
           <thead class="bg-gray-50 text-gray-700 text-xs uppercase font-semibold">
             <tr>
@@ -58,7 +58,7 @@
             <tr
               v-for="(item, index) in damage.items"
               :key="index"
-              class="hover:bg-gray-50 transition-colors"
+              class="hover:bg-surface-hover transition-colors"
             >
               <td class="px-6 py-4 font-medium text-gray-900">{{ item.item?.name || 'Unknown Item' }}</td>
               <td class="px-6 py-4 uppercase">

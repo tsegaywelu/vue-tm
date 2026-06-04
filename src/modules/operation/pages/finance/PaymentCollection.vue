@@ -18,13 +18,13 @@
 
   <Teleport defer to="#page-title-actions">
     <button
-      class="sm:hidden size-8 rounded-xl flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors"
+      class="sm:hidden size-8 rounded-xl flex items-center justify-center text-faint-text hover:bg-surface-hover transition-colors"
       @click="handleExport"
     >
       <i v-html="icons.excell"></i>
     </button>
     <button
-      class="sm:hidden size-8 rounded-xl flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors"
+      class="sm:hidden size-8 rounded-xl flex items-center justify-center text-faint-text hover:bg-surface-hover transition-colors"
       @click="showFilterSheet = true"
     >
       <i v-html="icons.calender"></i>
@@ -50,20 +50,20 @@
       <div
         v-for="stat in collectionStats"
         :key="stat.label"
-        class="bg-surface border border-gray-100 rounded-2xl px-3 py-2 sm:px-5 sm:py-3 shadow-sm flex flex-row items-center gap-3 sm:min-w-[280px] transition-all hover:shadow-md cursor-pointer"
+        class="bg-surface border border-line rounded-2xl px-3 py-2 sm:px-5 sm:py-3 shadow-sm flex flex-row items-center gap-3 sm:min-w-[280px] transition-all hover:shadow-md cursor-pointer"
       >
         <i
           :class="['mdi', stat.icon || 'mdi-cash', 'text-primary text-lg shrink-0']"
         ></i>
         <div class="flex flex-row flex-nowrap items-baseline gap-2 min-w-0">
           <span
-            class="text-xs font-bold text-gray-400 uppercase tracking-wider whitespace-nowrap"
+            class="text-xs font-bold text-faint-text uppercase tracking-wider whitespace-nowrap"
           >
             {{ stat.label }}
           </span>
           <span
             v-if="authStore.has_permission('REPORT', ['view'])"
-            class="text-base sm:text-xl font-black text-gray-900 tracking-tight whitespace-nowrap"
+            class="text-base sm:text-xl font-black text-base-text tracking-tight whitespace-nowrap"
           >
             {{ stat.amount }}
           </span>

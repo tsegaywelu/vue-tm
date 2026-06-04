@@ -27,7 +27,7 @@
           <tr
             v-for="row in rows"
             :key="row.route"
-            class="border-b border-gray-50 last:border-0 hover:bg-gray-50 transition-colors"
+            class="border-b border-gray-50 last:border-0 hover:bg-surface-hover transition-colors"
           >
             <td class="py-2 text-xs text-gray-700">
               <div class="flex items-center gap-1.5">

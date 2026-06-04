@@ -191,7 +191,7 @@
                         No shipments added yet.
                       </td>
                     </tr>
-                    <tr v-for="shipment in allShipments" :key="shipment._id" class="hover:bg-gray-50 transition-colors">
+                    <tr v-for="shipment in allShipments" :key="shipment._id" class="hover:bg-surface-hover transition-colors">
                       <td class="px-4 py-4 whitespace-nowrap text-sm font-medium text-primary">{{ shipment.shipmentCode }}</td>
                       <td class="px-4 py-4 whitespace-nowrap">
                         <Status :variant="shipment.paymentDetail?.paymentStatus || 'pending'" type="wrapped" size="sm">

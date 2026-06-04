@@ -187,7 +187,7 @@
             v-for="(option, idx) in finalOptions"
             :key="getOptionValue(option) + '-' + idx"
             @click.stop="selectOption(option)"
-            class="flex items-center justify-between cursor-pointer rounded-xl hover:bg-gray-50 p-3"
+            class="flex items-center justify-between cursor-pointer rounded-xl hover:bg-surface-hover p-3"
             :class="{ 'bg-gray-100': isSelected(option, modelValue) }"
           >
             <slot

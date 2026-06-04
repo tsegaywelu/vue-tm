@@ -111,7 +111,7 @@
             <tr
               v-for="item in report.statusSourceBreakdown"
               :key="item.status"
-              class="hover:bg-gray-50/50 transition-colors"
+              class="hover:bg-surface-hover/50 transition-colors"
             >
               <td class="px-4 py-3 text-xs font-bold text-gray-800">
                 {{ formatStatus(item.status) }}

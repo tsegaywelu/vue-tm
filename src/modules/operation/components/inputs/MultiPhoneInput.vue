@@ -162,7 +162,7 @@ function remove(id: string) {
           >
             <template #left_component>
               <div
-                class="pointer-events-none flex items-center gap-1 pr-2 border-r border-gray-200 mr-2"
+                class="pointer-events-none flex items-center gap-1 pr-2 border-r border-line mr-2"
               >
                 <i v-html="icons.phone" class="text-gray-400"></i>
               </div>

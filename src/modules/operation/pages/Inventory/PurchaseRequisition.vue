@@ -2,7 +2,7 @@
   <!-- Mobile filter button -->
   <Teleport to="#page-title-actions" defer>
     <button
-      class="sm:hidden size-8 rounded-xl border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors"
+      class="sm:hidden size-8 rounded-xl border border-line flex items-center justify-center text-faint-text hover:bg-surface-hover transition-colors"
       @click="mobileSearchOpen = true"
     >
       <i class="*:size-4" v-html="icons.filterOptions"></i>
@@ -26,7 +26,7 @@
       <button
         v-for="opt in tableRef?.searchFieldOptions"
         :key="opt.value"
-        class="flex items-center justify-between py-3 px-2 hover:bg-gray-50 rounded-xl transition-colors"
+        class="flex items-center justify-between py-3 px-2 hover:bg-surface-hover rounded-xl transition-colors"
         @click="tableRef.selectedSearchField = opt.value; mobileSearchOpen = false"
       >
         <span class="font-medium">{{ opt.label }}</span>

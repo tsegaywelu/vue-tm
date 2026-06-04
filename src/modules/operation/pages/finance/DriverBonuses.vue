@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col h-full">
     <div class="mb-4 px-2">
-      <nav class="flex space-x-8 border-b border-gray-200">
+      <nav class="flex space-x-8 border-b border-line">
         <button
           v-for="tab in tabs"
           :key="tab.id"

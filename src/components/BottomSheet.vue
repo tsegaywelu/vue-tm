@@ -47,21 +47,21 @@ watch(
       >
         <div
           v-if="modelValue"
-          class="fixed bottom-0 left-0 right-0 w-full bg-white rounded-t-3xl shadow-2xl flex flex-col max-h-[90dvh] pb-6 z-501"
+          class="fixed bottom-0 left-0 right-0 w-full bg-surface rounded-t-3xl shadow-2xl flex flex-col max-h-[90dvh] pb-6 z-501"
           @click.stop
         >
           <!-- Drag handle -->
           <div v-if="!no_handle" class="flex justify-center pt-4 pb-1 shrink-0">
-            <div class="w-12 h-1.5 bg-grey-300 rounded-full" />
+            <div class="w-12 h-1.5 bg-line rounded-full" />
           </div>
 
           <!-- Header (optional) -->
           <div
             v-if="title"
-            class="px-6 py-4 flex justify-between items-center border-b border-grey-100 shrink-0"
+            class="px-6 py-4 flex justify-between items-center border-b border-line shrink-0"
           >
             <div class="flex flex-col gap-0.5">
-              <h3 class="text-xl font-bold text-gray-900 leading-tight">
+              <h3 class="text-xl font-bold text-base-text leading-tight">
                 {{ title }}
               </h3>
               <span v-if="subtitle" class="text-sm text-grey-500">{{
@@ -70,10 +70,10 @@ watch(
             </div>
             <button
               type="button"
-              class="rounded-full w-10 h-10 grid place-items-center hover:bg-gray-100 transition-colors shrink-0"
+              class="rounded-full w-10 h-10 grid place-items-center hover:bg-surface-hover transition-colors shrink-0"
               @click="close"
             >
-              <i class="*:size-5 text-gray-500" v-html="icons.times" />
+              <i class="*:size-5 text-faint-text" v-html="icons.times" />
             </button>
           </div>
 
