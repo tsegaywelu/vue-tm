@@ -13,6 +13,7 @@ import LogoAnimation from "@/components/LogoAnimation.vue";
 import PasswordInput from "@/components/form/PasswordInput.vue";
 import SubmitButton from "@/components/form/SubmitButton.vue";
 import { required } from "@/utils/validations";
+import ThemePicker from "@/components/ThemePicker.vue";
 
 const router = useRouter();
 const auth_store = useAuthStore();
@@ -97,32 +98,37 @@ async function submitLogin(values: any) {
     <div
       class="w-full lg:w-1/2 relative flex items-center justify-center p-4 sm:p-8 bg-surface-beige-light/30 overflow-hidden"
     >
-      <!-- top-left -->
+      <!-- Theme picker -->
+      <div class="absolute top-4 right-4 z-10">
+        <ThemePicker />
+      </div>
+
+      <!-- top-left — always visible -->
       <div class="absolute -top-10 left-0 h-72 pointer-events-none select-none opacity-[0.13] text-primary" style="--anim-offset: 0s">
         <LogoAnimation :show_text="false" slow />
       </div>
-      <!-- top-right -->
-      <div class="absolute -top-16 right-0 h-64 pointer-events-none select-none opacity-[0.10] text-primary" style="--anim-offset: -4s">
+      <!-- top-right — sm+ only -->
+      <div class="hidden sm:block absolute -top-16 right-0 h-64 pointer-events-none select-none opacity-[0.10] text-primary" style="--anim-offset: -4s">
         <LogoAnimation :show_text="false" slow />
       </div>
-      <!-- center-left -->
-      <div class="absolute top-1/3 -left-8 h-56 pointer-events-none select-none opacity-[0.08] text-primary" style="--anim-offset: -8s">
+      <!-- center-left — sm+ only -->
+      <div class="hidden sm:block absolute top-1/3 -left-8 h-56 pointer-events-none select-none opacity-[0.08] text-primary" style="--anim-offset: -8s">
         <LogoAnimation :show_text="false" slow />
       </div>
-      <!-- center-right -->
+      <!-- center-right — always visible -->
       <div class="absolute top-1/4 -right-8 h-60 pointer-events-none select-none opacity-[0.09] text-primary" style="--anim-offset: -13s">
         <LogoAnimation :show_text="false" slow />
       </div>
-      <!-- bottom-left -->
-      <div class="absolute -bottom-10 left-0 h-64 pointer-events-none select-none opacity-[0.11] text-primary" style="--anim-offset: -17s">
+      <!-- bottom-left — sm+ only -->
+      <div class="hidden sm:block absolute -bottom-10 left-0 h-64 pointer-events-none select-none opacity-[0.11] text-primary" style="--anim-offset: -17s">
         <LogoAnimation :show_text="false" slow />
       </div>
-      <!-- bottom-right -->
+      <!-- bottom-right — always visible -->
       <div class="absolute -bottom-16 right-0 h-72 pointer-events-none select-none opacity-[0.13] text-primary" style="--anim-offset: -22s">
         <LogoAnimation :show_text="false" slow />
       </div>
 
-      <div class="relative w-full max-w-md space-y-6 sm:space-y-10 px-5 sm:px-0 backdrop-blur-sm bg-surface/40 rounded-3xl py-8">
+      <div class="relative w-full max-w-md space-y-6 sm:space-y-10 px-5 sm:px-0 backdrop-blur-none sm:backdrop-blur-sm bg-surface/40 rounded-3xl py-8">
         <!-- Logo & Header -->
         <div class="text-center">
           <div class="flex flex-col items-center gap-1.5 sm:gap-3 mb-3 sm:mb-6">
