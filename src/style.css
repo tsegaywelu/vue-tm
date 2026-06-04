@@ -723,3 +723,6 @@ html.accent-rose {
     linear-gradient(179.87deg, #E11D48 0.12%, #9F1239 104.69%),
     linear-gradient(270deg, #9F1239 0%, #E11D48 100%);
 }
+
+/* Dark mode: lighten default blue primary */
+html.dark:not([class*="accent-"]) { --color-primary: color-mix(in oklch, #2222FF 90%, white); }

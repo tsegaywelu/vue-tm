@@ -15,7 +15,7 @@ const slots = useSlots();
 const router = useRouter();
 const authStore = useAuthStore();
 
-const canGoBack = computed(() => !!window.history.state?.back);
+const canGoBack = computed(() => window.history.length > 1);
 
 const dropdownOpen = ref(false);
 const dropdownRef = ref<HTMLElement | null>(null);

@@ -155,7 +155,7 @@ watch(is_hovered, (hovered) => {
     <!-- Panel -->
     <div
       @click.stop
-      class="h-full flex flex-col gap-5 bg-surface overflow-hidden"
+      class="h-full flex flex-col gap-5 bg-surface overflow-hidden border-r border-transparent dark:border-white/10 dark:shadow-[8px_0_30px_rgba(255,255,255,0.05)]"
       :class="{
         // Mobile
         'w-full max-w-70 shadow-lg': !is_desktop,
