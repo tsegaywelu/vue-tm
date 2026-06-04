@@ -1,4 +1,5 @@
 import * as XLSX from "xlsx-js-style";
+import { getMaterialType, getOrigin, getDestination } from "@/utils/shipment-export-utils";
 
 function formatDateTime(isoString: string | null | undefined): string {
   if (!isoString) return " ";
@@ -79,14 +80,9 @@ export function exportToExcel(shipments: any[]) {
     supplierName: shipment?.agent
       ? shipment.agent?.name
       : shipment?.order?.agent?.name || "SITE_TRANSFER",
-    materialType:
-      shipment?.commodity?.length > 0
-        ? shipment.commodity[0].name
-        : shipment?.order?.commodity?.length > 0
-        ? shipment.order.commodity[0].name
-        : "",
-    origin: shipment.route?.origin || "",
-    destination: shipment.route?.destination || "",
+    materialType: getMaterialType(shipment),
+    origin: getOrigin(shipment),
+    destination: getDestination(shipment),
     plateNumber: shipment.vehicle?.plateNumber
       ? `${shipment.vehicle.plateNumber}/${shipment.vehicle.trailerPlate || ""}`
       : "",
@@ -180,8 +176,8 @@ export function exportToExcelFullProduct(shipments: any[]) {
     AgentName: shipment.agent?.name
       ? shipment.agent?.name
       : shipment.order?.agent?.name || "",
-    origin: shipment.route?.origin || "N/A",
-    destination: shipment.route?.destination || "N/A",
+    origin: getOrigin(shipment) || "N/A",
+    destination: getDestination(shipment) || "N/A",
     plateNumber: shipment.vehicle?.plateNumber
       ? `${shipment.vehicle.plateNumber}/${shipment.vehicle.trailerPlate || "N/A"}`
       : "N/A",
@@ -269,8 +265,8 @@ export function exportToExcelAll(shipments: any[]) {
 
   const formattedData = shipments.map((shipment) => ({
     dateOfRequest: formatDate(shipment.dispatchDate),
-    origin: shipment.route?.origin || "N/A",
-    destination: shipment.route?.destination || "N/A",
+    origin: getOrigin(shipment) || "N/A",
+    destination: getDestination(shipment) || "N/A",
     plateNumber: shipment.vehicle?.plateNumber
       ? `${shipment.vehicle?.plateNumber}/${shipment.vehicle?.trailerPlate || "N/A"}`
       : "N/A",

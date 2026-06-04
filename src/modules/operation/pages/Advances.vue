@@ -89,6 +89,7 @@
       :columns="transporterColumns"
       :checkable="false"
       :column-span="{ advanceNumber: 2, transporter: 2, shipment: 2, route: 2, total: 2, status: 2 }"
+      :search-options="transporterSearchOptions"
     />
   </div>
 </template>
@@ -133,6 +134,12 @@ const driverColumns: TableColumn[] = [
   { key: "otherAdvance", label: "Other Advance", field: "otherExpenses" },
   { key: "total", label: "Total", field: "total" },
   { key: "status", label: "Status", field: "status" },
+];
+
+const transporterSearchOptions = [
+  { label: "Plate Number", value: "vehiclePlateNumber" },
+  { label: "Advance Number", value: "advanceNumber" },
+  { label: "Transporter Name", value: "transporterName" },
 ];
 
 const transporterColumns: TableColumn[] = [

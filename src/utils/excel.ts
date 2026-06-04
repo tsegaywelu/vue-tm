@@ -1,5 +1,6 @@
 import * as XLSX from "xlsx";
 import * as XLSXStyle from "xlsx-js-style";
+import { generateRouteCode, getMaterialType, getOrigin, getDestination, getRouteDescription } from "./shipment-export-utils";
 
 export function exportToExcel(data: any[], filename: string, sheetName: string = "Sheet1") {
   const worksheet = XLSX.utils.json_to_sheet(data);
@@ -135,15 +136,15 @@ export function exportInvoiceToExcel(invoice: any) {
     if (isInbound) {
       row = [
         i + 1,
-        s.routeDestination || s.route?.destination || "",
+        getDestination(s),
         fmtDate(s.dispatchDate),
         s.allocationNumber || s.order?.allocationNumber || "",
-        s.agentName || s.agent?.name || (s.productType === "SITE_TRANSFER" ? "Site Transfer" : s.productType),
+        getMaterialType(s),
         fmtVehicleType(s.vehicleTypeName),
         s.productType === "SITE_TRANSFER" ? "Site Transfer" : (s.agentName || s.agent?.name || s.order?.agent?.name || ""),
-        s.routeOrigin || s.route?.origin || "",
-        s.routeDestination || s.route?.destination || "",
-        `${s.routeOrigin || s.route?.origin || ""}_${s.routeDestination || s.route?.destination || ""}`,
+        getOrigin(s),
+        getDestination(s),
+        getRouteDescription(s, "_"),
         `${s.vehiclePlateNumber || s.vehicle?.plateNumber || ""}/${s.vehicle?.trailerPlate || ""}`,
         fmtDriverName(s.driverName || `${s.driver?.firstName || ""} ${s.driver?.lastName || ""}`),
         s.agentReceiveVoucher || "",
@@ -161,9 +162,9 @@ export function exportInvoiceToExcel(invoice: any) {
         s.shipperIssueVoucher || "",
         "",
         s.packagingName || s.packaging?.name || s.order?.packaging?.name || "",
-        s.routeOrigin || s.route?.origin || s.order?.routeOrigin || "",
-        s.route?.routeCode || s.order?.route?.routeCode || (s.routeOrigin && s.routeDestination ? `${s.routeOrigin.substring(0, 3)}_${s.routeDestination.substring(0, 3)}`.toUpperCase() : ""),
-        `${s.routeOrigin || s.route?.origin || ""} - ${s.routeDestination || s.route?.destination || ""}`,
+        getOrigin(s),
+        generateRouteCode(s),
+        getRouteDescription(s),
         `${s.vehiclePlateNumber || s.vehicle?.plateNumber || ""}/${s.vehicle?.trailerPlate || ""}`,
         "DELIVERY",
         s.quantity || s.order?.totalRequest || s.dispatchWeight || "",

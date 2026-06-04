@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import { useForm } from "@tanstack/vue-form";
 import { useMutation } from "@tanstack/vue-query";
 import { useAuthStore } from "@/store/authStore";
 import { useToastStore } from "@/store/toastStore";
@@ -152,6 +151,7 @@ async function submitLogin(values: any) {
           class="space-y-6"
         >
           <Input
+            :validation="{ required }"
             name="username"
             label="Username"
             :validation="{ required }"

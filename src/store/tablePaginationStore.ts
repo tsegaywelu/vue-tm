@@ -32,6 +32,8 @@ export const useTablePaginationStore = defineStore("tablePagination", () => {
   const tableLabels = ref<
     Record<string, Record<string, Record<string, string>>>
   >({});
+  // Non-API UI state (search field selection, tab state, etc.) — never sent to the API.
+  const tableMeta = ref<Record<string, Record<string, any>>>({});
 
   function addTable(id: string, state?: Partial<TableState>) {
     if (tables.value[id]) return;
@@ -90,6 +92,10 @@ export const useTablePaginationStore = defineStore("tablePagination", () => {
     tableLabels.value[id] = labels;
   }
 
+  function setMeta(id: string, data: Record<string, any>) {
+    tableMeta.value[id] = { ...(tableMeta.value[id] ?? {}), ...data };
+  }
+
   function reset(id: string, state?: Partial<TableState>) {
     if (tables.value[id]) {
       tables.value[id] = { ...initial_state, ...state };
@@ -100,6 +106,7 @@ export const useTablePaginationStore = defineStore("tablePagination", () => {
     tables,
     tableParams,
     tableLabels,
+    tableMeta,
     addTable,
     removeTable,
     setPage,
@@ -111,6 +118,7 @@ export const useTablePaginationStore = defineStore("tablePagination", () => {
     setIsDirty,
     setParams,
     setLabels,
+    setMeta,
     reset,
   };
 });

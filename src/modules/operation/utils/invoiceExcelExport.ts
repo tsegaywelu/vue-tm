@@ -1,4 +1,5 @@
 import * as XLSX from "xlsx-js-style";
+import { generateRouteCode, getMaterialType, getOrigin, getDestination, getRouteDescription } from "@/utils/shipment-export-utils";
 
 export function exportInvoiceToExcel(invoice: any) {
   const { carrier, reference, shipments } = invoice;
@@ -154,9 +155,9 @@ export function exportInvoiceToExcel(invoice: any) {
         s.shipperIssueVoucher || "-",
         "",
         s.packagingName || s.packaging?.name || s.order?.packaging?.name || "-",
-        s.routeDestination || s.route?.destination || "-",
-        s.route?.routeCode || s.order?.route?.routeCode || "-",
-        `${s.routeOrigin || s.route?.origin || ""} - ${s.routeDestination || s.route?.destination || ""}`,
+        getDestination(s) || "-",
+        generateRouteCode(s) || "-",
+        getRouteDescription(s) || "-",
         `${s.vehiclePlateNumber || s.vehicle?.plateNumber || ""}/${s.vehicle?.trailerPlate || ""}`,
         "DELIVERY",
         s.quantity || s.order?.totalRequest || s.dispatchWeight || 0,
@@ -172,12 +173,12 @@ export function exportInvoiceToExcel(invoice: any) {
         s.routeDestination || s.route?.destination || "-",
         s.dispatchDate?.split("T")[0] || "-",
         s.allocationNumber || s.order?.allocationNumber || "-",
-        s.materialType || s.order?.commodity?.[0]?.name || "-",
+        getMaterialType(s) || "-",
         s.vehicleTypeName || "-",
         s.agentName || s.agent?.name || "-",
-        s.routeOrigin || s.route?.origin || "-",
-        s.routeDestination || s.route?.destination || "-",
-        `${s.routeOrigin || s.route?.origin}_${s.routeDestination || s.route?.destination}`,
+        getOrigin(s) || "-",
+        getDestination(s) || "-",
+        getRouteDescription(s, "_") || "-",
         s.vehiclePlateNumber || s.vehicle?.plateNumber || "-",
         s.driverName || "-",
         s.agentReceiveVoucher || "-",

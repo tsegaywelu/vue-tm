@@ -152,7 +152,7 @@ export function update_transaction_status(
 export function update_prepayment_status(id: string, status: ApprovalAction) {
   return prepayment_api
     .addAuthenticationHeader()
-    .post(`/updateStatus`, { id, status });
+    .post(`/${id}/${status}`, { });
 }
 
 export function update_lease_status(id: string, status: ApprovalAction) {
@@ -501,6 +501,14 @@ export function delete_contact(id: string) {
 
 export function fetch_contact_by_id(id: string) {
   return getApi("/contact").addAuthenticationHeader().get(`/${id}`);
+}
+
+export function fetch_unlinked_drivers(name?: string) {
+  return getApi("/contact").addAuthenticationHeader().get("/drivers/unlinked", name ? { params: { name } } : {});
+}
+
+export function link_driver_to_contact(driverId: string, data: any) {
+  return getApi("/contact").addAuthenticationHeader().post(`/drivers/${driverId}/link`, data);
 }
 
 export function generate_invoice(data: any) {

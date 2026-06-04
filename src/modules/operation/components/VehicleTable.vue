@@ -34,13 +34,11 @@
   >
     <template #search-prefix>
       <div class="h-full hidden sm:flex items-center border-r border-gray-200 pr-2 mr-2 w-48">
-        <Select
+        <SearchFieldSelect
           v-model="selectedSearchField"
-          class="[&_.input-focus]:shadow-none! [&_.input-focus]:border-none [&_.input-focus]:min-h-full min-w-48"
+          pagination-id="vehicle-list"
           :options="filterFieldOptions"
-          label_key="label"
-          value_key="value"
-          :clearable="false"
+          select-class="[&_.input-focus]:shadow-none! [&_.input-focus]:border-none [&_.input-focus]:min-h-full min-w-48"
         />
       </div>
     </template>
@@ -177,8 +175,8 @@ import Dropdown from "@/components/common/Dropdown.vue";
 import DropDownItem from "@/components/common/DropDownItem.vue";
 import VehicleFilters from "./VehicleFilters.vue";
 import { icons } from "@/utils/icons";
-import { usePagination } from "@/composables/usePagination";
-import Select from "@/components/common/Select.vue";
+import { usePagination, useTableLastMeta } from "@/composables/usePagination";
+import SearchFieldSelect from "@/components/common/SearchFieldSelect.vue";
 
 const filterFieldOptions = [
   { label: "Plate Number", value: "vehiclePlateNumber" },
@@ -191,7 +189,10 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits(["action"]);
-const selectedSearchField = ref("vehiclePlateNumber");
+const lastMeta = useTableLastMeta("vehicle-list");
+const selectedSearchField = ref(
+  (lastMeta.value.searchField as string | undefined) || "vehiclePlateNumber",
+);
 const selectedSearchFieldLabel = computed(
   () => filterFieldOptions.find((o) => o.value === selectedSearchField.value)?.label ?? "Plate Number"
 );

@@ -147,7 +147,7 @@ const handleInvoiceAction = async ({ row, action }: any) => {
   const userId = authStore.current_user?._id || authStore.current_user?.user?._id;
 
   if (action === 'view') {
-    router.push(`/finance/invoice-report/${id}`);
+    router.push({ path: `/finance/invoice-report/${id}`, query: { reference: row.reference } });
   } else if (action === 'edit') {
     router.push(`/finance/invoice-report/edit/${id}`);
   } else if (action === 'approve') {

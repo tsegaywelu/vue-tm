@@ -11,13 +11,11 @@
   >
     <template #search-prefix>
       <div class="hidden sm:flex h-full items-center border-r border-gray-200 pr-2 mr-2 w-48">
-        <Select
-          class="[&_.input-focus]:shadow-none! [&_.input-focus]:border-none [&_.input-focus]:min-h-full min-w-48"
+        <SearchFieldSelect
           v-model="selectedSearchField"
+          pagination-id="purchase-requisitions-list"
           :options="searchFieldOptions"
-          label_key="label"
-          value_key="value"
-          :clearable="false"
+          select-class="[&_.input-focus]:shadow-none! [&_.input-focus]:border-none [&_.input-focus]:min-h-full min-w-48"
         />
       </div>
     </template>
@@ -146,9 +144,10 @@
 import { computed, ref } from "vue";
 import Table from "@/components/common/Table.vue";
 import Select from "@/components/common/Select.vue";
+import SearchFieldSelect from "@/components/common/SearchFieldSelect.vue";
 import Dropdown from "@/components/common/Dropdown.vue";
 import DropDownItem from "@/components/common/DropDownItem.vue";
-import { usePagination } from "@/composables/usePagination";
+import { usePagination, useTableLastMeta } from "@/composables/usePagination";
 import { icons } from "@/utils/icons";
 import type { TableColumn } from "@/components/common/Table.vue";
 import Status from "@/components/common/Status.vue";
@@ -169,7 +168,10 @@ const statusOptions = [
   { label: "Cancelled", value: "CANCELLED" },
 ];
 
-const selectedSearchField = ref("referenceNumber");
+const lastMeta = useTableLastMeta("purchase-requisitions-list");
+const selectedSearchField = ref(
+  (lastMeta.value.searchField as string | undefined) || "referenceNumber",
+);
 const searchTerm = ref("");
 
 const dynamicSearchPlaceholder = computed(() => {

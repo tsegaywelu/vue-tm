@@ -171,10 +171,7 @@ const handleExport = () => {
   worksheet["!cols"] = headers.map((h) => ({ wch: Math.max(h.length, 15) }));
   const workbook = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(workbook, worksheet, "Advances");
-  XLSX.writeFile(
-    workbook,
-    `Advances_${new Date().toISOString().split("T")[0]}.xlsx`,
-  );
+  XLSX.writeFile(workbook, `Advances_${new Date().toISOString().split("T")[0]}.xlsx`);
 };
 
 const {

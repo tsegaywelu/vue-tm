@@ -50,52 +50,20 @@
       <div
         class="hidden sm:flex h-full items-center border-r border-gray-200 pr-2 mr-2 w-48"
       >
-        <Select
-          class="[&_.input-focus]:shadow-none! [&_.input-focus]:border-none [&_.input-focus]:min-h-full min-w-48"
-          v-model="selectedType"
-          :options="typeOptions"
-          label_key="label"
-          value_key="value"
-          :clearable="false"
+        <SearchFieldSelect
+          v-model="selectedSearchField"
+          pagination-id="approval-requests"
+          :options="searchFieldOptions"
+          select-class="[&_.input-focus]:shadow-none! [&_.input-focus]:border-none [&_.input-focus]:min-h-full min-w-48"
         />
       </div>
     </template>
 
     <template #after-search>
-      <div
-        class="[&_.input-focus]:bg-grey-25 min-h-16 flex-1 items-center gap-4 inline-flex overflow-x-auto px-3"
-      >
-        <Select
-          label="Origin"
-          size="xs"
-          name="routeOrigin"
-          v-model="origin"
-          :url="`/route`"
-          label_key="routeName"
-          value_key="destination"
-          searchable
-          class="min-w-48"
-          multiple
-          :attributes="{
-            placeholder: 'Origins',
-          }"
-        />
-        <Select
-          label="Destination"
-          size="xs"
-          name="routeDestination"
-          v-model="destination"
-          :url="`/route`"
-          label_key="routeName"
-          value_key="destination"
-          :attributes="{
-            placeholder: 'Destinations',
-          }"
-          class="min-w-48"
-          searchable
-          multiple
-        />
-      </div>
+      <ApprovalFilters
+        @change="handleFilterChange"
+        pagination-id="approval-requests"
+      />
     </template>
 
     <!-- Custom Cells -->
@@ -250,14 +218,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { ref } from "vue";
 import { useRouter } from "vue-router";
 import Table from "@/components/common/Table.vue";
-import Button from "@/components/common/Button.vue";
-import Select from "@/components/common/Select.vue";
+import SearchFieldSelect from "@/components/common/SearchFieldSelect.vue";
 import Dropdown from "@/components/common/Dropdown.vue";
+import ApprovalFilters from "./ApprovalFilters.vue";
 import BottomSheet from "@/components/BottomSheet.vue";
-import { usePagination } from "@/composables/usePagination";
+import { usePagination, useTableLastMeta } from "@/composables/usePagination";
 import { currencyFormatter } from "@/utils/utils";
 import { icons } from "@/utils/icons";
 import { openModal } from "@customizer/modal-x";
@@ -324,24 +292,34 @@ const handleRejectClick = async (row: any) => {
   }
 };
 
-// --- Filters State ---
-const typeOptions = [
-  { label: "All", value: "all" },
-  { label: "Advance", value: "advance" },
-  { label: "Pre Payment", value: "prePayment" },
-  { label: "Transaction", value: "transaction" },
+// --- Search Field ---
+const searchFieldOptions = [
+  { label: "Plate Number", value: "vehiclePlateNumber" },
+  { label: "Advance Number", value: "advanceNumber" },
+  { label: "Driver Name", value: "driverName" },
 ];
 
+const lastMeta = useTableLastMeta("approval-requests");
+const selectedSearchField = ref(
+  (lastMeta.value.searchField as string | undefined) || "vehiclePlateNumber",
+);
+
+// Mobile filter bottom sheet
 const mobileTypeOpen = ref(false);
 const selectedType = ref("all");
-const origin = ref("");
-const destination = ref("");
+const typeOptions = [
+  { label: "All", value: "all" },
+  { label: "Driver Advance", value: "advance" },
+  { label: "Transporter Advance", value: "prePayment" },
+  { label: "Settlements", value: "transaction" },
+];
 
-const activeFilters = computed(() => ({
-  select: selectedType.value || undefined,
-  routeOrigin: origin.value || undefined,
-  routeDestination: destination.value || undefined,
-}));
+// --- Filters State ---
+const activeFilters = ref<any>({});
+
+const handleFilterChange = (newFilters: any) => {
+  activeFilters.value = { ...newFilters };
+};
 
 // --- Columns Definition ---
 const columns: TableColumn<ApprovalRequest>[] = [
@@ -378,7 +356,7 @@ const { response, setPage, refetch } = usePagination<ApprovalRequest>({
   params: (state) => {
     return {
       ...activeFilters.value,
-      vehiclePlateNumber: state.search || undefined,
+      [selectedSearchField.value]: state.search || undefined,
       q: undefined,
     };
   },
