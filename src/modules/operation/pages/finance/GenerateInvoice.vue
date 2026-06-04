@@ -353,9 +353,23 @@ const handleExport = async () => {
     border: none !important;
     box-shadow: none !important;
     padding: 0 !important;
+    height: auto !important;
+    min-height: 0 !important;
   }
   .report-table {
     font-size: 10px !important;
+  }
+  thead {
+    display: table-header-group !important;
+  }
+  tr {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+  .report-footer {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    margin-top: 40px !important;
   }
 }
 

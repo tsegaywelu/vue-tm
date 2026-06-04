@@ -6,6 +6,7 @@
     v-else-if="initialValues"
     form-id="edit-commodity-form"
     :initial-values="initialValues"
+    :labels="labels"
     :on-submit="handleUpdate"
   >
     <template #submit-btn>
@@ -44,6 +45,14 @@ const initialValues = computed(() => {
   return {
     name: data.name || "",
     shipper: data.shipper?._id || data.shipper || "",
+  };
+});
+
+const labels = computed(() => {
+  if (!response.value?.data) return { shipper: "" };
+  const data = (response.value.data as any).result || response.value.data;
+  return {
+    shipper: data.shipper?.name || "",
   };
 });
 

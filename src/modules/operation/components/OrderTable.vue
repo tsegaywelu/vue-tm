@@ -189,8 +189,11 @@ const columns = computed(() => {
     cols.push({ key: "shipper", label: "Shipper", field: "shipper" });
   }
 
+  if (isShipper.value) {
+    cols.push({ key: "carrier", label: "Carrier", field: "carrier" });
+  }
+
   cols.push(
-    { key: "carrier", label: "Carrier", field: "carrier" },
     { key: "status", label: "Status", field: "status" },
     { key: "actions", label: "Actions", field: "", cellAlign: "right" },
   );

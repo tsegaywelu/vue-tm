@@ -54,9 +54,11 @@ export const printSummary = (
     .signature-section { display: flex; justify-content: space-between; margin-top: 50px; width: 100%; gap: 15px; }
     .signature-box { width: 23%; border-top: 1px solid #000; padding-top: 8px; text-align: center; font-size: 12px; font-weight: bold; }
     .footer { text-align: right; font-size: 11px; color: #888; margin-top: 25px; border-top: 1px solid #eee; padding-top: 10px; }
+    thead { display: table-header-group; }
+    tr { page-break-inside: avoid; break-inside: avoid; }
     @media print {
-      .signature-footer { position: fixed; bottom: 30px; width: calc(100% - 40px); }
-      body { padding-bottom: 150px; }
+      body { padding: 0; }
+      .signature-footer { page-break-inside: avoid; break-inside: avoid; margin-top: 40px; }
       @page { margin: 1.5cm; }
     }
   </style>

@@ -82,9 +82,11 @@ export function printIssueReport(report: any, currentUser: any) {
     .status-RESOLVED { background: #dcfce7; color: #166534; }
     .status-CLOSED { background: #f3f4f6; color: #374151; }
 
+    thead { display: table-header-group; }
+    tr { page-break-inside: avoid; break-inside: avoid; }
     @media print {
       body { padding: 0; }
-      .signature-footer { position: fixed; bottom: 40px; width: calc(100% - 60px); }
+      .signature-footer { page-break-inside: avoid; break-inside: avoid; margin-top: 40px; }
       @page { margin: 1.5cm; }
     }
   </style>
