@@ -9,9 +9,12 @@ import { useAuthStore } from "@/store/authStore";
 import type { Navs } from "@/types/navigation";
 import DashboardPage from "@/components/common/DashboardPage.vue";
 import AiChatBox from "@/components/AiChatBox.vue";
+import BottomSheet from "@/components/BottomSheet.vue";
+import { useIsMobile } from "@/composables/useIsMobile";
 
 const authStore = useAuthStore();
 const route = useRoute();
+const { isMobile } = useIsMobile();
 
 const allNavs = computed(() => {
   const registry = getNavigationRegistry(authStore.is_shipper);
@@ -63,7 +66,7 @@ const update_layout = () => {
 };
 
 const grid_cols_class = computed(() => {
-  const with_chat = is_dashboard.value && chat_col_active.value;
+  const with_chat = is_dashboard.value && chat_col_active.value && !isMobile.value;
   // Sidebar always occupies its collapsed width — hover expansion is absolute/overlay
   if (with_chat) return "xl:grid-cols-[5.5rem_minmax(0,1fr)_32rem]";
   return "xl:grid-cols-[5.5rem_minmax(0,1fr)]";
@@ -169,7 +172,7 @@ onUnmounted(() => {
       </div>
     </div>
 
-    <!-- Inline panel — dashboard only, pushes content aside -->
+    <!-- Inline panel — dashboard only, pushes content aside (desktop) -->
     <Transition
       enter-active-class="transition-all duration-200 ease-out"
       enter-from-class="opacity-0 translate-x-8"
@@ -179,14 +182,14 @@ onUnmounted(() => {
       leave-to-class="opacity-0 translate-x-8"
     >
       <AiChatBox
-        v-if="is_chat_open && is_dashboard"
+        v-if="is_chat_open && is_dashboard && !isMobile"
         class="m-2 rounded-2xl overflow-hidden shadow-sm"
         @close="toggle_chat"
       />
     </Transition>
   </div>
 
-  <!-- Floating panel — all other pages -->
+  <!-- Floating panel — all other pages (desktop) -->
   <Teleport v-if="isMounted" to="body">
     <Transition
       enter-active-class="transition-all duration-200 ease-out"
@@ -197,14 +200,19 @@ onUnmounted(() => {
       leave-to-class="opacity-0 translate-y-4 scale-95"
     >
       <div
-        v-if="is_chat_open && !is_dashboard"
-        class="fixed bottom-0 right-0 sm:bottom-4 sm:right-4 z-50 w-[calc(100vw-2rem)] max-w-96 rounded-t-2xl sm:rounded-2xl overflow-hidden shadow-2xl print-hide"
+        v-if="is_chat_open && !is_dashboard && !isMobile"
+        class="fixed bottom-4 right-4 z-50 w-96 max-w-96 rounded-2xl overflow-hidden shadow-2xl print-hide"
         style="height: min(560px, calc(100dvh - 2rem))"
       >
         <AiChatBox @close="toggle_chat" />
       </div>
     </Transition>
   </Teleport>
+
+  <!-- Mobile BottomSheet — all pages -->
+  <BottomSheet v-if="isMobile && isMounted" v-model="is_chat_open" no_handle fill>
+    <AiChatBox class="rounded-t-3xl" @close="toggle_chat" />
+  </BottomSheet>
 </template>
 
 <style>

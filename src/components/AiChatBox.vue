@@ -71,7 +71,7 @@ function onKeydown(e: KeyboardEvent) {
 
 <template>
   <div
-    class="flex flex-col h-full bg-white border-l border-gray-200 overflow-hidden print-hide"
+    class="flex flex-col h-full bg-white overflow-hidden print-hide"
   >
     <!-- Header -->
     <div

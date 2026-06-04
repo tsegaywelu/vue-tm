@@ -6,6 +6,8 @@ const props = defineProps<{
   modelValue: boolean;
   title?: string;
   subtitle?: string;
+  no_handle?: boolean;
+  fill?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -49,7 +51,7 @@ watch(
           @click.stop
         >
           <!-- Drag handle -->
-          <div class="flex justify-center pt-4 pb-1 shrink-0">
+          <div v-if="!no_handle" class="flex justify-center pt-4 pb-1 shrink-0">
             <div class="w-12 h-1.5 bg-grey-300 rounded-full" />
           </div>
 
@@ -76,7 +78,7 @@ watch(
           </div>
 
           <!-- Content -->
-          <div class="flex-1 overflow-y-auto">
+          <div :class="fill ? 'flex-1 flex flex-col overflow-hidden min-h-0' : 'flex-1 overflow-y-auto'">
             <slot />
           </div>
         </div>

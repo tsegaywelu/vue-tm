@@ -13,7 +13,7 @@
   <BottomSheet v-model="mobileSearchOpen" title="Search By">
     <div class="flex flex-col py-2 px-4 gap-1">
       <button
-        v-for="opt in AdvanceStatusOptions.filter((o) => o.value)"
+        v-for="opt in props.searchOptions.filter((o) => o.value)"
         :key="opt.value"
         class="flex items-center justify-between py-3 px-2 hover:bg-gray-50 rounded-xl transition-colors"
         @click="
@@ -321,7 +321,7 @@ const activeFilters = ref<any>({});
 const mobileSearchOpen = ref(false);
 
 const dynamicSearchPlaceholder = computed(() => {
-  const option = AdvanceStatusOptions.find(
+  const option = props.searchOptions.find(
     (o) => o.value === selectedStatus.value,
   );
   return option ? `Search by ${option.label}...` : "Search advances...";

@@ -97,6 +97,13 @@
           Export Full Product
         </button>
         <button
+          class="flex items-center gap-3 px-5 py-4 text-base font-medium text-gray-700 hover:bg-gray-50 border-b border-gray-100 text-left w-full"
+          @click="() => { handleExport('all'); showActionsSheet = false; }"
+        >
+          <i v-html="icons.excell" class="shrink-0 *:size-5"></i>
+          Export All
+        </button>
+        <button
           :disabled="selectedRows.length === 0"
           class="flex items-center gap-3 px-5 py-4 text-base font-medium text-left w-full disabled:opacity-40"
           :class="selectedRows.length === 0 ? 'text-gray-400' : 'text-primary hover:bg-primary/5'"

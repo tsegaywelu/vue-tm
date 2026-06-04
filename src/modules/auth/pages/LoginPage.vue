@@ -142,7 +142,6 @@ async function submitLogin(values: any) {
           </button>
         </div>
 
-        <!-- Login Form -->
         <Form
           :sanitize_bypass="['password']"
           :onSubmit="submitLogin"
@@ -154,7 +153,6 @@ async function submitLogin(values: any) {
             :validation="{ required }"
             name="username"
             label="Username"
-            :validation="{ required }"
             :attributes="{ placeholder: 'Enter your username' }"
           >
             <template #left_component>
