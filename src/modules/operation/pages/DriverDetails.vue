@@ -180,7 +180,7 @@ const getStatusVariant = (status: string | undefined) => {
   }
 };
 
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.v_STATIC_PATH;
 const getProfilePictureURL = (path: string) => {
   if (path) {
     return `${API_URL}/${path.replace(/\\/g, "/")}`;

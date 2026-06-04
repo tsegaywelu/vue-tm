@@ -196,6 +196,7 @@ watch(isOpen, (open) => {
 });
 
 function handleOutsideClick(e: MouseEvent) {
+  if (isMobile.value) return;
   if (
     !containerRef.value?.contains(e.target as Node) &&
     !dropdownRef.value?.contains(e.target as Node)

@@ -10,7 +10,7 @@
     <template v-else-if="purchaseOrder">
       <!-- Header Section -->
       <div
-        class="bg-surface flex flex-col md:flex-row md:items-center justify-between px-3 md:px-4 py-4 md:py-3 rounded-[20px] gap-4 shadow-sm border border-gray-100"
+        class="bg-surface flex flex-col md:flex-row md:items-center justify-between px-3 md:px-4 py-4 md:py-3 rounded-[20px] gap-4 shadow-sm border border-line dark:border-white/10"
       >
         <div class="flex flex-col gap-2 flex-1">
           <div class="flex items-center gap-4">
@@ -18,19 +18,19 @@
               <i class="mdi mdi-cart-outline text-2xl"></i>
             </div>
             <div>
-              <h1 class="font-bold text-2xl leading-tight text-gray-900 uppercase">
+              <h1 class="font-bold text-2xl leading-tight text-base-text uppercase">
                 PO #{{ purchaseOrder.referenceNumber || '-------' }}
               </h1>
               <div class="flex flex-col md:flex-row md:items-center gap-1 md:gap-4">
-                <span class="text-sm text-gray-600">
+                <span class="text-sm text-dim-text">
                   Supplier:
-                  <span class="font-bold text-black text-sm ml-1">
+                  <span class="font-bold text-base-text text-sm ml-1">
                     {{ purchaseOrder.to?.name || '-' }}
                   </span>
                 </span>
-                <span class="text-sm text-gray-600">
+                <span class="text-sm text-dim-text">
                   Date:
-                  <span class="font-bold text-black text-sm ml-1">
+                  <span class="font-bold text-base-text text-sm ml-1">
                     {{ purchaseOrder.date ? dateFormatter(purchaseOrder.date) : '-' }}
                   </span>
                 </span>
@@ -78,27 +78,27 @@
 
       <!-- Void Modal -->
       <ModalWrapper v-if="showVoidModal" @close="showVoidModal = false" class="flex items-center justify-center p-4">
-        <div class="bg-surface rounded-[30px] shadow-2xl w-full max-w-[500px] flex flex-col overflow-hidden animate-in fade-in zoom-in duration-200">
-          <div class="p-6 border-b border-gray-100 flex justify-between items-center">
-            <h2 class="text-xl font-bold text-gray-900">Void Purchase Order</h2>
-            <button @click="showVoidModal = false" class="text-gray-400 hover:text-gray-600 transition-colors">
+        <div class="bg-surface border border-line dark:border-white/10 rounded-[30px] shadow-2xl w-full max-w-[500px] flex flex-col overflow-hidden animate-in fade-in zoom-in duration-200">
+          <div class="p-6 border-b border-line flex justify-between items-center">
+            <h2 class="text-xl font-bold text-base-text">Void Purchase Order</h2>
+            <button @click="showVoidModal = false" class="text-faint-text hover:text-dim-text transition-colors">
               <i class="mdi mdi-close text-2xl"></i>
             </button>
           </div>
           
           <div class="p-6 flex flex-col gap-5">
-            <p class="text-sm text-gray-600">
+            <p class="text-sm text-dim-text">
               Are you sure you want to <span class="text-red-600 font-bold">Void</span> this purchase order? This action cannot be undone.
             </p>
             <div class="flex flex-col gap-1.5">
-              <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider ml-1">Void Reason <span class="text-red-500">*</span></label>
-              <textarea v-model="voidReason" placeholder="Enter reason for voiding..." class="bg-gray-50 border-none rounded-2xl px-4 py-3 outline-none focus:ring-2 focus:ring-primary/20 text-sm h-24 resize-none transition-all"></textarea>
+              <label class="text-[11px] font-bold text-dim-text uppercase tracking-wider ml-1">Void Reason <span class="text-red-500">*</span></label>
+              <textarea v-model="voidReason" placeholder="Enter reason for voiding..." class="bg-surface-muted text-base-text border border-line rounded-2xl px-4 py-3 outline-none focus:ring-2 focus:ring-primary/20 text-sm h-24 resize-none transition-all"></textarea>
             </div>
           </div>
 
-          <div class="p-6 bg-gray-50 flex justify-end gap-3">
+          <div class="p-6 bg-surface-muted border-t border-line flex justify-end gap-3">
             <Button variant="outline" size="md" @click="showVoidModal = false" class="!rounded-2xl">Cancel</Button>
-            <Button variant="primary" size="md" :isLoading="voidMutation.isPending" @click="handleVoid" class="!rounded-2xl bg-red-600 hover:bg-red-700 shadow-lg shadow-red-200">Confirm Void</Button>
+            <Button variant="primary" size="md" :isLoading="voidMutation.isPending" @click="handleVoid" class="!rounded-2xl bg-red-600 hover:bg-red-700 shadow-lg shadow-red-500/20">Confirm Void</Button>
           </div>
         </div>
       </ModalWrapper>

@@ -56,9 +56,11 @@ export function printPurchaseOrder(order: any, currentUser: any) {
     
     .footer-meta { text-align: right; font-size: 10px; color: #98a2b3; border-top: 1px solid #f2f4f7; padding-top: 10px; }
 
+    thead { display: table-header-group; }
+    tr { page-break-inside: avoid; break-inside: avoid; }
     @media print {
       body { padding: 0; }
-      .signature-footer { position: fixed; bottom: 40px; width: calc(100% - 60px); }
+      .signature-footer { page-break-inside: avoid; break-inside: avoid; margin-top: 40px; }
       @page { margin: 1.5cm; }
     }
   </style>

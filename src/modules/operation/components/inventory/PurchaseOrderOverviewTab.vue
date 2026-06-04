@@ -1,14 +1,14 @@
 <template>
   <div class="flex flex-col gap-4 pb-8">
     <div
-      class="rounded-2xl px-3 md:px-5 py-6 bg-surface flex flex-col gap-8 shadow-sm border border-gray-100 relative"
+      class="rounded-2xl px-3 md:px-5 py-6 bg-surface flex flex-col gap-8 shadow-sm border border-line dark:border-white/10 relative"
     >
       <!-- Void Watermark -->
       <div
         v-if="purchaseOrder?.status === 'VOID'"
         class="pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden"
       >
-        <div class="text-red-600 opacity-5 text-9xl font-bold -rotate-12 uppercase tracking-widest">
+        <div class="text-red-600/5 text-9xl font-bold -rotate-12 uppercase tracking-widest">
           VOID
         </div>
       </div>
@@ -41,29 +41,29 @@
 
       <div class="flex flex-col gap-4" v-if="purchaseOrder?.status === 'VOID'">
         <h4 class="text-xs font-bold text-red-600 uppercase tracking-widest px-1">Void Information</h4>
-        <div class="p-4 bg-red-50 rounded-xl border border-red-100 flex flex-col gap-2">
-          <p class="text-sm text-gray-700"><strong>Reason:</strong> {{ purchaseOrder.voidReason || '-' }}</p>
-          <p class="text-sm text-gray-700"><strong>Voided By:</strong> {{ purchaseOrder.voidedBy?.username || '-' }}</p>
+        <div class="p-4 bg-red-500/5 rounded-xl border border-red-500/20 text-red-600 flex flex-col gap-2">
+          <p class="text-sm text-base-text"><strong>Reason:</strong> {{ purchaseOrder.voidReason || '-' }}</p>
+          <p class="text-sm text-base-text"><strong>Voided By:</strong> {{ purchaseOrder.voidedBy?.username || '-' }}</p>
         </div>
       </div>
 
       <div class="flex flex-col gap-4">
-        <h3 class="text-lg font-bold text-gray-900 px-1">Order Items</h3>
+        <h3 class="text-lg font-bold text-base-text px-1">Order Items</h3>
 
         <!-- Mobile card list -->
-        <div class="sm:hidden flex flex-col divide-y divide-gray-100 rounded-xl border border-line bg-white overflow-hidden">
-          <div v-if="!purchaseOrder?.items?.length" class="px-4 py-10 text-center text-sm text-gray-500 italic">
+        <div class="sm:hidden flex flex-col divide-y divide-line rounded-xl border border-line bg-surface overflow-hidden">
+          <div v-if="!purchaseOrder?.items?.length" class="px-4 py-10 text-center text-sm text-dim-text italic">
             No items in this order.
           </div>
           <div v-for="(item, index) in purchaseOrder?.items" :key="index" class="px-4 py-3 grid grid-cols-6 gap-x-2 gap-y-1.5">
-            <div class="col-span-1"><span class="text-xs font-bold text-gray-400">#{{ index + 1 }}</span></div>
-            <div class="col-span-5 text-right"><span class="text-xs text-gray-500">{{ item.item?.uom || '-' }}</span></div>
-            <div class="col-span-4"><span class="text-sm font-bold text-gray-900">{{ item.item?.name || '-' }}</span></div>
-            <div class="col-span-2 text-right"><span class="text-xs text-gray-500">Qty</span><span class="text-sm font-semibold text-gray-900 ml-1">{{ item.quantity }}</span></div>
-            <div class="col-span-3"><span class="text-xs text-gray-500">Unit</span><span class="text-sm text-gray-700 ml-1">{{ currencyFormatter(item.price) }}</span></div>
+            <div class="col-span-1"><span class="text-xs font-bold text-faint-text">#{{ index + 1 }}</span></div>
+            <div class="col-span-5 text-right"><span class="text-xs text-dim-text">{{ item.item?.uom || '-' }}</span></div>
+            <div class="col-span-4"><span class="text-sm font-bold text-base-text">{{ item.item?.name || '-' }}</span></div>
+            <div class="col-span-2 text-right"><span class="text-xs text-dim-text">Qty</span><span class="text-sm font-semibold text-base-text ml-1">{{ item.quantity }}</span></div>
+            <div class="col-span-3"><span class="text-xs text-dim-text">Unit</span><span class="text-sm text-dim-text ml-1">{{ currencyFormatter(item.price) }}</span></div>
             <div class="col-span-3 text-right"><span class="text-sm font-bold text-primary">{{ currencyFormatter(item.totalPrice) }}</span></div>
           </div>
-          <div v-if="purchaseOrder?.items?.length" class="px-4 py-3 bg-primary/5 flex items-center justify-between">
+          <div v-if="purchaseOrder?.items?.length" class="px-4 py-3 bg-primary/10 flex items-center justify-between">
             <span class="text-sm font-bold text-primary">Grand Total</span>
             <span class="text-base font-black text-primary">{{ currencyFormatter(purchaseOrder?.grandTotal) }}</span>
           </div>
@@ -71,8 +71,8 @@
 
         <!-- Desktop table -->
         <div class="hidden sm:block overflow-x-auto rounded-xl border border-line">
-          <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
+          <table class="min-w-full divide-y divide-line">
+            <thead class="bg-surface-muted">
               <tr class="bg-primary/90 text-white">
                 <th class="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider">No</th>
                 <th class="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider">Item Description</th>
@@ -83,34 +83,34 @@
                 <th class="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider">Remark</th>
               </tr>
             </thead>
-            <tbody class="bg-surface divide-y divide-gray-200">
+            <tbody class="bg-surface divide-y divide-line">
               <tr v-if="!purchaseOrder?.items?.length">
-                <td colspan="7" class="px-4 py-10 text-center text-sm text-gray-500 italic">
+                <td colspan="7" class="px-4 py-10 text-center text-sm text-dim-text italic">
                   No items in this order.
                 </td>
               </tr>
               <tr v-for="(item, index) in purchaseOrder?.items" :key="index" class="hover:bg-surface-hover transition-colors">
-                <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">{{ index + 1 }}</td>
-                <td class="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ item.item?.name || '-' }}</td>
-                <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-600">{{ item.item?.uom || '-' }}</td>
-                <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900 font-semibold text-right">{{ item.quantity }}</td>
-                <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-600 text-right">{{ currencyFormatter(item.price) }}</td>
-                <td class="px-4 py-4 whitespace-nowrap text-sm font-bold text-gray-900 text-right">{{ currencyFormatter(item.totalPrice) }}</td>
-                <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-600">{{ item.remark || '-' }}</td>
+                <td class="px-4 py-4 whitespace-nowrap text-sm text-base-text">{{ index + 1 }}</td>
+                <td class="px-4 py-4 whitespace-nowrap text-sm font-medium text-base-text">{{ item.item?.name || '-' }}</td>
+                <td class="px-4 py-4 whitespace-nowrap text-sm text-dim-text">{{ item.item?.uom || '-' }}</td>
+                <td class="px-4 py-4 whitespace-nowrap text-sm text-base-text font-semibold text-right">{{ item.quantity }}</td>
+                <td class="px-4 py-4 whitespace-nowrap text-sm text-dim-text text-right">{{ currencyFormatter(item.price) }}</td>
+                <td class="px-4 py-4 whitespace-nowrap text-sm font-bold text-base-text text-right">{{ currencyFormatter(item.totalPrice) }}</td>
+                <td class="px-4 py-4 whitespace-nowrap text-sm text-dim-text">{{ item.remark || '-' }}</td>
               </tr>
             </tbody>
-            <tfoot class="bg-gray-50">
+            <tfoot class="bg-surface-muted">
               <tr>
-                <td colspan="5" class="px-4 py-3 text-right text-sm font-bold text-gray-700">Sub Total</td>
-                <td class="px-4 py-3 text-right text-sm font-bold text-gray-900">{{ currencyFormatter(purchaseOrder?.total) }}</td>
+                <td colspan="5" class="px-4 py-3 text-right text-sm font-bold text-dim-text">Sub Total</td>
+                <td class="px-4 py-3 text-right text-sm font-bold text-base-text">{{ currencyFormatter(purchaseOrder?.total) }}</td>
                 <td></td>
               </tr>
               <tr v-if="purchaseOrder?.includeVAT">
-                <td colspan="5" class="px-4 py-3 text-right text-sm font-bold text-gray-700">VAT ({{ purchaseOrder?.vatRate || 15 }}%)</td>
-                <td class="px-4 py-3 text-right text-sm font-bold text-gray-900 text-error-600">+ {{ currencyFormatter(purchaseOrder?.vat) }}</td>
+                <td colspan="5" class="px-4 py-3 text-right text-sm font-bold text-dim-text">VAT ({{ purchaseOrder?.vatRate || 15 }}%)</td>
+                <td class="px-4 py-3 text-right text-sm font-bold text-error">+ {{ currencyFormatter(purchaseOrder?.vat) }}</td>
                 <td></td>
               </tr>
-              <tr class="bg-primary/5">
+              <tr class="bg-primary/10">
                 <td colspan="5" class="px-4 py-3 text-right text-base font-bold text-primary">Grand Total</td>
                 <td class="px-4 py-3 text-right text-lg font-black text-primary">{{ currencyFormatter(purchaseOrder?.grandTotal) }}</td>
                 <td></td>

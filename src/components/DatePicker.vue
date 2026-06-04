@@ -1,6 +1,6 @@
 <template>
   <div
-    class="bg-surface border border-line rounded-4xl p-6 select-none w-full sm:shadow-2xl sm:min-w-[320px] sm:w-auto transition-all duration-300"
+    class="bg-surface border-0 sm:border sm:border-line rounded-4xl p-6 select-none w-full sm:shadow-2xl sm:min-w-[320px] sm:w-auto transition-all duration-300"
     @click.stop
   >
     <!-- Calendar Type Toggle (Optional) -->

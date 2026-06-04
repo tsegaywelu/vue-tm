@@ -6,6 +6,7 @@
     v-else-if="initialValues"
     form-id="edit-commodity-form"
     :initial-values="initialValues"
+    :shipper-labels="shipperLabels"
     :on-submit="handleUpdate"
   >
     <template #submit-btn>
@@ -47,6 +48,16 @@ const initialValues = computed(() => {
   };
 });
 
+const shipperLabels = computed(() => {
+  if (!response.value?.data) return {};
+  const data = (response.value.data as any).result || response.value.data;
+  if (data.shipper && typeof data.shipper === "object") {
+    return {
+      [data.shipper._id]: data.shipper.name || "",
+    };
+  }
+  return {};
+});
 
 const mutation = useMutation({
   mutationFn: (values: any) => update_commodity(id, values),

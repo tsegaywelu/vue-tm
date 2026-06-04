@@ -1,7 +1,14 @@
 <template>
   <Teleport to="#page-actions" defer>
     <div class="hidden sm:flex">
-      <Button v-permission="'DRIVER:create'" size="md" variant="primary" @click="addDriver"> New Driver </Button>
+      <Button
+        v-permission="'DRIVER:create'"
+        size="md"
+        variant="primary"
+        @click="addDriver"
+      >
+        New Driver
+      </Button>
     </div>
   </Teleport>
 
@@ -11,7 +18,14 @@
     class="fixed bottom-6 right-6 sm:hidden z-50 w-14 h-14 rounded-full bg-primary text-white flex items-center justify-center shadow-lg active:scale-95 transition-transform"
     @click="addDriver"
   >
-    <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="w-7 h-7"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      stroke-width="2.5"
+    >
       <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
     </svg>
   </button>
@@ -252,7 +266,7 @@ const getStatusVariant = (status: string | undefined) => {
   }
 };
 
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.v_STATIC_PATH;
 const getProfilePictureURL = (path: string) => {
   if (path) {
     return `${API_URL}/${path.replace(/\\/g, "/")}`;

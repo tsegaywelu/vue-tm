@@ -10,7 +10,7 @@
     <template v-else-if="issueReport">
       <!-- Header Section -->
       <div
-        class="bg-surface flex flex-col md:flex-row md:items-center justify-between px-3 md:px-4 py-4 md:py-3 rounded-[20px] gap-4 shadow-sm border border-gray-100"
+        class="bg-surface flex flex-col md:flex-row md:items-center justify-between px-3 md:px-4 py-4 md:py-3 rounded-[20px] gap-4 shadow-sm border border-line dark:border-white/10"
       >
         <div class="flex flex-col gap-2 flex-1">
           <div class="flex items-center gap-4">
@@ -18,15 +18,15 @@
               <i class="mdi mdi-alert-circle-outline text-2xl"></i>
             </div>
             <div>
-              <h1 class="font-bold text-2xl leading-tight text-gray-900 uppercase">
+              <h1 class="font-bold text-2xl leading-tight text-base-text uppercase">
                 Issue Report #{{ issueReport._id?.slice(-6) || '-------' }}
               </h1>
               <div class="flex flex-col md:flex-row md:items-center gap-1 md:gap-4">
-                <span class="text-sm text-gray-600">
-                  Type: <span class="font-bold text-black ml-1">{{ issueReport.type || '-' }}</span>
+                <span class="text-sm text-dim-text">
+                  Type: <span class="font-bold text-base-text ml-1">{{ issueReport.type || '-' }}</span>
                 </span>
-                <span class="text-sm text-gray-600">
-                  Date: <span class="font-bold text-black ml-1">{{ dateFormatter(issueReport.createdAt) }}</span>
+                <span class="text-sm text-dim-text">
+                  Date: <span class="font-bold text-base-text ml-1">{{ dateFormatter(issueReport.createdAt) }}</span>
                 </span>
               </div>
             </div>
@@ -91,10 +91,10 @@
       </div>
     </template>
 
-    <div v-else class="flex flex-col items-center justify-center py-20 bg-surface rounded-[20px] border border-gray-100 shadow-sm">
-      <i class="mdi mdi-alert-circle-outline text-6xl text-gray-300"></i>
-      <h2 class="mt-4 text-xl font-bold text-gray-800">Issue Report Not Found</h2>
-      <p class="mt-2 text-gray-500">The requested report could not be found or has been removed.</p>
+    <div v-else class="flex flex-col items-center justify-center py-20 bg-surface rounded-[20px] border border-line dark:border-white/10 shadow-sm">
+      <i class="mdi mdi-alert-circle-outline text-6xl text-faint-text"></i>
+      <h2 class="mt-4 text-xl font-bold text-base-text">Issue Report Not Found</h2>
+      <p class="mt-2 text-dim-text">The requested report could not be found or has been removed.</p>
       <Button variant="outline" class="mt-6" @click="$router.push('/maintenance/issue-report')">
         Back to List
       </Button>

@@ -9,7 +9,7 @@
     <template v-if="!isLoading && requisition">
       <!-- Header Section -->
       <div
-        class="bg-surface flex flex-col md:flex-row md:items-center justify-between px-3 md:px-4 py-4 md:py-3 rounded-[20px] gap-4 shadow-sm border border-gray-100"
+        class="bg-surface flex flex-col md:flex-row md:items-center justify-between px-3 md:px-4 py-4 md:py-3 rounded-[20px] gap-4 shadow-sm border border-line dark:border-white/10"
       >
         <div class="flex flex-col gap-2 flex-1">
           <div class="flex items-center gap-4">
@@ -17,19 +17,19 @@
               <i class="mdi mdi-file-document-edit-outline text-2xl"></i>
             </div>
             <div>
-              <h1 class="font-bold text-2xl leading-tight text-gray-900 uppercase">
+              <h1 class="font-bold text-2xl leading-tight text-base-text uppercase">
                 PR #{{ requisition.referenceNumber || '-------' }}
               </h1>
               <div class="flex flex-col md:flex-row md:items-center gap-1 md:gap-4">
-                <span class="text-sm text-gray-600">
+                <span class="text-sm text-dim-text">
                   Carrier:
-                  <span class="font-bold text-black text-sm ml-1">
+                  <span class="font-bold text-base-text text-sm ml-1">
                     {{ requisition.carrier?.name || '-' }}
                   </span>
                 </span>
-                <span class="text-sm text-gray-600">
+                <span class="text-sm text-dim-text">
                   Date:
-                  <span class="font-bold text-black text-sm ml-1">
+                  <span class="font-bold text-base-text text-sm ml-1">
                     {{ requisition.date ? dateFormatter(requisition.date) : '-' }}
                   </span>
                 </span>

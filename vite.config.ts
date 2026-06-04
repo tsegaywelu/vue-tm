@@ -51,4 +51,7 @@ export default defineConfig({
   define: {
     global: "window",
   },
+  build: {
+    sourcemap: false,
+  },
 });

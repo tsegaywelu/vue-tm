@@ -1,13 +1,13 @@
 <template>
-  <div class="bg-white rounded-2xl p-4 flex flex-col gap-4 select-none w-full sm:shadow-lg sm:min-w-[240px] sm:w-auto">
+  <div class="bg-surface rounded-2xl p-4 flex flex-col gap-4 select-none w-full border-0 sm:border sm:border-line sm:dark:border-white/10 sm:shadow-2xl sm:dark:shadow-[0_4px_24px_rgba(255,255,255,0.06)] sm:min-w-[240px] sm:w-auto">
     <!-- Range tab switcher -->
-    <div v-if="isRange" class="flex bg-gray-50 p-1 rounded-xl">
+    <div v-if="isRange" class="flex bg-surface-muted p-1 rounded-xl">
       <button
         type="button"
         @click="activeTab = 'start'"
         :class="[
           'flex-1 py-1.5 rounded-lg text-xs font-medium transition-all',
-          activeTab === 'start' ? 'bg-white shadow-sm text-primary' : 'text-gray-500',
+          activeTab === 'start' ? 'bg-surface shadow-sm text-primary' : 'text-dim-text',
         ]"
       >
         Start Time
@@ -17,7 +17,7 @@
         @click="activeTab = 'end'"
         :class="[
           'flex-1 py-1.5 rounded-lg text-xs font-medium transition-all',
-          activeTab === 'end' ? 'bg-white shadow-sm text-primary' : 'text-gray-500',
+          activeTab === 'end' ? 'bg-surface shadow-sm text-primary' : 'text-dim-text',
         ]"
       >
         End Time
@@ -28,8 +28,8 @@
     <div class="flex justify-center items-center gap-4">
       <!-- Hours -->
       <div class="flex flex-col items-center">
-        <span class="text-xs text-gray-600 mb-1">Hour</span>
-        <div class="flex flex-col gap-1 max-h-[150px] overflow-y-auto no-scrollbar py-10 px-2 border border-gray-100 rounded-lg">
+        <span class="text-xs text-dim-text mb-1">Hour</span>
+        <div class="flex flex-col gap-1 max-h-[150px] overflow-y-auto no-scrollbar py-10 px-2 border border-line rounded-lg">
           <button
             v-for="h in hourOptions"
             :key="h"
@@ -37,7 +37,7 @@
             @click="selectHour(h)"
             :class="[
               'w-10 h-10 flex items-center justify-center rounded-lg transition-colors text-sm',
-              hours === h ? 'bg-primary text-white' : 'hover:bg-surface-hover text-gray-800',
+              hours === h ? 'bg-primary text-white' : 'hover:bg-surface-hover text-base-text',
             ]"
           >
             {{ h.toString().padStart(2, '0') }}
@@ -45,12 +45,12 @@
         </div>
       </div>
 
-      <span class="text-2xl font-bold mt-4">:</span>
+      <span class="text-2xl font-bold mt-4 text-base-text">:</span>
 
       <!-- Minutes -->
       <div class="flex flex-col items-center">
-        <span class="text-xs text-gray-600 mb-1">Min</span>
-        <div class="flex flex-col gap-1 max-h-[150px] overflow-y-auto no-scrollbar py-10 px-2 border border-gray-100 rounded-lg">
+        <span class="text-xs text-dim-text mb-1">Min</span>
+        <div class="flex flex-col gap-1 max-h-[150px] overflow-y-auto no-scrollbar py-10 px-2 border border-line rounded-lg">
           <button
             v-for="m in minuteOptions"
             :key="m"
@@ -58,7 +58,7 @@
             @click="selectMinute(m)"
             :class="[
               'w-10 h-10 flex items-center justify-center rounded-lg transition-colors text-sm',
-              minutes === m ? 'bg-primary text-white' : 'hover:bg-surface-hover text-gray-800',
+              minutes === m ? 'bg-primary text-white' : 'hover:bg-surface-hover text-base-text',
             ]"
           >
             {{ m.toString().padStart(2, '0') }}
@@ -75,7 +75,7 @@
           @click="selectPeriod(p as 'AM' | 'PM')"
           :class="[
             'px-3 py-2 rounded-lg text-sm font-semibold transition-colors',
-            period === p ? 'bg-primary text-white' : 'bg-gray-50 text-gray-600 hover:bg-gray-100',
+            period === p ? 'bg-primary text-white' : 'bg-surface-muted text-dim-text hover:bg-surface-hover',
           ]"
         >
           {{ p }}

@@ -12,6 +12,7 @@
             url="/shipper"
             label_key="name"
             value_key="_id"
+            :initial_labels="shipperLabels"
             :validation="{ required }"
             :attributes="{ placeholder: 'Select shipper' }"
           />
@@ -44,5 +45,6 @@ defineProps<{
   formId: string;
   initialValues: Record<string, any>;
   onSubmit: (values: any) => Promise<void> | void;
+  shipperLabels?: Record<string, string>;
 }>();
 </script>

@@ -45,7 +45,7 @@
     <i class="*:size-6" v-html="icons.plus"></i>
   </button>
 
-  <Teleport to="#extra-page-data">
+  <Teleport to="#extra-page-data" defer>
     <StatsCards
       :stats="[
         {

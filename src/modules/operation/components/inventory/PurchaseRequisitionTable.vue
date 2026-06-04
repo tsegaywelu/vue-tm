@@ -6,11 +6,18 @@
     :rows="response"
     :search_placeholder="dynamicSearchPlaceholder"
     :hide_on_sm_screen="['srv', 'supplierName', 'requestedDate', 'preparedBy']"
-    :on_sm_screen_column_span="{ date: 2, referenceNumber: 2, items: 2, status: 2 }"
+    :on_sm_screen_column_span="{
+      date: 2,
+      referenceNumber: 2,
+      items: 2,
+      status: 2,
+    }"
     @row_click="(row) => handleAction(row, 'view')"
   >
     <template #search-prefix>
-      <div class="hidden sm:flex h-full items-center border-r border-line pr-2 mr-2 w-48">
+      <div
+        class="hidden sm:flex h-full items-center border-r border-line pr-2 mr-2 w-48"
+      >
         <SearchFieldSelect
           v-model="selectedSearchField"
           pagination-id="purchase-requisitions-list"
@@ -41,25 +48,34 @@
 
     <template #cell-items="{ row }">
       <div class="flex flex-col gap-1">
-        <span v-for="item in row.items?.slice(0, 2)" :key="item._id" class="text-xs text-gray-600">
+        <span
+          v-for="item in row.items?.slice(0, 2)"
+          :key="item._id"
+          class="text-xs text-gray-600"
+        >
           • {{ item.item?.name }} ({{ item.quantity }})
         </span>
-        <span v-if="row.items?.length > 2" class="text-[10px] text-primary font-medium">
+        <span
+          v-if="row.items?.length > 2"
+          class="text-[10px] text-primary font-medium"
+        >
           + {{ row.items.length - 2 }} more items
         </span>
       </div>
     </template>
 
-    <template #cell-date="{ row }">
-      {{ new Date(row.date).toLocaleDateString() }}
+    <template #cell-approvedSTRDate="{ row }">
+      {{ new Date(row.approvedSTRDate).toLocaleDateString() }}
     </template>
 
     <template #cell-requestedDate="{ row }">
-      {{ new Date(row.requestedDate).toLocaleDateString() }}
+      {{ new Date(row.createdAt).toLocaleDateString() }}
     </template>
 
     <template #cell-srv="{ row }">
-      <span class="font-medium text-gray-900">{{ row.srv?.referenceNumber || '-' }}</span>
+      <span class="font-medium text-gray-900">{{
+        row.srv?.referenceNumber || "-"
+      }}</span>
     </template>
 
     <template #cell-preparedBy="{ row }">
@@ -76,7 +92,8 @@
       <div class="flex items-center justify-center">
         <Dropdown>
           <template #default="{ close }">
-            <DropDownItem v-permission="'PURCHASE_REQUISITION:read'"
+            <DropDownItem
+              v-permission="'PURCHASE_REQUISITION:read'"
               :icon="icons.eye"
               label="View Details"
               @click.stop="
@@ -84,7 +101,8 @@
                 close();
               "
             />
-            <DropDownItem v-permission="'PURCHASE_REQUISITION:update'"
+            <DropDownItem
+              v-permission="'PURCHASE_REQUISITION:update'"
               v-if="row.status === 'PENDING'"
               :icon="icons.edit"
               label="Edit"
@@ -93,7 +111,8 @@
                 close();
               "
             />
-            <DropDownItem v-permission="'PURCHASE_REQUISITION:approve'"
+            <DropDownItem
+              v-permission="'PURCHASE_REQUISITION:approve'"
               v-if="row.status === 'PENDING'"
               :icon="icons.successBell"
               label="Approve"
@@ -103,7 +122,8 @@
                 close();
               "
             />
-            <DropDownItem v-permission="'PURCHASE_REQUISITION:reject'"
+            <DropDownItem
+              v-permission="'PURCHASE_REQUISITION:reject'"
               v-if="row.status === 'PENDING'"
               :icon="icons.rejectedBell"
               label="Reject"
@@ -113,7 +133,8 @@
                 close();
               "
             />
-            <DropDownItem v-permission="'PURCHASE_REQUISITION:authorize'"
+            <DropDownItem
+              v-permission="'PURCHASE_REQUISITION:authorize'"
               v-if="row.status === 'APPROVED'"
               :icon="icons.successBell"
               label="Authorize"
@@ -123,7 +144,8 @@
                 close();
               "
             />
-            <DropDownItem v-permission="'PURCHASE_REQUISITION:cancel'"
+            <DropDownItem
+              v-permission="'PURCHASE_REQUISITION:cancel'"
               v-if="row.status === 'APPROVED'"
               :icon="icons.rejectedBell"
               label="Cancel"
@@ -175,7 +197,9 @@ const selectedSearchField = ref(
 const searchTerm = ref("");
 
 const dynamicSearchPlaceholder = computed(() => {
-  const option = searchFieldOptions.find((o) => o.value === selectedSearchField.value);
+  const option = searchFieldOptions.find(
+    (o) => o.value === selectedSearchField.value,
+  );
   return option ? `Search by ${option.label}...` : "Search...";
 });
 
@@ -193,10 +217,9 @@ const { response, refetch } = usePagination<any>({
 });
 
 const columns: TableColumn<any>[] = [
-  { key: "date", label: "Date", field: "date" },
+  { key: "approvedSTRDate", label: "Date", field: "approvedSTRDate" },
   { key: "referenceNumber", label: "Reference No", field: "referenceNumber" },
   { key: "srv", label: "SRV No", field: "srv" },
-  { key: "supplierName", label: "Supplier", field: "supplierName" },
   { key: "items", label: "Items", field: "items" },
   { key: "requestedDate", label: "Requested Date", field: "requestedDate" },
   { key: "preparedBy", label: "Prepared By", field: "preparedBy" },
@@ -206,12 +229,17 @@ const columns: TableColumn<any>[] = [
 
 const getStatusVariant = (status: string) => {
   switch (status) {
-    case "PENDING": return "warning";
-    case "APPROVED": return "info";
-    case "AUTHORIZED": return "success";
+    case "PENDING":
+      return "warning";
+    case "APPROVED":
+      return "info";
+    case "AUTHORIZED":
+      return "success";
     case "CANCELLED":
-    case "REJECTED": return "error";
-    default: return "neutral";
+    case "REJECTED":
+      return "error";
+    default:
+      return "neutral";
   }
 };
 
