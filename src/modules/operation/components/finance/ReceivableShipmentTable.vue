@@ -5,7 +5,7 @@
       <div 
         v-for="item in summaryItems" 
         :key="item.label"
-        class="bg-white p-4 rounded-xl border border-grey-100 shadow-sm flex flex-col gap-1"
+        class="bg-surface p-4 rounded-xl border border-grey-100 shadow-sm flex flex-col gap-1"
       >
         <span class="text-xs font-medium text-grey-500">{{ item.label }}</span>
         <div class="flex items-baseline gap-2">

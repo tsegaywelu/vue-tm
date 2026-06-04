@@ -5,7 +5,7 @@
       <slot name="trigger">
         <button
           type="button"
-          class="rounded-lg cursor-pointer border grid place-items-center size-8 border-gray-200 hover:bg-gray-50 transition-colors"
+          class="rounded-lg cursor-pointer border grid place-items-center size-8 border-line hover:bg-surface-hover transition-colors"
         >
           <i class="*:size-full size-4.5" v-html="icons.v_elipssis"></i>
         </button>
@@ -28,7 +28,7 @@
             ref="contentRef"
             :class="
               twMerge(
-                'fixed z-9999 rounded-xl border border-gray-100 bg-white shadow-2xl ring-1 ring-black/5 min-w-48 p-1',
+                'fixed z-9999 rounded-xl border border-line bg-surface shadow-2xl ring-1 ring-black/5 min-w-48 p-1',
                 contentParent,
               )
             "

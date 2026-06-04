@@ -56,7 +56,7 @@ function getVehicleTypeLabel(id: string): string {
       </button>
 
       <div
-        class="grid [&_.input-focus]:bg-white grid-cols-1 md:grid-cols-4 gap-4 pr-8"
+        class="grid [&_.input-focus]:bg-surface grid-cols-1 md:grid-cols-4 gap-4 pr-8"
       >
         <BaseSelect
           size="xs"

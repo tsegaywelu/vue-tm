@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex flex-col">
+  <div class="bg-surface rounded-2xl border border-gray-100 shadow-sm p-5 flex flex-col">
     <div class="flex items-center justify-between mb-4">
       <h3 class="font-semibold text-gray-800">Destination Down Time</h3>
       <button @click="refetch()" class="text-gray-400 hover:text-gray-600 transition-colors">

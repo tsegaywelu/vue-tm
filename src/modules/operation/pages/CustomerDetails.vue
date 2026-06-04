@@ -7,7 +7,7 @@
     >
       <div class="flex items-center gap-4 md:gap-8">
         <div
-          class="size-16 md:size-32 rounded-full bg-white flex items-center justify-center shadow-lg border border-grey-100 overflow-hidden shrink-0"
+          class="size-16 md:size-32 rounded-full bg-surface flex items-center justify-center shadow-lg border border-grey-100 overflow-hidden shrink-0"
         >
           <img
             v-if="customer.logo"
@@ -47,7 +47,7 @@
     </div>
 
     <!-- Content card -->
-    <div v-else-if="customer" class="bg-white rounded-[32px] p-4 md:p-6 border border-grey-100">
+    <div v-else-if="customer" class="bg-surface rounded-[32px] p-4 md:p-6 border border-grey-100">
       <!-- Basic Details -->
       <div
         v-if="activeTab === 'basic'"

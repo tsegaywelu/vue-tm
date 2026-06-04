@@ -7,7 +7,7 @@
         <div
           v-for="toast in toasts"
           :key="toast.id"
-          class="pointer-events-auto flex flex-col rounded-xl shadow-2xl border min-w-[300px] max-w-md bg-white transition-all duration-300 transform overflow-hidden"
+          class="pointer-events-auto flex flex-col rounded-xl shadow-2xl border min-w-[300px] max-w-md bg-surface transition-all duration-300 transform overflow-hidden"
           :class="[borderClass(toast.type)]"
           @mouseenter="pauseToast(toast.id)"
           @mouseleave="resumeToast(toast.id)"
@@ -78,10 +78,10 @@
               </div>
 
               <div class="grow">
-                <p class="text-sm font-semibold text-gray-900 leading-tight">
+                <p class="text-sm font-semibold text-base-text leading-tight">
                   {{ toast.type.charAt(0).toUpperCase() + toast.type.slice(1) }}
                 </p>
-                <p class="text-xs text-gray-500 mt-1">
+                <p class="text-xs text-dim-text mt-1">
                   {{ toast.message }}
                 </p>
               </div>

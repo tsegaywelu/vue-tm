@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col gap-4 relative">
     <div
-      class="rounded-2xl px-0 md:px-3 md:py-4 bg-white flex flex-col gap-6 shadow-sm border border-gray-100"
+      class="rounded-2xl px-0 md:px-3 md:py-4 bg-surface flex flex-col gap-6 shadow-sm border border-gray-100"
     >
       <!-- Operational Vouchers -->
       <InfoWrapper title="Operational Vouchers">

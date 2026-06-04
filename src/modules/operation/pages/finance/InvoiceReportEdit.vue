@@ -7,7 +7,7 @@
     <template v-else-if="originalInvoice">
       <!-- Header -->
       <div
-        class="bg-white flex flex-col md:flex-row md:items-center justify-between px-3 md:px-4 py-3 rounded-[20px] gap-3 shadow-sm border border-gray-100"
+        class="bg-surface flex flex-col md:flex-row md:items-center justify-between px-3 md:px-4 py-3 rounded-[20px] gap-3 shadow-sm border border-gray-100"
       >
         <div class="flex items-center gap-4">
           <div
@@ -43,7 +43,7 @@
           <!-- Basic Information -->
           <div class="lg:col-span-1">
             <div
-              class="bg-white rounded-[20px] p-3 sm:p-6 shadow-sm border border-gray-100 flex flex-col gap-3 sm:gap-5"
+              class="bg-surface rounded-[20px] p-3 sm:p-6 shadow-sm border border-gray-100 flex flex-col gap-3 sm:gap-5"
             >
               <h3
                 class="text-lg font-bold text-gray-900 border-b border-gray-50 pb-3"
@@ -116,7 +116,7 @@
           <!-- Associated Shipments -->
           <div class="lg:col-span-2">
             <div
-              class="bg-white rounded-[20px] p-3 sm:p-6 shadow-sm border border-gray-100 flex flex-col gap-3 sm:gap-5"
+              class="bg-surface rounded-[20px] p-3 sm:p-6 shadow-sm border border-gray-100 flex flex-col gap-3 sm:gap-5"
             >
               <h3
                 class="text-lg font-bold text-gray-900 border-b border-gray-50 pb-3"
@@ -185,7 +185,7 @@
                       <th class="px-4 py-3 text-center text-[11px] font-bold text-gray-400 uppercase tracking-wider">Actions</th>
                     </tr>
                   </thead>
-                  <tbody class="bg-white divide-y divide-gray-50">
+                  <tbody class="bg-surface divide-y divide-gray-50">
                     <tr v-if="!allShipments.length">
                       <td colspan="4" class="px-4 py-10 text-center text-sm text-gray-400 italic">
                         No shipments added yet.

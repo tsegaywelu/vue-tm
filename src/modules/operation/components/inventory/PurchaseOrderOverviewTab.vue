@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col gap-4 pb-8">
     <div
-      class="rounded-2xl px-3 md:px-5 py-6 bg-white flex flex-col gap-8 shadow-sm border border-gray-100 relative"
+      class="rounded-2xl px-3 md:px-5 py-6 bg-surface flex flex-col gap-8 shadow-sm border border-gray-100 relative"
     >
       <!-- Void Watermark -->
       <div
@@ -83,7 +83,7 @@
                 <th class="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider">Remark</th>
               </tr>
             </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
+            <tbody class="bg-surface divide-y divide-gray-200">
               <tr v-if="!purchaseOrder?.items?.length">
                 <td colspan="7" class="px-4 py-10 text-center text-sm text-gray-500 italic">
                   No items in this order.

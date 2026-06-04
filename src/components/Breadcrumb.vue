@@ -18,7 +18,7 @@ const breadCrumbs = computed(() => {
 </script>
 
 <template>
-  <div class="ml-2 hidden md:block bg-white rounded-2xl z-10 w-fit">
+  <div class="ml-2 hidden md:block bg-surface rounded-2xl z-10 w-fit">
     <div class="px-3 py-2.5">
       <div class="flex gap-2 items-center">
         <i v-html="icons.homeIcon" class="*:size-4"></i>
@@ -29,16 +29,16 @@ const breadCrumbs = computed(() => {
           <i
             v-if="index === 0"
             v-html="icons.leftAngle"
-            class="*:bg-white *:min-w-2 *:min-h-3.5 text-grey-400 flex items-center justify-center transform rotate-180"
+            class="*:bg-surface *:min-w-2 *:min-h-3.5 text-grey-400 flex items-center justify-center transform rotate-180"
           />
           <i
             v-else
             v-html="icons.leftAngle"
-            class="*:bg-white *:min-w-2 *:min-h-3.5 text-grey-400 flex items-center justify-center transform rotate-180"
+            class="*:bg-surface *:min-w-2 *:min-h-3.5 text-grey-400 flex items-center justify-center transform rotate-180"
           />
           <RouterLink
             :to="crumb.path || '#'"
-            class="text-[#000] text-[0.875rem] font-semibold leading-[18px]"
+            class="text-base-text text-[0.875rem] font-semibold leading-[18px]"
           >
             {{ crumb.name }}
           </RouterLink>
@@ -46,7 +46,7 @@ const breadCrumbs = computed(() => {
         <i
           v-if="breadCrumbs.length > 0"
           v-html="icons.leftAngle"
-          class="*:bg-white *:min-w-2 *:min-h-3.5 text-grey-400 flex items-center justify-center transform rotate-180"
+          class="*:bg-surface *:min-w-2 *:min-h-3.5 text-grey-400 flex items-center justify-center transform rotate-180"
         />
       </div>
     </div>

@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+  <div class="bg-surface rounded-2xl border border-gray-100 shadow-sm p-5">
     <div class="flex items-center justify-between mb-1">
       <div>
         <p class="text-xs text-gray-400 font-medium">Shipment Status</p>

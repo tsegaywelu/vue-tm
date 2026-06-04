@@ -59,7 +59,7 @@
   <!-- Stat Cards -->
   <!-- <div class="mb-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
     <div
-      class="p-6 bg-white rounded-[20px] shadow-sm border border-gray-100 flex flex-col items-center gap-2"
+      class="p-6 bg-surface rounded-[20px] shadow-sm border border-gray-100 flex flex-col items-center gap-2"
     >
       <div class="flex items-center gap-2 text-gray-500 text-sm font-medium">
         <i class="mdi mdi-currency-usd text-2xl text-primary" />

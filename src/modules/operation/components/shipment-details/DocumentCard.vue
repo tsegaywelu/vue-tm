@@ -1,6 +1,6 @@
 <template>
   <div
-    class="relative flex flex-col gap-3 p-4 bg-[#f6f7f9] rounded-xl border border-gray-100 overflow-hidden min-h-[120px]"
+    class="relative flex flex-col gap-3 p-4 bg-surface-muted rounded-xl border border-gray-100 overflow-hidden min-h-[120px]"
   >
     <span
       class="font-bold truncate text-gray-900 text-sm wrap-break-words pr-24"
@@ -10,10 +10,10 @@
 
     <div
       v-if="filePath && !readOnly"
-      class="absolute top-2 right-2 flex items-center gap-1 bg-white/60 backdrop-blur-sm rounded-lg p-1 border border-gray-200/50 shadow-sm z-10"
+      class="absolute top-2 right-2 flex items-center gap-1 bg-surface/60 backdrop-blur-sm rounded-lg p-1 border border-gray-200/50 shadow-sm z-10"
     >
       <button
-        class="relative flex items-center justify-center h-8 min-w-[32px] px-2 rounded-md hover:bg-white text-gray-600 transition-colors shadow-sm"
+        class="relative flex items-center justify-center h-8 min-w-[32px] px-2 rounded-md hover:bg-surface text-gray-600 transition-colors shadow-sm"
         :disabled="isUploading"
         @click="fileInput?.click()"
         title="Change File"
@@ -113,7 +113,7 @@
         v-if="!hideDelete"
         @click="handleRemove"
         :disabled="isRemoving || isUploading || isRejecting"
-        class="flex items-center justify-center size-8 rounded-md hover:bg-white text-gray-500 hover:text-red-600 transition-colors shadow-sm"
+        class="flex items-center justify-center size-8 rounded-md hover:bg-surface text-gray-500 hover:text-red-600 transition-colors shadow-sm"
         title="Remove Document"
       >
         <i
@@ -187,7 +187,7 @@
         <Button
           size="sm"
           variant="secondary"
-          class_name="flex-1 relative overflow-hidden h-10 border-dashed border-2 border-gray-300 hover:border-gray-400 bg-white"
+          class_name="flex-1 relative overflow-hidden h-10 border-dashed border-2 border-gray-300 hover:border-gray-400 bg-surface"
           :disabled="isUploading"
           @click="fileInput?.click()"
         >

@@ -59,7 +59,7 @@
         <div
           v-for="subject in subjects"
           :key="subject"
-          class="p-4 bg-white rounded-2xl border border-gray-100 hover:border-primary/20 transition-all group"
+          class="p-4 bg-surface rounded-2xl border border-gray-100 hover:border-primary/20 transition-all group"
         >
           <div class="flex items-center justify-between mb-3">
             <span class="text-xs font-black text-gray-400 group-hover:text-primary transition-colors uppercase tracking-widest">

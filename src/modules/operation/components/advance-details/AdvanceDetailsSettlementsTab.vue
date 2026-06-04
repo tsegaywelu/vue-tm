@@ -39,7 +39,7 @@
 
     <!-- Transactions Table -->
     <div
-      class="bg-white rounded-[20px] border border-gray-100 p-2 shadow-sm overflow-hidden flex flex-col min-h-0"
+      class="bg-surface rounded-[20px] border border-gray-100 p-2 shadow-sm overflow-hidden flex flex-col min-h-0"
     >
       <Table
         id="advance-transactions-table"

@@ -3,6 +3,7 @@ import { ref, computed, watch, onMounted, onUnmounted } from "vue";
 import { icons } from "@/utils/icons";
 import { raaz_icons } from "@/utils/raaz_icons";
 import NavButton from "@/components/NavButton.vue";
+import LogoAnimation from "@/components/LogoAnimation.vue";
 import {
   getNavigationRegistry,
   filterNavsByPermission,
@@ -154,7 +155,7 @@ watch(is_hovered, (hovered) => {
     <!-- Panel -->
     <div
       @click.stop
-      class="h-full flex flex-col gap-5 bg-white overflow-hidden"
+      class="h-full flex flex-col gap-5 bg-surface overflow-hidden"
       :class="{
         // Mobile
         'w-full max-w-70 shadow-lg': !is_desktop,
@@ -170,7 +171,7 @@ watch(is_hovered, (hovered) => {
     >
       <!-- Header -->
       <div
-        class="flex items-center gap-2 border-b-[0.5px] border-grey-100"
+        class="flex items-center gap-2 border-b-[0.5px] border-line transition-all duration-300"
         :class="
           show_expanded
             ? 'p-4 h-18'
@@ -181,33 +182,31 @@ watch(is_hovered, (hovered) => {
           class="flex items-center justify-center transition-all duration-300"
           :class="show_expanded ? 'h-10' : 'h-10 w-full'"
         >
-          <img
+          <!-- Expanded: wide wordmark -->
+          <LogoAnimation
             v-if="show_expanded"
-            src="@/assets/rlogo.png"
-            class="h-full w-40 object-contain"
-            alt="TMS Logo"
-            style="filter: brightness(0)"
+            class="h-full text-primary dark:text-base-text transition-all duration-300"
           />
-          <div v-else class="p-1 bg-primary/10 rounded-lg">
-            <i
-              class="*:h-10 *:w-10 block text-primary"
-              v-html="all_icons['raaz-logo']"
-            ></i>
-          </div>
+          <!-- Collapsed: icon only -->
+          <LogoAnimation
+            v-else
+            :show_text="false"
+            class="h-10 text-primary"
+          />
         </div>
 
         <!-- Toggle buttons — mobile only (desktop uses hover) -->
         <button
           v-if="show_expanded"
           @click="$emit('toggle')"
-          class="xl:hidden grid place-items-center p-0 size-8 variant-ghost ml-auto rounded-full hover:bg-grey-50"
+          class="xl:hidden grid place-items-center p-0 size-8 variant-ghost ml-auto rounded-full hover:bg-surface-hover"
         >
           <i class="*:size-6 text-grey-500" v-html="all_icons.nav"></i>
         </button>
         <button
           v-else
           @click="$emit('toggle')"
-          class="xl:hidden grid place-items-center p-0 size-12 variant-ghost mx-auto mt-2 rounded-full hover:bg-grey-50"
+          class="xl:hidden grid place-items-center p-0 size-12 variant-ghost mx-auto mt-2 rounded-full hover:bg-surface-hover"
         >
           <i class="*:size-6 text-grey-500" v-html="all_icons.nav"></i>
         </button>
@@ -255,9 +254,9 @@ watch(is_hovered, (hovered) => {
       </div>
 
       <!-- Profile / logout -->
-      <div class="shrink-0 border-t border-grey-100 p-3">
+      <div class="shrink-0 border-t border-line p-3">
         <button
-          class="w-full flex items-center gap-3 rounded-2xl p-2 hover:bg-grey-50 transition-colors"
+          class="w-full flex items-center gap-3 rounded-2xl p-2 hover:bg-surface-hover transition-colors"
           :class="show_expanded ? '' : 'justify-center'"
           @click="handleLogout"
         >
@@ -270,17 +269,17 @@ watch(is_hovered, (hovered) => {
             v-if="show_expanded"
             class="flex flex-col items-start leading-tight min-w-0 flex-1"
           >
-            <span class="text-sm font-semibold text-gray-800 truncate">{{
+            <span class="text-sm font-semibold text-base-text truncate">{{
               userName
             }}</span>
-            <span v-if="userRole" class="text-[10px] text-gray-400 truncate">{{
+            <span v-if="userRole" class="text-[10px] text-faint-text truncate">{{
               userRole
             }}</span>
           </div>
           <svg
             v-if="show_expanded"
             xmlns="http://www.w3.org/2000/svg"
-            class="w-4 h-4 text-gray-400 shrink-0"
+            class="w-4 h-4 text-faint-text shrink-0"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"

@@ -2,22 +2,22 @@
   <div class="flex flex-wrap items-center gap-2">
     <!-- First page button -->
     <Button
-      class="p-0! h-10 w-10 rounded-full border border-gray-100 items-center justify-center hidden sm:flex"
+      class="p-0! h-10 w-10 rounded-full border border-line items-center justify-center hidden sm:flex"
       variant="outline"
       @click="onPageChange(1)"
       :disabled="current_page <= 1"
     >
-      <div class="text-black *:size-4" v-html="icons.doubleAngle"></div>
+      <div class="text-base-text *:size-4" v-html="icons.doubleAngle"></div>
     </Button>
 
     <!-- Previous page button -->
     <Button
-      class="p-0! h-10 w-10 rounded-full border border-gray-100 flex items-center justify-center"
+      class="p-0! h-10 w-10 rounded-full border border-line flex items-center justify-center"
       variant="outline"
       @click="onPageChange(current_page - 1)"
       :disabled="current_page <= 1"
     >
-      <div class="text-black *:size-4" v-html="icons.leftAngle"></div>
+      <div class="text-base-text *:size-4" v-html="icons.leftAngle"></div>
     </Button>
 
     <!-- Page numbers with ellipsis -->
@@ -35,7 +35,7 @@
             @keydown="handleInputSubmit"
             @click.stop
             placeholder="Go to"
-            class="h-10 w-16 rounded-full border border-gray-100 text-center text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-600 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+            class="h-10 w-16 rounded-full border border-line bg-surface text-base-text text-center text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-600 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
           />
         </template>
         <template v-else>
@@ -44,7 +44,7 @@
             @click.stop="
               handleEllipsisClick(page === 'ellipsis-start' ? 'start' : 'end')
             "
-            class="h-10 w-10 rounded-full text-sm font-extrabold border-none text-black hover:bg-gray-50 flex items-center justify-center"
+            class="h-10 w-10 rounded-full text-sm font-extrabold border-none text-base-text hover:bg-surface-hover flex items-center justify-center"
             title="Click to enter page number"
           >
             ...
@@ -58,8 +58,8 @@
           :class="[
             page === current_page
               ? 'primary-gradient !text-white !border-transparent'
-              : 'text-black',
-            'h-10 w-10 rounded-full p-0! text-sm font-extrabold border border-gray-100 flex items-center justify-center',
+              : 'text-base-text',
+            'h-10 w-10 rounded-full p-0! text-sm font-extrabold border border-line flex items-center justify-center',
           ]"
           @click="onPageChange(+page)"
         >
@@ -70,7 +70,7 @@
 
     <!-- Next page button -->
     <Button
-      class="p-0! h-10 w-10 rounded-full border border-gray-100 flex items-center justify-center"
+      class="p-0! h-10 w-10 rounded-full border border-line flex items-center justify-center"
       variant="outline"
       @click="onPageChange(current_page + 1)"
       :disabled="current_page >= total_pages"
@@ -83,13 +83,13 @@
 
     <!-- Last page button -->
     <Button
-      class="p-0! h-10 w-10 rounded-full border border-gray-100 items-center justify-center hidden sm:flex"
+      class="p-0! h-10 w-10 rounded-full border border-line items-center justify-center hidden sm:flex"
       variant="outline"
       @click="onPageChange(total_pages)"
       :disabled="current_page >= total_pages"
     >
       <div
-        class="rotate-180 text-black *:size-4 flex justify-center items-center"
+        class="rotate-180 text-base-text *:size-4 flex justify-center items-center"
         v-html="icons.doubleAngle"
       ></div>
     </Button>

@@ -7,7 +7,7 @@
     <!-- Header Info Card -->
     <div class="bg-grey-25 rounded-[32px] p-4 md:p-10 md:border md:border-grey-100 flex flex-col md:flex-row md:items-center md:justify-between gap-4 md:gap-8">
       <div class="flex items-center gap-4 md:gap-8">
-        <div class="size-16 md:size-32 shrink-0 rounded-full bg-white flex items-center justify-center shadow-lg border border-grey-100 p-3 md:p-4">
+        <div class="size-16 md:size-32 shrink-0 rounded-full bg-surface flex items-center justify-center shadow-lg border border-grey-100 p-3 md:p-4">
           <i class="*:size-full text-primary" v-html="icons.insurance"></i>
         </div>
         <div class="flex flex-col gap-1">

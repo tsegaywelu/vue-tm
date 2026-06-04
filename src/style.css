@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @source not "../.claude/";
+@custom-variant dark (&:where(.dark, .dark *));
 
 /* Tailwind preflight sets img { max-width: 100%; height: auto } which breaks Leaflet tile rendering */
 .leaflet-container img {
@@ -44,7 +45,7 @@
   --color-primary-gradient:
     linear-gradient(179.87deg, #2222FF 0.12%, #16169D 104.69%),
     linear-gradient(270deg, #1858B1 0%, #0069FA 100%);
-    
+
 
   --color-light: var(--color-grey-500);
   --color-text-clr: #000;
@@ -63,6 +64,21 @@
   --color-grey-600: #888888;
   --color-grey-100: #F2F2F2;
   --color-grey-75: #F7F7F7;
+
+  /* Semantic surface tokens — used in components instead of bg-white / bg-[#fafafa] */
+  --color-surface: #ffffff;
+  --color-page: #fafafa;
+  --color-surface-muted: #f9f9f9;
+  --color-surface-hover: #eeeeee;
+
+  /* Semantic text tokens */
+  --color-base-text: #000000;
+  --color-dim-text: #6b7280;
+  --color-faint-text: #9ca3af;
+
+  /* Semantic border tokens */
+  --color-line: #f1f1f1;
+  --color-line-strong: #e5e5e5;
 
   --spacing-input-gap: 8px;
   --spacing-input-gap-sm: 4px;
@@ -493,4 +509,173 @@ code {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
+}
+
+/* ============================================================
+   DARK MODE OVERRIDES
+   ============================================================ */
+.dark {
+  /* Semantic surface tokens */
+  --color-surface: #1a1a26;
+  --color-page: #0d0d12;
+  --color-surface-muted: #16161e;
+  --color-surface-hover: #25253a;
+
+  /* Semantic text tokens */
+  --color-base-text: #f0f0f0;
+  --color-dim-text: #9ca3af;
+  --color-faint-text: #6b7280;
+
+  /* Semantic border tokens */
+  --color-line: #2a2a3f;
+  --color-line-strong: #353550;
+
+  /* Custom grey palette — affects bg-grey-*, text-grey-*, border-grey-* */
+  --color-grey-25: #16161e;
+  --color-grey-50: #25253a;
+  --color-grey-75: #1a1a26;
+  --color-grey-100: #1f1f30;
+  --color-grey-150: #252540;
+  --color-grey-200: #4a5568;
+  --color-grey-300: #374151;
+  --color-grey-500: #9ca3af;
+  --color-grey-600: #6b7280;
+  --color-text-clr: #f0f0f0;
+
+  /* Tailwind gray palette — affects bg-gray-*, text-gray-*, border-gray-* */
+  --color-gray-50: oklch(0.14 0.02 264);
+  --color-gray-100: oklch(0.17 0.02 264);
+  --color-gray-200: oklch(0.22 0.02 264);
+  --color-gray-300: oklch(0.30 0.02 264);
+  --color-gray-400: oklch(0.47 0.02 264);
+  --color-gray-500: oklch(0.60 0.01 264);
+  --color-gray-600: oklch(0.75 0.01 264);
+  --color-gray-700: oklch(0.85 0.01 264);
+  --color-gray-800: oklch(0.92 0.005 264);
+  --color-gray-900: oklch(0.96 0.003 264);
+  --color-gray-950: oklch(0.98 0.001 264);
+}
+
+/* Dark overrides for CSS component classes (hardcoded values in @layer components) */
+.dark body {
+  background-color: var(--color-page);
+  color: var(--color-base-text);
+}
+
+.dark .input-style,
+.dark .input-style-sm,
+.dark .input-style-xs {
+  border-color: var(--color-line);
+  background-color: var(--color-surface);
+}
+
+.dark .input-style input,
+.dark .input-style-sm input,
+.dark .input-style-xs input,
+.dark .input-style .custom-input,
+.dark .input-style-sm .custom-input,
+.dark .input-style-xs .custom-input {
+  color: var(--color-base-text);
+}
+
+.dark .input-label {
+  color: var(--color-base-text);
+}
+
+.dark .input-label-sm,
+.dark .input-label-xs {
+  color: var(--color-base-text);
+}
+
+.dark .sub-title-xl {
+  color: var(--color-dim-text);
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: var(--color-surface-muted);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: var(--color-line-strong);
+}
+
+/* ============================================================
+   BLACK (OLED) MODE OVERRIDES
+   Applied on top of .dark — both classes present when mode=black
+   ============================================================ */
+.black {
+  --color-surface: #0f0f0f;
+  --color-page: #000000;
+  --color-surface-muted: #111111;
+  --color-surface-hover: #1c1c1c;
+
+  --color-base-text: #f5f5f5;
+  --color-dim-text: #a3a3a3;
+  --color-faint-text: #666666;
+
+  --color-line: #1e1e1e;
+  --color-line-strong: #2a2a2a;
+
+  --color-grey-25: #0a0a0a;
+  --color-grey-50: #141414;
+  --color-grey-75: #0f0f0f;
+  --color-grey-100: #1a1a1a;
+  --color-grey-150: #212121;
+  --color-grey-200: #383838;
+  --color-grey-300: #3d3d3d;
+  --color-grey-500: #a3a3a3;
+  --color-grey-600: #737373;
+  --color-text-clr: #f5f5f5;
+
+  --color-gray-50: oklch(0.07 0 0);
+  --color-gray-100: oklch(0.10 0 0);
+  --color-gray-200: oklch(0.14 0 0);
+  --color-gray-300: oklch(0.20 0 0);
+  --color-gray-400: oklch(0.47 0 0);
+  --color-gray-500: oklch(0.62 0 0);
+  --color-gray-600: oklch(0.75 0 0);
+  --color-gray-700: oklch(0.84 0 0);
+  --color-gray-800: oklch(0.91 0 0);
+  --color-gray-900: oklch(0.96 0 0);
+  --color-gray-950: oklch(0.99 0 0);
+}
+
+/* ============================================================
+   ACCENT COLOR PRESETS
+   Applied as html.accent-* classes
+   ============================================================ */
+html.accent-indigo {
+  --color-primary: #6366F1;
+  --color-primary-dark: #4338CA;
+  --color-action: #6366F1;
+  --color-primary-gradient:
+    linear-gradient(179.87deg, #6366F1 0.12%, #4338CA 104.69%),
+    linear-gradient(270deg, #4338CA 0%, #6366F1 100%);
+}
+
+html.accent-green {
+  --color-primary: #059669;
+  --color-primary-dark: #065F46;
+  --color-action: #059669;
+  --color-primary-gradient:
+    linear-gradient(179.87deg, #059669 0.12%, #065F46 104.69%),
+    linear-gradient(270deg, #065F46 0%, #059669 100%);
+}
+
+html.accent-purple {
+  --color-primary: #7C3AED;
+  --color-primary-dark: #5B21B6;
+  --color-action: #7C3AED;
+  --color-primary-gradient:
+    linear-gradient(179.87deg, #7C3AED 0.12%, #5B21B6 104.69%),
+    linear-gradient(270deg, #5B21B6 0%, #7C3AED 100%);
+}
+
+html.accent-rose {
+  --color-primary: #E11D48;
+  --color-primary-dark: #9F1239;
+  --color-action: #E11D48;
+  --color-primary-gradient:
+    linear-gradient(179.87deg, #E11D48 0.12%, #9F1239 104.69%),
+    linear-gradient(270deg, #9F1239 0%, #E11D48 100%);
 }

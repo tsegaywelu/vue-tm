@@ -71,7 +71,7 @@ async function submitLogin(values: any) {
 </script>
 
 <template>
-  <div class="min-h-screen flex bg-white font-sans overflow-hidden">
+  <div class="min-h-screen flex bg-surface font-sans overflow-hidden">
     <div class="hidden lg:block lg:w-1/2 relative">
       <img
         src="/login_background.png"
@@ -99,7 +99,7 @@ async function submitLogin(values: any) {
         <!-- Logo & Header -->
         <div class="text-center">
           <div class="flex flex-col items-center gap-1.5 sm:gap-3 mb-3 sm:mb-6">
-            <div class="p-4 bg-white rounded-3xl shadow-soft">
+            <div class="p-4 bg-surface rounded-3xl shadow-soft">
               <i class="h-12 w-auto block" v-html="icons['raaz-logo']"></i>
             </div>
             <span class="text-lg font-extrabold text-grey-800 tracking-tight"
@@ -123,7 +123,7 @@ async function submitLogin(values: any) {
             class="flex-1 py-3 px-6 rounded-xl text-sm font-bold transition-all duration-300"
             :class="
               login_mode === 'carrier'
-                ? 'bg-white text-primary shadow-sm'
+                ? 'bg-surface text-primary shadow-sm'
                 : 'text-grey-500 hover:text-grey-700'
             "
           >
@@ -134,7 +134,7 @@ async function submitLogin(values: any) {
             class="flex-1 py-3 px-6 rounded-xl text-sm font-bold transition-all duration-300"
             :class="
               login_mode === 'shipper'
-                ? 'bg-white text-primary shadow-sm'
+                ? 'bg-surface text-primary shadow-sm'
                 : 'text-grey-500 hover:text-grey-700'
             "
           >

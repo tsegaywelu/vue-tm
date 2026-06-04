@@ -48,7 +48,7 @@ defineEmits<{
 </script>
 <style>
 .stat-card {
-  background: linear-gradient(135deg, #ffffff 0%, #f8faff 100%);
+  background: linear-gradient(135deg, var(--color-surface) 0%, var(--color-surface-muted) 100%);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
   position: relative;
   overflow: hidden;
@@ -72,7 +72,7 @@ defineEmits<{
 
 .stat-card:hover {
   transform: translateY(-1px);
-  background: linear-gradient(135deg, #ffffff 0%, #f0f4ff 100%);
+  background: linear-gradient(135deg, var(--color-surface) 0%, var(--color-surface-hover) 100%);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   border-color: rgba(var(--primary-rgb, 59, 130, 246), 0.2);
 }

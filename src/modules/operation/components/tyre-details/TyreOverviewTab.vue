@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col gap-4">
     <div
-      class="rounded-2xl px-0 md:px-3 md:py-4 bg-white flex flex-col gap-6 md:shadow-sm md:border border-gray-100"
+      class="rounded-2xl px-0 md:px-3 md:py-4 bg-surface flex flex-col gap-6 md:shadow-sm md:border border-gray-100"
     >
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         <InfoWrapper title="General Information">

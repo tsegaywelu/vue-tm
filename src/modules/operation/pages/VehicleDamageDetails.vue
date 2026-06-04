@@ -7,7 +7,7 @@
     <!-- Header Info Card -->
     <div class="bg-grey-25 rounded-[32px] p-4 md:p-10 border border-grey-100 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
       <div class="flex items-center gap-4 md:gap-8">
-        <div class="size-16 md:size-32 shrink-0 rounded-full bg-white flex items-center justify-center shadow-lg border border-grey-100 p-3 md:p-4">
+        <div class="size-16 md:size-32 shrink-0 rounded-full bg-surface flex items-center justify-center shadow-lg border border-grey-100 p-3 md:p-4">
           <div class="text-red-500">
             <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>

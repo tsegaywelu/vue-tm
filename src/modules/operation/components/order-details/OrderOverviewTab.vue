@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col gap-4">
     <div
-      class="rounded-2xl px-0 md:px-3 md:py-4 bg-white flex flex-col gap-6 shadow-sm border border-gray-100"
+      class="rounded-2xl px-0 md:px-3 md:py-4 bg-surface flex flex-col gap-6 shadow-sm border border-gray-100"
     >
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8 lg:gap-12">
         <InfoWrapper title="Order Information">

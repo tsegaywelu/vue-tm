@@ -53,7 +53,8 @@
       </div>
     </div>
 
-    <div class="md:rounded-3xl md:p-6 md:border md:border-grey-100 bg-white">
+    <div class="rounded-3xl p-6 border border-grey-100 bg-surface">
+            <h3 class="text-lg font-bold text-grey-900 mb-4">Vehicle Groups List</h3>
       <Table :columns="columns" :rows="response" :loading="isLoading" :hide_on_sm_screen="['createdAt']" :on_sm_screen_column_span="{ name: 2, description: 2, actions: 2 }">
         <template #cell-name="{ row }">
           <span class="font-bold text-grey-900">{{ row.name }}</span>

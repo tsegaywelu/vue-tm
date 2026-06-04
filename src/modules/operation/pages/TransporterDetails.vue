@@ -26,7 +26,7 @@
     <!-- Header Info Card -->
     <div class="bg-grey-25 rounded-[32px] p-4 md:p-10 border border-grey-100 flex flex-col md:flex-row md:items-center md:justify-between gap-4 md:gap-8">
       <div class="flex items-center gap-4 md:gap-8">
-        <div class="size-16 md:size-32 shrink-0 rounded-full bg-white flex items-center justify-center shadow-lg border border-grey-100 p-3 md:p-4 overflow-hidden">
+        <div class="size-16 md:size-32 shrink-0 rounded-full bg-surface flex items-center justify-center shadow-lg border border-grey-100 p-3 md:p-4 overflow-hidden">
           <i class="*:size-full text-primary" v-html="icons.trasporter"></i>
         </div>
         <div class="flex flex-col gap-1">
@@ -47,7 +47,7 @@
 
     <!-- Details Section -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-      <div class="bg-white rounded-[32px] p-4 md:p-6 border border-grey-100 flex flex-col gap-4 md:gap-6">
+      <div class="bg-surface rounded-[32px] p-4 md:p-6 border border-grey-100 flex flex-col gap-4 md:gap-6">
         <h3 class="text-xl font-bold text-grey-900">General Information</h3>
         <div class="grid grid-cols-2 gap-3 md:gap-4">
           <div class="flex flex-col gap-1 p-3 md:p-4 bg-grey-25 rounded-2xl border border-grey-100">
@@ -65,7 +65,7 @@
         </div>
       </div>
 
-      <div class="bg-white rounded-[32px] p-4 md:p-6 border border-grey-100 flex flex-col gap-4 md:gap-6">
+      <div class="bg-surface rounded-[32px] p-4 md:p-6 border border-grey-100 flex flex-col gap-4 md:gap-6">
         <h3 class="text-xl font-bold text-grey-900">Contact & Address</h3>
         <div class="grid grid-cols-2 gap-3 md:gap-4">
           <div class="flex flex-col gap-1 p-3 md:p-4 bg-grey-25 rounded-2xl border border-grey-100">
@@ -89,7 +89,7 @@
     </div>
 
     <!-- Bank Accounts Section -->
-    <div class="bg-white rounded-[32px] p-4 md:p-6 border border-grey-100 flex flex-col gap-4 md:gap-6">
+    <div class="bg-surface rounded-[32px] p-4 md:p-6 border border-grey-100 flex flex-col gap-4 md:gap-6">
       <h3 class="text-xl font-bold text-grey-900">Bank Accounts</h3>
       <div v-if="transporter.bankAccount && transporter.bankAccount.length > 0" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
         <div

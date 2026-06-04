@@ -116,7 +116,7 @@
       </div>
     </BottomSheet>
 
-    <div class="md:rounded-3xl md:p-6 md:border md:border-grey-100 bg-white">
+    <div class="md:rounded-3xl md:p-6 md:border md:border-grey-100 bg-surface">
       <Table
         client_search
         client_sort

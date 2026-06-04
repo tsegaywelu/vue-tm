@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white rounded-[32px] p-6 border border-gray-100 shadow-sm">
+  <div class="bg-surface rounded-[32px] p-6 border border-gray-100 shadow-sm">
     <div class="flex items-center justify-between mb-6">
       <h3 class="text-xl font-bold text-gray-900 tracking-tight">Damaged Items</h3>
       <div class="text-sm font-medium text-gray-500 bg-gray-50 px-3 py-1 rounded-full">

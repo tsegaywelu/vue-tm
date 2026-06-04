@@ -3,7 +3,7 @@
     class="w-full h-full overflow-hidden bg-black/40 backdrop-blur-[2px] flex flex-col justify-end sm:flex sm:items-center sm:justify-center sm:px-4 modal-overlay"
   >
     <div
-      class="confirmation-card bg-white pt-2 rounded-t-3xl sm:rounded-4xl shadow-2xl w-full sm:max-w-sm flex flex-col max-h-[90dvh] sm:max-h-none"
+      class="confirmation-card bg-surface pt-2 rounded-t-3xl sm:rounded-4xl shadow-2xl w-full sm:max-w-sm flex flex-col max-h-[90dvh] sm:max-h-none"
       style="box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15)"
     >
       <!-- Mobile drag handle -->
@@ -20,8 +20,8 @@
           class="w-16 h-16 rounded-2xl flex items-center justify-center mb-6 shrink-0"
           :class="
             isNegativeAction
-              ? 'bg-red-50 text-red-500'
-              : 'bg-blue-50 text-blue-500'
+              ? 'bg-red-50 dark:bg-red-500/15 text-red-500 dark:text-red-400'
+              : 'bg-blue-50 dark:bg-blue-500/15 text-blue-500 dark:text-blue-400'
           "
         >
           <i
@@ -31,11 +31,11 @@
           <i v-else class="mdi mdi-help-circle-outline text-3xl"></i>
         </div>
 
-        <h2 class="text-xl font-bold mb-2 text-gray-900 leading-tight">
+        <h2 class="text-xl font-bold mb-2 text-base-text leading-tight">
           {{ data.title || "Are you sure?" }}
         </h2>
 
-        <p class="mb-8 text-sm text-gray-500 leading-relaxed px-2">
+        <p class="mb-8 text-sm text-dim-text leading-relaxed px-2">
           {{ data.message || defaultMessage }}
         </p>
 
@@ -45,7 +45,7 @@
           class="mb-6 w-full text-left"
         >
           <label
-            class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 ml-1"
+            class="block text-xs font-bold text-faint-text uppercase tracking-wider mb-2 ml-1"
             >Approved Amount</label
           >
           <input
@@ -53,7 +53,7 @@
             type="number"
             min="0"
             step="0.01"
-            class="w-full bg-gray-50 border border-gray-100 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+            class="w-full bg-surface-muted border border-line rounded-2xl px-4 py-3 text-sm text-base-text focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
             placeholder="0.00"
           />
         </div>
@@ -77,7 +77,7 @@
 
         <button
           @click="cancel"
-          class="w-full py-4 rounded-2xl text-sm font-bold mb-8 bg-gray-50 text-gray-500 hover:bg-gray-100 transition-all"
+          class="w-full py-4 rounded-2xl text-sm font-bold mb-8 bg-surface-muted text-dim-text hover:bg-surface-hover transition-all"
         >
           {{ data.cancelText || "Cancel" }}
         </button>

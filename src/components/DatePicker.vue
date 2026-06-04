@@ -1,6 +1,6 @@
 <template>
   <div
-    class="bg-white rounded-[2rem] p-6 select-none w-full sm:shadow-2xl sm:min-w-[320px] sm:w-auto transition-all duration-300"
+    class="bg-surface border border-line rounded-4xl p-6 select-none w-full sm:shadow-2xl sm:min-w-[320px] sm:w-auto transition-all duration-300"
     @click.stop
   >
     <!-- Calendar Type Toggle (Optional) -->
@@ -12,7 +12,7 @@
           class="px-3 py-1.5 rounded-lg text-xs font-medium transition-all"
           :class="
             calendarType === 'ethiopian'
-              ? 'bg-white shadow-sm text-primary'
+              ? 'bg-surface shadow-sm text-primary'
               : 'text-gray-500 hover:text-gray-700'
           "
         >
@@ -24,7 +24,7 @@
           class="px-3 py-1.5 rounded-lg text-xs font-medium transition-all"
           :class="
             calendarType === 'english'
-              ? 'bg-white shadow-sm text-primary'
+              ? 'bg-surface shadow-sm text-primary'
               : 'text-gray-500 hover:text-gray-700'
           "
         >

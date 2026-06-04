@@ -946,7 +946,7 @@
 
     <!-- ======================== SCREEN LAYOUT (hidden on print) ======================== -->
     <div
-      class="rounded-2xl px-3 md:px-5 py-6 bg-white flex flex-col gap-8 shadow-sm border border-gray-100 print:hidden"
+      class="rounded-2xl px-3 md:px-5 py-6 bg-surface flex flex-col gap-8 shadow-sm border border-gray-100 print:hidden"
     >
       <!-- Summary cards -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -1212,7 +1212,7 @@
                 </th>
               </tr>
             </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
+            <tbody class="bg-surface divide-y divide-gray-200">
               <tr v-if="!filteredShipments.length">
                 <td
                   colspan="16"
@@ -1425,7 +1425,7 @@
                 </th>
               </tr>
             </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
+            <tbody class="bg-surface divide-y divide-gray-200">
               <tr v-if="!filteredShipments.length">
                 <td
                   colspan="19"

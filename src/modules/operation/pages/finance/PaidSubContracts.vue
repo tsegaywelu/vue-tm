@@ -47,7 +47,7 @@
       <div
         v-for="stat in stats"
         :key="stat.label"
-        class="bg-white border border-gray-100 rounded-2xl px-3 py-2 sm:px-5 sm:py-3 shadow-sm flex flex-row items-center gap-3 sm:min-w-[240px] transition-all hover:shadow-md cursor-pointer"
+        class="bg-surface border border-gray-100 rounded-2xl px-3 py-2 sm:px-5 sm:py-3 shadow-sm flex flex-row items-center gap-3 sm:min-w-[240px] transition-all hover:shadow-md cursor-pointer"
       >
         <i :class="['mdi', stat.icon || 'mdi-cash', 'text-primary text-lg shrink-0']"></i>
         <div class="flex flex-row flex-nowrap items-baseline gap-2 min-w-0">

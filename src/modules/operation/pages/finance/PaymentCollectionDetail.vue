@@ -10,7 +10,7 @@
     <template v-else-if="invoice">
       <!-- Header Section -->
       <div
-        class="bg-white flex flex-col md:flex-row md:items-center justify-between px-3 md:px-4 py-4 md:py-3 rounded-[20px] gap-4 shadow-sm border border-gray-100"
+        class="bg-surface flex flex-col md:flex-row md:items-center justify-between px-3 md:px-4 py-4 md:py-3 rounded-[20px] gap-4 shadow-sm border border-gray-100"
       >
         <div class="flex flex-col gap-2 flex-1">
           <div class="flex items-center gap-4">
@@ -85,7 +85,7 @@
 
       <!-- Collect Modal -->
       <ModalWrapper v-if="showCollectModal" @close="showCollectModal = false" class="flex items-center justify-center p-4">
-        <div class="bg-white rounded-[30px] shadow-2xl w-full max-w-[500px] flex flex-col overflow-hidden animate-in fade-in zoom-in duration-200">
+        <div class="bg-surface rounded-[30px] shadow-2xl w-full max-w-[500px] flex flex-col overflow-hidden animate-in fade-in zoom-in duration-200">
           <div class="p-6 border-b border-gray-100 flex justify-between items-center">
             <h2 class="text-xl font-bold text-gray-900">Collect Payment</h2>
             <button @click="showCollectModal = false" class="text-gray-400 hover:text-gray-600 transition-colors">

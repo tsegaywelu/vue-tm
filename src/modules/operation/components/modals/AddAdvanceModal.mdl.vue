@@ -14,7 +14,7 @@
         <div
           v-for="(stepName, index) in stepOrder"
           :key="stepName"
-          class="flex flex-col items-center gap-2 bg-white px-2 cursor-pointer select-none"
+          class="flex flex-col items-center gap-2 bg-surface px-2 cursor-pointer select-none"
           @click="currentStep = stepName"
         >
           <div

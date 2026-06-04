@@ -143,11 +143,11 @@ function remove(id: string) {
                   :class="
                     item.isActive
                       ? 'primary-gradient bg-blue-600'
-                      : 'bg-[#F5F7F1]'
+                      : 'bg-surface-muted'
                   "
                 >
                   <div
-                    class="absolute rounded-full transition-all duration-100 h-[13.3px] w-[13.3px] bg-white"
+                    class="absolute rounded-full transition-all duration-100 h-[13.3px] w-[13.3px] bg-surface"
                     :class="item.isActive ? 'left-[15px]' : 'left-px'"
                     style="
                       box-shadow:
@@ -171,11 +171,11 @@ function remove(id: string) {
                   :class="
                     item.isDefault
                       ? 'primary-gradient bg-blue-600'
-                      : 'bg-[#F5F7F1]'
+                      : 'bg-surface-muted'
                   "
                 >
                   <div
-                    class="absolute rounded-full transition-all duration-100 h-[13.3px] w-[13.3px] bg-white"
+                    class="absolute rounded-full transition-all duration-100 h-[13.3px] w-[13.3px] bg-surface"
                     :class="item.isDefault ? 'left-[15px]' : 'left-px'"
                     style="
                       box-shadow:

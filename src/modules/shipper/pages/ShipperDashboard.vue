@@ -26,7 +26,7 @@
       <div
         v-for="stat in stats"
         :key="stat.label"
-        class="bg-white rounded-2xl p-6 border border-grey-100 flex flex-col gap-3 hover:shadow-lg transition-shadow duration-200"
+        class="bg-surface rounded-2xl p-6 border border-grey-100 flex flex-col gap-3 hover:shadow-lg transition-shadow duration-200"
       >
         <div class="flex items-center gap-3">
           <div
@@ -48,7 +48,7 @@
     <!-- Quick Actions -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
       <!-- Recent Shipments -->
-      <div class="bg-white rounded-[32px] p-6 border border-grey-100">
+      <div class="bg-surface rounded-[32px] p-6 border border-grey-100">
         <div class="flex items-center justify-between mb-4">
           <h3 class="text-lg font-bold text-grey-900">Recent Shipments</h3>
           <router-link
@@ -85,7 +85,7 @@
       </div>
 
       <!-- Recent Orders -->
-      <div class="bg-white rounded-[32px] p-6 border border-grey-100">
+      <div class="bg-surface rounded-[32px] p-6 border border-grey-100">
         <div class="flex items-center justify-between mb-4">
           <h3 class="text-lg font-bold text-grey-900">Recent Orders</h3>
           <router-link

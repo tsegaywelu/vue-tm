@@ -10,7 +10,7 @@
     >
       <div class="flex items-center gap-8">
         <div
-          class="size-24 md:size-32 rounded-full bg-white flex items-center justify-center shadow-lg border border-grey-100 p-4 overflow-hidden"
+          class="size-24 md:size-32 rounded-full bg-surface flex items-center justify-center shadow-lg border border-grey-100 p-4 overflow-hidden"
         >
           <img
             v-if="driver.profilePicture"

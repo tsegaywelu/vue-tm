@@ -163,7 +163,7 @@ function remove(id: string) {
               <button
                 v-if="items.length > 1"
                 type="button"
-                class="absolute -top-2 -right-2 size-6 bg-white border border-gray-100 text-error-600 rounded-full shadow-sm flex items-center justify-center hover:bg-error-50"
+                class="absolute -top-2 -right-2 size-6 bg-surface border border-gray-100 text-error-600 rounded-full shadow-sm flex items-center justify-center hover:bg-error-50"
                 @click="remove(item.fakeId)"
               >
                 <i v-html="icons.delete" class="*:size-3" />

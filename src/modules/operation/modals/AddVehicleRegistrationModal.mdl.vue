@@ -22,7 +22,7 @@
         <div
           v-for="(stepName, index) in stepOrder"
           :key="stepName"
-          class="flex flex-col items-center gap-2 bg-white px-2"
+          class="flex flex-col items-center gap-2 bg-surface px-2"
         >
           <div
             class="size-8 rounded-full flex items-center justify-center text-sm font-semibold transition-all duration-300"
@@ -200,6 +200,11 @@ import { useMutation } from "@tanstack/vue-query";
 import type { Driver, Trasporter, Vehicle } from "../operation.types";
 
 // [MODAL-X] AUTO-GENERATED INSTANCE
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
 // [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
 // [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
 // [MODAL-X] Managed Props: This block is auto-generated for strict type safety.

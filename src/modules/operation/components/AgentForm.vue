@@ -62,7 +62,7 @@
 
       <!-- Map Picker -->
       <div
-        class="bg-white rounded-[20px] p-5 border border-gray-100 flex flex-col gap-3"
+        class="bg-surface rounded-[20px] p-5 border border-gray-100 flex flex-col gap-3"
         style="box-shadow: 0px 0px 24px 0px #00000014"
       >
         <div>

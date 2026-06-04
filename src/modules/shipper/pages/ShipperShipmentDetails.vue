@@ -12,7 +12,7 @@
       />
       <div
         v-else
-        class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm"
+        class="bg-surface p-6 rounded-2xl border border-gray-100 shadow-sm"
       >
         <h2 class="text-lg font-bold mb-4">Contracted Carriers</h2>
         <Table :columns="carrierColumns" :rows="carriersResponse?.data || []" />

@@ -1,14 +1,14 @@
 <template>
   <div
-    class="flex flex-col mg:gap-2 sm:gap-4 px-2 py-1 sm:px-5 sm:py-4 bg-white rounded-3xl max-w-500 mx-auto min-h-screen animate-fade-in"
+    class="flex flex-col gap-2 sm:gap-4 px-2 py-1 sm:px-5 sm:py-4 bg-surface rounded-3xl max-w-[2000px] mx-auto min-h-screen animate-fade-in"
   >
     <div class="flex items-center justify-between gap-3">
       <!-- Left: title + description -->
       <div class="flex flex-col min-w-0">
-        <h1 v-if="title" class="text-xl sm:text-2xl font-bold text-gray-800">
+        <h1 v-if="title" class="text-xl sm:text-2xl font-bold text-base-text">
           {{ title }}
         </h1>
-        <p v-if="description" class="text-gray-600 text-sm">
+        <p v-if="description" class="text-dim-text text-sm">
           {{ description }}
         </p>
       </div>
@@ -37,7 +37,7 @@
       </Teleport>
       <div v-else class="relative">
         <div
-          class="flex items-center gap-3 overflow-x-auto no-scrollbar whitespace-nowrap border-b border-gray-200"
+          class="flex items-center gap-3 overflow-x-auto no-scrollbar whitespace-nowrap border-b border-line-strong"
         >
           <Tabs :tabs="tabs" v-model="activeTab" />
         </div>

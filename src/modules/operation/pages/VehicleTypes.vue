@@ -60,7 +60,8 @@
       </div>
     </div>
 
-    <div class="md:rounded-3xl md:p-6 md:border md:border-grey-100 bg-white">
+    <div class="rounded-3xl p-6 border border-grey-100 bg-surface">
+            <h3 class="text-lg font-bold text-grey-900 mb-4">Vehicle Types List</h3>
       <Table
         :columns="columns"
         :rows="response"

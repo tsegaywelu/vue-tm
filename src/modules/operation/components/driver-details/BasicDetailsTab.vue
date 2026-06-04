@@ -148,6 +148,46 @@
         </div>
       </InfoWrapper>
     </div>
+
+    <!-- Educational Background -->
+    <InfoWrapper title="Educational Background">
+      <div class="space-y-4">
+        <div
+          v-for="(edu, index) in driver.educationalBackground"
+          :key="index"
+          class="bg-surface rounded-2xl p-4 shadow-sm border border-grey-100 flex flex-col gap-1"
+        >
+          <span class="text-xs font-medium text-grey-500 uppercase tracking-wider">{{ edu.type }}</span>
+          <span class="text-sm font-bold text-grey-900">{{ edu.institutionName }}</span>
+          <span class="text-xs text-grey-500" v-if="edu.startDate">
+            {{ formatDate(edu.startDate) }} - {{ formatDate(edu.endDate) }}
+          </span>
+        </div>
+        <span v-if="!driver.educationalBackground?.length" class="text-sm text-grey-400 italic">
+          No educational background added.
+        </span>
+      </div>
+    </InfoWrapper>
+
+    <!-- Work Experience -->
+    <InfoWrapper title="Work Experience">
+      <div class="space-y-4">
+        <div
+          v-for="(work, index) in driver.workExperience"
+          :key="index"
+          class="bg-surface rounded-2xl p-4 shadow-sm border border-grey-100 flex flex-col gap-1"
+        >
+          <span class="text-xs font-medium text-grey-500 uppercase tracking-wider">{{ work.position }}</span>
+          <span class="text-sm font-bold text-grey-900">{{ work.companyName }}</span>
+          <span class="text-xs text-grey-500" v-if="work.startDate">
+            {{ formatDate(work.startDate) }} - {{ formatDate(work.endDate) }}
+          </span>
+        </div>
+        <span v-if="!driver.workExperience?.length" class="text-sm text-grey-400 italic">
+          No work experience added.
+        </span>
+      </div>
+    </InfoWrapper>
   </div>
 </template>
 

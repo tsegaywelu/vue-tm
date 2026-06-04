@@ -2,7 +2,7 @@
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 pb-6">
     <!-- Main Details -->
     <div class="lg:col-span-2 flex flex-col gap-6">
-      <div class="bg-white p-6 rounded-[20px] border border-gray-100 shadow-sm flex flex-col gap-6">
+      <div class="bg-surface p-6 rounded-[20px] border border-gray-100 shadow-sm flex flex-col gap-6">
         <h3 class="text-lg font-bold text-gray-900 border-b border-gray-50 pb-2">Report Details</h3>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-12">
           <div class="flex flex-col gap-1">
@@ -51,7 +51,7 @@
       </div>
 
       <!-- Attached Picture -->
-      <div v-if="issueReport.picture" class="bg-white p-6 rounded-[20px] border border-gray-100 shadow-sm flex flex-col gap-4">
+      <div v-if="issueReport.picture" class="bg-surface p-6 rounded-[20px] border border-gray-100 shadow-sm flex flex-col gap-4">
         <h3 class="text-lg font-bold text-gray-900 border-b border-gray-50 pb-2">Evidence / Picture</h3>
         <div class="relative group w-full max-w-2xl overflow-hidden rounded-xl border border-gray-200 bg-gray-50">
           <img 
@@ -65,7 +65,7 @@
 
     <!-- Sidebar / Secondary Info -->
     <div class="flex flex-col gap-6">
-      <div class="bg-white p-6 rounded-[20px] border border-gray-100 shadow-sm flex flex-col gap-6 text-sm">
+      <div class="bg-surface p-6 rounded-[20px] border border-gray-100 shadow-sm flex flex-col gap-6 text-sm">
         <h3 class="text-lg font-bold text-gray-900 border-b border-gray-50 pb-2 text-base">Involved Parties</h3>
         
         <div class="flex flex-col gap-4">
@@ -103,7 +103,7 @@
         </div>
       </div>
 
-      <div class="bg-white p-6 rounded-[20px] border border-gray-100 shadow-sm flex flex-col gap-4 text-sm text-gray-500">
+      <div class="bg-surface p-6 rounded-[20px] border border-gray-100 shadow-sm flex flex-col gap-4 text-sm text-gray-500">
         <div class="flex justify-between items-center">
           <span>Created:</span>
           <span class="font-bold text-gray-900">{{ dateFormatter(issueReport.createdAt) }}</span>

@@ -7,7 +7,7 @@
     <!-- Header Section -->
     <div class="bg-grey-25 rounded-[32px] p-4 md:p-10 border border-grey-100 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 md:gap-8">
       <div class="flex items-center gap-4 md:gap-8">
-        <div class="size-16 md:size-32 rounded-full bg-white flex items-center justify-center shadow-lg border border-grey-100 overflow-hidden shrink-0">
+        <div class="size-16 md:size-32 rounded-full bg-surface flex items-center justify-center shadow-lg border border-grey-100 overflow-hidden shrink-0">
           <img
             v-if="contact.profilePicture"
             :src="getProfilePictureURL(contact.profilePicture)"
@@ -44,7 +44,7 @@
     <!-- Contact Details Body -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <!-- General Contact Info Card -->
-      <div class="bg-white rounded-[32px] p-6 border border-grey-100 flex flex-col gap-4">
+      <div class="bg-surface rounded-[32px] p-6 border border-grey-100 flex flex-col gap-4">
         <h3 class="text-lg font-bold text-grey-900 border-b border-grey-100 pb-3 flex items-center gap-2">
           <i class="mdi mdi-card-account-details-outline text-primary text-xl"></i>
           Contact Information
@@ -76,7 +76,7 @@
       </div>
 
       <!-- Specific Info Card (DRIVER / MECHANIC) -->
-      <div v-if="contact.group === 'DRIVER' || contact.group === 'MECHANIC'" class="bg-white rounded-[32px] p-6 border border-grey-100 flex flex-col gap-4">
+      <div v-if="contact.group === 'DRIVER' || contact.group === 'MECHANIC'" class="bg-surface rounded-[32px] p-6 border border-grey-100 flex flex-col gap-4">
         <h3 class="text-lg font-bold text-grey-900 border-b border-grey-100 pb-3 flex items-center gap-2">
           <i class="mdi mdi-account-star-outline text-primary text-xl"></i>
           {{ contact.group === 'DRIVER' ? 'Driver Information' : 'Mechanic Information' }}

@@ -17,7 +17,7 @@ const goBack = () => {
 
 <template>
   <div class="min-h-screen flex items-center justify-center bg-surface-beige-light/30 px-4">
-    <div class="max-w-lg w-full bg-white rounded-3xl p-10 text-center shadow-soft">
+    <div class="max-w-lg w-full bg-surface rounded-3xl p-10 text-center shadow-soft">
       <div class="mx-auto w-24 h-24 bg-red-50 rounded-full flex items-center justify-center mb-8">
         <i class="size-12 text-red-500 block" v-html="icons.shieldAlert"></i>
       </div>

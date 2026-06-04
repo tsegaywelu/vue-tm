@@ -25,7 +25,7 @@
     >
       <div class="flex items-center gap-4 md:gap-8">
         <div
-          class="size-16 md:size-32 rounded-full bg-white flex items-center justify-center shadow-lg border border-grey-100 shrink-0"
+          class="size-16 md:size-32 rounded-full bg-surface flex items-center justify-center shadow-lg border border-grey-100 shrink-0"
         >
           <div class="text-primary">
             <svg
