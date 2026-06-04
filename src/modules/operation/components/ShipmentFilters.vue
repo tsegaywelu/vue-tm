@@ -13,6 +13,9 @@
           routeDestination: values.routeDestination?.length
             ? values.routeDestination.join(',')
             : undefined,
+          shipper: values.shipper?.length
+            ? values.shipper.join(',')
+            : undefined,
         });
       }
     "
@@ -47,6 +50,7 @@
       v-if="!isShipper"
       name="shipper"
       size="xs"
+      multiple
       :params="
         (state) => {
           return {
