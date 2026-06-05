@@ -5,6 +5,7 @@
     form-id="advancePaymentForm"
     :submit-handler="handleFinalSubmit"
     modal-style="auto"
+    container-class="sm:!max-h-[90dvh]"
     :values="initialValues"
   >
     <template #center="{ form }">
@@ -68,7 +69,7 @@
           </template>
         </component>
 
-        <div class="grid grid-cols-2 gap-4 bg-gray-50 p-4 rounded-lg">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-gray-50 p-4 rounded-lg">
           <Input
             name="shipmentCode"
             label="Shipment"

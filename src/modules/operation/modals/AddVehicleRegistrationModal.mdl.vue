@@ -5,6 +5,7 @@
     form-id="vehicleRegistrationForm"
     @submit="handleStepSubmit"
     modal-style="auto"
+    container-class="sm:!max-h-[90dvh]"
     :values="stepFields"
     :key="currentStep"
   >
@@ -29,8 +30,8 @@
               registeredData[stepName]
                 ? 'bg-green-500 text-white shadow-md shadow-green-200/50'
                 : currentStep === stepName
-                ? 'primary-gradient text-white shadow-md shadow-primary/20 scale-110'
-                : 'bg-gray-100 text-gray-400',
+                  ? 'primary-gradient text-white shadow-md shadow-primary/20 scale-110'
+                  : 'bg-gray-100 text-gray-400',
             ]"
           >
             <span v-if="registeredData[stepName]">✓</span>
@@ -77,12 +78,12 @@
           url="/transporter"
           label_key="tradeName"
           value_key="_id"
-          search_key="tradeName"
           :searchable="true"
+          search_key="name[regex]"
           :attributes="{ placeholder: 'Search transporter...' }"
           :validation="{ required }"
         />
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Input
             name="driver.firstName"
             label="First Name"
@@ -123,9 +124,20 @@
           url="/transporter"
           label_key="tradeName"
           value_key="_id"
-          search_key="tradeName"
           :searchable="true"
+          search_key="name[regex]"
           :attributes="{ placeholder: 'Search transporter...' }"
+          :validation="{ required }"
+        />
+        <SelectInput
+          name="vehicle.driver"
+          label="Driver"
+          url="/driver"
+          label_key="firstName"
+          value_key="_id"
+          :searchable="true"
+          search_key="name[regexAny]"
+          :attributes="{ placeholder: 'Search driver...' }"
           :validation="{ required }"
         />
         <Input
@@ -181,6 +193,7 @@ import Button from "@/components/common/Button.vue";
 import SubmitButton from "@/components/form/SubmitButton.vue";
 import { phone, required } from "@/utils/validations";
 import { useToastStore } from "@/store/toastStore";
+import { useTablePaginationStore } from "@/store/tablePaginationStore";
 import * as api from "../api/registration.api";
 import { useMutation } from "@tanstack/vue-query";
 import type { Driver, Trasporter, Vehicle } from "../operation.types";
@@ -203,7 +216,29 @@ import type { Driver, Trasporter, Vehicle } from "../operation.types";
 // [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
 // [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
 // [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
-
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
 
 export type ReturnType = {
   transporter?: Trasporter;
@@ -213,6 +248,13 @@ export type ReturnType = {
 } | null;
 
 const toast = useToastStore();
+const paginationStore = useTablePaginationStore();
+
+const DROPDOWN_IDS = [
+  "/transporter__driver.transporter",
+  "/transporter__vehicle.transporter",
+  "/driver__vehicle.driver",
+];
 const isLoading = ref(false);
 
 const trasporterMutation = useMutation({
@@ -265,6 +307,7 @@ const emptyFields = {
   },
   vehicle: {
     transporter: "",
+    driver: "",
     plateNumber: "",
     trailerPlate: "",
     vehicleType: "",
@@ -286,6 +329,7 @@ function navigateToStep(stepName: StepName, form: any) {
   if (form) {
     stepFields.value = JSON.parse(JSON.stringify(form.state.values));
   }
+  DROPDOWN_IDS.forEach((id) => paginationStore.removeTable(id));
   currentStep.value = stepName;
 }
 
