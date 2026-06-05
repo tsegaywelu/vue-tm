@@ -98,22 +98,7 @@ export const useAuthStore = defineStore("auth", () => {
     // Shipper users always go to the shipper dashboard
     if (is_shipper.value) return "/shipper/dashboard";
 
-    if (has_permission("REPORT", ["view"])) return "/operation/dashboard";
-    if (has_permission("SHIPMENT", ["view"])) return "/operation/shipments";
-    if (has_permission("ORDER", ["view"])) return "/operation/orders";
-    if (has_permission("ADVANCE_PAYMENT", ["view"]))
-      return "/operation/advances";
-    if (has_permission("TRANSACTION", ["view"]))
-      return "/operation/settlements";
-    if (
-      has_permission("MECHANIC", ["view"]) ||
-      has_permission("SERVICE_TASK", ["view"])
-    )
-      return "/operation/maintenance/service-task";
-    if (has_permission("INVENTORY_ITEM", ["view"]))
-      return "/operation/inventory/items";
-    // Ultimate fallback for very restricted users to avoid infinite loop
-    return "/unauthorized";
+    return "/operation/dashboard";
   };
 
   return {
