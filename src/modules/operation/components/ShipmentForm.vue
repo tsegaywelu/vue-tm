@@ -731,11 +731,10 @@ const updateTotalPrice = (form: any, overrides?: Record<string, any>) => {
 const openRegistrationModal = async (form: any) => {
   const res = await openModal("AddVehicleRegistrationModal");
   if (res && res.vehicle) {
-    // Inject the fully populated objects from the other steps into the vehicle object
     const enrichedVehicle = {
       ...res.vehicle,
-      driver: res.driver,
-      transporter: res.transporter,
+      ...(res.driver && { driver: res.driver }),
+      ...(res.transporter && { transporter: res.transporter }),
     };
     handleVehicleSelect(enrichedVehicle, form);
     form.setFieldValue("vehicle", res.vehicle._id);
