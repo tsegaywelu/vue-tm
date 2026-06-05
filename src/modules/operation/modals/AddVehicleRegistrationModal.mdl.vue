@@ -3,10 +3,11 @@
     title="Vehicle Registration"
     subtitle="Register Transporter, Driver, and Vehicle"
     form-id="vehicleRegistrationForm"
-    @submit="handleFinalSubmit"
+    @submit="handleStepSubmit"
     modal-style="auto"
+    container-class="sm:!max-h-[90dvh]"
     :values="stepFields"
-    :key="currentIndex"
+    :key="currentStep"
   >
     <template #center="{ form }">
       <div class="flex items-center justify-between mb-8 relative z-0">
@@ -15,29 +16,34 @@
         ></div>
         <div
           class="absolute left-0 top-1/2 -translate-y-1/2 h-0.5 primary-gradient -z-10 transition-all duration-300"
-          :style="{
-            width: `${(currentIndex / (stepOrder.length - 1)) * 100}%`,
-          }"
+          :style="{ width: `${(registeredCount / stepOrder.length) * 100}%` }"
         ></div>
         <div
           v-for="(stepName, index) in stepOrder"
           :key="stepName"
-          class="flex flex-col items-center gap-2 bg-surface px-2"
+          class="flex flex-col items-center gap-2 bg-surface px-2 cursor-pointer"
+          @click="navigateToStep(stepName, form)"
         >
           <div
             class="size-8 rounded-full flex items-center justify-center text-sm font-semibold transition-all duration-300"
             :class="[
-              index <= currentIndex
-                ? 'primary-gradient text-white shadow-md shadow-primary/20 scale-110'
-                : 'bg-gray-100 text-gray-400',
+              registeredData[stepName]
+                ? 'bg-green-500 text-white shadow-md shadow-green-200/50'
+                : currentStep === stepName
+                  ? 'primary-gradient text-white shadow-md shadow-primary/20 scale-110'
+                  : 'bg-gray-100 text-gray-400',
             ]"
           >
-            <span v-if="index < currentIndex">✓</span>
+            <span v-if="registeredData[stepName]">✓</span>
             <span v-else>{{ index + 1 }}</span>
           </div>
           <span
             class="text-[11px] font-bold uppercase tracking-wider transition-colors duration-300"
-            :class="index <= currentIndex ? 'text-gray-900' : 'text-gray-400'"
+            :class="
+              currentStep === stepName || registeredData[stepName]
+                ? 'text-gray-900'
+                : 'text-gray-400'
+            "
           >
             {{ stepName }}
           </span>
@@ -66,7 +72,18 @@
       </div>
 
       <div v-if="currentStep === 'driver'" class="flex flex-col gap-6">
-        <div class="grid grid-cols-2 gap-4">
+        <SelectInput
+          name="driver.transporter"
+          label="Transporter"
+          url="/transporter"
+          label_key="tradeName"
+          value_key="_id"
+          :searchable="true"
+          search_key="name[regex]"
+          :attributes="{ placeholder: 'Search transporter...' }"
+          :validation="{ required }"
+        />
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Input
             name="driver.firstName"
             label="First Name"
@@ -101,6 +118,28 @@
       </div>
 
       <div v-if="currentStep === 'vehicle'" class="flex flex-col gap-6">
+        <SelectInput
+          name="vehicle.transporter"
+          label="Transporter"
+          url="/transporter"
+          label_key="tradeName"
+          value_key="_id"
+          :searchable="true"
+          search_key="name[regex]"
+          :attributes="{ placeholder: 'Search transporter...' }"
+          :validation="{ required }"
+        />
+        <SelectInput
+          name="vehicle.driver"
+          label="Driver"
+          url="/driver"
+          label_key="firstName"
+          value_key="_id"
+          :searchable="true"
+          search_key="name[regexAny]"
+          :attributes="{ placeholder: 'Search driver...' }"
+          :validation="{ required }"
+        />
         <Input
           name="vehicle.plateNumber"
           label="Plate Number"
@@ -125,59 +164,18 @@
 
       <!-- Insurance step temporarily disabled
       <div v-if="currentStep === 'insurance'" class="flex flex-col gap-6">
-        <SelectInput
-          name="insurance.insurer"
-          label="Insurance Provider"
-          url="/insurance-provider"
-          label_key="name"
-          value_key="_id"
-          :attributes="{ placeholder: 'Select insurance company' }"
-          :validation="{ required }"
-        />
-        <div class="grid grid-cols-2 gap-4">
-          <DateInput
-            name="insurance.prePaymentDate"
-            label="Pre Payment Start Date"
-            :attributes="{ placeholder: 'Select start date' }"
-            :validation="{
-              required,
-              dateGreaterThanOrEqalToToday,
-              validateStartDate,
-            }"
-            match="insurance.prePaymentMatureDate"
-          />
-          <DateInput
-            name="insurance.prePaymentMatureDate"
-            label="Pre Payment Mature Date"
-            :attributes="{ placeholder: 'Select end date' }"
-            :validation="{ required, validateMatureDate }"
-            match="insurance.prePaymentDate"
-          />
-        </div>
-        <div class="grid grid-cols-2 gap-4">
-          <Input name="insurance.JV" label="JV" :attributes="{ placeholder: 'Enter JV' }" :validation="{ required }" />
-          <Input name="insurance.CPV" label="CPV" :attributes="{ placeholder: 'Enter CPV' }" :validation="{ required }" />
-          <Input name="insurance.withHoldTax" label="Withhold Tax" type="number" :attributes="{ placeholder: 'Enter Withhold Tax', step: '0.01' }" :validation="{ required, number }" />
-          <Input name="insurance.total" label="Total" type="number" :attributes="{ placeholder: 'Enter Total', step: '0.01' }" :validation="{ required, number }" />
-        </div>
+        ...
       </div>
       -->
     </template>
 
     <template #bottom="{ form }">
-      <div class="flex justify-end gap-3">
-        <Button
-          v-if="currentIndex > 0"
-          variant="secondary"
-          size="md"
-          @click="goBack(form)"
-        >
-          Back
+      <div class="flex justify-between gap-3">
+        <Button variant="secondary" size="md" @click="handleDone">
+          Done
         </Button>
         <SubmitButton :loading="isLoading">
-          {{
-            currentStep === "vehicle" ? "Complete Registration" : "Next Step"
-          }}
+          Register {{ stepLabel }}
         </SubmitButton>
       </div>
     </template>
@@ -195,6 +193,7 @@ import Button from "@/components/common/Button.vue";
 import SubmitButton from "@/components/form/SubmitButton.vue";
 import { phone, required } from "@/utils/validations";
 import { useToastStore } from "@/store/toastStore";
+import { useTablePaginationStore } from "@/store/tablePaginationStore";
 import * as api from "../api/registration.api";
 import { useMutation } from "@tanstack/vue-query";
 import type { Driver, Trasporter, Vehicle } from "../operation.types";
@@ -214,20 +213,54 @@ import type { Driver, Trasporter, Vehicle } from "../operation.types";
 // [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
 // [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
 // [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+<<<<<<< HEAD
 
+=======
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+>>>>>>> a67255f2622a64a782fab6e51e218987dc6ef52f
 
 export type ReturnType = {
-  transporter: Trasporter;
-  driver: Driver;
-  vehicle: Vehicle;
-  // insurance: Insurance; // temporarily disabled
+  transporter?: Trasporter;
+  driver?: Driver;
+  vehicle?: Vehicle;
+  // insurance?: Insurance; // temporarily disabled
 } | null;
 
 const toast = useToastStore();
-const isLoading = ref(false);
+const paginationStore = useTablePaginationStore();
 
-// const validateStartDate = (value: any, msg: any, form: any) => { ... }; // insurance step disabled
-// const validateMatureDate = (value: any, msg: any, form: any) => { ... }; // insurance step disabled
+const DROPDOWN_IDS = [
+  "/transporter__driver.transporter",
+  "/transporter__vehicle.transporter",
+  "/driver__vehicle.driver",
+];
+const isLoading = ref(false);
 
 const trasporterMutation = useMutation({
   mutationKey: ["trasporter"],
@@ -244,16 +277,25 @@ const vehicleMutation = useMutation({
   mutationFn: (payload: any) => api.add_vehicle(payload),
 });
 
-// const insuranceMutation = useMutation({
-//   mutationKey: ["insurance"],
-//   mutationFn: (payload: any) => api.add_insurance(payload),
-// });
-
 const stepOrder = ["transporter", "driver", "vehicle"] as const;
-const currentStep = ref<(typeof stepOrder)[number]>("transporter");
-const currentIndex = computed(() => stepOrder.indexOf(currentStep.value));
+type StepName = (typeof stepOrder)[number];
 
-// Define which fields belong to which step for validation
+const currentStep = ref<StepName>("transporter");
+
+const registeredData = ref<{
+  transporter?: Trasporter;
+  driver?: Driver;
+  vehicle?: Vehicle;
+}>({});
+
+const registeredCount = computed(
+  () => Object.values(registeredData.value).filter(Boolean).length,
+);
+
+const stepLabel = computed(
+  () => currentStep.value.charAt(0).toUpperCase() + currentStep.value.slice(1),
+);
+
 const emptyFields = {
   transporter: {
     tradeName: "",
@@ -261,6 +303,7 @@ const emptyFields = {
     address: "",
   },
   driver: {
+    transporter: "",
     firstName: "",
     middleName: "",
     lastName: "",
@@ -268,11 +311,12 @@ const emptyFields = {
     driverLicenceNumber: "",
   },
   vehicle: {
+    transporter: "",
+    driver: "",
     plateNumber: "",
     trailerPlate: "",
     vehicleType: "",
   },
-  // insurance: { ... }, // temporarily disabled
 };
 
 const stepFields = ref(emptyFields);
@@ -286,55 +330,60 @@ if (import.meta.env.DEV) {
   );
 }
 
-function goBack(form: any) {
-  stepFields.value = JSON.parse(JSON.stringify(form.state.values));
-  currentStep.value = stepOrder[currentIndex.value - 1];
+function navigateToStep(stepName: StepName, form: any) {
+  if (form) {
+    stepFields.value = JSON.parse(JSON.stringify(form.state.values));
+  }
+  DROPDOWN_IDS.forEach((id) => paginationStore.removeTable(id));
+  currentStep.value = stepName;
 }
 
-async function handleFinalSubmit(values: any) {
+function handleDone() {
+  const hasData =
+    registeredData.value.transporter ||
+    registeredData.value.driver ||
+    registeredData.value.vehicle;
+  closeModal(hasData ? { ...registeredData.value } : null);
+}
+
+async function handleStepSubmit(values: any) {
   stepFields.value = JSON.parse(JSON.stringify(values));
-
-  if (currentStep.value !== "vehicle") {
-    currentStep.value = stepOrder[currentIndex.value + 1];
-    return;
-  }
-
   isLoading.value = true;
+
   try {
-    const transRes = await trasporterMutation.mutateAsync({
-      ...stepFields.value.transporter,
-      name: stepFields.value.transporter.tradeName,
-      type: "STSC",
-    });
-    if (!transRes.success) return toast.error(transRes.error);
-
-    const driverPayload = {
-      ...stepFields.value.driver,
-      transporter: transRes.data?._id,
-      isActive: true,
-      driverStatus: "vehicle_not_assigned",
-      isEmployed: false,
-    };
-    const driverRes = await driverrMutation.mutateAsync(driverPayload);
-    if (!driverRes.success) return toast.error(driverRes.error);
-
-    const vehiclePayload = {
-      ...stepFields.value.vehicle,
-      transporter: transRes.data?._id,
-      driver: driverRes.data?._id,
-      ownership: "Rental",
-      status: "available",
-      isOperational: true,
-    };
-    const vehicleRes = await vehicleMutation.mutateAsync(vehiclePayload);
-    if (!vehicleRes.success) return toast.error(vehicleRes.error);
-
-    toast.success("All data registered successfully!");
-    closeModal({
-      transporter: transRes.data,
-      driver: driverRes.data,
-      vehicle: vehicleRes.data,
-    });
+    if (currentStep.value === "transporter") {
+      const res = await trasporterMutation.mutateAsync({
+        ...stepFields.value.transporter,
+        name: stepFields.value.transporter.tradeName,
+        type: "STSC",
+      });
+      if (!res.success) return toast.error(res.error);
+      registeredData.value.transporter = res.data;
+      toast.success("Transporter registered successfully!");
+      currentStep.value = "driver";
+    } else if (currentStep.value === "driver") {
+      const res = await driverrMutation.mutateAsync({
+        ...stepFields.value.driver,
+        isActive: true,
+        driverStatus: "vehicle_not_assigned",
+        isEmployed: false,
+      });
+      if (!res.success) return toast.error(res.error);
+      registeredData.value.driver = res.data;
+      toast.success("Driver registered successfully!");
+      currentStep.value = "vehicle";
+    } else if (currentStep.value === "vehicle") {
+      const res = await vehicleMutation.mutateAsync({
+        ...stepFields.value.vehicle,
+        ownership: "Rental",
+        status: "available",
+        isOperational: true,
+      });
+      if (!res.success) return toast.error(res.error);
+      registeredData.value.vehicle = res.data;
+      toast.success("Vehicle registered successfully!");
+      closeModal({ ...registeredData.value, vehicle: res.data });
+    }
   } finally {
     isLoading.value = false;
   }
