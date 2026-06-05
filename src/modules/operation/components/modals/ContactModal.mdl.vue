@@ -8,7 +8,12 @@
     :values="initialFormValues"
   >
     <template #center="{ form }">
-      <div class="flex flex-col gap-4">
+      <!-- Loading state while fetching full contact details for edit -->
+      <div v-if="contact && isLoadingContact" class="flex justify-center py-10">
+        <i class="mdi mdi-loading mdi-spin text-2xl text-primary"></i>
+      </div>
+
+      <div v-else class="flex flex-col gap-4">
         <!-- Profile picture (hidden for Path B — contact info comes from the driver) -->
         <FileInput
           v-if="!isPathB"
@@ -347,7 +352,7 @@
             </div>
           </template>
         </component>
-      </div>
+      </div><!-- end v-else -->
     </template>
 
     <template #bottom>
@@ -364,7 +369,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import FormModalParent from "@/components/modals/FormModalParent.vue";
 import Input from "@/components/form/Input.vue";
 import SelectInput from "@/components/form/SelectInput.vue";
@@ -378,13 +383,28 @@ import SubmitButton from "@/components/form/SubmitButton.vue";
 import {
   add_contact,
   update_contact,
+  fetch_contact_by_id,
   fetch_unlinked_drivers,
   link_driver_to_contact,
 } from "../../api/operation.api";
-import { useMutation } from "@tanstack/vue-query";
+import { useMutation, useQuery } from "@tanstack/vue-query";
 
 const props = defineProps<{ data?: { contact?: any } }>();
 const contact = computed(() => props.data?.contact);
+
+// Fetch full contact details on edit so driver/mechanic sub-docs are populated
+const { data: fullContactResponse, isLoading: isLoadingContact } = useQuery({
+  queryKey: computed(() => ["contact", contact.value?._id]),
+  queryFn: () => fetch_contact_by_id(contact.value!._id),
+  enabled: computed(() => !!contact.value?._id),
+});
+
+const fullContact = computed(() => {
+  if (!contact.value) return null;
+  const res = fullContactResponse.value as any;
+  return res?.data?.result || res?.data || contact.value;
+});
+
 const API_URL = import.meta.env.VITE_API_URL;
 const showPassword = ref(false);
 
@@ -463,34 +483,41 @@ function generatePassword(form: any) {
   form.setFieldValue("password", password);
 }
 
+// Sync isEmployed when full contact loads
+watch(fullContact, (fc) => {
+  if (fc?.group === "DRIVER" && fc?.driverInfo) {
+    isEmployed.value = fc.driverInfo.isEmployed !== false;
+  }
+});
+
 // ── Initial form values ───────────────────────────────────────
 const initialFormValues = computed(() => {
-  if (contact.value) {
+  const fc = fullContact.value;
+  if (fc) {
+    const driverInfo = typeof fc.driver === "object" ? fc.driver : fc.driverInfo;
+    const mechanicInfo = typeof fc.mechanic === "object" ? fc.mechanic : fc.mechanicInfo;
     return {
-      name: contact.value.name || "",
-      email: contact.value.email || "",
-      phone: contact.value.phone || "",
-      group: contact.value.group || "OTHER",
-      jobTitle: contact.value.jobTitle || "",
-      employeeNumber: contact.value.employeeNumber || "",
-      dateOfBirth: contact.value.dateOfBirth
-        ? contact.value.dateOfBirth.split("T")[0]
+      name: fc.name || "",
+      email: fc.email || "",
+      phone: fc.phone || "",
+      group: fc.group || "OTHER",
+      jobTitle: fc.jobTitle || "",
+      employeeNumber: fc.employeeNumber || "",
+      dateOfBirth: fc.dateOfBirth ? fc.dateOfBirth.split("T")[0] : "",
+      driverLicenceNumber: driverInfo?.driverLicenceNumber || "",
+      drivingLicenceExpirationDate: driverInfo?.drivingLicenceExpirationDate
+        ? driverInfo.drivingLicenceExpirationDate.split("T")[0]
         : "",
-      driverLicenceNumber: contact.value.driver?.driverLicenceNumber || "",
-      drivingLicenceExpirationDate: contact.value.driver
-        ?.drivingLicenceExpirationDate
-        ? contact.value.driver.drivingLicenceExpirationDate.split("T")[0]
-        : "",
-      driverType: contact.value.driver?.driverType || "",
-      certification: contact.value.mechanic?.certification || "",
-      experience: contact.value.mechanic?.experience || "",
-      loginAccess: contact.value.loginAccess || false,
-      username: contact.value.username || "",
+      driverType: driverInfo?.driverType || "",
+      certification: mechanicInfo?.certification || "",
+      experience: mechanicInfo?.experience || "",
+      loginAccess: fc.loginAccess || false,
+      username: fc.username || "",
       password: "",
-      role: contact.value.role || "",
-      region: contact.value.region?._id || contact.value.region || "",
-      profilePicture: contact.value.profilePicture
-        ? `${API_URL}/${contact.value.profilePicture.replace(/\\/g, "/")}`
+      role: fc.role?._id || fc.role || "",
+      region: fc.region?._id || fc.region || "",
+      profilePicture: fc.profilePicture
+        ? `${API_URL}/${fc.profilePicture.replace(/\\/g, "/")}`
         : null,
     };
   }

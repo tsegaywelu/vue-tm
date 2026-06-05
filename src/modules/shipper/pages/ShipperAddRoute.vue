@@ -24,6 +24,8 @@ const queryClient = useQueryClient();
 const toast = useToastStore();
 
 const initialValues = {
+  originCity: "",
+  destinationCity: "",
   origin: "",
   destination: "",
   routeName: "",

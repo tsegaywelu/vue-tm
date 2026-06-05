@@ -360,6 +360,15 @@ export const shipper_routes: RouteRecordRaw[] = [
           description: "Modify an invoice export template.",
         },
       },
+      {
+        path: "setting/city-shipper-codes",
+        name: "shipper_setting_city_shipper_codes",
+        component: () => import("./pages/setting/CietyShipperCode.vue"),
+        meta: {
+          title: "City Shipper Codes",
+          description: "Manage custom origin and destination codes for cities.",
+        },
+      },
       // ── User Management ──
       {
         path: "users",

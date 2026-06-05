@@ -41,8 +41,8 @@ const router = useRouter();
 const toast = useToastStore();
 
 const initialValues = {
-  origin: "",
-  destination: "",
+  originCity: "",
+  destinationCity: "",
   routeName: "",
   productType: "",
   waypoints: [],

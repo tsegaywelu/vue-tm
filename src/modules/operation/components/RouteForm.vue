@@ -11,17 +11,29 @@
         description="Specify origin, destination, and product details."
       >
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <Input
-            name="origin"
-            label="Origin"
-            :attributes="{ placeholder: 'Enter origin' }"
+          <SelectInput
+            name="originCity"
+            label="Origin City"
+            url="/city"
+            label_key="name"
+            value_key="_id"
+            searchable
+            :display_label_fn="cityLabel"
             :validation="{ required }"
+            :attributes="{ placeholder: 'Select origin city' }"
+            @select="(city) => onOriginCitySelect(city, form)"
           />
-          <Input
-            name="destination"
-            label="Destination"
-            :attributes="{ placeholder: 'Enter destination' }"
+          <SelectInput
+            name="destinationCity"
+            label="Destination City"
+            url="/city"
+            label_key="name"
+            value_key="_id"
+            searchable
+            :display_label_fn="cityLabel"
             :validation="{ required }"
+            :attributes="{ placeholder: 'Select destination city' }"
+            @select="(city) => onDestCitySelect(city, form)"
           />
           <Input
             name="routeName"
@@ -55,6 +67,7 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from "vue";
 import Form from "@/components/form/Form.vue";
 import Input from "@/components/form/Input.vue";
 import SelectInput from "@/components/form/SelectInput.vue";
@@ -68,6 +81,25 @@ const props = defineProps<{
   initialValues: Record<string, any>;
   onSubmit: (values: any) => Promise<void> | void;
 }>();
+
+const cityLabel = (city: any) => city.code || city.name;
+
+const selectedOriginCity = ref<any>(null);
+const selectedDestCity = ref<any>(null);
+
+function onOriginCitySelect(city: any, form: any) {
+  selectedOriginCity.value = city;
+  const origin = city?.code || city?.name || "";
+  const dest = selectedDestCity.value?.code || selectedDestCity.value?.name || "";
+  if (origin && dest) form.setFieldValue("routeName", `${origin} - ${dest}`);
+}
+
+function onDestCitySelect(city: any, form: any) {
+  selectedDestCity.value = city;
+  const origin = selectedOriginCity.value?.code || selectedOriginCity.value?.name || "";
+  const dest = city?.code || city?.name || "";
+  if (origin && dest) form.setFieldValue("routeName", `${origin} - ${dest}`);
+}
 
 const productTypeOptions = [
   { label: "Out Bound", value: ProductType["Out Bound"] },

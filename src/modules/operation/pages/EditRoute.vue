@@ -65,8 +65,8 @@ const initialValues = computed(() => {
   if (!routeData.value) return null;
   const data = routeData.value;
   return {
-    origin: data.origin || "",
-    destination: data.destination || "",
+    originCity: data.originCity?._id || data.originCity || "",
+    destinationCity: data.destinationCity?._id || data.destinationCity || "",
     routeName: data.routeName || "",
     productType: data.productType || "",
     waypoints:

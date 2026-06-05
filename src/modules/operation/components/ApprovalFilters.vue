@@ -23,7 +23,7 @@
         <SelectInput
           name="routeOrigin"
           v-model="filters.routeOrigin"
-          :options="routeOptions"
+          :options="cityOptions"
           placeholder="Select Origin"
           is-multi
           size="md"
@@ -37,7 +37,7 @@
         <SelectInput
           name="routeDestination"
           v-model="filters.routeDestination"
-          :options="routeOptions"
+          :options="cityOptions"
           placeholder="Select Destination"
           is-multi
           size="md"
@@ -124,7 +124,7 @@ import SearchInput from "@/components/form/SearchInput.vue";
 import SelectInput from "@/components/form/SelectInput.vue";
 import DatePicker from "@/components/DatePicker.vue";
 import Button from "@/components/Button.vue";
-import { fetch_routes } from "../api/route.api";
+import { fetch_cities } from "../api/city.api";
 import type { ApprovalFilterParams } from "../operation.types";
 import { icons } from "@/utils/icons";
 import { raaz_icons } from "@/utils/raaz_icons";
@@ -143,16 +143,16 @@ const emit = defineEmits(["change"]);
 const { setSearch, state } = useTablePagination("approval-requests");
 
 // --- Data Fetching ---
-const { data: routes } = useQuery({
-  queryKey: ["routes"],
+const { data: cities } = useQuery({
+  queryKey: ["cities"],
   queryFn: async () => {
-    const res = await fetch_routes();
+    const res = await fetch_cities();
     return res.data || [];
   },
 });
 
-const routeOptions = computed(() =>
-  (routes.value || []).map((r) => ({ label: r.name, value: r._id })),
+const cityOptions = computed(() =>
+  (cities.value || []).map((c: any) => ({ label: c.code || c.name, value: c.name })),
 );
 
 // --- Local State ---

@@ -1805,6 +1805,15 @@ export const operation_routes: RouteRecordRaw[] = [
           description: "Modify an invoice export template.",
         },
       },
+      {
+        path: "city-shipper-codes",
+        name: "operation_setting_city_shipper_codes",
+        component: () => import("../shipper/pages/setting/CietyShipperCode.vue"),
+        meta: {
+          title: "City Shipper Codes",
+          description: "Manage custom origin and destination codes for cities.",
+        },
+      },
     ],
   },
   {

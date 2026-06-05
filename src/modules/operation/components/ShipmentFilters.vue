@@ -23,19 +23,14 @@
       multiple
       size="xs"
       :initial_labels="fieldLabels['routeOrigin']"
-      @select="
-        (opt) => captureLabel('routeOrigin', opt, 'destination', 'routeName')
-      "
+      @select="(opt: any) => captureLabel('routeOrigin', opt, 'name', (c: any) => c.code || c.name)"
     />
     <DestinationInput
       name="routeDestination"
       multiple
       size="xs"
       :initial_labels="fieldLabels['routeDestination']"
-      @select="
-        (opt) =>
-          captureLabel('routeDestination', opt, 'destination', 'routeName')
-      "
+      @select="(opt: any) => captureLabel('routeDestination', opt, 'name', (c: any) => c.code || c.name)"
     />
     <ShipmentStatusInput name="status" size="xs" />
     <ProductTypeInput name="productType" size="xs" />
@@ -114,10 +109,12 @@ function captureLabel(
   field: string,
   opt: any,
   valueKey: string,
-  labelKey: string,
+  labelKeyOrFn: string | ((item: any) => string),
 ) {
   const value = String(getNestedValue(opt, valueKey));
-  const label = getNestedValue(opt, labelKey);
+  const label = typeof labelKeyOrFn === "function"
+    ? labelKeyOrFn(opt)
+    : getNestedValue(opt, labelKeyOrFn);
   if (!fieldLabels.value[field]) fieldLabels.value[field] = {};
   fieldLabels.value[field][value] = label;
   store.setLabels(props.paginationId ?? "", { ...fieldLabels.value });
@@ -157,9 +154,7 @@ onMounted(() => {
     filterOnly.routeOrigin = filterOnly.routeOrigin.split(",").filter(Boolean);
   }
   if (typeof filterOnly.routeDestination === "string") {
-    filterOnly.routeDestination = filterOnly.routeDestination
-      .split(",")
-      .filter(Boolean);
+    filterOnly.routeDestination = filterOnly.routeDestination.split(",").filter(Boolean);
   }
   if (Object.keys(filterOnly).length > 0) {
     formValues.value = filterOnly;

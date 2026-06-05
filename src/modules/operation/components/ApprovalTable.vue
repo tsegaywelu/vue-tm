@@ -27,13 +27,14 @@
       >
         <i v-html="icons.filter" />
         <Select
-          label="Origin"
+          label="Origin City"
           size="xs"
           name="routeOrigin"
           v-model="origin"
-          :url="`/route`"
-          label_key="routeName"
-          value_key="destination"
+          url="/city"
+          label_key="name"
+          value_key="name"
+          :display_label_fn="(c: any) => c.code || c.name"
           searchable
           class="min-w-48"
           multiple
@@ -42,13 +43,14 @@
           }"
         />
         <Select
-          label="Destination"
+          label="Destination City"
           size="xs"
           name="routeDestination"
           v-model="destination"
-          :url="`/route`"
-          label_key="routeName"
-          value_key="destination"
+          url="/city"
+          label_key="name"
+          value_key="name"
+          :display_label_fn="(c: any) => c.code || c.name"
           :attributes="{
             placeholder: 'Destinations',
           }"
