@@ -9,6 +9,7 @@ import ContractWaypointInput from "./ContractWaypointInput.vue";
 import { getApi } from "@/utils/getApi";
 import { required, number, validateArrayItems } from "@/utils/validations";
 import { useAuthStore } from "@/store/authStore";
+import CommodityInput from "@/components/common/inputs/CommodityInput.vue";
 
 const props = defineProps<{
   mode?: "carrier" | "shipper";
@@ -218,6 +219,7 @@ function removeRouteFromContract(idx: number) {
         label_key="routeName"
         value_key="_id"
         searchable
+        :params="state => ({q: undefined, name: state.search})"
         :show_validation_status="false"
         :attributes="{ disabled: !routeCarrierId }"
         :on_change="onRouteChange"
@@ -226,7 +228,7 @@ function removeRouteFromContract(idx: number) {
     <div class="space-y-6">
       <!-- Commodity / Packaging / Agents / Product Types -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <SelectInput
+        <CommodityInput
           name="tempCommodities"
           label="Commodities"
           url="/commodity/contracted"

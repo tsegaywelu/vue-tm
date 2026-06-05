@@ -15,7 +15,7 @@
         :class="[
           modalStyle === 'full'
             ? 'max-h-[90dvh] sm:max-h-none sm:h-full sm:border-t-0 sm:border-l sm:border-line sm:dark:border-white/10 sm:dark:shadow-[-10px_0_50px_rgba(255,255,255,0.04)] shadow-2xl mt-auto'
-            : 'max-h-[90dvh] sm:max-h-none h-auto sm:border sm:border-line sm:dark:border-white/10 sm:dark:shadow-[0_0_50px_rgba(255,255,255,0.05)] shadow-2xl',
+            : 'max-h-[90dvh] sm:max-h-full h-auto sm:border sm:border-line sm:dark:border-white/10 sm:dark:shadow-[0_0_50px_rgba(255,255,255,0.05)] shadow-2xl',
           'w-full max-w-full sm:max-w-161.5',
           'rounded-t-3xl sm:rounded-[40px]',
           containerClass,
