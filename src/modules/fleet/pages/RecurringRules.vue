@@ -1,12 +1,36 @@
 <template>
-  <Teleport defer to="#page-actions">
-    <Button variant="secondary" size="md" :loading="runNowMutation.isPending.value" @click="handleRunNow">
-      Run Now
-    </Button>
-    <Button variant="primary" size="md" @click="$router.push('/fleet/recurring-rules/add')">
-      Add Rule
-    </Button>
+  <Teleport to="#page-title-actions" defer>
+    <button
+      class="sm:hidden size-8 rounded-xl border border-line flex items-center justify-center text-faint-text hover:bg-surface-hover transition-colors"
+      title="Run Now"
+      :disabled="runNowMutation.isPending.value"
+      @click="handleRunNow"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 0 1 0 1.972l-11.54 6.347a1.125 1.125 0 0 1-1.667-.986V5.653Z" />
+      </svg>
+    </button>
   </Teleport>
+
+  <Teleport defer to="#page-actions">
+    <div class="hidden sm:flex items-center gap-2">
+      <Button variant="secondary" size="md" :loading="runNowMutation.isPending.value" @click="handleRunNow">
+        Run Now
+      </Button>
+      <Button variant="primary" size="md" @click="router.push('/fleet/recurring-rules/add')">
+        Add Rule
+      </Button>
+    </div>
+  </Teleport>
+
+  <button
+    class="fixed bottom-6 right-6 sm:hidden z-50 w-14 h-14 rounded-full bg-primary text-white shadow-xl flex items-center justify-center active:scale-95 transition-transform"
+    @click="router.push('/fleet/recurring-rules/add')"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+    </svg>
+  </button>
 
   <RecurringRuleTable ref="tableRef" @action="handleAction" />
 </template>

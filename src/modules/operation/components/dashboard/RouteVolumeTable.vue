@@ -25,8 +25,8 @@
         </thead>
         <tbody>
           <tr
-            v-for="row in rows"
-            :key="row.route"
+            v-for="(row, i) in rows"
+            :key="row.routeId ?? `${row.route}-${i}`"
             class="border-b border-gray-50 last:border-0 hover:bg-surface-hover transition-colors"
           >
             <td class="py-2 text-xs text-gray-700">
@@ -60,6 +60,7 @@ const rows = computed(() => {
   const payload = (data.value as any)?.data ?? {};
   const list: any[] = payload.routes ?? payload ?? [];
   return list.map((item: any) => ({
+    routeId: item.routeId ?? item._id,
     route: item.routeName ?? "—",
     volume: Number(item.shipmentCount ?? 0),
   }));

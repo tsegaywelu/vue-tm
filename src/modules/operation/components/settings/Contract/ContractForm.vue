@@ -245,6 +245,8 @@ function removeRouteFromContract(idx: number) {
           label_key="name"
           value_key="_id"
           multiple
+          searchable
+          :params="(state) => ({ q: undefined,limit: undefined, 'name': state.search })"
           :show_validation_status="false"
           :attributes="{ disabled: !counterpartyId }"
         />

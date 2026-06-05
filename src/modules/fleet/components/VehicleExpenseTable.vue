@@ -4,6 +4,8 @@
     :columns="columns"
     :rows="response"
     search_placeholder="Search by plate number..."
+    :hide_on_sm_screen="['vendor', 'isVoided']"
+    :on_sm_screen_column_span="{ vehicle: 2, vehicleExpenseType: 2, amount: 2, date: 1, actions: 2 }"
   >
     <template #cell-vehicle="{ value }">
       <span class="font-bold text-gray-900">{{ value?.plateNumber || value || '-' }}</span>

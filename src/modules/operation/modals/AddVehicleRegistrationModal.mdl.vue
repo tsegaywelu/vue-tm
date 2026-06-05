@@ -214,36 +214,7 @@ import type { Driver, Trasporter, Vehicle } from "../operation.types";
 // [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
 // [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
 // [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
-<<<<<<< HEAD
-
-=======
 // [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
-// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
-// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
-// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
-// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
-// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
-// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
-// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
-// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
-// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
-// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
-// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
-// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
-// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
-// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
-// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
-// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
-// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
-// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
-// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
-// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
-// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
-// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
-// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
-// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
-// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
->>>>>>> a67255f2622a64a782fab6e51e218987dc6ef52f
 
 export type ReturnType = {
   transporter?: Trasporter;
