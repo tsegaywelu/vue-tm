@@ -1225,5 +1225,6 @@ export const reports_navs: Navs[] = [
     path: "/reports",
     icon: "reports",
     show: true,
+    permission: { subject: "REPORT", actions: ["view"] },
   },
 ];

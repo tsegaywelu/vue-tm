@@ -1801,7 +1801,7 @@ export const operation_routes: RouteRecordRaw[] = [
     name: "operation_reports",
     component: () => import("./report/Reports.vue"),
     meta: {
-      permission: [{ subject: "SHIPMENT", actions: ["generate_invoice"] }],
+      permission: [{ subject: "REPORT", actions: ["view"] }],
       title: "Reports",
       description: "Comprehensive operational and financial reports.",
     },
