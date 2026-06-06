@@ -120,9 +120,10 @@
     </template>
 
     <template #cell-createdAt="{ value }">
-      <span class="text-sm text-gray-600">
-        {{ dateFormatter(value) }}
-      </span>
+      <div class="flex flex-col gap-1 *:truncate">
+        <span class="text-sm text-gray-600">{{ isoDate(value) }}</span>
+        <span class="text-xs text-gray-400">{{ isoTime(value) }}</span>
+      </div>
     </template>
 
     <template #after-search>
@@ -212,6 +213,18 @@ import PayableFilters from "./PayableFilters.vue";
 import BottomSheet from "@/components/BottomSheet.vue";
 import { formatType, getPaidTo } from "./payableUtils";
 import { currencyFormatter, dateFormatter } from "@/utils/utils";
+
+const isoDate = (val: string | Date) => {
+  if (!val) return "-";
+  const d = typeof val === "string" ? new Date(val) : val;
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+};
+
+const isoTime = (val: string | Date) => {
+  if (!val) return "";
+  const d = typeof val === "string" ? new Date(val) : val;
+  return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+};
 
 const emit = defineEmits(["action"]);
 

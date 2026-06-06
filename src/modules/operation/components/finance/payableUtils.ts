@@ -30,7 +30,7 @@ export const getPaidTo = (row: any) => {
     return row.supplier || row.supplier?.tradeName || "-";
   } else if (["advancePayment", "transactions"].includes(row.payableType)) {
     return (
-      `${row.driver?.firstName || ""} ${row.driver?.lastName || ""}`.trim() ||
+      `${row.driver?.firstName || ""} ${row.driver?.middleName || ""} ${row.driver?.lastName || ""}`.trim() ||
       "-"
     );
   } else if (row.supplier) {
