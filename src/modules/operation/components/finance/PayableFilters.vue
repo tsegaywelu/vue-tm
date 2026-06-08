@@ -54,34 +54,36 @@
     <SelectInput
       searchable
       :show_validation_status="false"
-      label="Origin"
+      label="Origin City"
       multiple
       parent_class_name=""
       size="xs"
-      :params="(values) => ({ sort: 'shipmentCount', q: undefined, ...(values.search ? { routeName: { regexAny: values.search } } : {}) })"
       name="routeOrigin"
-      value_key="destination"
-      label_key="routeName"
-      :url="`/route`"
-      :attributes="{ placeholder: 'Select a City' }"
+      url="/city"
+      value_key="name"
+      label_key="name"
+      :display_label_fn="(c: any) => c.code || c.name"
+      :params="(values: any) => ({ q: undefined, ...(values.search ? { name: { regexAny: values.search } } : {}) })"
+      :attributes="{ placeholder: 'Select Origin City' }"
       :initial_labels="fieldLabels['routeOrigin']"
-      @select="(opt: any) => captureLabel('routeOrigin', opt, 'destination', 'routeName')"
+      @select="(opt: any) => captureLabel('routeOrigin', opt, 'name', (c: any) => c.code || c.name)"
     />
     <SelectInput
       searchable
       :show_validation_status="false"
-      label="Destination"
+      label="Destination City"
       multiple
       parent_class_name=""
       size="xs"
-      :params="(values) => ({ sort: 'shipmentCount', q: undefined, ...(values.search ? { routeName: { regexAny: values.search } } : {}) })"
       name="routeDestination"
-      value_key="destination"
-      label_key="routeName"
-      :url="`/route`"
-      :attributes="{ placeholder: 'Select a City' }"
+      url="/city"
+      value_key="name"
+      label_key="name"
+      :display_label_fn="(c: any) => c.code || c.name"
+      :params="(values: any) => ({ q: undefined, ...(values.search ? { name: { regexAny: values.search } } : {}) })"
+      :attributes="{ placeholder: 'Select Destination City' }"
       :initial_labels="fieldLabels['routeDestination']"
-      @select="(opt: any) => captureLabel('routeDestination', opt, 'destination', 'routeName')"
+      @select="(opt: any) => captureLabel('routeDestination', opt, 'name', (c: any) => c.code || c.name)"
     />
   </Form>
 </template>
@@ -109,9 +111,11 @@ function getNestedValue(obj: any, path: string): string {
   return path.split(".").reduce((acc: any, key) => acc?.[key], obj) ?? "";
 }
 
-function captureLabel(field: string, opt: any, valueKey: string, labelKey: string) {
+function captureLabel(field: string, opt: any, valueKey: string, labelKeyOrFn: string | ((item: any) => string)) {
   const value = String(getNestedValue(opt, valueKey));
-  const label = getNestedValue(opt, labelKey);
+  const label = typeof labelKeyOrFn === "function"
+    ? labelKeyOrFn(opt)
+    : getNestedValue(opt, labelKeyOrFn);
   if (!fieldLabels.value[field]) fieldLabels.value[field] = {};
   fieldLabels.value[field][value] = label;
   store.setLabels(props.paginationId ?? "", { ...fieldLabels.value });

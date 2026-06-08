@@ -56,7 +56,6 @@ const isEdit = computed(() => !!props.data.user);
 
 const labels = computed(() => ({
   role: props.data.user?.role?.name || "",
-  region: props.data.user?.region?.name || "",
 }));
 
 const initialValues = computed(() => {
@@ -64,7 +63,11 @@ const initialValues = computed(() => {
     return {
       username: props.data.user.username,
       role: props.data.user.role?._id || props.data.user.role,
-      region: props.data.user.region?._id || props.data.user.region,
+      regions: Array.isArray(props.data.user.regions)
+        ? props.data.user.regions.map((r: any) => r._id || r)
+        : props.data.user.regions
+          ? [props.data.user.regions]
+          : [],
     };
   }
   return {
@@ -72,18 +75,18 @@ const initialValues = computed(() => {
     password: "",
     confirmPassword: "",
     role: "",
-    region: "",
+    regions: [],
   };
 });
 
 const mutation = useMutation({
   mutationFn: (values: any) => {
     if (isEdit.value) {
-      const { confirmPassword, ...payload } = values;
+      const payload = { username: values.username, role: values.role, regions: values.regions };
       return update_user(props.data.user._id, payload);
     } else {
-      const { confirmPassword, ...payload } = values;
-      return create_carrier_user({ ...payload, carrier: authStore.carrierId });
+      const payload = { username: values.username, password: values.password, role: values.role, regions: values.regions, carrier: authStore.carrierId };
+      return create_carrier_user(payload);
     }
   },
   onSuccess: (res) => {

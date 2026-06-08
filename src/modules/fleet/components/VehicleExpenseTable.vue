@@ -31,25 +31,34 @@
     </template>
 
     <template #cell-actions="{ row }">
-      <div class="flex items-center justify-center gap-1">
-        <button
-          v-if="!row.isVoided"
-          type="button"
-          class="p-2 rounded-full hover:bg-gray-100 transition-colors text-gray-500 hover:text-primary"
-          title="Edit"
-          @click.stop="emit('action', { row, action: 'edit' })"
-        >
-          <i v-html="icons.edit"></i>
-        </button>
-        <button
-          v-if="!row.isVoided"
-          type="button"
-          class="p-2 rounded-full hover:bg-red-50 transition-colors text-gray-500 hover:text-red-600"
-          title="Void"
-          @click.stop="emit('action', { row, action: 'void' })"
-        >
-          <i class="mdi mdi-cancel text-base"></i>
-        </button>
+      <div class="flex items-center justify-center">
+        <Dropdown>
+          <template #default="{ close }">
+            <DropDownItem
+              :icon="icons.eye"
+              label="View Details"
+              @click.stop="emit('action', { row, action: 'view' }); close()"
+            />
+            <DropDownItem
+              v-if="!row.isVoided"
+              :icon="icons.edit"
+              label="Edit"
+              @click.stop="emit('action', { row, action: 'edit' }); close()"
+            />
+            <DropDownItem
+              v-if="!row.isVoided"
+              :icon="icons.deactivate"
+              label="Void"
+              variant="danger"
+              @click.stop="emit('action', { row, action: 'void' }); close()"
+            />
+            <DropDownItem
+              v-else
+              label="Cancel Void"
+              @click.stop="emit('action', { row, action: 'cancel-void' }); close()"
+            />
+          </template>
+        </Dropdown>
       </div>
     </template>
   </Table>
@@ -57,6 +66,8 @@
 
 <script setup lang="ts">
 import Table from "@/components/common/Table.vue";
+import Dropdown from "@/components/common/Dropdown.vue";
+import DropDownItem from "@/components/common/DropDownItem.vue";
 import type { TableColumn } from "@/components/common/Table.vue";
 import { icons } from "@/utils/icons";
 import { usePagination } from "@/composables/usePagination";
@@ -78,7 +89,7 @@ const { response, refetch } = usePagination<any>({
   id: "vehicle-expense-list",
   url: "/fleet/vehicle-expenses",
   params: (state) => ({
-    ...(state.search ? {vehiclePlateNumber: state.search } : {}),
+    ...(state.search ? { vehiclePlateNumber: state.search } : {}),
     q: undefined,
   }),
 });

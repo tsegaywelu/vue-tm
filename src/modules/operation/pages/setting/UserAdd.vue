@@ -44,11 +44,16 @@ const initialValues = {
   password: "",
   confirmPassword: "",
   role: "",
-  region: "",
+  regions: [],
 };
 
 const handleCreate = async (values: any) => {
-  const { confirmPassword, ...payload } = values;
+  const payload = {
+    username: values.username,
+    password: values.password,
+    role: values.role,
+    regions: values.regions,
+  };
   try {
     const res = await mutation.mutateAsync(payload);
     if (res.success) {

@@ -42,6 +42,10 @@ export function void_fuel_entry(id: string, voidReason: string) {
   return fleet_api.addAuthenticationHeader().patch(`/fuel-entries/${id}/void`, { voidReason });
 }
 
+export function cancel_void_fuel_entry(id: string) {
+  return fleet_api.addAuthenticationHeader().patch(`/fuel-entries/${id}/cancel-void`, {});
+}
+
 // ─── Vehicle Expense Entries ──────────────────────────────────────────────────
 
 export function fetch_vehicle_expenses(params?: Record<string, any>) {
@@ -62,6 +66,10 @@ export function update_vehicle_expense(id: string, data: FormData) {
 
 export function void_vehicle_expense(id: string, voidReason: string) {
   return fleet_api.addAuthenticationHeader().patch(`/vehicle-expenses/${id}/void`, { voidReason });
+}
+
+export function cancel_void_vehicle_expense(id: string) {
+  return fleet_api.addAuthenticationHeader().patch(`/vehicle-expenses/${id}/cancel-void`, {});
 }
 
 // ─── Recurring Expense Rules ──────────────────────────────────────────────────

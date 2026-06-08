@@ -17,7 +17,7 @@ const route = useRoute();
 const { isMobile } = useIsMobile();
 
 const allNavs = computed(() => {
-  const registry = getNavigationRegistry(authStore.is_shipper);
+  const registry = getNavigationRegistry(authStore.is_shipper, authStore.is_super_admin);
   return registry.reduce((acc, group) => {
     return acc.concat(group.items);
   }, [] as Navs[]);
@@ -25,7 +25,9 @@ const allNavs = computed(() => {
 
 const is_dashboard = computed(
   () =>
-    route.name === "operation_dashboard" || route.name === "shipper_dashboard",
+    route.name === "operation_dashboard" ||
+    route.name === "shipper_dashboard" ||
+    route.name === "admin_dashboard",
 );
 
 const is_open = ref(false);

@@ -72,6 +72,41 @@
       :initial_labels="fieldLabels['shipperName']"
       @select="(opt: any) => captureLabel('shipperName', opt, '_id', 'name')"
     />
+
+    <SelectInput
+      searchable
+      :show_validation_status="false"
+      label="Origin City"
+      multiple
+      parent_class_name=""
+      size="xs"
+      name="routeOrigin"
+      url="/city"
+      value_key="name"
+      label_key="name"
+      :display_label_fn="(c: any) => c.code || c.name"
+      :params="(values: any) => ({ q: undefined, ...(values.search ? { name: { regexAny: values.search } } : {}) })"
+      :attributes="{ placeholder: 'Select Origin City' }"
+      :initial_labels="fieldLabels['routeOrigin']"
+      @select="(opt: any) => captureLabel('routeOrigin', opt, 'name', (c: any) => c.code || c.name)"
+    />
+    <SelectInput
+      searchable
+      :show_validation_status="false"
+      label="Destination City"
+      multiple
+      parent_class_name=""
+      size="xs"
+      name="routeDestination"
+      url="/city"
+      value_key="name"
+      label_key="name"
+      :display_label_fn="(c: any) => c.code || c.name"
+      :params="(values: any) => ({ q: undefined, ...(values.search ? { name: { regexAny: values.search } } : {}) })"
+      :attributes="{ placeholder: 'Select Destination City' }"
+      :initial_labels="fieldLabels['routeDestination']"
+      @select="(opt: any) => captureLabel('routeDestination', opt, 'name', (c: any) => c.code || c.name)"
+    />
   </Form>
 </template>
 
@@ -98,9 +133,11 @@ function getNestedValue(obj: any, path: string): string {
   return path.split(".").reduce((acc: any, key) => acc?.[key], obj) ?? "";
 }
 
-function captureLabel(field: string, opt: any, valueKey: string, labelKey: string) {
+function captureLabel(field: string, opt: any, valueKey: string, labelKeyOrFn: string | ((item: any) => string)) {
   const value = String(getNestedValue(opt, valueKey));
-  const label = getNestedValue(opt, labelKey);
+  const label = typeof labelKeyOrFn === "function"
+    ? labelKeyOrFn(opt)
+    : getNestedValue(opt, labelKeyOrFn);
   if (!fieldLabels.value[field]) fieldLabels.value[field] = {};
   fieldLabels.value[field][value] = label;
   store.setLabels(props.paginationId ?? "", { ...fieldLabels.value });
@@ -108,6 +145,7 @@ function captureLabel(field: string, opt: any, valueKey: string, labelKey: strin
 
 const FORM_FILTER_FIELDS = [
   "transporterType", "productType", "tripType", "areDocumentsUploaded", "shipperName",
+  "routeOrigin", "routeDestination",
 ];
 
 const formValues = ref<Record<string, any> | undefined>(undefined);
@@ -123,12 +161,22 @@ onMounted(() => {
       filterOnly[field] = saved[field];
     }
   }
+  if (typeof filterOnly.routeOrigin === "string") {
+    filterOnly.routeOrigin = filterOnly.routeOrigin.split(",").filter(Boolean);
+  }
+  if (typeof filterOnly.routeDestination === "string") {
+    filterOnly.routeDestination = filterOnly.routeDestination.split(",").filter(Boolean);
+  }
   if (Object.keys(filterOnly).length > 0) {
     formValues.value = filterOnly;
   }
 });
 
 const handleChange = (values: any) => {
-  emit('change', values);
+  emit('change', {
+    ...values,
+    routeOrigin: values.routeOrigin?.length ? values.routeOrigin.join(',') : undefined,
+    routeDestination: values.routeDestination?.length ? values.routeDestination.join(',') : undefined,
+  });
 };
 </script>

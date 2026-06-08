@@ -1193,6 +1193,11 @@ export const setting_navs: Navs[] = [
         ],
       },
       {
+        name: "City Shipper Codes",
+        path: "/setting/city-shipper-codes",
+        show: true,
+      },
+      {
         name: "Invoice Templates",
         path: "/setting/invoice-templates",
         show: true,

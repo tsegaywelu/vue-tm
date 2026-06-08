@@ -53,6 +53,13 @@
             >
               {{ driver.employeeNumber || "N/A" }}
             </span>
+            <span
+              v-if="driver.region?.name"
+              class="px-3 py-1 bg-blue-50 text-blue-600 text-xs font-bold rounded-full uppercase flex items-center gap-1"
+            >
+              <i class="mdi mdi-map-marker-outline"></i>
+              {{ driver.region.name }}
+            </span>
           </div>
         </div>
       </div>

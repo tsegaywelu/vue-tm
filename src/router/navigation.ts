@@ -14,6 +14,11 @@ import {
   shipper_finance_navs,
   shipper_settings_navs
 } from '@/modules/shipper/shipper.navs'
+import {
+  admin_core_navs,
+  admin_shipper_navs,
+  admin_carrier_navs
+} from '@/modules/admin/admin.navs'
 import type { Navs } from '@/types/navigation'
 
 export interface NavGroup {
@@ -77,11 +82,27 @@ export const shipperNavigationRegistry: NavGroup[] = [
   }
 ]
 
+// Super Admin navigation
+export const superAdminNavigationRegistry: NavGroup[] = [
+  {
+    name: 'OVERVIEW',
+    items: admin_core_navs
+  },
+  {
+    name: 'SHIPPER',
+    items: admin_shipper_navs
+  },
+  {
+    name: 'CARRIERS',
+    items: admin_carrier_navs
+  }
+]
+
 /**
  * Returns the appropriate navigation registry based on user type.
- * @param isShipper - Whether the current user is a shipper user
  */
-export function getNavigationRegistry(isShipper: boolean): NavGroup[] {
+export function getNavigationRegistry(isShipper: boolean, isSuperAdmin?: boolean): NavGroup[] {
+  if (isSuperAdmin) return superAdminNavigationRegistry
   return isShipper ? shipperNavigationRegistry : carrierNavigationRegistry
 }
 

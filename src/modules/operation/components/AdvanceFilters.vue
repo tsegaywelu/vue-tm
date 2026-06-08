@@ -18,28 +18,44 @@
     "
     class="[&_.input-focus]:bg-grey-25 flex-1 flex max-h-16 h-16 min-h-16 *:w-[220px] *:shrink-0 px-2 gap-2 overflow-auto"
   >
-    <OriginInput
+    <SelectInput
+      searchable
+      :show_validation_status="false"
+      label="Origin City"
+      multiple
+      parent_class_name=""
+      size="xs"
       name="routeOrigin"
-      multiple
-      size="xs"
-      :params="{ sort: 'shipmentCount' }"
-      :attributes="{ placeholder: 'Search Origin' }"
+      url="/city"
+      value_key="name"
+      label_key="name"
+      :display_label_fn="(city: any) => city.code || city.name"
+      :params="(values: any) => ({
+        q: undefined,
+        ...(values.search ? { name: { regexAny: values.search } } : {}),
+      })"
+      :attributes="{ placeholder: 'Search Origin City' }"
       :initial_labels="fieldLabels['routeOrigin']"
-      @select="
-        (opt: any) =>
-          captureLabel('routeOrigin', opt, 'destination', 'routeName')
-      "
+      @select="(opt: any) => captureLabel('routeOrigin', opt, 'name', (c: any) => c.code || c.name)"
     />
-    <DestinationInput
-      name="routeDestination"
+    <SelectInput
+      searchable
+      :show_validation_status="false"
+      label="Destination City"
       multiple
       size="xs"
-      :attributes="{ placeholder: 'Search Destination' }"
+      name="routeDestination"
+      url="/city"
+      value_key="name"
+      label_key="name"
+      :display_label_fn="(city: any) => city.code || city.name"
+      :params="(values: any) => ({
+        q: undefined,
+        ...(values.search ? { name: { regexAny: values.search } } : {}),
+      })"
+      :attributes="{ placeholder: 'Search Destination City' }"
       :initial_labels="fieldLabels['routeDestination']"
-      @select="
-        (opt: any) =>
-          captureLabel('routeDestination', opt, 'destination', 'routeName')
-      "
+      @select="(opt: any) => captureLabel('routeDestination', opt, 'name', (c: any) => c.code || c.name)"
     />
     <SelectInput
       :show_validation_status="false"
@@ -83,14 +99,11 @@ function getNestedValue(obj: any, path: string): string {
   return path.split(".").reduce((acc: any, key) => acc?.[key], obj) ?? "";
 }
 
-function captureLabel(
-  field: string,
-  opt: any,
-  valueKey: string,
-  labelKey: string,
-) {
+function captureLabel(field: string, opt: any, valueKey: string, labelKeyOrFn: string | ((item: any) => string)) {
   const value = String(getNestedValue(opt, valueKey));
-  const label = getNestedValue(opt, labelKey);
+  const label = typeof labelKeyOrFn === "function"
+    ? labelKeyOrFn(opt)
+    : getNestedValue(opt, labelKeyOrFn);
   if (!fieldLabels.value[field]) fieldLabels.value[field] = {};
   fieldLabels.value[field][value] = label;
   store.setLabels(props.paginationId ?? "", { ...fieldLabels.value });

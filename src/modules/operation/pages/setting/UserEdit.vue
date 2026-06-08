@@ -52,7 +52,13 @@ const initialValues = computed(() => {
   return {
     username: data.username || "",
     role: data.role?._id || data.role || "",
-    region: data.region?._id || data.region || "",
+    regions: Array.isArray(data.regions)
+      ? data.regions.map((r: any) => r._id || r)
+      : data.regions?._id
+        ? [data.regions._id]
+        : data.regions
+          ? [data.regions]
+          : [],
   };
 });
 
@@ -69,7 +75,11 @@ const mutation = useMutation({
 });
 
 const handleUpdate = async (values: any) => {
-  const { confirmPassword, ...payload } = values;
+  const payload = {
+    username: values.username,
+    role: values.role,
+    regions: values.regions,
+  };
   try {
     const res = await mutation.mutateAsync(payload);
     if (res.success) {

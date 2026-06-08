@@ -39,6 +39,16 @@ export const fleet_routes: RouteRecordRaw[] = [
           description: 'Update an existing fuel entry.',
         },
       },
+      {
+        path: 'fuel-entries/:id',
+        name: 'fleet_fuel_entry_detail',
+        component: () => import('./pages/FuelEntryDetail.vue'),
+        meta: {
+          permission: 'VEHICLE',
+          title: 'Fuel Entry Details',
+          description: 'View fuel entry details.',
+        },
+      },
 
       // ── Meter Entries ───────────────────────────────────────────────────
       {
@@ -69,6 +79,16 @@ export const fleet_routes: RouteRecordRaw[] = [
           permission: 'VEHICLE',
           title: 'Edit Meter Entry',
           description: 'Update an existing meter entry.',
+        },
+      },
+      {
+        path: 'meter-entries/:id',
+        name: 'fleet_meter_entry_detail',
+        component: () => import('./pages/MeterEntryDetail.vue'),
+        meta: {
+          permission: 'VEHICLE',
+          title: 'Meter Entry Details',
+          description: 'View meter entry details.',
         },
       },
 
@@ -103,6 +123,16 @@ export const fleet_routes: RouteRecordRaw[] = [
           description: 'Update an existing vehicle expense entry.',
         },
       },
+      {
+        path: 'vehicle-expenses/:id',
+        name: 'fleet_vehicle_expense_detail',
+        component: () => import('./pages/VehicleExpenseDetail.vue'),
+        meta: {
+          permission: 'VEHICLE',
+          title: 'Vehicle Expense Details',
+          description: 'View vehicle expense entry details.',
+        },
+      },
 
       // ── Recurring Expense Rules ──────────────────────────────────────────
       {
@@ -133,6 +163,16 @@ export const fleet_routes: RouteRecordRaw[] = [
           permission: 'VEHICLE',
           title: 'Edit Recurring Rule',
           description: 'Update an existing recurring expense rule.',
+        },
+      },
+      {
+        path: 'recurring-rules/:id',
+        name: 'fleet_recurring_rule_detail',
+        component: () => import('./pages/RecurringRuleDetail.vue'),
+        meta: {
+          permission: 'VEHICLE',
+          title: 'Recurring Rule Details',
+          description: 'View recurring expense rule details.',
         },
       },
     ],

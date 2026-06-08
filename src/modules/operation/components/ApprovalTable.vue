@@ -60,10 +60,43 @@
     </template>
 
     <template #after-search>
-      <ApprovalFilters
-        @change="handleFilterChange"
-        pagination-id="approval-requests"
-      />
+      <div
+        class="items-center gap-4 inline-flex border-l border-grey-100 overflow-x-auto px-3"
+      >
+        <i v-html="icons.filter" />
+        <Select
+          label="Origin City"
+          size="xs"
+          name="routeOrigin"
+          v-model="origin"
+          url="/city"
+          label_key="name"
+          value_key="name"
+          :display_label_fn="(c: any) => c.code || c.name"
+          searchable
+          class="min-w-48"
+          multiple
+          :attributes="{
+            placeholder: 'Origins',
+          }"
+        />
+        <Select
+          label="Destination City"
+          size="xs"
+          name="routeDestination"
+          v-model="destination"
+          url="/city"
+          label_key="name"
+          value_key="name"
+          :display_label_fn="(c: any) => c.code || c.name"
+          :attributes="{
+            placeholder: 'Destinations',
+          }"
+          class="min-w-48"
+          searchable
+          multiple
+        />
+      </div>
     </template>
 
     <!-- Custom Cells -->

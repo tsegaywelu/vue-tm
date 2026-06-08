@@ -7,7 +7,7 @@
       class="hidden sm:flex"
       @click="$router.push(`/vehicles/edit/${vehicleId}`)"
     >
-      Edit Vehicle
+      Edit Vehicle 
     </Button>
   </Teleport>
 
@@ -107,6 +107,10 @@ import InsuranceTab from "../components/vehicle-details/InsuranceTab.vue";
 import FuelTab from "../components/vehicle-details/FuelTab.vue";
 import DriverHistoryTab from "../components/vehicle-details/DriverHistoryTab.vue";
 import TyreHistoryTab from "../components/vehicle-details/TyreHistoryTab.vue";
+import VehicleFuelEntriesTab from "../components/vehicle-details/VehicleFuelEntriesTab.vue";
+import VehicleMeterEntriesTab from "../components/vehicle-details/VehicleMeterEntriesTab.vue";
+import VehicleExpensesTab from "../components/vehicle-details/VehicleExpensesTab.vue";
+import VehicleRecurringRulesTab from "../components/vehicle-details/VehicleRecurringRulesTab.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -134,6 +138,10 @@ const tabComponents: Record<string, any> = {
   fuel: FuelTab,
   drivers: DriverHistoryTab,
   tyres: TyreHistoryTab,
+  "fuel-entries": VehicleFuelEntriesTab,
+  "meter-entries": VehicleMeterEntriesTab,
+  "vehicle-expenses": VehicleExpensesTab,
+  "recurring-rules": VehicleRecurringRulesTab,
 };
 
 const activeTabComponent = computed(() => {

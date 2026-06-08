@@ -41,14 +41,20 @@
 
     <template #cell-actions="{ row }">
       <div class="flex items-center justify-center">
-        <button
-          type="button"
-          class="p-2 rounded-full hover:bg-gray-100 transition-colors text-gray-500 hover:text-primary"
-          title="Edit"
-          @click.stop="emit('action', { row, action: 'edit' })"
-        >
-          <i v-html="icons.edit"></i>
-        </button>
+        <Dropdown>
+          <template #default="{ close }">
+            <DropDownItem
+              :icon="icons.eye"
+              label="View Details"
+              @click.stop="emit('action', { row, action: 'view' }); close()"
+            />
+            <DropDownItem
+              :icon="icons.edit"
+              label="Edit"
+              @click.stop="emit('action', { row, action: 'edit' }); close()"
+            />
+          </template>
+        </Dropdown>
       </div>
     </template>
   </Table>
@@ -56,6 +62,8 @@
 
 <script setup lang="ts">
 import Table from "@/components/common/Table.vue";
+import Dropdown from "@/components/common/Dropdown.vue";
+import DropDownItem from "@/components/common/DropDownItem.vue";
 import type { TableColumn } from "@/components/common/Table.vue";
 import { icons } from "@/utils/icons";
 import { usePagination } from "@/composables/usePagination";
@@ -77,7 +85,7 @@ const { response, refetch } = usePagination<any>({
   id: "meter-entry-list",
   url: "/fleet/meter-entries",
   params: (state) => ({
-     ...(state.search ? {vehiclePlateNumber: state.search } : {}),
+    ...(state.search ? { vehiclePlateNumber: state.search } : {}),
     q: undefined,
   }),
 });

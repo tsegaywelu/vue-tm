@@ -99,6 +99,10 @@
 
           <RegionInput
             name="region"
+            label="Region"
+            url="/region/myRegions"
+            label_key="name"
+            value_key="_id"
             :attributes="{ placeholder: 'Select region' }"
             :display_value="props.labels?.region"
           />

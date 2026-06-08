@@ -1,30 +1,23 @@
 <template>
   <SelectInput
-    v-bind="props"
+    :name="name"
+    :multiple="multiple"
+    :size="size"
+    :parent_class_name="parent_class_name"
+    :initial_labels="initial_labels"
     searchable
     :show_validation_status="false"
-    :label="label || 'Destination'"
-    :params="
-      (values) => {
-        return {
-          sort: 'shipmentCount',
-          q: undefined,
-          ...(values.search
-            ? {
-                routeName: {
-                  regexAny: values.search,
-                },
-              }
-            : {}),
-          ...params,
-        };
-      }
-    "
-    :value_key="value_key || 'destination'"
-    :label_key="label_key || 'destination'"
-    :url="url || '/route'"
+    :label="label || 'Destination City'"
+    url="/city"
+    value_key="name"
+    label_key="name"
+    :display_label_fn="(city: any) => city.code || city.name"
+    :params="(values: any) => ({
+      q: undefined,
+      ...(values.search ? { name: { regexAny: values.search } } : {}),
+    })"
     :attributes="{
-      placeholder: 'Search and Select Destination',
+      placeholder: 'Search and Select Destination City',
       ...attributes,
     }"
   />
@@ -38,11 +31,8 @@ const props = defineProps<{
   label?: string;
   multiple?: boolean;
   size?: "xs" | "sm" | "md" | "lg";
-  params?: any;
-  value_key?: string;
-  label_key?: string;
-  url?: string;
   attributes?: any;
   parent_class_name?: string;
+  initial_labels?: Record<string, string>;
 }>();
 </script>

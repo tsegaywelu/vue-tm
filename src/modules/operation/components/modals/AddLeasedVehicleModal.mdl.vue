@@ -156,6 +156,8 @@ import DateInput from "@/components/form/DateInput.vue";
 // [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
 // [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
 // [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
 
 const toast = useToastStore();
 const api = new ApiService();

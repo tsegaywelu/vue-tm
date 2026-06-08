@@ -215,6 +215,7 @@ import type { Driver, Trasporter, Vehicle } from "../operation.types";
 // [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
 // [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
 // [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
+// [MODAL-X] Managed Props: This block is auto-generated for strict type safety.
 
 export type ReturnType = {
   transporter?: Trasporter;

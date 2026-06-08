@@ -1,5 +1,5 @@
 <template>
-  <Form :id="formId" :values="initialValues" :onSubmit="handleSubmit">
+  <Form :id="formId" :values="normalizedValues" :onSubmit="handleSubmit">
     <template #default="{ form }">
       <Colapsable
         title="General Information"
@@ -70,24 +70,16 @@
           <SelectInput
             name="location.region"
             label="Region"
-            :options="[
-              { label: 'Addis Ababa', value: 'Addis Ababa' },
-              { label: 'Afar', value: 'Afar' },
-              { label: 'Amhara', value: 'Amhara' },
-              { label: 'Benishangul-Gumuz', value: 'Benishangul-Gumuz' },
-              { label: 'Dire Dawa', value: 'Dire Dawa' },
-              { label: 'Gambela', value: 'Gambela' },
-              { label: 'Harari', value: 'Harari' },
-              { label: 'Oromia', value: 'Oromia' },
-              { label: 'Sidama', value: 'Sidama' },
-              { label: 'Somali', value: 'Somali' },
-              { label: 'South Ethiopia', value: 'South Ethiopia' },
-              { label: 'Central Ethiopia', value: 'Central Ethiopia' },
-              { label: 'South West Ethiopia', value: 'South West Ethiopia' },
-              { label: 'Tigray', value: 'Tigray' },
-            ]"
+            url="/region/myRegions"
+            label_key="name"
+            value_key="_id"
             :attributes="{ placeholder: 'Select region' }"
             :validation="{ required }"
+            :options="
+              props.initialValues.location?.region?.name
+                ? [{ label: props.initialValues.location.region.name, value: props.initialValues.location.region._id }]
+                : []
+            "
           />
 
           <Input
@@ -121,6 +113,7 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
 import Form from "@/components/form/Form.vue";
 import Input from "@/components/form/Input.vue";
 import SelectInput from "@/components/form/SelectInput.vue";
@@ -133,6 +126,17 @@ const props = defineProps<{
   initialValues: Record<string, any>;
   onSubmit: (values: any) => Promise<void> | void;
 }>();
+
+const normalizedValues = computed(() => {
+  const loc = props.initialValues.location || {};
+  return {
+    ...props.initialValues,
+    location: {
+      ...loc,
+      region: loc.region?._id || loc.region || "",
+    },
+  };
+});
 
 const handleSubmit = async (values: any) => {
   const payload = {

@@ -219,6 +219,11 @@ export const shipper_settings_navs: Navs[] = [
         ],
       },
       {
+        name: "City Shipper Codes",
+        path: "/shipper/setting/city-shipper-codes",
+        show: true,
+      },
+      {
         name: "User Management",
         path: "/shipper/users",
         show: true,

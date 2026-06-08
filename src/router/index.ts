@@ -4,6 +4,7 @@ import RouteGuard from "@/components/RouteGuard.vue";
 import { operation_routes } from "@/modules/operation/operation.routes";
 import { shipper_routes } from "@/modules/shipper/shipper.routes";
 import { fleet_routes } from "@/modules/fleet/fleet.routes";
+import { admin_routes } from "@/modules/admin/admin.routes";
 import { useAuthStore } from "@/store/authStore";
 
 const router = createRouter({
@@ -16,7 +17,7 @@ const router = createRouter({
         {
           path: "",
           component: DashboardLayout,
-          children: [...operation_routes, ...shipper_routes, ...fleet_routes],
+          children: [...operation_routes, ...shipper_routes, ...fleet_routes, ...admin_routes],
         },
       ],
     },
@@ -42,6 +43,38 @@ router.beforeEach(async (to, from, next) => {
   } else if (to.name === "login" && auth_store.is_authenticated) {
     next({ path: auth_store.get_default_home_route() });
   } else {
+    // On hard refresh user may not be loaded yet — skip type checks until RouteGuard loads user
+    if (auth_store.is_authenticated && auth_store.current_user) {
+      const isAdminRoute = to.path.startsWith("/admin");
+      const isCarrierOrShipperRoute =
+        to.path.startsWith("/operation") ||
+        to.path.startsWith("/shipper") ||
+        to.path.startsWith("/vehicles") ||
+        to.path.startsWith("/drivers") ||
+        to.path.startsWith("/fleet") ||
+        to.path.startsWith("/finance") ||
+        to.path.startsWith("/maintenance") ||
+        to.path.startsWith("/inventory") ||
+        to.path.startsWith("/setting") ||
+        to.path.startsWith("/reports") ||
+        to.path.startsWith("/customers") ||
+        to.path.startsWith("/contacts") ||
+        to.path.startsWith("/agents") ||
+        to.path.startsWith("/facilities") ||
+        to.path.startsWith("/transporters") ||
+        to.path.startsWith("/insurances");
+
+      // Super Admin must stay in /admin routes
+      if (auth_store.is_super_admin && isCarrierOrShipperRoute) {
+        return next({ path: "/admin/dashboard" });
+      }
+
+      // Non-super-admin must not access /admin routes
+      if (!auth_store.is_super_admin && isAdminRoute) {
+        return next({ path: auth_store.get_default_home_route() });
+      }
+    }
+
     // Permission Guard
     if (to.meta.permission && auth_store.is_authenticated) {
       // On hard refresh there is no previous route — skip the check and let

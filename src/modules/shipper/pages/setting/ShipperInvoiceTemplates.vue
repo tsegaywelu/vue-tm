@@ -8,7 +8,7 @@
         @click="router.push('/shipper/setting/invoice-templates/new')"
       >
         <i v-html="icons.plus" />
-        New Template
+        New Template 
       </Button>
     </Teleport>
 

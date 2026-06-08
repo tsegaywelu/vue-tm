@@ -47,11 +47,12 @@ const initialValues = computed(() => {
   if (!routeData.value) return {};
 
   return {
+    originCity: routeData.value.originCity?._id || routeData.value.originCity || "",
+    destinationCity: routeData.value.destinationCity?._id || routeData.value.destinationCity || "",
     origin: routeData.value.origin,
     destination: routeData.value.destination,
     routeName: routeData.value.routeName,
     carriers: routeData.value.carriers?.map((c: any) => c._id) || [],
-    // Map singular 'waypoint' from API back to 'waypoints' for the form
     waypoints: routeData.value.waypoint || [],
   };
 });

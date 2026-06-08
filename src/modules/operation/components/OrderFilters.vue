@@ -23,14 +23,14 @@
       multiple
       size="xs"
       :initial_labels="fieldLabels['routeOrigin']"
-      @select="(opt: any) => captureLabel('routeOrigin', opt, 'destination', 'routeName')"
+      @select="(opt: any) => captureLabel('routeOrigin', opt, 'name', (c: any) => c.code || c.name)"
     />
     <DestinationInput
       name="routeDestination"
       multiple
       size="xs"
       :initial_labels="fieldLabels['routeDestination']"
-      @select="(opt: any) => captureLabel('routeDestination', opt, 'destination', 'routeName')"
+      @select="(opt: any) => captureLabel('routeDestination', opt, 'name', (c: any) => c.code || c.name)"
     />
     <OrderStatusInput name="status" size="xs" />
     <ShipperInput
@@ -79,9 +79,11 @@ function getNestedValue(obj: any, path: string): string {
   return path.split(".").reduce((acc: any, key) => acc?.[key], obj) ?? "";
 }
 
-function captureLabel(field: string, opt: any, valueKey: string, labelKey: string) {
+function captureLabel(field: string, opt: any, valueKey: string, labelKeyOrFn: string | ((item: any) => string)) {
   const value = String(getNestedValue(opt, valueKey));
-  const label = getNestedValue(opt, labelKey);
+  const label = typeof labelKeyOrFn === "function"
+    ? labelKeyOrFn(opt)
+    : getNestedValue(opt, labelKeyOrFn);
   if (!fieldLabels.value[field]) fieldLabels.value[field] = {};
   fieldLabels.value[field][value] = label;
   store.setLabels(props.paginationId ?? "", { ...fieldLabels.value });
