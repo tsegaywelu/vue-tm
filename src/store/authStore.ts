@@ -9,9 +9,15 @@ export const useAuthStore = defineStore("auth", () => {
 
   const is_authenticated = computed(() => !!token.value);
 
+  const is_super_admin = computed(() => {
+    const user = current_user.value?.user || current_user.value;
+    return user?.type === "SUPER_ADMIN";
+  });
+
   // Shipper detection: shipper users have a `shipper` object on their user profile
   const is_shipper = computed(() => {
     const user = current_user.value?.user || current_user.value;
+    if (is_super_admin.value) return false;
     return !!user?.shipper;
   });
 
@@ -52,8 +58,8 @@ export const useAuthStore = defineStore("auth", () => {
     const user = current_user.value?.user || current_user.value;
     if (!user) return false;
 
-    // 1. Admin Override
-    if (user.type === "ADMIN") return true;
+    // 1. Admin / Super Admin Override
+    if (user.type === "ADMIN" || user.type === "SUPER_ADMIN") return true;
 
     const permissions = user.permissions || user.role?.permissions || [];
 
@@ -95,6 +101,9 @@ export const useAuthStore = defineStore("auth", () => {
     // User not loaded yet — let RouteGuard fetch and redirect
     if (!current_user.value) return "/";
 
+    // Super Admin goes to the admin dashboard
+    if (is_super_admin.value) return "/admin/dashboard";
+
     // Shipper users always go to the shipper dashboard
     if (is_shipper.value) return "/shipper/dashboard";
 
@@ -122,6 +131,7 @@ export const useAuthStore = defineStore("auth", () => {
     current_user,
     is_loading,
     is_authenticated,
+    is_super_admin,
     is_shipper,
     shipperId,
     carrierId,

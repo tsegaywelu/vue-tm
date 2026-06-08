@@ -14,7 +14,7 @@ const all_icons = { ...icons, ...raaz_icons };
 const authStore = useAuthStore();
 
 const dynamicNavRegistry = computed(() => {
-  const registry = getNavigationRegistry(authStore.is_shipper);
+  const registry = getNavigationRegistry(authStore.is_shipper, authStore.is_super_admin);
   return registry
     .map((group) => ({
       ...group,
