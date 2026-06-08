@@ -213,6 +213,11 @@
 
     <!-- Mobile Card View -->
     <div class="xl:hidden w-full px-1">
+      <!-- Page indicator -->
+      <div v-if="show_pagination && totalPages > 0" class="flex justify-end">
+        <span class="text-xs text-faint-text">Page {{ currentPage }} of {{ totalPages > 0 ? totalPages : 1 }}</span>
+      </div>
+
       <!-- Initial load skeleton -->
       <div
         v-if="isLoading && accumulated_mobile_rows.length === 0"
@@ -238,7 +243,7 @@
 
       <div
         v-else-if="accumulated_mobile_rows.length > 0"
-        class="relative w-full mt-4"
+        class="relative w-full mt-2"
         :style="{ height: `${row_virtualizer.getTotalSize()}px` }"
       >
         <div

@@ -44,6 +44,7 @@ import {
   cancel_order,
   cancel_order_shipper,
   fetch_order_status_count,
+  postOrderToLoadboard,
 } from "../api/orders.api";
 import { useToastStore } from "@/store/toastStore";
 
@@ -99,6 +100,28 @@ const handleOrderAction = async ({
   row: any;
   action: string;
 }) => {
+  if(action === "post") {
+    const res = await openModal('ConfirmationModal', {
+      title: 'Post to Loadboard',
+      message: `Are you sure you want to post order ${row.orderCode} to loadboard?`,
+      confirmText: 'Post',
+      type: 'primary',
+    })
+
+    if(!res) return
+
+    const response = await postOrderToLoadboard(row._id, {
+      origin: row.route?.origin,
+      destination: row.route?.destination,
+      truckType: row.vehicleType?.name,
+    })
+    if(response.success) {
+      toast.success('Order posted to loadboard successfully')
+      invalidateOrderQueries();
+    } else {
+      toast.error(response.error)
+    }
+  }
   if (action === "approve") {
     openModal(
       "ConfirmationModal",

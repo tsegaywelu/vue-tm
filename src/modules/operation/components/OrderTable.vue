@@ -112,6 +112,16 @@
             "
           />
           <DropDownItem
+            v-permission="'ORDER:update'"
+            v-if="row.status === 'approved'"
+            :icon="icons.dashboard"
+            label="Post to Loadboard"
+            @click.stop="
+              emitAction(row, 'post')
+              close();
+            "
+          />
+          <DropDownItem
             v-if="row.status === 'pending' && isShipper"
             :icon="icons.check"
             label="Approve"
@@ -206,7 +216,7 @@ const columns = computed(() => {
 const activeFilters = ref<ShipmentFilterParams>({});
 
 const { response, refetch } = usePagination({
-  queryKey: ["order-list", isShipper.value],
+  queryKey: ["order-list", `${isShipper.value}`],
   id: "order-list",
   url: isShipper.value ? "/order/shipper" : "/order",
   params: (state: any) => {

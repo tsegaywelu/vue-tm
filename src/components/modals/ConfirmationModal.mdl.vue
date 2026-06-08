@@ -3,8 +3,7 @@
     class="w-full h-full overflow-hidden bg-black/40 backdrop-blur-[2px] flex flex-col justify-end sm:flex sm:items-center sm:justify-center sm:px-4 modal-overlay"
   >
     <div
-      class="confirmation-card bg-surface pt-2 rounded-t-3xl sm:rounded-4xl shadow-2xl w-full sm:max-w-sm flex flex-col max-h-[90dvh] sm:max-h-none"
-      style="box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15)"
+      class="confirmation-card bg-surface pt-2 rounded-t-3xl sm:rounded-4xl shadow-2xl shadow-gray-300/50 dark:shadow-none border border-line dark:border-white/10 w-full sm:max-w-sm flex flex-col max-h-[90dvh] sm:max-h-none"
     >
       <!-- Mobile drag handle -->
       <div class="sm:hidden flex justify-center pb-4 shrink-0">

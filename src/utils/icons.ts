@@ -354,10 +354,10 @@ export const icons: Record<string, string> = {
   shippingRoute: `
 		<svg width="12" height="61" viewBox="0 0 12 61" fill="none" xmlns="http://www.w3.org/2000/svg">
 		<rect width="12" height="12" rx="6" fill="black" fill-opacity="0.04"/>
-		<rect x="3.59961" y="3.59961" width="4.8" height="4.8" rx="2.4" fill="#2222FF"/>
+		<rect x="3.59961" y="3.59961" width="4.8" height="4.8" rx="2.4" style="fill: var(--color-primary)"/>
 		<path d="M6 12.5L6 48.5" stroke="#E7E8EF" stroke-width="3" stroke-linecap="round"/>
 		<rect y="49" width="12" height="12" rx="6" fill="black" fill-opacity="0.04"/>
-		<rect x="3.59961" y="52.5996" width="4.8" height="4.8" rx="2.4" fill="#2222FF"/>
+		<rect x="3.59961" y="52.5996" width="4.8" height="4.8" rx="2.4" style="fill: var(--color-primary)"/>
 		</svg>
 	`,
   404: `
@@ -1326,18 +1326,12 @@ export const icons: Record<string, string> = {
 	`,
   check: `
 		<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-			<rect x="0.6" y="0.6" width="22.8" height="22.8" rx="6.6" fill="url(#paint0_linear_6130_69754)"/>
-			<rect x="0.6" y="0.6" width="22.8" height="22.8" rx="6.6" fill="url(#paint1_linear_6130_69754)"/>
-			<rect x="0.6" y="0.6" width="22.8" height="22.8" rx="6.6" stroke="#2222FF" stroke-width="1.2"/>
+			<rect x="0.6" y="0.6" width="22.8" height="22.8" rx="6.6" fill="url(#check_theme_gradient)" stroke="var(--color-primary)" stroke-width="1.2"/>
 			<path d="M17.6004 7.80029L9.90039 15.5003L6.40039 12.0003" stroke="white" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
 			<defs>
-			<linearGradient id="paint0_linear_6130_69754" x1="24" y1="12" x2="0" y2="12" gradientUnits="userSpaceOnUse">
-			<stop stop-color="#1858B1"/>
-			<stop offset="1" stop-color="#0069FA"/>
-			</linearGradient>
-			<linearGradient id="paint1_linear_6130_69754" x1="12" y1="-1.73286e-09" x2="12.0581" y2="25.1561" gradientUnits="userSpaceOnUse">
-			<stop stop-color="#2222FF"/>
-			<stop offset="1" stop-color="#16169D"/>
+			<linearGradient id="check_theme_gradient" x1="12" y1="0" x2="12" y2="24" gradientUnits="userSpaceOnUse">
+			<stop style="stop-color: var(--color-primary)"/>
+			<stop offset="1" style="stop-color: var(--color-primary-dark)"/>
 			</linearGradient>
 			</defs>
 		</svg>

@@ -63,3 +63,7 @@ export function fetch_contract_route_details_shipper(
 export function fetch_order_status_count() {
   return api.addAuthenticationHeader().get<any>("/statusCount");
 }
+
+export function postOrderToLoadboard(id: string, data: Record<string, any>) {
+  return api.addAuthenticationHeader().post(`/${id}/integrations/chinet`, data);
+}

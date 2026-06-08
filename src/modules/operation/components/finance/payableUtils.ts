@@ -20,7 +20,6 @@ export const formatType = (val: string) => {
 };
 
 export const getPaidTo = (row: any) => {
-  console.log(row.payableType);
   if (row.payableType === "shipment" || row.payableType === "shipments") {
     return row.transporter?.tradeName || row.transporter?.name || "-";
   } else if (

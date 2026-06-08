@@ -13,7 +13,6 @@ function checkRole(el: HTMLElement, binding: DirectiveBinding) {
   const user = authStore.current_user.user;
   const userRole = user.role?.type;
   const requiredLower = (requiredRole as string).toLowerCase();
-  console.log(user, requiredLower);
   const existsAsValue = user?.[requiredLower];
 
   if (userRole !== requiredRole && !existsAsValue) {
