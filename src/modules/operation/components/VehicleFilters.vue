@@ -16,18 +16,11 @@
         placeholder: 'Select Ownership',
       }"
     />
-    <SelectInput
-      :show_validation_status="false"
-      label="Vehicle Type"
+    <VehicleTypeInput
       name="vehicleType"
       size="xs"
-      url="/vehicle-type"
-      label_key="name"
       value_key="name"
-      searchable
-      :attributes="{
-        placeholder: 'Select Vehicle Type',
-      }"
+      :attributes="{ placeholder: 'Select Vehicle Type' }"
       :initial_labels="fieldLabels['vehicleType']"
       @select="(opt: any) => captureLabel('vehicleType', opt, 'name', 'name')"
     />
@@ -47,6 +40,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import SelectInput from "@/components/form/SelectInput.vue";
+import VehicleTypeInput from "@/components/common/inputs/VehicleTypeInput.vue";
 import Input from "@/components/form/Input.vue";
 import Form from "@/components/form/Form.vue";
 import { VehicleOwnership } from "../operation.types";

@@ -187,7 +187,7 @@ const { response, fullResponse, refetch, isLoading } = usePagination<any>({
   id: "receivable-shipment-list",
   url: "/shipment/receivableShipment",
   params: (state) => ({
-    ...(state.search ? { [selectedSearchField.value]: { regexAny: state.search } } : {}),
+    ...(state.search ? { [selectedSearchField.value]: state.search } : {}),
     ...activeFilters.value,
     ...(props.dateRange?.start
       ? { dispatchStartDate: props.dateRange.start }

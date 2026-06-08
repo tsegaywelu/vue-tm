@@ -142,23 +142,13 @@
             :selector="(state: any) => [state.values.carrier]"
           >
             <template #default="[carrier]">
-              <SelectInput
+              <VehicleTypeInput
                 :key="carrier"
                 name="vehicleType"
-                label="Vehicle Type"
-                :attributes="{
-                  placeholder: 'Select vehicle type',
-                }"
+                :attributes="{ placeholder: 'Select vehicle type' }"
                 :url="`/vehicle-type/carrier/${carrier || ''}`"
-                :params="{
-                  page: undefined,
-                  limit: undefined,
-                }"
-                label_key="name"
-                value_key="_id"
-                :validation="{
-                  required,
-                }"
+                :params="{ page: undefined, limit: undefined }"
+                :validation="{ required }"
               />
             </template>
           </component>
@@ -276,6 +266,7 @@ import { ref, watch, onMounted, computed } from "vue";
 import Form from "@/components/form/Form.vue";
 import Input from "@/components/form/Input.vue";
 import SelectInput from "@/components/form/SelectInput.vue";
+import VehicleTypeInput from "@/components/common/inputs/VehicleTypeInput.vue";
 import TextareaInput from "@/components/form/TextareaInput.vue";
 import Colapsable from "@/components/common/Colapsable.vue";
 import { required } from "@/utils/validations";

@@ -25,7 +25,11 @@
 import { computed } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import CarrierOrderForm from "../components/CarrierOrderForm.vue";
-import { fetch_order_by_id, update_order, update_order_shipper } from "../api/orders.api";
+import {
+  fetch_order_by_id,
+  update_order,
+  update_order_shipper,
+} from "../api/orders.api";
 import { useToastStore } from "@/store/toastStore";
 import { useAuthStore } from "@/store/authStore";
 import SubmitButton from "@/components/form/SubmitButton.vue";
@@ -107,7 +111,10 @@ const updateMutation = useMutation({
 });
 
 const handleUpdateOrder = async (values: any) => {
-  const res = await updateMutation.mutateAsync(values);
+  const res = await updateMutation.mutateAsync({
+    ...values,
+    carrer: undefined,
+  });
   if (res.success) {
     toast.success("Order updated successfully");
     queryClient.invalidateQueries({ queryKey: ["order", orderId] });

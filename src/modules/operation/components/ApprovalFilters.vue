@@ -118,9 +118,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, onUnmounted, watch } from "vue";
-import { useQuery } from "@tanstack/vue-query";
-import SearchInput from "@/components/form/SearchInput.vue";
+import { ref, onMounted } from "vue";
 import SelectInput from "@/components/form/SelectInput.vue";
 import DatePicker from "@/components/DatePicker.vue";
 import Button from "@/components/Button.vue";
@@ -133,8 +131,7 @@ import { useTablePagination } from "@/composables/usePagination";
 const all_icons = { ...icons, ...raaz_icons };
 
 const props = defineProps<{
-  calendarType?: "english" | "ethiopian";
-  outputCalendarType?: "english" | "ethiopian";
+  paginationId?: string;
 }>();
 
 const emit = defineEmits(["change"]);
@@ -320,10 +317,3 @@ const handleClickOutside = (e: MouseEvent) => {
 onMounted(() => window.addEventListener("click", handleClickOutside));
 onUnmounted(() => window.removeEventListener("click", handleClickOutside));
 </script>
-
-<style scoped>
-.input-focus:focus-within {
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 4px rgba(34, 34, 255, 0.1);
-}
-</style>

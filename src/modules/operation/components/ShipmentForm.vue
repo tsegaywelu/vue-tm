@@ -150,14 +150,9 @@
           />
 
           <!-- vehicleType -->
-          <SelectInput
+          <VehicleTypeInput
             v-if="props.mode === 'edit'"
             name="vehicleType"
-            label="Vehicle Type"
-            searchable
-            url="/vehicle-type"
-            label_key="name"
-            value_key="_id"
             :display_value="internalLabels.vehicleType"
             :validation="{ required }"
           />
@@ -330,7 +325,7 @@
             >
               Add New
             </button>
-            
+
             <VehicleInput
               name="vehicle"
               label="Search Vehicles"
@@ -350,28 +345,16 @@
             </VehicleInput>
           </div>
 
-          <SelectInput
+          <DriverInput
             v-if="props.mode === 'edit'"
             name="driver"
-            label="Driver"
-            searchable
-            url="/driver"
-            :label_key="
-              (item: any) =>
-                `${item.firstName} ${item.middleName || ''} ${item.lastName || ''}`.trim()
-            "
-            value_key="_id"
             :display_value="internalLabels.driver"
             :validation="{ required }"
             :params="
-              (state) => {
-                return {
-                  name: {
-                    regexAny: state.search,
-                  },
-                  q: undefined,
-                };
-              }
+              (state: any) => ({
+                name: { regexAny: state.search },
+                q: undefined,
+              })
             "
           />
           <SelectInput
@@ -389,16 +372,19 @@
           />
 
           <SelectInput
-            parent_class_name="[&_.input-focus]:bg-grey-25!"
             v-if="selectedVehicleOwnership !== VehicleOwnership.Owned"
             name="transporter"
             label="Transporter"
-            hide_icon
             :display_value="internalLabels.transporter"
-            :attributes="{
+            :searchable="props.mode === 'edit'"
+            :url="props.mode === 'edit' ? '/transporter' : undefined"
+            label_key="name"
+            value_key="_id"
+            :params="(state: any) => ({ 'name[regex]': state.search, q: undefined })"
+            :attributes="props.mode !== 'edit' ? {
               disabled: true,
               placeholder: 'Auto filled based on selected vehicle',
-            }"
+            } : { placeholder: 'Search transporter' }"
             :validation="{
               required,
             }"
@@ -483,17 +469,34 @@
             }"
           />
 
-          <Input
-            name="totalPrice"
-            label="Total Price"
-            :attributes="{
-              placeholder: 'Enter Total Price',
-            }"
-            :validation="{
-              required,
-              price,
-            }"
-          />
+          <div class="relative">
+            <button
+              v-if="
+                filteredPricingType &&
+                +calculateTotalPrice(form.state.values) > 0
+              "
+              type="button"
+              class="absolute top-0 right-0 text-primary text-[10px] font-black uppercase tracking-wider hover:underline z-10"
+              @click="
+                usingCalculatedPrice
+                  ? (form.setFieldValue('totalPrice', String(props.initialValues.totalPrice || '')), usingCalculatedPrice = false)
+                  : (form.setFieldValue('totalPrice', String(+calculateTotalPrice(form.state.values))), usingCalculatedPrice = true)
+              "
+            >
+              {{ usingCalculatedPrice ? 'Use Edited Value' : 'Use Calculated Price from Contract' }}
+            </button>
+            <Input
+              name="totalPrice"
+              label="Total Price"
+              :attributes="{
+                placeholder: 'Enter Total Price',
+              }"
+              :validation="{
+                required,
+                price,
+              }"
+            />
+          </div>
 
           <div
             v-if="pricingWarning"
@@ -532,6 +535,8 @@ import DateInput from "@/components/form/DateInput.vue";
 import TextareaInput from "@/components/form/TextareaInput.vue";
 import Colapsable from "@/components/common/Colapsable.vue";
 import VehicleInput from "@/components/common/inputs/VehicleInput.vue";
+import VehicleTypeInput from "@/components/common/inputs/VehicleTypeInput.vue";
+import DriverInput from "@/components/common/inputs/DriverInput.vue";
 import { currencyFormatter } from "@/utils/utils";
 import {
   dateGreaterThanOrEqalToToday,
@@ -566,7 +571,10 @@ const props = withDefaults(
   },
 );
 
-const formInitialValues = computed(() => ({ ...props.initialValues, totalPrice: "" }));
+const formInitialValues = computed(() => ({
+  ...props.initialValues,
+  ...(props.mode === "add" && { totalPrice: "" }),
+}));
 
 const internalLabels = ref({ ...props.labels });
 
@@ -587,6 +595,7 @@ const selectedVehicle = ref<any>(null);
 const formRef = ref<any>(null);
 const filteredPricingType = ref<any>(null);
 const pricingWarning = ref("");
+const usingCalculatedPrice = ref(props.mode === "add");
 
 const tripTypeOptions = [
   { label: "Round Trip", value: TripType.RoundTrip },
@@ -637,8 +646,8 @@ const autoFilledOptions = computed(() => {
   };
 });
 
-const selectedVehicleOwnership = computed(
-  () => selectedVehicle.value?.ownership,
+const selectedVehicleOwnership = ref<string | undefined>(
+  props.initialValues.vehicleOwnership || undefined,
 );
 
 const formatType = (type: string) => {
@@ -735,6 +744,7 @@ const openRegistrationModal = async (form: any) => {
 
 const handleVehicleSelect = (vehicle: any, form: any) => {
   selectedVehicle.value = vehicle;
+  selectedVehicleOwnership.value = vehicle.ownership;
 
   let driverName = "Not Assigned";
   if (vehicle.driver && typeof vehicle.driver === "object") {
@@ -793,8 +803,10 @@ onMounted(async () => {
     }
 
     if (order_record && props.initialValues.waypoint) {
-      // Small delay to ensure refs are updated before triggering logic
       handleWaypointChange(props.initialValues.waypoint, null);
+      if (props.initialValues.totalPrice) {
+        formRef.value?.form.setFieldValue("totalPrice", String(props.initialValues.totalPrice));
+      }
     }
   }
 
@@ -805,16 +817,6 @@ onMounted(async () => {
       .then((res: any) => {
         if (res.success) {
           selectedVehicle.value = res.data;
-          const vehicle = res.data;
-          if (vehicle.transporter && typeof vehicle.transporter === "object") {
-            const transporterId = vehicle.transporter._id || "";
-            const transporterName =
-              vehicle.transporter.name || vehicle.transporter.tradeName || "";
-            if (!props.initialValues.transporter && transporterId) {
-              formRef.value?.form.setFieldValue("transporter", transporterId);
-              internalLabels.value.transporter = transporterName;
-            }
-          }
         }
       });
   }

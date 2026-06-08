@@ -152,7 +152,7 @@ export function update_transaction_status(
 export function update_prepayment_status(id: string, status: ApprovalAction) {
   return prepayment_api
     .addAuthenticationHeader()
-    .post(`/updateStatus`, { id, status });
+    .post(`/${id}/${status}`, { });
 }
 
 export function update_lease_status(id: string, status: ApprovalAction) {
@@ -439,6 +439,19 @@ export function update_driver_status(id: string, data: any) {
   return driver_api
     .addAuthenticationHeader()
     .patch(`/driverStatus/${id}`, data);
+}
+export function adjust_initial_settlement_balance(
+  id: string,
+  payload: { value: number; reason: string },
+) {
+  return driver_api
+    .addAuthenticationHeader()
+    .patch(`/${id}/initial-settlement-balance`, payload);
+}
+export function fetch_initial_settlement_balance_history(id: string) {
+  return driver_api
+    .addAuthenticationHeader()
+    .get(`/${id}/initial-settlement-balance-history`);
 }
 export function upload_driver_documents(
   id: string,

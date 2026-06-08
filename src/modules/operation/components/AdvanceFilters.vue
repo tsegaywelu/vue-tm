@@ -43,7 +43,6 @@
       :show_validation_status="false"
       label="Destination City"
       multiple
-      parent_class_name=""
       size="xs"
       name="routeDestination"
       url="/city"
@@ -75,8 +74,13 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import SelectInput from "@/components/form/SelectInput.vue";
+import OriginInput from "@/components/common/inputs/OriginInput.vue";
+import DestinationInput from "@/components/common/inputs/DestinationInput.vue";
 import Form from "@/components/form/Form.vue";
-import { useTableLastParams, useTableLastLabels } from "@/composables/usePagination";
+import {
+  useTableLastParams,
+  useTableLastLabels,
+} from "@/composables/usePagination";
 import { useTablePaginationStore } from "@/store/tablePaginationStore";
 
 const props = defineProps<{
@@ -124,7 +128,9 @@ onMounted(() => {
     filterOnly.routeOrigin = filterOnly.routeOrigin.split(",").filter(Boolean);
   }
   if (typeof filterOnly.routeDestination === "string") {
-    filterOnly.routeDestination = filterOnly.routeDestination.split(",").filter(Boolean);
+    filterOnly.routeDestination = filterOnly.routeDestination
+      .split(",")
+      .filter(Boolean);
   }
   if (Object.keys(filterOnly).length > 0) {
     formValues.value = filterOnly;

@@ -64,7 +64,15 @@
         </div>
       </div>
 
-      <div class="flex items-center gap-4">
+      <div class="flex flex-wrap items-center gap-4">
+        <Button
+          v-permission="'DRIVER:balance_update'"
+          size="md"
+          variant="outline"
+          @click="openAdjustBalanceModal"
+        >
+          Adjust Initial Settlement Balance
+        </Button>
         <div @click.stop="openEditStatusModal">
           <Status
             :variant="getStatusVariant(driver.driverStatus)"
@@ -89,6 +97,7 @@ import { useRoute, useRouter } from "vue-router";
 import { useQuery } from "@tanstack/vue-query";
 import DashboardPage from "@/components/common/DashboardPage.vue";
 import Status from "@/components/common/Status.vue";
+import Button from "@/components/Button.vue";
 import { openModal } from "@customizer/modal-x";
 import { fetch_driver_by_id } from "../api/operation.api";
 
@@ -130,6 +139,14 @@ const tabComponents: Record<string, any> = {
 const activeTabComponent = computed(() => {
   return tabComponents[activeTab.value];
 });
+
+const openAdjustBalanceModal = async () => {
+  if (!driver.value) return;
+  const res = await openModal("AdjustInitialSettlementBalanceModal", {
+    driver: driver.value,
+  });
+  if (res) refetch();
+};
 
 const openEditStatusModal = async () => {
   if (!driver.value) return;
