@@ -1,6 +1,6 @@
 <template>
-  <div class="overflow-auto rounded-xl border border-line bg-gray-50 p-3">
-    <table class="text-xs border-collapse" style="min-width: 100%">
+  <div class="overflow-auto rounded-xl border border-line p-3" style="background: #f3f4f6">
+    <table class="text-xs border-collapse" style="min-width: 100%; background: white; color: #111111">
       <!-- Column widths -->
       <colgroup>
         <col

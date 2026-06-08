@@ -1,13 +1,13 @@
 <template>
   <div class="flex flex-col gap-4">
     <!-- Title row toggle -->
-    <div class="rounded-xl border border-line bg-white p-4 flex flex-col gap-3">
+    <div class="rounded-xl border border-line bg-surface p-4 flex flex-col gap-3">
       <div class="flex items-center justify-between">
         <span class="text-sm font-semibold text-gray-700">Title Row</span>
         <label class="relative inline-flex items-center cursor-pointer">
           <input type="checkbox" :checked="modelValue.titleRow.enabled" class="sr-only peer"
             @change="update('titleRow', { ...modelValue.titleRow, enabled: ($event.target as HTMLInputElement).checked })" />
-          <div class="w-9 h-5 bg-gray-200 peer-focus:ring-2 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary-600"></div>
+          <div class="w-9 h-5 bg-gray-200 peer-focus:ring-2 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-surface after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary-600"></div>
         </label>
       </div>
       <div v-if="modelValue.titleRow.enabled" class="flex flex-col gap-2">
@@ -23,7 +23,7 @@
     </div>
 
     <!-- Metadata rows builder -->
-    <div class="rounded-xl border border-line bg-white overflow-hidden">
+    <div class="rounded-xl border border-line bg-surface overflow-hidden">
       <!-- Section header (always visible) -->
       <button
         class="w-full flex items-center justify-between px-4 py-3 hover:bg-surface-hover transition-colors"
@@ -43,7 +43,7 @@
       </button>
 
       <!-- Collapsible content -->
-      <div v-show="metaOpen" class="px-4 pb-4 flex flex-col gap-3 border-t border-gray-100">
+      <div v-show="metaOpen" class="px-4 pb-4 flex flex-col gap-3 border-t border-line">
         <div class="flex justify-end pt-3">
           <button class="text-xs text-primary-600 hover:text-primary-700 font-medium" @click="addMetaRow">+ Add Row</button>
         </div>
@@ -53,14 +53,14 @@
         <div
           v-for="(row, idx) in modelValue.metadataRows"
           :key="row.id"
-          class="rounded-lg border border-gray-100 bg-gray-50 overflow-hidden"
+          class="rounded-lg border border-line bg-surface-muted overflow-hidden"
         >
           <!-- Row header: always visible, click to expand -->
           <div class="flex items-center gap-2 px-3 py-2">
             <label class="relative inline-flex items-center cursor-pointer shrink-0" @click.stop>
               <input type="checkbox" :checked="row.enabled" class="sr-only peer"
                 @change="updateMetaRow(idx, 'enabled', ($event.target as HTMLInputElement).checked)" />
-              <div class="w-8 h-4 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-primary-600"></div>
+              <div class="w-8 h-4 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-surface after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-primary-600"></div>
             </label>
             <button class="flex-1 text-left" @click="toggleRowExpand(row.id)">
               <span class="text-xs font-medium text-gray-600 truncate block">{{ row.labelText || `Row ${idx + 1}` }}</span>
@@ -96,7 +96,7 @@
                 <label class="text-[10px] text-gray-400 uppercase tracking-wide">Value Source</label>
                 <select
                   :value="row.valueSource"
-                  class="text-xs border border-line rounded-lg px-2 py-1.5 bg-white focus:outline-none focus:ring-2 focus:ring-primary-300"
+                  class="text-xs border border-line rounded-lg px-2 py-1.5 bg-surface focus:outline-none focus:ring-2 focus:ring-primary-300"
                   @change="updateMetaRow(idx, 'valueSource', ($event.target as HTMLSelectElement).value)"
                 >
                   <option value="transporterName">Transporter Name</option>
@@ -162,7 +162,7 @@
             </div>
 
             <!-- Label style -->
-            <div class="flex flex-col gap-1.5 pt-1 border-t border-gray-100">
+            <div class="flex flex-col gap-1.5 pt-1 border-t border-line">
               <span class="text-[10px] font-semibold text-gray-500 uppercase tracking-wide">Label Style</span>
               <div class="flex flex-wrap items-center gap-3">
                 <div class="flex items-center gap-1.5">
@@ -191,7 +191,7 @@
             </div>
 
             <!-- Value style (hidden when valueSource === 'none') -->
-            <div v-if="row.valueSource !== 'none'" class="flex flex-col gap-1.5 pt-1 border-t border-gray-100">
+            <div v-if="row.valueSource !== 'none'" class="flex flex-col gap-1.5 pt-1 border-t border-line">
               <span class="text-[10px] font-semibold text-gray-500 uppercase tracking-wide">Value Style</span>
               <div class="flex flex-wrap items-center gap-3">
                 <div class="flex items-center gap-1.5">
@@ -230,7 +230,7 @@
     <StyleSection title="Total Row" :modelValue="modelValue.styles.totalRow" @update:modelValue="updateStyle('totalRow', $event)" />
 
     <!-- Total row config -->
-    <div class="rounded-xl border border-line bg-white p-4 flex flex-col gap-3">
+    <div class="rounded-xl border border-line bg-surface p-4 flex flex-col gap-3">
       <span class="text-sm font-semibold text-gray-700">Total Row</span>
 
       <div class="flex flex-col gap-1">
@@ -440,7 +440,7 @@ const StyleSection = defineComponent({
   emits: ["update:modelValue"],
   setup(p, { emit: e, slots }) {
     return () =>
-      h("div", { class: "rounded-xl border border-line bg-white p-4 flex flex-col gap-3" }, [
+      h("div", { class: "rounded-xl border border-line bg-surface p-4 flex flex-col gap-3" }, [
         h("span", { class: "text-sm font-semibold text-gray-700" }, p.title),
         h(StyleRow, { modelValue: p.modelValue, "onUpdate:modelValue": (v: CellStyle) => e("update:modelValue", v) }),
         slots.extra?.(),

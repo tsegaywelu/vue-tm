@@ -22,7 +22,7 @@
       class="group/col relative shrink-0 w-[260px] xl:shrink xl:w-auto"
     >
       <div
-        class="rounded-xl border border-line bg-white shadow-sm p-3 flex flex-col gap-2"
+        class="rounded-xl border border-line bg-surface shadow-sm p-3 flex flex-col gap-2"
         :class="{ 'border-primary-300 ring-1 ring-primary-100': dragOverIndex === realIndex(col) }"
         draggable="true"
         @dragstart="onDragStart(realIndex(col))"
@@ -85,7 +85,7 @@
           <label class="text-[10px] text-gray-400 uppercase tracking-wide">Type</label>
           <select
             :value="col.type"
-            class="text-sm border border-line rounded-lg px-2 py-1.5 bg-white focus:outline-none focus:ring-2 focus:ring-primary-300"
+            class="text-sm border border-line rounded-lg px-2 py-1.5 bg-surface focus:outline-none focus:ring-2 focus:ring-primary-300"
             @change="updateColumn(realIndex(col), 'type', ($event.target as HTMLSelectElement).value)"
           >
             <option value="text">Text</option>
@@ -103,7 +103,7 @@
           <label class="text-[10px] text-gray-400 uppercase tracking-wide">Format</label>
           <select
             :value="col.dateFormat ?? 'DMY'"
-            class="text-sm border border-line rounded-lg px-2 py-1.5 bg-white focus:outline-none focus:ring-2 focus:ring-primary-300"
+            class="text-sm border border-line rounded-lg px-2 py-1.5 bg-surface focus:outline-none focus:ring-2 focus:ring-primary-300"
             @change="updateColumn(realIndex(col), 'dateFormat', ($event.target as HTMLSelectElement).value)"
           >
             <option v-for="fmt in DATE_FORMATS" :key="fmt" :value="fmt">
@@ -116,7 +116,7 @@
           <select
             :value="col.dateSeparator ?? '/'"
             :disabled="NO_SEP_FORMATS.has(col.dateFormat ?? '')"
-            class="text-sm border border-line rounded-lg px-2 py-1.5 bg-white focus:outline-none focus:ring-2 focus:ring-primary-300 disabled:opacity-40 disabled:cursor-not-allowed"
+            class="text-sm border border-line rounded-lg px-2 py-1.5 bg-surface focus:outline-none focus:ring-2 focus:ring-primary-300 disabled:opacity-40 disabled:cursor-not-allowed"
             @change="updateColumn(realIndex(col), 'dateSeparator', ($event.target as HTMLSelectElement).value)"
           >
             <option value="/">/  (slash)</option>
@@ -128,7 +128,7 @@
 
       <!-- Style overrides toggle -->
       <button
-        class="flex items-center gap-1.5 text-[10px] text-gray-400 hover:text-primary-600 transition-colors border-t border-gray-100 pt-2 w-full text-left"
+        class="flex items-center gap-1.5 text-[10px] text-gray-400 hover:text-primary-600 transition-colors border-t border-line pt-2 w-full text-left"
         @click="toggleStyleExpand(col.id)"
       >
         <svg
@@ -153,7 +153,7 @@
             <span class="text-[10px] text-gray-400 w-9 shrink-0">Align</span>
             <select
               :value="col.headerStyle?.align ?? ''"
-              class="flex-1 text-xs border border-line rounded px-1.5 py-0.5 bg-white focus:outline-none focus:ring-1 focus:ring-primary-300"
+              class="flex-1 text-xs border border-line rounded px-1.5 py-0.5 bg-surface focus:outline-none focus:ring-1 focus:ring-primary-300"
               @change="setColStyle(realIndex(col), 'headerStyle', 'align', ($event.target as HTMLSelectElement).value)"
             >
               <option value="">—</option>
@@ -195,7 +195,7 @@
             <span class="text-[10px] text-gray-400 w-9 shrink-0">Align</span>
             <select
               :value="col.style?.align ?? ''"
-              class="flex-1 text-xs border border-line rounded px-1.5 py-0.5 bg-white focus:outline-none focus:ring-1 focus:ring-primary-300"
+              class="flex-1 text-xs border border-line rounded px-1.5 py-0.5 bg-surface focus:outline-none focus:ring-1 focus:ring-primary-300"
               @change="setColStyle(realIndex(col), 'style', 'align', ($event.target as HTMLSelectElement).value)"
             >
               <option value="">—</option>
@@ -246,7 +246,7 @@
 
       <!-- Mobile: button on right edge between cards, always visible -->
       <button
-        class="xl:hidden absolute -right-[18px] top-1/2 -translate-y-1/2 z-10 flex items-center justify-center w-6 h-6 rounded-full border border-primary-300 bg-white text-primary-600 shadow hover:bg-primary-50 transition-colors"
+        class="xl:hidden absolute -right-[18px] top-1/2 -translate-y-1/2 z-10 flex items-center justify-center w-6 h-6 rounded-full border border-primary-300 bg-surface text-primary-600 shadow hover:bg-primary-50 transition-colors"
         title="Insert column after"
         @click="insertColumnAfter(realIndex(col))"
       >
@@ -257,7 +257,7 @@
       <!-- Desktop: button below card, visible on hover -->
       <div class="hidden xl:flex justify-center h-3 opacity-0 group-hover/col:opacity-100 transition-opacity">
         <button
-          class="absolute -bottom-3.5 z-10 flex items-center justify-center w-6 h-6 rounded-full border border-primary-300 bg-white text-primary-600 shadow hover:bg-primary-50 transition-colors"
+          class="absolute -bottom-3.5 z-10 flex items-center justify-center w-6 h-6 rounded-full border border-primary-300 bg-surface text-primary-600 shadow hover:bg-primary-50 transition-colors"
           title="Insert column after"
           @click="insertColumnAfter(realIndex(col))"
         >

@@ -2,7 +2,7 @@
   <div class="flex flex-col h-full gap-4">
     <!-- Header bar -->
     <div
-      class="flex flex-wrap items-end gap-3 bg-white rounded-2xl px-5 py-4 shadow-sm border border-gray-100"
+      class="flex flex-wrap items-end gap-3 bg-surface rounded-2xl px-5 py-4 shadow-sm border border-line"
     >
       <div class="grid grid-cols-2 w-full gap-4">
         <div v-if="props.ownerType !== 'shipper'">

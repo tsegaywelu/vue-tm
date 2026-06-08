@@ -3,7 +3,7 @@
     <!-- Trigger -->
     <button
       type="button"
-      class="w-full text-sm border border-line rounded-lg px-2 py-1.5 bg-white focus:outline-none focus:ring-2 focus:ring-primary-300 flex items-center justify-between text-left gap-1 min-w-0"
+      class="w-full text-sm border border-line rounded-lg px-2 py-1.5 bg-surface focus:outline-none focus:ring-2 focus:ring-primary-300 flex items-center justify-between text-left gap-1 min-w-0"
       @click="open = !open"
     >
       <span class="truncate flex-1" :class="modelValue ? 'text-gray-800' : 'text-gray-400'">
@@ -22,11 +22,11 @@
     <Teleport to="body">
       <div
         v-if="open"
-        class="fixed z-9999 bg-white border border-line rounded-xl shadow-xl overflow-hidden"
+        class="fixed z-9999 bg-surface border border-line rounded-xl shadow-xl overflow-hidden"
         :style="dropdownStyle"
       >
         <!-- Search -->
-        <div class="p-2 border-b border-gray-100">
+        <div class="p-2 border-b border-line">
           <input
             ref="searchRef"
             v-model="search"

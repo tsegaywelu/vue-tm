@@ -2,7 +2,7 @@
   <!-- Mobile: filter icon next to page title -->
   <Teleport to="#page-title-actions" defer>
     <button
-      class="size-8 rounded-xl border border-line flex items-center justify-center text-faint-text hover:bg-surface-hover transition-colors"
+      class="sm:hidden size-8 rounded-xl border border-line flex items-center justify-center text-faint-text hover:bg-surface-hover transition-colors"
       @click="mobileSearchOpen = true"
     >
       <i class="*:size-4" v-html="icons.filterOptions"></i>
