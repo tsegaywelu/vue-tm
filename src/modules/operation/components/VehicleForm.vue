@@ -55,12 +55,15 @@
             :validation="{ required }"
             :attributes="{ placeholder: 'Select type' }"
             :display_value="props.labels?.vehicleType"
+            :params="state => ({q: undefined, 'name[regex]': state.search})"
           />
 
           <SelectInput
             name="vehicleGroup"
             label="Vehicle Group"
             url="/group"
+            :params="state => ({q: undefined, 'name[regex]': state.search})"
+            searchable
             label_key="name"
             value_key="_id"
             :display_value="props.labels?.vehicleGroup"
@@ -71,6 +74,8 @@
             name="type"
             label="Category Type"
             url="/type"
+            :params="state => ({q: undefined, 'name[regex]': state.search})"
+            searchable
             label_key="name"
             value_key="_id"
             :display_value="props.labels?.type"
@@ -78,35 +83,37 @@
           />
 
           <SelectInput
+            searchable
             name="vehicleModel"
             label="Vehicle Model"
             url="/vehicle-model"
             label_key="name"
             value_key="_id"
+            :params="state => ({q: undefined, 'name[regex]': state.search})"
             :display_value="props.labels?.vehicleModel"
             :attributes="{ placeholder: 'Select model' }"
           />
-
           <SelectInput
+            searchable
             name="maker"
             label="Maker"
             url="/maker"
             label_key="name"
+            :params="state => ({q: undefined, 'name[regex]': state.search})"
             value_key="_id"
             :display_value="props.labels?.maker"
             :attributes="{ placeholder: 'Select maker' }"
           />
-
           <RegionInput
             name="region"
             label="Region"
+            :params="state => ({q: undefined, limit: undefined, 'name[regex]': state.search})"
             url="/region/myRegions"
             label_key="name"
             value_key="_id"
             :attributes="{ placeholder: 'Select region' }"
             :display_value="props.labels?.region"
           />
-
           <DateInput
             name="lastServiceDate"
             label="Last Service Date"
@@ -123,8 +130,6 @@
           />
         </div>
       </Colapsable>
-
-      <!-- 2. Trailer Information -->
       <Colapsable
         title="Trailer Information"
         description="Details of the attached trailer, if applicable."
@@ -135,13 +140,11 @@
             label="Trailer Plate Number"
             :attributes="{ placeholder: 'Enter trailer plate' }"
           />
-
           <Input
             name="trailerChassisNumber"
             label="Trailer Chassis Number"
             :attributes="{ placeholder: 'Enter trailer chassis' }"
           />
-
           <DateInput
             name="trailerPurchaseDate"
             label="Trailer Purchase Date"
@@ -150,8 +153,6 @@
           />
         </div>
       </Colapsable>
-
-      <!-- 3. Ownership & Assignment -->
       <Colapsable
         title="Ownership & Assignment"
         description="Management details and operational assignment."
