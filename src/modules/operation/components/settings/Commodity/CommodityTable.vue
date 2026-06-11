@@ -42,7 +42,7 @@ const emit = defineEmits(["action"]);
 const { response, refetch } = usePagination<any>({
   id: "commodity-list",
   url: "/commodity/contracted",
-  searchKey: "name[regex]",
+  searchKey: "name",
 });
 
 const columns: TableColumn<any>[] = [

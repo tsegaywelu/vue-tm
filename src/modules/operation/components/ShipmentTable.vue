@@ -295,10 +295,10 @@ const dynamicSearchPlaceholder = computed(() => {
 const handleFilterChange = (newFilters: ShipmentFilterParams) => {
   activeFilters.value = {
     ...newFilters,
-    searchField: selectedSearchField.value,
-    selectedFilterOption: {
-      value: selectedSearchField.value,
-    },
+    // searchField: selectedSearchField.value,
+    // selectedFilterOption: {
+    //   value: selectedSearchField.value,
+    // },
   };
 };
 

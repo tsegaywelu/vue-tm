@@ -4,7 +4,7 @@ import Input from "@/components/common/Input.vue";
 import { inject, onMounted, ref, reactive, watch } from "vue";
 import { genId } from "@/utils/utils";
 import InputParent from "@/components/form/InputParent.vue";
-import { required, number, validateArrayItems } from "@/utils/validations";
+import { required, number, validateArrayItems, price } from "@/utils/validations";
 import { icons } from "@/utils/icons";
 
 type Waypoint = {
@@ -52,6 +52,10 @@ const errors = reactive<Record<string, string>>({});
 const itemRules = {
   name: { required },
   distance: { required, number },
+  perDiemDays: { required, number },
+  TAT: { required, number },
+  AFU: { required, number },
+  otherAmount: {price}
 };
 
 onMounted(() => {
@@ -152,7 +156,6 @@ function remove(id: string) {
               v-model="item.TAT"
               label="Turn Around Time (TAT)"
               :error="errors[`TAT_${item.fakeId}`]"
-              type="number"
               :attributes="{
                 placeholder: 'Enter TAT',
               }"
@@ -161,7 +164,6 @@ function remove(id: string) {
               v-model="item.AFU"
               label="Avg Fuel Usage (AFU)"
               :error="errors[`AFU_${item.fakeId}`]"
-              type="number"
               :attributes="{
                 placeholder: 'Enter AFU',
               }"
@@ -170,7 +172,6 @@ function remove(id: string) {
               v-model="item.otherAmount"
               label="Other Amount"
               :error="errors[`otherAmount_${item.fakeId}`]"
-              type="number"
               :attributes="{
                 placeholder: 'Enter other amount',
               }"

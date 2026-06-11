@@ -182,7 +182,6 @@
   <ShipmentTable
     ref="shipmentTableRef"
     :filters="{
-      ...shipperFilters,
       dispatchStartDate: dateRange.start,
       dispatchEndDate: dateRange.end,
     }"
