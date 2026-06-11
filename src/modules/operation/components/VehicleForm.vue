@@ -158,10 +158,11 @@
       >
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <SelectInput
+            searchable
             name="driver"
             label="Assigned Driver"
             url="/driver"
-            :params="{ driverStatus: 'vehicle_not_assigned' }"
+            :params="state => ({ driverStatus: 'vehicle_not_assigned', q: undefined, 'name[regexAny]': state.search })"
             :label_key="
               (item: any) =>
                 `${item.firstName} ${item.middleName || ''} ${item.lastName || ''}`

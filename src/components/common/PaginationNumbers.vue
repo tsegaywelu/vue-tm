@@ -76,7 +76,7 @@
       :disabled="current_page >= total_pages"
     >
       <div
-        class="text-black rotate-180 *:size-4"
+        class="text-base-text rotate-180 *:size-4"
         v-html="icons.leftAngle"
       ></div>
     </Button>
