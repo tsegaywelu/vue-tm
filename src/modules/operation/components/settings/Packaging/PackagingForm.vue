@@ -6,10 +6,16 @@
         description="Provide details about the packaging type."
       >
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <SelectInput
+          <ShipperInput
             name="shipper"
             label="Shipper"
             url="/shipper"
+            :params="(state) => {
+          return {
+            name: state.search,
+            q: undefined,
+          };
+        }"
             label_key="name"
             value_key="_id"
             :validation="{ required }"
@@ -39,6 +45,7 @@ import Input from "@/components/form/Input.vue";
 import SelectInput from "@/components/form/SelectInput.vue";
 import Colapsable from "@/components/common/Colapsable.vue";
 import { required } from "@/utils/validations";
+import ShipperInput from "@/components/common/inputs/ShipperInput.vue";
 
 defineProps<{
   formId: string;
