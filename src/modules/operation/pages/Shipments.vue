@@ -176,7 +176,12 @@
   />
 
   <Teleport to="#extra-page-data" defer>
-    <StatsCards :stats="shipmentStats" :loading="isLoadingStats" />
+    <StatsCards
+      :stats="shipmentStats"
+      :loading="isLoadingStats"
+      :active_label="activeStatLabel"
+      @click="handleStatCardClick"
+    />
   </Teleport>
 
   <ShipmentTable
@@ -241,23 +246,65 @@ const { data: statsResponse, isLoading: isLoadingStats } = useQuery({
 });
 
 const shipmentStats = computed(() => {
-  const data = statsResponse.value?.data || {};
+  const data: any = statsResponse.value?.data || {};
   return [
-    { label: "InProgress", value: data.InProgress, class: "text-primary" },
-    { label: "Completed", value: data.completed },
-    { label: "In Bound", value: data.IN_BOUND },
-    { label: "Out Bound", value: data.OUT_BOUND },
-    { label: "Site Transfer", value: data.SITE_TRANSFER },
-    { label: "Owned", value: data.owned },
-    { label: "Rental", value: data.rental },
-    { label: "Leased", value: data.leased },
     {
-      label: "Power & Trailer",
-      value: data["power & trailer"] || data["power & trailor"],
+      label: "In Progress",
+      value: data.InProgress,
+      class: "text-primary",
+      children: [
+        { label: "In Bound", value: data.IN_BOUND, clickable: true },
+        { label: "Out Bound", value: data.OUT_BOUND, clickable: true },
+        { label: "Site Transfer", value: data.SITE_TRANSFER, clickable: true },
+      ],
     },
-    { label: "MDV", value: data.mdv },
+    {
+      label: "Ownership",
+      value: null,
+      children: [
+        { label: "Owned", value: data.owned },
+        { label: "Rental", value: data.rental },
+        { label: "Leased", value: data.leased },
+      ],
+    },
+    {
+      label: "Vehicle Type",
+      value: null,
+      children: [
+        { label: "Power & Trailer", value: data["power & trailer"] || data["power & trailor"] },
+        { label: "MDV", value: data.mdv },
+      ],
+    },
+    { label: "Completed", value: data.completed },
   ];
 });
+
+const productTypeMap: Record<string, string> = {
+  "In Bound": "IN_BOUND",
+  "Out Bound": "OUT_BOUND",
+  "Site Transfer": "SITE_TRANSFER",
+};
+const productTypeReverseMap: Record<string, string> = Object.fromEntries(
+  Object.entries(productTypeMap).map(([label, val]) => [val, label]),
+);
+
+// Derived from the table's own activeFilters so both directions stay in sync
+const activeStatLabel = computed(() => {
+  const pt = shipmentTableRef.value?.activeFilters?.productType;
+  return pt ? (productTypeReverseMap[pt] ?? null) : null;
+});
+
+const handleStatCardClick = (stat: any) => {
+  if (!productTypeMap[stat.label]) return;
+  const table = shipmentTableRef.value;
+  if (!table) return;
+  const next = productTypeMap[stat.label];
+  const current = table.activeFilters?.productType;
+  table.activeFilters = {
+    ...table.activeFilters,
+    productType: current === next ? undefined : next,
+  };
+};
 
 const handleShipmentAction = ({
   row,

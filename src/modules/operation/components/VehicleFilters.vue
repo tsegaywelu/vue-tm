@@ -38,7 +38,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import SelectInput from "@/components/form/SelectInput.vue";
 import VehicleTypeInput from "@/components/common/inputs/VehicleTypeInput.vue";
 import Input from "@/components/form/Input.vue";
@@ -52,6 +52,7 @@ import { useTablePaginationStore } from "@/store/tablePaginationStore";
 
 const props = defineProps<{
   paginationId?: string;
+  filters?: Record<string, any>;
 }>();
 
 const emit = defineEmits(["change"]);
@@ -122,10 +123,20 @@ onMounted(() => {
   if (saved.selectedFilterOption?.value) {
     filterOnly.filterField = saved.selectedFilterOption.value;
   }
-  if (Object.keys(filterOnly).length > 0) {
-    formValues.value = filterOnly;
+  const merged = { ...filterOnly, ...(props.filters || {}) };
+  if (Object.keys(merged).length > 0) {
+    formValues.value = merged;
   }
 });
+
+watch(
+  () => props.filters,
+  (newFilters) => {
+    if (!newFilters) return;
+    formValues.value = { ...(formValues.value || {}), ...newFilters };
+  },
+  { deep: true },
+);
 
 const ownershipOptions = Object.values(VehicleOwnership).map((v) => ({
   label: v,

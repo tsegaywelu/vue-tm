@@ -15,11 +15,15 @@
       <!-- semi-donut -->
       <div class="flex justify-center -mb-6">
         <apexchart
+          v-if="total > 0"
           type="donut"
           width="240"
           :options="chartOptions"
           :series="series"
         />
+        <div v-else class="w-60 h-32 flex items-center justify-center text-sm text-gray-400">
+          No data
+        </div>
       </div>
 
       <!-- custom legend with counts -->
@@ -31,7 +35,7 @@
           :class="activeIndex === i
             ? 'bg-blue-50 ring-1 ring-blue-200'
             : 'hover:bg-surface-hover'"
-          @click="toggleSegment(i)"
+          @click="navigateToVehicles(i)"
         >
           <div class="flex items-center gap-1.5 min-w-0">
             <span
@@ -56,7 +60,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { useQuery } from "@tanstack/vue-query";
-import ApexCharts from "apexcharts";
+import { useRouter } from "vue-router";
 import { fetchVehicleStatusCount } from "../../api/dashboard.api";
 
 const CHART_ID = "vehicle-status-donut";
@@ -89,11 +93,12 @@ const legendItems = computed(() => {
 const series = computed(() => legendItems.value.map((i) => i.count));
 const total  = computed(() => series.value.reduce((a, b) => a + b, 0));
 
+const router = useRouter();
 const activeIndex = ref<number | null>(null);
 
-function toggleSegment(i: number) {
-  ApexCharts.exec(CHART_ID, "toggleDataPointSelection", i);
+function navigateToVehicles(i: number) {
   activeIndex.value = activeIndex.value === i ? null : i;
+  setTimeout(() => router.push({ path: "/vehicles", query: { status: STATUSES[i].key } }), 0);
 }
 
 const chartOptions = computed(() => ({
@@ -103,8 +108,7 @@ const chartOptions = computed(() => ({
     animations: { speed: 400 },
     events: {
       dataPointSelection(_e: any, _ctx: any, config: any) {
-        const i = config.dataPointIndex;
-        activeIndex.value = activeIndex.value === i ? null : i;
+        navigateToVehicles(config.dataPointIndex);
       },
     },
   },
@@ -125,23 +129,7 @@ const chartOptions = computed(() => ({
       expandOnClick: true,
       donut: {
         size: "70%",
-        labels: {
-          show: true,
-          total: {
-            show: true,
-            label: "Total Vehicles",
-            fontSize: "11px",
-            color: "#6b7280",
-            formatter: () => total.value.toLocaleString(),
-          },
-          value: {
-            show: true,
-            fontSize: "18px",
-            fontWeight: 700,
-            color: "#1e3a8a",
-            formatter: (v: string) => Number(v).toLocaleString(),
-          },
-        },
+        labels: { show: false },
       },
     },
   },

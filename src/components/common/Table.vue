@@ -311,10 +311,15 @@
         isLoading || rows.length === 0 ? 'pointer-events-none opacity-50' : '',
       ]"
     >
-      <TablePerPageSelect
-        :page_size="itemsPerPage"
-        @update:page_size="onItemsPerPageInput"
-      />
+      <div class="flex items-center gap-4">
+        <TablePerPageSelect
+          :page_size="itemsPerPage"
+          @update:page_size="onItemsPerPageInput"
+        />
+        <span v-if="totalResults > 0" class="text-sm text-dim-text whitespace-nowrap">
+          {{ totalResults.toLocaleString() }} results
+        </span>
+      </div>
       <PaginationNumbers
         :total_pages="totalPages > 0 ? totalPages : 1"
         :current_page="currentPage"
@@ -539,6 +544,11 @@ const totalPages = computed(() => {
 const itemsPerPage = computed(() => {
   if (props.items_per_page != null) return props.items_per_page;
   return paginationContext?.state?.value?.limit ?? 10;
+});
+
+const totalResults = computed(() => {
+  if (props.total_results != null) return Number(props.total_results);
+  return paginationContext?.totalResults?.value ?? paginationContext?.state?.value?.totalResults ?? 0;
 });
 
 const searchValue = computed(() => {

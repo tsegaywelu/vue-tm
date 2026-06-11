@@ -69,7 +69,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, onMounted } from "vue";
+import { computed, ref, onMounted, watch } from "vue";
 import Form from "@/components/form/Form.vue";
 import OriginInput from "@/components/common/inputs/OriginInput.vue";
 import DestinationInput from "@/components/common/inputs/DestinationInput.vue";
@@ -92,6 +92,7 @@ const props = defineProps<{
   paginationId?: string;
   calendarType?: "english" | "ethiopian";
   outputCalendarType?: "english" | "ethiopian";
+  active_product_type?: string | null;
 }>();
 
 const emit = defineEmits(["change"]);
@@ -140,6 +141,13 @@ const FORM_FILTER_FIELDS = [
 // Start undefined so the Form's values-watcher fires when we assign saved params.
 // This restores the filter UI to the previously selected state on navigation-back.
 const formValues = ref<Record<string, any> | undefined>(undefined);
+
+watch(
+  () => props.active_product_type,
+  (val: string | null | undefined) => {
+    formValues.value = { ...(formValues.value || {}), productType: val ?? undefined };
+  },
+);
 
 onMounted(() => {
   const saved = lastParams.value;

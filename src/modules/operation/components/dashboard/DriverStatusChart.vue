@@ -15,11 +15,15 @@
       <!-- donut -->
       <div class="shrink-0 flex justify-center">
         <apexchart
+          v-if="total > 0"
           type="donut"
           width="220"
           :options="chartOptions"
           :series="series"
         />
+        <div v-else class="w-55 h-55 flex items-center justify-center text-sm text-gray-400">
+          No data
+        </div>
       </div>
 
       <!-- custom legend -->
@@ -31,7 +35,7 @@
           :class="activeIndex === i
             ? 'bg-blue-50 ring-1 ring-blue-200'
             : 'hover:bg-surface-hover'"
-          @click="toggleSegment(i)"
+          @click="navigateToDrivers(i)"
         >
           <span
             class="w-3 h-3 rounded-full shrink-0 transition-all"
@@ -53,7 +57,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { useQuery } from "@tanstack/vue-query";
-import ApexCharts from "apexcharts";
+import { useRouter } from "vue-router";
 import { fetchDriverStatusCount } from "../../api/dashboard.api";
 
 const CHART_ID = "driver-status-donut";
@@ -87,11 +91,12 @@ const legendItems = computed(() => {
 const series = computed(() => legendItems.value.map((i) => i.count));
 const total  = computed(() => series.value.reduce((a, b) => a + b, 0));
 
+const router = useRouter();
 const activeIndex = ref<number | null>(null);
 
-function toggleSegment(i: number) {
-  ApexCharts.exec(CHART_ID, "toggleDataPointSelection", i);
+function navigateToDrivers(i: number) {
   activeIndex.value = activeIndex.value === i ? null : i;
+  setTimeout(() => router.push({ path: "/drivers", query: { driverStatus: STATUSES[i].key } }), 0);
 }
 
 const chartOptions = computed(() => ({
@@ -101,8 +106,7 @@ const chartOptions = computed(() => ({
     animations: { speed: 400 },
     events: {
       dataPointSelection(_e: any, _ctx: any, config: any) {
-        const i = config.dataPointIndex;
-        activeIndex.value = activeIndex.value === i ? null : i;
+        navigateToDrivers(config.dataPointIndex);
       },
     },
   },

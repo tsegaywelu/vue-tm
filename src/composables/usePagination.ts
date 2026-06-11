@@ -35,6 +35,7 @@ export interface TablePaginationContext<T = any> {
   debouncedSearch: ComputedRef<string>;
   setSorting: (sorting: SortingState[]) => void;
   setTotalPages: (total_pages: number) => void;
+  totalResults: ComputedRef<number>;
   fullResponse: ComputedRef<any>;
   refetch: () => void;
 }
@@ -98,6 +99,7 @@ export function useTablePagination(
     setSorting: (sorting: SortingState[]) => store.setSorting(id, sorting),
     setTotalPages: (total_pages: number) =>
       store.setTotalPages(id, total_pages),
+    setTotalResults: (total: number) => store.setTotalResults(id, total),
     setPending: (pending: boolean) => store.setPending(id, pending),
     setIsDirty: (is_dirty: boolean) => store.setIsDirty(id, is_dirty),
     setParams: (p: Record<string, any>) => store.setParams(id, p),
@@ -133,6 +135,7 @@ export function usePagination<T = any>({
     setSearch,
     setSorting,
     setTotalPages,
+    setTotalResults,
     setPending,
     setIsDirty,
     setParams,
@@ -394,6 +397,10 @@ export function usePagination<T = any>({
           setIsDirty(true);
         }
 
+        if (typeof raw.totalResults === "number") {
+          setTotalResults(raw.totalResults);
+        }
+
         if (typeof raw.totalPages === "number") {
           setTotalPages(raw.totalPages);
         } else if (typeof raw.totalResults === "number") {
@@ -469,6 +476,7 @@ export function usePagination<T = any>({
     debouncedSearch: computed(() => debounced_search.value),
     setSorting,
     setTotalPages,
+    totalResults: computed(() => state.value?.totalResults ?? 0),
     fullResponse: computed(() => data.value?.data || {}),
     refetch: () => refetch(),
   };

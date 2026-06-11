@@ -143,7 +143,7 @@
                 "
               />
               <DropDownItem
-                v-permission="'DRIVER:change_status'"
+                v-permission="'DRIVER:driver_status_update'"
                 label="Edit Driver Status"
                 @click="
                   close();
@@ -168,7 +168,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from "vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import { usePagination } from "@/composables/usePagination";
 import Dropdown from "@/components/common/Dropdown.vue";
 import DropDownItem from "@/components/common/DropDownItem.vue";
@@ -180,7 +180,9 @@ import Button from "@/components/common/Button.vue";
 import { openModal } from "@customizer/modal-x";
 
 const router = useRouter();
+const route = useRoute();
 
+const driverStatus = computed(() => route.query.driverStatus)  
 const selectedSearchField = ref("name");
 
 const searchFieldOptions = [
@@ -201,9 +203,13 @@ const { response, refetch, isLoading } = usePagination({
   id: "drivers-list",
   url: "/driver",
   params: (state) => ({
-    name: {
-      regexAny: state.search,
-    },
+    name: { regexAny: state.search },
+    ...(
+        driverStatus.value ? ({
+          driverStatus: route.query.driverStatus,
+          isEmployed: true,
+        }) : ({})
+    )     ,
     q: undefined,
   }),
 });

@@ -87,6 +87,8 @@
             </div>
             <div>
               <SelectInput
+                :params="state => ({q: undefined, limit: undefined, 'name[regexAny]': state.search})"
+                searchable
                 name="region"
                 label="Region"
                 url="/region/myRegions"
@@ -342,6 +344,8 @@
                     name="role"
                     label="Role"
                     url="/role"
+                    searchable
+                    :params="state => ({q: undefined, name: state.search})"
                     label_key="name"
                     value_key="_id"
                     :validation="{ required }"

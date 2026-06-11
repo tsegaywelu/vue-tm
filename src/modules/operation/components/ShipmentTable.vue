@@ -102,6 +102,7 @@
       <div class="items-center gap-4 inline-flex overflow-x-auto md:px-3">
         <ShipmentFilters
           pagination-id="shipment-list"
+          :active_product_type="activeFilters.productType"
           @change="handleFilterChange"
           calendar-type="english"
           output-calendar-type="english"

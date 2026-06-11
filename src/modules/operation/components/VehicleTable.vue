@@ -51,6 +51,7 @@
         <VehicleFilters
           @change="handleFilterChange"
           pagination-id="vehicle-list"
+          :filters="props.filters"
         />
       </div>
     </template>
@@ -144,7 +145,7 @@
             "
           />
           <DropDownItem
-            v-permission="'VEHICLE:update'"
+            v-permission="'VEHICLE:vehicle_status_update'"
             :icon="icons.shield"
             label="Change Status"
             @click.stop="
@@ -225,9 +226,9 @@ const { response, refetch } = usePagination({
   id: "vehicle-list",
   url: "/vehicle",
   params: (state) => ({
-    ...props.filters,
     [selectedSearchField.value]: state.search,
     ...activeFilters.value,
+    ...props.filters,
     q: undefined,
   }),
 });
@@ -237,7 +238,9 @@ const emitAction = (row: any, action: string) => {
 };
 
 const handleFilterChange = (newFilters: any) => {
-  activeFilters.value = { ...newFilters };
+  activeFilters.value = Object.fromEntries(
+    Object.entries(newFilters).filter(([, v]) => v !== "" && v !== null && v !== undefined),
+  );
 };
 
 defineExpose({ refetch, selectedSearchField, filterFieldOptions });

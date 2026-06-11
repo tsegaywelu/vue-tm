@@ -256,7 +256,7 @@ import { useRouter } from "vue-router";
 import Table from "@/components/common/Table.vue";
 import SearchFieldSelect from "@/components/common/SearchFieldSelect.vue";
 import Dropdown from "@/components/common/Dropdown.vue";
-import ApprovalFilters from "./ApprovalFilters.vue";
+import Select from "@/components/common/Select.vue";
 import BottomSheet from "@/components/BottomSheet.vue";
 import { usePagination, useTableLastMeta } from "@/composables/usePagination";
 import { currencyFormatter } from "@/utils/utils";
@@ -346,6 +346,10 @@ const typeOptions = [
   { label: "Transporter Advance", value: "prePayment" },
   { label: "Settlements", value: "transaction" },
 ];
+
+// --- Origin / Destination filter state ---
+const origin = ref<string[]>([]);
+const destination = ref<string[]>([]);
 
 // --- Filters State ---
 const activeFilters = ref<any>({});

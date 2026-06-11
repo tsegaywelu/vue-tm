@@ -11,6 +11,7 @@ export type TableState = {
   page: number;
   limit: number;
   totalPages: number;
+  totalResults: number;
   search: string;
   sorting: SortingState[];
   isDirty: boolean;
@@ -21,6 +22,7 @@ const initial_state: TableState = {
   page: 1,
   limit: 10,
   totalPages: 1,
+  totalResults: 0,
   search: "",
   sorting: [],
   isDirty: false,
@@ -73,6 +75,10 @@ export const useTablePaginationStore = defineStore("tablePagination", () => {
     if (tables.value[id]) tables.value[id].totalPages = total;
   }
 
+  function setTotalResults(id: string, total: number) {
+    if (tables.value[id]) tables.value[id].totalResults = total;
+  }
+
   function setPending(id: string, pending: boolean) {
     if (tables.value[id]) tables.value[id].pending = pending;
   }
@@ -114,6 +120,7 @@ export const useTablePaginationStore = defineStore("tablePagination", () => {
     setSearch,
     setSorting,
     setTotalPages,
+    setTotalResults,
     setPending,
     setIsDirty,
     setParams,

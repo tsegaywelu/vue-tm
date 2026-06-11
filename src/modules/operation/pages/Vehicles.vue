@@ -64,12 +64,16 @@
     </div>
   </BottomSheet>
 
-  <VehicleTable ref="tableRef" @action="handleAction" />
+  <VehicleTable
+    ref="tableRef"
+    :filters="route.query.status ? { status: route.query.status, ownership: 'Owned' } : undefined"
+    @action="handleAction"
+  />
 </template>
 
 <script setup lang="ts">
 import { ref } from "vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import Button from "@/components/common/Button.vue";
 import VehicleTable from "../components/VehicleTable.vue";
 import BottomSheet from "@/components/BottomSheet.vue";
@@ -77,6 +81,7 @@ import { icons } from "@/utils/icons";
 import { openModal } from "@customizer/modal-x";
 
 const router = useRouter();
+const route = useRoute();
 const tableRef = ref<any>(null);
 const mobileMenuOpen = ref(false);
 
