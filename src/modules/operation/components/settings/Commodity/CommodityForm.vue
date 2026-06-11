@@ -8,19 +8,16 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <ShipperInput
             name="shipper"
-            url="/shipper"
-            label_key="name"
-            value_key="_id"
-            :params="(state) => {
-          return {
-            name: state.search,
-            q: undefined,
-          };
-        }"
             :initial_labels="shipperLabels"
             :validation="{ required }"
             :attributes="{ placeholder: 'Select shipper' }"
             :options="labels?.shipper ? [{ label: labels.shipper, value: initialValues.shipper }] : []"
+            :params="(state) => {
+              return {
+                name: state.search,
+                q: undefined,
+              };
+            }"
           />
           <Input
             name="name"

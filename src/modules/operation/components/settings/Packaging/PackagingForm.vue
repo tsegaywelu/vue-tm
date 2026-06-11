@@ -9,19 +9,14 @@
           <ShipperInput
             name="shipper"
             label="Shipper"
-            url="/shipper"
-            :params="
-              (state) => {
-                return {
-                  name: state.search,
-                  q: undefined,
-                };
-              }
-            "
-            label_key="name"
-            value_key="_id"
             :validation="{ required }"
             :attributes="{ placeholder: 'Select shipper' }"
+            :params="(state) => {
+              return {
+                name: state.search,
+                q: undefined,
+              };
+            }"
           />
           <Input
             name="name"
