@@ -103,6 +103,7 @@
         <ShipmentFilters
           pagination-id="shipment-list"
           :active_product_type="activeFilters.productType"
+          :active_vehicle_ownership="activeFilters.vehicleOwnership"
           @change="handleFilterChange"
           calendar-type="english"
           output-calendar-type="english"

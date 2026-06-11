@@ -93,6 +93,7 @@ const props = defineProps<{
   calendarType?: "english" | "ethiopian";
   outputCalendarType?: "english" | "ethiopian";
   active_product_type?: string | null;
+  active_vehicle_ownership?: string | null;
 }>();
 
 const emit = defineEmits(["change"]);
@@ -146,6 +147,13 @@ watch(
   () => props.active_product_type,
   (val: string | null | undefined) => {
     formValues.value = { ...(formValues.value || {}), productType: val ?? undefined };
+  },
+);
+
+watch(
+  () => props.active_vehicle_ownership,
+  (val: string | null | undefined) => {
+    formValues.value = { ...(formValues.value || {}), vehicleOwnership: val ?? undefined };
   },
 );
 

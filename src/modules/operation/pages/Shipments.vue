@@ -262,9 +262,9 @@ const shipmentStats = computed(() => {
       label: "Ownership",
       value: null,
       children: [
-        { label: "Owned", value: data.owned },
-        { label: "Rental", value: data.rental },
-        { label: "Leased", value: data.leased },
+        { label: "Owned", value: data.owned, clickable: true },
+        { label: "Rental", value: data.rental, clickable: true },
+        { label: "Leased", value: data.leased, clickable: true },
       ],
     },
     {
@@ -275,7 +275,6 @@ const shipmentStats = computed(() => {
         { label: "MDV", value: data.mdv },
       ],
     },
-    { label: "Completed", value: data.completed },
   ];
 });
 
@@ -288,22 +287,52 @@ const productTypeReverseMap: Record<string, string> = Object.fromEntries(
   Object.entries(productTypeMap).map(([label, val]) => [val, label]),
 );
 
-// Derived from the table's own activeFilters so both directions stay in sync
-const activeStatLabel = computed(() => {
-  const pt = shipmentTableRef.value?.activeFilters?.productType;
-  return pt ? (productTypeReverseMap[pt] ?? null) : null;
+const ownershipMap: Record<string, string> = {
+  "Owned": "owned",
+  "Rental": "rental",
+  "Leased": "leased",
+};
+const ownershipReverseMap: Record<string, string> = Object.fromEntries(
+  Object.entries(ownershipMap).map(([label, val]) => [val, label]),
+);
+
+// Returns all currently active child labels so StatsCards can highlight them
+const activeStatLabel = computed<string[]>(() => {
+  const labels: string[] = [];
+  const filters = shipmentTableRef.value?.activeFilters;
+  if (filters?.productType) {
+    const label = productTypeReverseMap[filters.productType];
+    if (label) labels.push(label);
+  }
+  if (filters?.vehicleOwnership) {
+    const label = ownershipReverseMap[filters.vehicleOwnership];
+    if (label) labels.push(label);
+  }
+  return labels;
 });
 
 const handleStatCardClick = (stat: any) => {
-  if (!productTypeMap[stat.label]) return;
   const table = shipmentTableRef.value;
   if (!table) return;
-  const next = productTypeMap[stat.label];
-  const current = table.activeFilters?.productType;
-  table.activeFilters = {
-    ...table.activeFilters,
-    productType: current === next ? undefined : next,
-  };
+
+  if (productTypeMap[stat.label]) {
+    const next = productTypeMap[stat.label];
+    const current = table.activeFilters?.productType;
+    table.activeFilters = {
+      ...table.activeFilters,
+      productType: current === next ? undefined : next,
+    };
+    return;
+  }
+
+  if (ownershipMap[stat.label]) {
+    const next = ownershipMap[stat.label];
+    const current = table.activeFilters?.vehicleOwnership;
+    table.activeFilters = {
+      ...table.activeFilters,
+      vehicleOwnership: current === next ? undefined : next,
+    };
+  }
 };
 
 const handleShipmentAction = ({

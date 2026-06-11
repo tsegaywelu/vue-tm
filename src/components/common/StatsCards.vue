@@ -29,7 +29,7 @@
             :key="child.label"
             :class="[
               'stat-card shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full border transition-all cursor-pointer',
-              active_label === child.label
+              (Array.isArray(active_label) ? active_label.includes(child.label) : active_label === child.label)
                 ? 'stat-card--active stat-card--clickable border-primary/60'
                 : child.clickable
                   ? 'stat-card--clickable border-primary/25'
@@ -86,7 +86,7 @@ export interface StatItem {
 defineProps<{
   stats: StatItem[];
   loading?: boolean;
-  active_label?: string | null;
+  active_label?: string | string[] | null;
 }>();
 
 defineEmits<{
