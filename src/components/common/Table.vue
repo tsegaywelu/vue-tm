@@ -214,8 +214,8 @@
     <!-- Mobile Card View -->
     <div class="xl:hidden w-full px-1">
       <!-- Page indicator -->
-      <div v-if="show_pagination && totalPages > 0" class="flex justify-end">
-        <span class="text-xs text-faint-text">Page {{ currentPage }} of {{ totalPages > 0 ? totalPages : 1 }}</span>
+      <div v-if="show_pagination && totalResults > 0" class="flex justify-end">
+        <span class="text-xs text-faint-text">{{ totalResults.toLocaleString() }} results</span>
       </div>
 
       <!-- Initial load skeleton -->
