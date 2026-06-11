@@ -10,12 +10,14 @@
             name="shipper"
             label="Shipper"
             url="/shipper"
-            :params="(state) => {
-          return {
-            name: state.search,
-            q: undefined,
-          };
-        }"
+            :params="
+              (state) => {
+                return {
+                  name: state.search,
+                  q: undefined,
+                };
+              }
+            "
             label_key="name"
             value_key="_id"
             :validation="{ required }"
@@ -26,13 +28,15 @@
             label="Name"
             :validation="{ required }"
             :attributes="{
-              placeholder: 'Enter packaging name'
+              placeholder: 'Enter packaging name',
             }"
           />
         </div>
       </Colapsable>
 
-      <div class="pt-10 flex flex-col sm:flex-row justify-end gap-3 *:w-full sm:*:w-auto *:min-h-[52px] sm:*:min-h-0 *:text-base sm:*:text-sm *:rounded-2xl sm:*:rounded-xl">
+      <div
+        class="pt-10 flex flex-col sm:flex-row justify-end gap-3 *:w-full sm:*:w-auto *:min-h-[52px] sm:*:min-h-0 *:text-base sm:*:text-sm *:rounded-2xl sm:*:rounded-xl"
+      >
         <slot :form="form" name="submit-btn"></slot>
       </div>
     </template>

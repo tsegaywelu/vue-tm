@@ -240,6 +240,7 @@ import {
 import InputLayout from "@/components/form/InputLayout.vue";
 import type { InputLayoutProps } from "@/components/form/InputLayout.vue";
 import { usePagination } from "@/composables/usePagination";
+import { useRoute } from "vue-router";
 import ApiService from "@/api/ApiService";
 import { icons } from "@/utils/icons";
 import { getValueByPath } from "@/utils/utils";
@@ -393,6 +394,11 @@ const computedParams = computed(() => {
   return props.params;
 });
 
+const route = useRoute();
+const remotePaginationId = props.url
+  ? `${props.url}__${props.name}__${route.path}`
+  : `${props.name}__${route.path}`;
+
 const {
   response: remoteData,
   state: remoteState,
@@ -401,8 +407,8 @@ const {
   isLoading: remoteLoading,
   isFetching: remoteFetching,
 } = usePagination({
-  id: props.url ? `${props.url}__${props.name}` : props.name,
-  queryKey: [props.url || props.name, props.name, props.size, props.base_url || ""],
+  id: remotePaginationId,
+  queryKey: [props.url || props.name, props.name, props.size, props.base_url || "", route.path],
   url: props.url,
   autofetch: isRemote.value,
   params: computedParams,
