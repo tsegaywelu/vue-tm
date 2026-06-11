@@ -42,7 +42,7 @@
             :validation="{ required }"
             :attributes="{ placeholder: 'Enter engine number' }"
           />
-          <Input
+        <Input
             name="chassisNumber"
             label="Chassis Number"
             :validation="{ required }"
@@ -53,13 +53,13 @@
             :validation="{ required }"
             :attributes="{ placeholder: 'Select type' }"
             :display_value="props.labels?.vehicleType"
-            :params="state => ({q: undefined, 'name[regex]': state.search})"
+            :params="state => ({q: undefined, 'name[regexAny]': state.search})"
           />
           <SelectInput
             name="vehicleGroup"
             label="Vehicle Group"
             url="/group"
-            :params="state => ({q: undefined, 'name[regex]': state.search})"
+            :params="state => ({q: undefined, 'name[regexAny]': state.search})"
             searchable
             label_key="name"
             value_key="_id"
@@ -70,7 +70,7 @@
             name="type"
             label="Category Type"
             url="/type"
-            :params="state => ({q: undefined, 'name[regex]': state.search})"
+            :params="state => ({q: undefined, 'name[regexAny]': state.search})"
             searchable
             label_key="name"
             value_key="_id"
@@ -84,7 +84,7 @@
             url="/vehicle-model"
             label_key="name"
             value_key="_id"
-            :params="state => ({q: undefined, 'name[regex]': state.search})"
+            :params="state => ({q: undefined, 'name[regexAny]': state.search})"
             :display_value="props.labels?.vehicleModel"
             :attributes="{ placeholder: 'Select model' }"
           />
@@ -94,7 +94,7 @@
             label="Maker"
             url="/maker"
             label_key="name"
-            :params="state => ({q: undefined, 'name[regex]': state.search})"
+            :params="state => ({q: undefined, 'name[regexAny]': state.search})"
             value_key="_id"
             :display_value="props.labels?.maker"
             :attributes="{ placeholder: 'Select maker' }"
@@ -102,7 +102,7 @@
           <RegionInput
             name="region"
             label="Region"
-            :params="state => ({q: undefined, limit: undefined, 'name[regex]': state.search})"
+            :params="state => ({q: undefined, limit: undefined, 'name[regexAny]': state.search})"
             url="/region/myRegions"
             label_key="name"
             value_key="_id"
