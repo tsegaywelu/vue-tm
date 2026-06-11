@@ -42,14 +42,12 @@
             :validation="{ required }"
             :attributes="{ placeholder: 'Enter engine number' }"
           />
-
           <Input
             name="chassisNumber"
             label="Chassis Number"
             :validation="{ required }"
             :attributes="{ placeholder: 'Enter chassis number' }"
           />
-
           <VehicleTypeInput
             name="vehicleType"
             :validation="{ required }"
@@ -57,7 +55,6 @@
             :display_value="props.labels?.vehicleType"
             :params="state => ({q: undefined, 'name[regex]': state.search})"
           />
-
           <SelectInput
             name="vehicleGroup"
             label="Vehicle Group"
@@ -69,7 +66,6 @@
             :display_value="props.labels?.vehicleGroup"
             :attributes="{ placeholder: 'Select group' }"
           />
-
           <SelectInput
             name="type"
             label="Category Type"
@@ -81,7 +77,6 @@
             :display_value="props.labels?.type"
             :attributes="{ placeholder: 'Select category' }"
           />
-
           <SelectInput
             searchable
             name="vehicleModel"

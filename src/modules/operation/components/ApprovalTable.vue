@@ -391,6 +391,7 @@ const { response, setPage, refetch } = usePagination<ApprovalRequest>({
       ...activeFilters.value,
       [selectedSearchField.value]: state.search || undefined,
       q: undefined,
+      select: 'all'
     };
   },
 });
