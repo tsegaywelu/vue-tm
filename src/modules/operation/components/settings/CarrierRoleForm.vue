@@ -137,13 +137,13 @@ const specificActions: Record<string, string[]> = {
   STORE_REQUISITION_VOUCHER: ["approve", "authorize", "cancel", "reject"],
   ADVANCE_PAYMENT: ["approve", "authorize", "pay"],
   WORK_ORDER: ["approve"],
-  DRIVER: ["self", "region", "all_regions"],
+  DRIVER: ["driver_status_update", "self", "region", "all_regions"],
   DRIVER_BONUS: ["self", "region", "all_regions"],
   CONTACT: ["self", "region", "all_regions"],
   MECHANIC: ["self", "region", "all_regions"],
   ROUTE: ["self", "region", "all_regions"],
   TRANSPORTER: ["self", "region", "all_regions"],
-  VEHICLE: ["self", "region", "all_regions"],
+  VEHICLE: ["vehicle_status_update", "self", "region", "all_regions"],
   WORKSHOP: ["self", "region", "all_regions"],
 };
 

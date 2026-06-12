@@ -16,17 +16,30 @@
         value-key="value"
         :display_value="currentStatusLabel"
         :validation="{ required }"
-        :on-change="onStatusChange"
+        :on_change="onStatusChange"
       />
 
       <!-- Follow-up Note (only when custom) -->
       <TextareaInput
+        :show_validation_status="false"
         v-if="currentStatus === 'custom'"
         name="followUp"
         label="Set note"
         :attributes="{
           rows: 4,
           placeholder: 'Enter follow-up note...',
+        }"
+        :validation="{ required }"
+      />
+
+      <!-- Cancellation Reason (only when cancelled) -->
+      <TextareaInput
+        v-if="currentStatus === 'cancelled'"
+        name="cancellationReason"
+        label="Cancellation Reason"
+        :attributes="{
+          rows: 4,
+          placeholder: 'Enter reason for cancellation...',
         }"
         :validation="{ required }"
       />
@@ -81,7 +94,7 @@ import SelectInput from "@/components/form/SelectInput.vue";
 import TextareaInput from "@/components/form/TextareaInput.vue";
 import SubmitButton from "@/components/form/SubmitButton.vue";
 import DateInput from "@/components/form/DateInput.vue";
-import { dateLessThanOrEqalToToday, required } from "@/utils/validations";
+import { required } from "@/utils/validations";
 import {
   update_shipment_status,
   add_follow_up,
@@ -113,6 +126,7 @@ const isSubmitting = ref(false);
 const formValues = computed(() => ({
   status: shipment.value.status ?? "",
   followUp: "",
+  cancellationReason: "",
   statusTime: "",
   time: "",
 }));
@@ -262,6 +276,9 @@ async function handleFormSubmit(values: any) {
           ? `${values.statusTime}T${values.time}:00`
           : values.statusTime;
         statusData.statusTime = combined;
+      }
+      if (values.status === "cancelled" && values.cancellationReason) {
+        statusData.cancellationReason = values.cancellationReason;
       }
 
       const res = await update_shipment_status(id, statusData);
