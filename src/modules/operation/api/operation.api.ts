@@ -558,6 +558,15 @@ export function fetch_shipment_by_id(id: string) {
   return shipment_api.addAuthenticationHeader().get(`/${id}`);
 }
 
+export function fetch_all_receivable_shipments_unpaginated(
+  params?: Record<string, any>,
+  config?: any,
+) {
+  return shipment_api
+    .addAuthenticationHeader()
+    .get("/receivableShipment", { params, ...config });
+}
+
 export function fetch_all_sub_contracts_unpaginated(
   params?: Record<string, any>,
   config?: any,

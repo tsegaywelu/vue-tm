@@ -197,8 +197,8 @@ import DateRangePicker from "@/components/common/DateRangePicker.vue";
 import DatePicker from "@/components/DatePicker.vue";
 import BottomSheet from "@/components/BottomSheet.vue";
 import { icons } from "@/utils/icons";
-import * as XLSX from "xlsx";
 import { openModal } from "@customizer/modal-x";
+import ReceivableDownloadToast from "../../components/finance/ReceivableDownloadToast.vue";
 import {
   generate_invoice,
   update_transaction_status,
@@ -338,64 +338,11 @@ const handleAction = async ({ row, action }: any) => {
 };
 
 const handleExport = (type: "raw" | "full" | "all") => {
-  const data = selectedRows.value.length > 0 ? selectedRows.value : (tableRef.value?.response || []);
-  if (data.length === 0) {
-    toast.warning("No data to export");
-    return;
-  }
-
-  let filteredData = data;
-  if (type === "raw") {
-    filteredData = data.filter(
-      (s: any) =>
-        s.productType === "IN_BOUND" || s.productType === "SITE_TRANSFER",
-    );
-  } else if (type === "full") {
-    filteredData = data.filter((s: any) => s.productType === "OUT_BOUND");
-  }
-
-  if (filteredData.length === 0) {
-    toast.warning(
-      type === "raw" ? "No Raw Material data found to export"
-      : type === "full" ? "No Full Product data found to export"
-      : "No data found to export",
-    );
-    return;
-  }
-
-  const columns = [
-    "Date of Request",
-    "Supplier Name",
-    "Origin",
-    "Destination",
-    "Plate Number",
-    "Driver Name",
-    "Issue Voucher",
-    "Receive Voucher",
-    "Document Uploaded",
-    "Product Type",
-  ];
-
-  const formattedData = filteredData.map((s: any) => ({
-    "Date of Request": s.dispatchDate?.split("T")[0] || "N/A",
-    "Supplier Name": s.order?.agent?.name || s.agent?.name || "N/A",
-    Origin: s.route?.origin || "N/A",
-    Destination: s.route?.destination || "N/A",
-    "Plate Number": `${s.vehicle?.plateNumber || "N/A"}/${s.vehicle?.trailerPlate || "N/A"}`,
-    "Driver Name": `${s.driver?.firstName || ""} ${s.driver?.lastName || ""}`.trim() || "N/A",
-    "Issue Voucher": s.shipperIssueVoucher || "N/A",
-    "Receive Voucher": s.agentReceiveVoucher || "N/A",
-    "Document Uploaded": s.areDocumentsUploaded ? "Yes" : "No",
-    "Product Type": s.productType || "N/A",
-  }));
-
-  const worksheet = XLSX.utils.json_to_sheet(formattedData);
-  worksheet["!cols"] = columns.map((h) => ({ wch: Math.max(h.length + 4, 20) }));
-  const workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, worksheet, "Receivables");
-  XLSX.writeFile(
-    workbook,
-    `Receivable_${type === "raw" ? "Raw_Material" : type === "full" ? "Full_Product" : "All"}_${new Date().toISOString().split("T")[0]}.xlsx`,
+  const typeLabel = type === "raw" ? "Raw Material" : type === "full" ? "Full Product" : "All";
+  const raw = tableRef.value?.activeParams ?? {};
+  const filters = Object.fromEntries(
+    Object.entries(raw).filter(([, v]) => v !== "" && v !== null && v !== undefined),
   );
+  toast.addCustomToast(ReceivableDownloadToast, { type: typeLabel, filters });
 };
 </script>

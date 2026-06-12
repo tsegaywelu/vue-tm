@@ -207,7 +207,7 @@ const selectionModel = computed({
   set: (val) => emit("update:selection", val),
 });
 
-const { response, fullResponse, refetch, isLoading } = usePagination<any>({
+const { response, fullResponse, refetch, isLoading, debouncedSearch } = usePagination<any>({
   id: "receivable-shipment-list",
   url: "/shipment/receivableShipment",
   params: (state) => ({
@@ -220,6 +220,13 @@ const { response, fullResponse, refetch, isLoading } = usePagination<any>({
     q: undefined,
   }),
 });
+
+const activeParams = computed(() => ({
+  ...(debouncedSearch.value ? { [selectedSearchField.value]: debouncedSearch.value } : {}),
+  ...activeFilters.value,
+  ...(props.dateRange?.start ? { dispatchStartDate: props.dateRange.start } : {}),
+  ...(props.dateRange?.end ? { dispatchEndDate: props.dateRange.end } : {}),
+}));
 
 watch(
   () => props.dateRange,
@@ -266,5 +273,5 @@ const handleAction = (row: any, action: string) => {
   emit("action", { row, action });
 };
 
-defineExpose({ refetch, summaryItems, response });
+defineExpose({ refetch, summaryItems, response, activeParams });
 </script>
