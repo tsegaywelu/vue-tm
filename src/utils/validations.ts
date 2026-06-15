@@ -363,6 +363,8 @@ export const validateAll = (
 ): string | undefined => {
   if (!funs || Object.keys(funs).length === 0) return undefined;
 
+  const trimmed = typeof value === "string" ? value.trim() : value;
+
   // Prioritize required-like validations
   const priorityKeys = [
     "required",
@@ -374,7 +376,7 @@ export const validateAll = (
 
   for (const key of priorityKeys) {
     if (funs[key] && typeof funs[key] === "function") {
-      const result = funs[key](value, undefined, form);
+      const result = funs[key](trimmed, undefined, form);
       const [isValid, error] = Array.isArray(result)
         ? result
         : [!result, result];
@@ -385,10 +387,10 @@ export const validateAll = (
   // Check if value is truly empty (null, undefined, or empty string)
   // We keep 0 and false as non-empty values.
   const isEmpty =
-    value === undefined ||
-    value === null ||
-    value === "" ||
-    (Array.isArray(value) && value.length === 0);
+    trimmed === undefined ||
+    trimmed === null ||
+    trimmed === "" ||
+    (Array.isArray(trimmed) && trimmed.length === 0);
 
   // If the value is empty and we passed all priority validations, skip further validations
   if (isEmpty) {
@@ -399,7 +401,7 @@ export const validateAll = (
   for (const [key, fun] of Object.entries(funs)) {
     if (priorityKeys.includes(key) || typeof fun !== "function") continue;
 
-    const result = (fun as Function)(value, undefined, form);
+    const result = (fun as Function)(trimmed, undefined, form);
     const [isValid, error] = Array.isArray(result) ? result : [!result, result];
     if (!isValid) return error;
   }

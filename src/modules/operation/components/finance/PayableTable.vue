@@ -164,7 +164,7 @@
               v-permission="'ADVANCE_PAYMENT:pay'"
               v-if="canAction(row, 'pay')"
               class="text-green-600"
-              label="Pay"
+              label="Settled"
               @click.stop="
                 handleAction(row, 'pay');
                 close();

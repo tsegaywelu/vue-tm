@@ -66,6 +66,24 @@ function hashForCompare(val: any): string {
 }
 
 // Use provided instance or create local one
+/** Recursively trim string values */
+function trimValues(val: any): any {
+  try {
+    if (typeof val === "string") return val.trim();
+    if (Array.isArray(val)) {
+      return val.map(item => typeof item === "string" ? item.trim() : trimValues(item));
+    }
+    if (val && typeof val === "object" && !(val instanceof File) && !(val instanceof Date)) {
+      const result: Record<string, any> = {};
+      for (const key of Object.keys(val)) result[key] = trimValues(val[key]);
+      return result;
+    }
+    return val;
+  } catch {
+    return val;
+  }
+}
+
 /** Recursively strip `fakeId` keys from submitted values */
 function stripFakeIds(val: any): any {
   if (Array.isArray(val)) return val.filter(Boolean).map(stripFakeIds);
@@ -117,7 +135,7 @@ const localForm = !props.instance
       defaultValues: props.values,
       onSubmit: async ({ value }) => {
         const cleanValue = sanitizePayload(
-          stripFakeIds(value),
+          stripFakeIds(trimValues(value)),
           props.sanitize_bypass,
         );
         if (props.onSubmit) {

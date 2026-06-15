@@ -5,7 +5,7 @@
     :selector="(state: any) => [state.canSubmit, state.isSubmitting]"
   >
     <template #default="[canSubmit, isSubmitting]">
-      <Button :type="type" :form="formId" :size="size" :class_name="class_name">
+      <Button :disabled="isSubmitting || loading" :type="type" :form="formId" :size="size" :class_name="class_name">
         <slot />
         <span
           v-if="isSubmitting || loading"
