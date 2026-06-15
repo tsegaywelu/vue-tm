@@ -164,7 +164,7 @@
               v-permission="'ADVANCE_PAYMENT:pay'"
               v-if="canAction(row, 'pay')"
               class="text-green-600"
-              label="Settled"
+              :label="row.payableType === 'vehicleLeaseAgreement' || row.payableType === 'vehicleLeaseAgreements' ? 'Settle' : 'Pay'"
               @click.stop="
                 handleAction(row, 'pay');
                 close();

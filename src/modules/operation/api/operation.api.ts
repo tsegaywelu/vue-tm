@@ -156,6 +156,11 @@ export function update_prepayment_status(id: string, status: ApprovalAction) {
 }
 
 export function update_lease_status(id: string, status: ApprovalAction) {
+  if (status === "pay") {
+    return lease_api
+      .addAuthenticationHeader()
+      .patch(`/${id}/settlements/settle`, { id });
+  }
   return lease_api
     .addAuthenticationHeader()
     .patch(`/${id}/settlements/authorize`, { id, status });
