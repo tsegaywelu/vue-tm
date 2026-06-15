@@ -12,6 +12,12 @@
       label="Shipper"
       size="xs"
       name="shipper"
+      :params="
+        (state: any) => ({
+          name: state.search,
+          q: undefined,
+        })
+      "
       :attributes="{ placeholder: 'Select Shipper' }"
       :initial_labels="fieldLabels['shipper']"
       @select="(opt: any) => captureLabel('shipper', opt, '_id', 'name')"
