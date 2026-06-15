@@ -6,16 +6,12 @@
     @change="handleChange"
     class="[&_.input-focus]:bg-grey-25 flex-1 flex max-h-16 h-16 min-h-16 *:w-[220px] *:shrink-0 px-2 gap-2 overflow-auto"
   >
-    <SelectInput
+    <ShipperInput
       searchable
       :show_validation_status="false"
       label="Shipper"
-      parent_class_name=""
       size="xs"
       name="shipper"
-      value_key="_id"
-      label_key="name"
-      :url="`/shipper`"
       :attributes="{ placeholder: 'Select Shipper' }"
       :initial_labels="fieldLabels['shipper']"
       @select="(opt: any) => captureLabel('shipper', opt, '_id', 'name')"
@@ -42,6 +38,7 @@ import SelectInput from "@/components/form/SelectInput.vue";
 import Form from "@/components/form/Form.vue";
 import { useTableLastParams, useTableLastLabels } from "@/composables/usePagination";
 import { useTablePaginationStore } from "@/store/tablePaginationStore";
+import ShipperInput from "@/components/common/inputs/ShipperInput.vue";
 
 const props = defineProps<{
   paginationId?: string;
