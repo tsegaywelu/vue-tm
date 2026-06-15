@@ -28,7 +28,7 @@
         <div class="flex items-center gap-1 flex-1 min-w-0 overflow-hidden">
           <div
             v-if="multiple && isValidSelection(modelValue)"
-            class="flex items-center gap-1 overflow-x-auto no-scrollbar shrink-0 max-w-[50%]"
+            class="flex items-center gap-1 overflow-x-auto no-scrollbar shrink-0 max-w-[50%] max-h-10"
           >
             <span
               v-for="val in modelValue"
@@ -150,7 +150,7 @@
               :class="[
                 isSelected(option, modelValue)
                   ? 'border-transparent'
-                  : 'border-gray-300',
+                  : 'border-gray-300 dark:border-gray-400',
               ]"
               class="size-4 grid place-items-center border rounded"
             >
@@ -207,7 +207,7 @@
               :class="[
                 isSelected(option, modelValue)
                   ? 'border-transparent'
-                  : 'border-gray-300',
+                  : 'border-gray-300 dark:border-gray-400',
               ]"
               class="size-5 grid place-items-center border rounded"
             >
