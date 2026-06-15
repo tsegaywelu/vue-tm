@@ -24,6 +24,8 @@
     <OriginInput
       name="routeOrigin"
       multiple
+      label_key="origin"
+      value_key="origin"
       size="xs"
       :initial_labels="fieldLabels['routeOrigin']"
       @select="(opt: any) => captureLabel('routeOrigin', opt, 'name', (c: any) => c.code || c.name)"
@@ -31,6 +33,8 @@
     <DestinationInput
       name="routeDestination"
       multiple
+      label_key="destination"
+      value_key="destination"
       size="xs"
       :initial_labels="fieldLabels['routeDestination']"
       @select="(opt: any) => captureLabel('routeDestination', opt, 'name', (c: any) => c.code || c.name)"

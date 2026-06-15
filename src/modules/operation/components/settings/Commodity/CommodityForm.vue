@@ -40,7 +40,6 @@
 <script setup lang="ts">
 import Form from "@/components/form/Form.vue";
 import Input from "@/components/form/Input.vue";
-import SelectInput from "@/components/form/SelectInput.vue";
 import Colapsable from "@/components/common/Colapsable.vue";
 import { required } from "@/utils/validations";
 import ShipperInput from "@/components/common/inputs/ShipperInput.vue";
