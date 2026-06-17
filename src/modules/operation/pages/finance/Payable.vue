@@ -8,6 +8,18 @@
         end-key="endDate"
       />
 
+      <Button
+        variant="secondary"
+        :title="selectedPayables.length === 0 ? 'Select at least one payable to print' : 'Print selected payables'"
+        @click="handlePrint"
+      >
+        <template #leading>
+          <i class="mdi mdi-printer"></i>
+        </template>
+        Print Selected
+        <span v-if="selectedPayables.length > 0" class="ml-2 text-xs font-semibold">({{ selectedPayables.length }})</span>
+      </Button>
+
       <Button variant="secondary" @click="handleExport">
         <template #leading>
           <i v-html="icons.excell"></i>
@@ -18,6 +30,13 @@
   </Teleport>
 
   <Teleport defer to="#page-title-actions">
+    <button
+      class="sm:hidden size-8 rounded-xl flex items-center justify-center text-faint-text hover:bg-surface-hover transition-colors"
+      @click="handlePrint"
+      :title="selectedPayables.length === 0 ? 'Select at least one payable to print' : 'Print selected payables'"
+    >
+      <i class="mdi mdi-printer"></i>
+    </button>
     <button
       class="sm:hidden size-8 rounded-xl flex items-center justify-center text-faint-text hover:bg-surface-hover transition-colors"
       @click="handleExport"
@@ -76,6 +95,7 @@
     ref="tableRef"
     :filters="{ startDate: dateRange.start, endDate: dateRange.end }"
     @action="handlePayableAction"
+    @selection-change="selectedPayables = $event"
   />
 </template>
 
@@ -85,6 +105,7 @@ import { useRouter } from "vue-router";
 import { useQuery, useMutation } from "@tanstack/vue-query";
 import PayableTable from "../../components/finance/PayableTable.vue";
 import { formatType, getPaidTo } from "../../components/finance/payableUtils";
+import { printPayables } from "../../utils/printPayable";
 import StatsCards from "@/components/common/StatsCards.vue";
 import {
   fetch_advance_status_count,
@@ -114,11 +135,38 @@ const toast = useToastStore();
 const authStore = useAuthStore();
 const tableRef = ref();
 const showFilterSheet = ref(false);
+const selectedPayables = ref<any[]>([]);
 
 const dateRange = ref({
   start: "",
   end: "",
 });
+
+watch(dateRange, () => {
+  // Clear selections when date range changes
+  selectedPayables.value = [];
+}, { deep: true });
+
+const handlePrint = () => {
+  console.log("Print button clicked, selected payables:", selectedPayables.value.length);
+
+  if (selectedPayables.value.length === 0) {
+    toast.error("Please select at least one payable to print. Use the checkboxes to select rows.");
+    return;
+  }
+
+  try {
+    console.log("Calling printPayables with", selectedPayables.value.length, "items");
+    printPayables(selectedPayables.value, authStore.current_user, {
+      groupByType: true,
+    });
+    console.log("printPayables called successfully");
+    toast.success(`Printing ${selectedPayables.value.length} payable(s)...`);
+  } catch (error) {
+    console.error("Print error:", error);
+    toast.error("Error opening print dialog. Please try again.");
+  }
+};
 
 const handleExport = () => {
   const rows = tableRef.value?.response || [];

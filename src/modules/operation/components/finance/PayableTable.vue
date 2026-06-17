@@ -22,13 +22,17 @@
     </div>
   </BottomSheet>
 
-  <Table
+  <CheckTable
+    :key="`payable-${activeFilters.select}-${props.filters?.startDate}`"
     id="payable-list"
+    v-model="selectedPayables"
     :columns="columns"
     :rows="response"
+    :loading="isLoading || isFetching"
     v-model:search_value="searchTerm"
     :search_placeholder="dynamicSearchPlaceholder"
     :on_sm_screen_column_span="{ advanceNumber: 2, shipmentCode: 2, status: 2, payableType: 3, paidTo: 3, route: 3, totalFuelAdvances: 3, totalPerDiemExpenses: 3, totalOtherExpenses: 3, transporterPrice: 3, purchaseCost: 3, total: 3 }"
+    @selection-change="handleSelectionChange"
   >
     <template #search-prefix>
       <div
@@ -195,12 +199,12 @@
         </Dropdown>
       </div>
     </template>
-  </Table>
+  </CheckTable>
 </template>
 
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import Table from "@/components/common/Table.vue";
+import CheckTable from "@/components/common/CheckTable.vue";
 import Dropdown from "@/components/common/Dropdown.vue";
 import DropDownItem from "@/components/common/DropDownItem.vue";
 import Status from "@/components/common/Status.vue";
@@ -226,11 +230,18 @@ const isoTime = (val: string | Date) => {
   return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
 };
 
-const emit = defineEmits(["action"]);
+const emit = defineEmits(["action", "selection-change"]);
 
 const props = defineProps<{
   filters?: Record<string, any>;
 }>();
+
+const selectedPayables = ref<any[]>([]);
+
+const handleSelectionChange = (selected: any[]) => {
+  selectedPayables.value = selected;
+  emit("selection-change", selected);
+};
 
 const columns: TableColumn<any>[] = [
   { key: "advanceNumber", label: "Code", field: "advanceNumber" },
@@ -288,7 +299,7 @@ const dynamicSearchPlaceholder = computed(() => {
 
 const activeFilters = ref({ select: "all" });
 
-const { response, refetch, fullResponse } = usePagination<any>({
+const { response, refetch, fullResponse, isLoading, isFetching } = usePagination<any>({
   id: "payable-list",
   url: "/advance-payment/allPayables",
   params: computed(() => {
@@ -303,6 +314,9 @@ const { response, refetch, fullResponse } = usePagination<any>({
 
 const handleFilterChange = (newFilters: any) => {
   activeFilters.value = { ...newFilters };
+  // Clear selections when filters change
+  selectedPayables.value = [];
+  emit("selection-change", []);
 };
 
 const canAction = (row: any, action: string) => {
@@ -368,5 +382,5 @@ const typeClasses: Record<string, string> = {
   purchaseOrder: "bg-indigo-50 text-indigo-600",
 };
 
-defineExpose({ refetch, fullResponse, response });
+defineExpose({ refetch, fullResponse, response, selectedPayables, isLoading, isFetching });
 </script>
