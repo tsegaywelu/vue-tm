@@ -99,15 +99,16 @@
             :display_value="props.labels?.maker"
             :attributes="{ placeholder: 'Select maker' }"
           />
-          <RegionInput
+          <SelectInput
+            searchable
             name="region"
             label="Region"
-            :params="state => ({q: undefined, limit: undefined, 'name[regexAny]': state.search})"
-            url="/region/myRegions"
+            url="/region"
             label_key="name"
+            :params="state => ({q: undefined, limit: undefined, 'name[regexAny]': state.search})"
             value_key="_id"
-            :attributes="{ placeholder: 'Select region' }"
             :display_value="props.labels?.region"
+            :attributes="{ placeholder: 'Select region' }"
           />
           <DateInput
             name="lastServiceDate"
@@ -421,7 +422,6 @@ import Form from "@/components/form/Form.vue";
 import Input from "@/components/form/Input.vue";
 import SelectInput from "@/components/form/SelectInput.vue";
 import VehicleTypeInput from "@/components/common/inputs/VehicleTypeInput.vue";
-import RegionInput from "@/components/common/inputs/RegionInput.vue";
 import DateInput from "@/components/form/DateInput.vue";
 import ToggleInput from "@/components/form/ToggleInput.vue";
 import TextareaInput from "@/components/form/TextareaInput.vue";

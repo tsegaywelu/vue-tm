@@ -64,7 +64,15 @@
           <SelectInput
             name="region"
             label="Region"
-            url="/region/myRegions"
+            url="/region"
+            :params="
+      (state) => ({
+        q: undefined,
+        limit: undefined,
+        'name[regexAny]': state.search,
+      })
+    "
+    searchable
             label_key="name"
             value_key="_id"
             :attributes="{ placeholder: 'Select Region' }"

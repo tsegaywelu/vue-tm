@@ -86,14 +86,10 @@
               <Input name="dateOfBirth" label="Date of Birth" type="date" />
             </div>
             <div>
-              <SelectInput
-                :params="state => ({q: undefined, limit: undefined, 'name[regexAny]': state.search})"
+              <RegionInput
                 searchable
                 name="region"
                 label="Region"
-                url="/region/myRegions"
-                label_key="name"
-                value_key="_id"
                 :attributes="{ placeholder: 'Select region' }"
               />
             </div>
