@@ -328,10 +328,9 @@
 
                 <!-- Region field: only for Path B (existing non-employee driver) -->
                 <div v-if="isPathB" class="col-span-2">
-                  <SelectInput
+                  <RegionInput
                     name="region"
                     label="Region"
-                    url="/region/myRegions"
                     label_key="name"
                     value_key="_id"
                     :attributes="{ placeholder: 'Select region' }"
@@ -392,6 +391,7 @@ import {
   link_driver_to_contact,
 } from "../../api/operation.api";
 import { useMutation, useQuery } from "@tanstack/vue-query";
+import RegionInput from "@/components/common/inputs/RegionInput.vue";
 
 const props = defineProps<{ data?: { contact?: any } }>();
 const contact = computed(() => props.data?.contact);

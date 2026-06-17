@@ -6,6 +6,8 @@
     :label="label || 'Region'"
     value_key="_id"
     label_key="name"
+                :params="state => ({q: undefined, limit: undefined, 'name[regexAny]': state.search})"
+
     url="/region"
     :attributes="{
       placeholder: 'Select Region',
