@@ -7,6 +7,19 @@ export function printPayables(
 ) {
   if (!payables || payables.length === 0) return;
 
+  // Escape dynamic values before interpolating into the print HTML. Payable
+  // rows contain arbitrary user data (names, routes, codes); an unescaped "<"
+  // or a literal "</script>" can produce malformed HTML where window.onload
+  // never fires, leaving the print tab stuck on a spinner in production.
+  const esc = (value: any): string => {
+    return String(value ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  };
+
   const formatDriverName = (driver: any) => {
     if (!driver) return "N/A";
     return (
@@ -126,8 +139,8 @@ export function printPayables(
 
     return `
       <div>
-        <h3 class="group-header">${groupName}</h3>
-        ${description ? `<p style="font-size: 9px; color: #666; margin: 0 0 3px 0; font-style: italic;">${description}</p>` : ""}
+        <h3 class="group-header">${esc(groupName)}</h3>
+        ${description ? `<p style="font-size: 9px; color: #666; margin: 0 0 3px 0; font-style: italic;">${esc(description)}</p>` : ""}
         <table class="summary-table">
           <thead>
             <tr style="background-color: #f8f9fc;">
@@ -147,16 +160,16 @@ export function printPayables(
               .map(
                 (p) => `
               <tr>
-                <td>${p.advanceNumber || p.shipmentCode || "-"}</td>
-                <td>${formatDate(p.createdAt)}</td>
-                <td>${getPaidTo(p)}</td>
-                <td>${p.route?.name || "-"}</td>
+                <td>${esc(p.advanceNumber || p.shipmentCode || "-")}</td>
+                <td>${esc(formatDate(p.createdAt))}</td>
+                <td>${esc(getPaidTo(p))}</td>
+                <td>${esc(p.route?.name || "-")}</td>
                 <td style="text-align: right;">${currencyFormatter(p.totalFuelAdvances || 0)}</td>
                 <td style="text-align: right;">${currencyFormatter(p.totalPerDiemExpenses || 0)}</td>
                 <td style="text-align: right;">${currencyFormatter(p.totalOtherExpenses || 0)}</td>
                 <td style="text-align: right; font-weight: 600;">${currencyFormatter(p.total || 0)}</td>
                 <td style="text-align: center;">
-                  <span style="padding: 1px 4px; border-radius: 2px; background: #ecfdf3; color: #027a48; font-size: 8px; font-weight: 700;">${(p.status || p.payableStatus || "N/A").replace(/_/g, " ")}</span>
+                  <span style="padding: 1px 4px; border-radius: 2px; background: #ecfdf3; color: #027a48; font-size: 8px; font-weight: 700;">${esc((p.status || p.payableStatus || "N/A").replace(/_/g, " "))}</span>
                 </td>
               </tr>
             `,
@@ -327,7 +340,7 @@ export function printPayables(
 <body>
   <div class="company-header">
     <div class="company-names">
-      <h1>${currentUser?.carrier?.name || currentUser?.user?.carrier?.name || "RaAz Transport"}</h1>
+      <h1>${esc(currentUser?.carrier?.name || currentUser?.user?.carrier?.name || "RaAz Transport")}</h1>
     </div>
   </div>
 
@@ -348,62 +361,18 @@ export function printPayables(
   <div class="footer-meta">
     <p>System Generated Document | Report Generated: ${new Date().toISOString()}</p>
   </div>
+
+  <script>
+    window.onload = function() {
+      setTimeout(function() { window.print(); }, 500);
+    };
+  <\/script>
 </body>
 </html>`;
 
-  try {
-    // Use a hidden iframe instead of window.open(). A blank window populated
-    // via document.write() can stay in a perpetual "loading" (spinner) state on
-    // production, and inline <script> print triggers are blocked by CSP. The
-    // iframe approach avoids popup blockers and triggers print from the parent.
-    const iframe = document.createElement("iframe");
-    iframe.setAttribute("aria-hidden", "true");
-    iframe.style.position = "fixed";
-    iframe.style.right = "0";
-    iframe.style.bottom = "0";
-    iframe.style.width = "0";
-    iframe.style.height = "0";
-    iframe.style.border = "0";
-    document.body.appendChild(iframe);
-
-    const frameWindow = iframe.contentWindow;
-    if (!frameWindow) {
-      iframe.remove();
-      console.error("Could not access print iframe document.");
-      return;
-    }
-
-    let cleanedUp = false;
-    const cleanup = () => {
-      if (cleanedUp) return;
-      cleanedUp = true;
-      // Delay removal so the print job can finish reading the document.
-      setTimeout(() => iframe.remove(), 1000);
-    };
-
-    const triggerPrint = () => {
-      try {
-        frameWindow.focus();
-        frameWindow.onafterprint = cleanup;
-        frameWindow.print();
-        // Fallback cleanup in case onafterprint never fires.
-        setTimeout(cleanup, 60000);
-      } catch (err) {
-        console.error("Error triggering print:", err);
-        cleanup();
-      }
-    };
-
-    frameWindow.document.open();
-    frameWindow.document.write(content);
-    frameWindow.document.close();
-
-    if (frameWindow.document.readyState === "complete") {
-      setTimeout(triggerPrint, 200);
-    } else {
-      iframe.onload = () => setTimeout(triggerPrint, 200);
-    }
-  } catch (error) {
-    console.error("Error printing payables:", error);
+  const printWindow = window.open("", "_blank");
+  if (printWindow) {
+    printWindow.document.write(content);
+    printWindow.document.close();
   }
 }
