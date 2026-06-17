@@ -1,4 +1,4 @@
-import { currencyFormatter, dateFormatter } from "@/utils/utils";
+import { currencyFormatter } from "@/utils/utils";
 
 export function printPayables(
   payables: any[],
@@ -6,12 +6,6 @@ export function printPayables(
   options?: { groupByType?: boolean }
 ) {
   if (!payables || payables.length === 0) return;
-
-  const getSafe = (obj: any, path: string, defaultValue = "N/A") => {
-    return path
-      .split(".")
-      .reduce((o, p) => (o && o[p] !== undefined ? o[p] : defaultValue), obj);
-  };
 
   const formatDriverName = (driver: any) => {
     if (!driver) return "N/A";
@@ -78,7 +72,7 @@ export function printPayables(
 
     const uniqueTypes = new Set(payables.map(p => normalizeType(p.payableType)));
     if (uniqueTypes.size === 1) {
-      const type = uniqueTypes.values().next().value;
+      const type = uniqueTypes.values().next().value || "";
       const titleMap: Record<string, string> = {
         advancePayment: "Driver Advance Settlement Report",
         vehicleLeaseAgreement: "Vehicle Lease Payment Report",
@@ -129,7 +123,6 @@ export function printPayables(
   const generateGroupHTML = (groupName: string, items: any[]) => {
     const totals = calculateTotals(items);
     const description = getGroupDescription(items[0]?.payableType || "");
-    const normalizedType = normalizeType(items[0]?.payableType || "");
 
     return `
       <div>
@@ -355,31 +348,62 @@ export function printPayables(
   <div class="footer-meta">
     <p>System Generated Document | Report Generated: ${new Date().toISOString()}</p>
   </div>
-
-  <script>
-    if (window.print) {
-      setTimeout(window.print, 200);
-    }
-  </script>
 </body>
 </html>`;
 
   try {
-    const printWindow = window.open("", "_blank");
-    if (!printWindow) {
-      console.error("Print window could not be opened. Check if popups are blocked.");
-      alert("Please allow popups for this website to print documents.");
+    // Use a hidden iframe instead of window.open(). A blank window populated
+    // via document.write() can stay in a perpetual "loading" (spinner) state on
+    // production, and inline <script> print triggers are blocked by CSP. The
+    // iframe approach avoids popup blockers and triggers print from the parent.
+    const iframe = document.createElement("iframe");
+    iframe.setAttribute("aria-hidden", "true");
+    iframe.style.position = "fixed";
+    iframe.style.right = "0";
+    iframe.style.bottom = "0";
+    iframe.style.width = "0";
+    iframe.style.height = "0";
+    iframe.style.border = "0";
+    document.body.appendChild(iframe);
+
+    const frameWindow = iframe.contentWindow;
+    if (!frameWindow) {
+      iframe.remove();
+      console.error("Could not access print iframe document.");
       return;
     }
 
-    printWindow.document.open();
-    printWindow.document.write(content);
-    printWindow.document.close();
+    let cleanedUp = false;
+    const cleanup = () => {
+      if (cleanedUp) return;
+      cleanedUp = true;
+      // Delay removal so the print job can finish reading the document.
+      setTimeout(() => iframe.remove(), 1000);
+    };
 
-    // Ensure print dialog opens after a short delay
-    printWindow.focus();
+    const triggerPrint = () => {
+      try {
+        frameWindow.focus();
+        frameWindow.onafterprint = cleanup;
+        frameWindow.print();
+        // Fallback cleanup in case onafterprint never fires.
+        setTimeout(cleanup, 60000);
+      } catch (err) {
+        console.error("Error triggering print:", err);
+        cleanup();
+      }
+    };
+
+    frameWindow.document.open();
+    frameWindow.document.write(content);
+    frameWindow.document.close();
+
+    if (frameWindow.document.readyState === "complete") {
+      setTimeout(triggerPrint, 200);
+    } else {
+      iframe.onload = () => setTimeout(triggerPrint, 200);
+    }
   } catch (error) {
-    console.error("Error opening print window:", error);
-    alert("Error opening print dialog: " + (error instanceof Error ? error.message : String(error)));
+    console.error("Error printing payables:", error);
   }
 }
