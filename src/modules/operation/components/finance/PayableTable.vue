@@ -302,14 +302,14 @@ const activeFilters = ref({ select: "all" });
 const { response, refetch, fullResponse, isLoading, isFetching } = usePagination<any>({
   id: "payable-list",
   url: "/advance-payment/allPayables",
-  params: computed(() => {
+  params: (state) => {
     const params: any = { ...activeFilters.value, ...props.filters };
-    if (searchTerm.value) {
-      params[`${selectedSearchField.value}`] = searchTerm.value;
+    if (state.search) {
+      params[`${selectedSearchField.value}`] = state.search;
       params.q = undefined;
     }
     return params;
-  }),
+  },
 });
 
 const handleFilterChange = (newFilters: any) => {
