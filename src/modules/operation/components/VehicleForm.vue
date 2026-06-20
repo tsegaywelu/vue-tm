@@ -235,6 +235,7 @@
 
         <!-- Lease Details Section -->
         <component
+          v-if="props.mode !== 'edit'"
           :is="form.Subscribe"
           :selector="(state: any) => [state.values.ownership]"
           v-slot="[ownership]"

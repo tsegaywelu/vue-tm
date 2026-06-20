@@ -3,8 +3,9 @@
     formId="add-driver-form"
     :initial-values="initialValues"
     :onSubmit="handleSubmit"
+    :enable_unsaved_guard="guardEnabled"
   >
-    <template #actions="{ form }">
+    <template #actions>
       <Button variant="secondary" size="md" @click="$router.back()">
         Cancel
       </Button>
@@ -16,6 +17,7 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from "vue";
 import { useRouter } from "vue-router";
 import Button from "@/components/common/Button.vue";
 import SubmitButton from "@/components/form/SubmitButton.vue";
@@ -26,6 +28,7 @@ import { useToastStore } from "@/store/toastStore";
 
 const router = useRouter();
 const toast = useToastStore();
+const guardEnabled = ref(true);
 
 const initialValues = {
   isEmployed: true,
@@ -43,6 +46,7 @@ const mutation = useMutation({
   onSuccess: (res: any) => {
     if (res.success || res.status === 200 || res.status === 201) {
       toast.success("Driver registered successfully");
+      guardEnabled.value = false;
       router.push("/drivers");
     } else {
       toast.error(res.error || "Failed to register driver");
