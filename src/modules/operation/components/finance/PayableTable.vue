@@ -353,11 +353,12 @@ const { response, refetch, fullResponse, isLoading, isFetching } = usePagination
   id: "payable-list",
   url: "/advance-payment/allPayables",
   params: (state) => {
-    return {
-      ...activeFilters.value, ...props.filters,
-      [selectedSearchField.value]: state.search,
-      q: undefined
-    };
+    const params: any = { ...activeFilters.value, ...props.filters };
+    if (state.search) {
+      params[`${selectedSearchField.value}`] = state.search;
+      params.q = undefined;
+    }
+    return params;
   },
 });
 

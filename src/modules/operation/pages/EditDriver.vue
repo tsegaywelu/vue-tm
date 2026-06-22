@@ -7,6 +7,7 @@
       formId="edit-driver-form"
       :initial-values="mappedValues"
       :onSubmit="handleSubmit"
+      :enable_unsaved_guard="guardEnabled"
     >
       <template #actions="{ form }">
         <Button variant="secondary" size="md" @click="$router.back()">
@@ -21,7 +22,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import Button from "@/components/common/Button.vue";
 import SubmitButton from "@/components/form/SubmitButton.vue";
@@ -34,6 +35,7 @@ const route = useRoute();
 const router = useRouter();
 const toast = useToastStore();
 const driverId = route.params.id as string;
+const guardEnabled = ref(true);
 
 const { data: driverResponse, isLoading } = useQuery({
   queryKey: ["driver", driverId],
@@ -70,6 +72,7 @@ const mutation = useMutation({
   onSuccess: (res: any) => {
     if (res.success || res.status === 200 || res.status === 201) {
       toast.success("Driver updated successfully");
+      guardEnabled.value = false;
       router.push("/drivers");
     } else {
       toast.error(res.error || "Failed to update driver");
@@ -86,7 +89,7 @@ const mutation = useMutation({
 const handleSubmit = async (values: any) => {
   const {
     _id, name, ratingCount, hasUserAccount, initialSettlementBalance,
-    regionHistory, createdAt, updatedAt, __v,
+    regionHistory, createdAt, updatedAt, __v, contact,
     ...rest
   } = values;
 
@@ -101,6 +104,10 @@ const handleSubmit = async (values: any) => {
     employmentEndDate: toDate(rest.employmentEndDate),
   };
 
-  await mutation.mutateAsync(payload);
+  const cleanPayload = Object.fromEntries(
+    Object.entries(payload).filter(([_, v]) => v !== null && v !== undefined),
+  );
+
+  await mutation.mutateAsync(cleanPayload);
 };
 </script>

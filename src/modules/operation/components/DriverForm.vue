@@ -1,5 +1,5 @@
 <template>
-  <Form :id="formId" :values="normalizedValues" :onSubmit="handleSubmit">
+  <Form :id="formId" :values="normalizedValues" :onSubmit="handleSubmit" :enable_unsaved_guard="props.enable_unsaved_guard ?? true">
     <template #default="{ form }">
       <!-- 1. Personal Information -->
       <Colapsable
@@ -359,6 +359,7 @@ const props = defineProps<{
   initialValues: Record<string, any>;
   labels?: Record<string, string>;
   onSubmit: (values: any) => Promise<void> | void;
+  enable_unsaved_guard?: boolean;
 }>();
 
 const normalizedValues = computed(() => ({
