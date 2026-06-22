@@ -16,7 +16,7 @@
                 page: undefined,
                 limit: undefined,
                 q: undefined,
-                name: { regex: state.search },
+                name: state.search || undefined,
               })
             "
             :attributes="{ placeholder: 'Select carrier' }"
