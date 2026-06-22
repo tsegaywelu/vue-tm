@@ -1,5 +1,6 @@
 <template>
   <Table
+    ref="tableRef"
     v-bind="tableProps"
     :columns="augmentedColumns"
     :rows="rows"
@@ -63,7 +64,7 @@
 </template>
 
 <script setup lang="ts" generic="T">
-import { computed, onMounted, watch } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import Table from "./Table.vue";
 import type { TableColumn, TableProps } from "./Table.vue";
 import { icons } from "@/utils/icons";
@@ -248,4 +249,14 @@ const computedHideOnSmScreen = computed(() => {
 const handleRowClick = (row: T) => {
   emit("row_click", row);
 };
+
+// All rows loaded so far (mobile accumulates across infinite-scroll pages),
+// forwarded from the underlying Table so consumers can "select all" the loaded
+// set rather than just the current page.
+const tableRef = ref<any>(null);
+const accumulatedRows = computed<T[]>(
+  () => tableRef.value?.accumulatedRows ?? props.rows,
+);
+
+defineExpose({ accumulatedRows });
 </script>

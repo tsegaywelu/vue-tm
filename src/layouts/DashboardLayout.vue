@@ -69,9 +69,14 @@ const update_layout = () => {
 
 const grid_cols_class = computed(() => {
   const with_chat = is_dashboard.value && chat_col_active.value && !isMobile.value;
-  // Sidebar always occupies its collapsed width — hover expansion is absolute/overlay
-  if (with_chat) return "xl:grid-cols-[5.5rem_minmax(0,1fr)_32rem]";
-  return "xl:grid-cols-[5.5rem_minmax(0,1fr)]";
+  if (with_chat) {
+    return is_open.value
+      ? "xl:grid-cols-[18rem_minmax(0,1fr)_32rem]"
+      : "xl:grid-cols-[5.5rem_minmax(0,1fr)_32rem]";
+  }
+  return is_open.value
+    ? "xl:grid-cols-[18rem_minmax(0,1fr)]"
+    : "xl:grid-cols-[5.5rem_minmax(0,1fr)]";
 });
 
 // because Teleport requires the parent to be mounted
