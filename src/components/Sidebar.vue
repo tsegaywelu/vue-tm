@@ -34,16 +34,11 @@ const emit = defineEmits<{
 }>();
 
 const is_desktop = ref(window.innerWidth > 1280);
-const is_hovered = ref(false);
 
-// Desktop: hover-driven only. Mobile: is_open prop-driven only.
-const show_expanded = computed(() =>
-  is_desktop.value ? is_hovered.value : props.is_open,
-);
+const show_expanded = computed(() => props.is_open);
 
 const update_media = () => {
   is_desktop.value = window.innerWidth > 1280;
-  if (!is_desktop.value) is_hovered.value = false;
 };
 
 onMounted(() => window.addEventListener("resize", update_media));
@@ -111,18 +106,22 @@ const scrollToActive = () => {
   });
 };
 
-// Mobile: scroll to active every time the sidebar opens
+// Scroll to active every time the sidebar opens/expands
 watch(
   () => props.is_open,
   (opened) => {
-    if (opened) scrollToActive();
+    if (opened) {
+      scrollToActive();
+      // Ensure it scrolls correctly after transition completes
+      setTimeout(scrollToActive, 300);
+    }
   },
 );
 
 // Desktop: save scroll position on collapse, restore on expand
 let savedScrollTop = 0;
-watch(is_hovered, (hovered) => {
-  if (!hovered) {
+watch(show_expanded, (expanded) => {
+  if (!expanded) {
     savedScrollTop = navScrollRef.value?.scrollTop ?? 0;
   } else {
     requestAnimationFrame(() => {
@@ -155,19 +154,17 @@ watch(is_hovered, (hovered) => {
     <!-- Panel -->
     <div
       @click.stop
-      class="h-full flex flex-col gap-5 bg-surface overflow-hidden border-r border-transparent dark:border-white/10 dark:shadow-[8px_0_30px_rgba(255,255,255,0.05)]"
+      class="h-full flex flex-col gap-5 bg-surface overflow-hidden border-r border-transparent dark:border-white/10 dark:shadow-[8px_0_30px_rgba(255,255,255,0.05)] transition-all duration-300"
       :class="{
         // Mobile
         'w-full max-w-70 shadow-lg': !is_desktop,
         // Desktop: always absolute so it overlays content when expanded
         'absolute inset-y-0 left-0 z-50': is_desktop,
-        // No width animation on desktop — instant expand so scroll-to-active works correctly
+        // Height/width transitions smoothly
         'w-72 shadow-2xl shadow-gray-300/50 rounded-r-3xl':
           is_desktop && show_expanded,
         'w-22 shadow-none': is_desktop && !show_expanded,
       }"
-      @mouseenter="is_desktop && (is_hovered = true)"
-      @mouseleave="is_desktop && (is_hovered = false)"
     >
       <!-- Header -->
       <div
@@ -195,18 +192,18 @@ watch(is_hovered, (hovered) => {
           />
         </div>
 
-        <!-- Toggle buttons — mobile only (desktop uses hover) -->
+        <!-- Toggle buttons -->
         <button
           v-if="show_expanded"
           @click="$emit('toggle')"
-          class="xl:hidden grid place-items-center p-0 size-8 variant-ghost ml-auto rounded-full hover:bg-surface-hover"
+          class="grid place-items-center p-0 size-8 variant-ghost ml-auto rounded-full hover:bg-surface-hover"
         >
           <i class="*:size-6 text-grey-500" v-html="all_icons.nav"></i>
         </button>
         <button
           v-else
           @click="$emit('toggle')"
-          class="xl:hidden grid place-items-center p-0 size-12 variant-ghost mx-auto mt-2 rounded-full hover:bg-surface-hover"
+          class="grid place-items-center p-0 size-12 variant-ghost mx-auto mt-2 rounded-full hover:bg-surface-hover"
         >
           <i class="*:size-6 text-grey-500" v-html="all_icons.nav"></i>
         </button>

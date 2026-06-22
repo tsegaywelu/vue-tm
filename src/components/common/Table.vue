@@ -840,4 +840,8 @@ const onItemsPerPageInput = (limit: number) => {
   }
   emit("items-per-page-input", limit);
 };
+
+// All rows loaded so far (accumulated across mobile infinite-scroll pages). On
+// desktop this mirrors the current page. Consumers use it for "select all".
+defineExpose({ accumulatedRows: accumulated_mobile_rows });
 </script>

@@ -1,34 +1,44 @@
 <template>
-  <Teleport defer to="#page-title-actions">
+  <MobileTableOptions
+    v-model="selectedSearchField"
+    :options="searchFieldOptions"
+    title="Search By"
+  />
+  <SelectModeToggle v-model="selectMode" />
+
+  <!-- Mobile "Select all" — the card layout has no table header, so surface the
+       select-all action in the Options sheet while in select mode (desktop uses
+       the table header checkbox). -->
+  <Teleport
+    v-if="mobileOptions.mounted && mobileOptions.open && selectMode"
+    :to="`#${mobileOptions.actionsId}`"
+    defer
+  >
     <button
-      class="sm:hidden size-8 rounded-xl border border-line flex items-center justify-center text-faint-text hover:bg-surface-hover transition-colors"
-      @click="showSearchSheet = true"
+      class="flex items-center gap-3 px-4 py-3.5 hover:bg-surface-hover transition-colors text-left"
+      @click="toggleSelectAll"
     >
-      <i v-html="icons.filterOptions"></i>
+      <i class="*:size-5 shrink-0 text-gray-500" v-html="icons.duplicate"></i>
+      <div class="flex flex-col flex-1">
+        <span class="font-medium text-gray-900">
+          {{ allLoadedSelected ? "Clear all" : "Select all" }}
+        </span>
+        <span class="text-xs text-gray-400 mt-0.5">
+          {{ selectedPayables.length }} of {{ loadedRows.length }} selected
+        </span>
+      </div>
     </button>
   </Teleport>
 
-  <BottomSheet v-model="showSearchSheet" title="Search By">
-    <div class="flex flex-col gap-2 pb-4">
-      <button
-        v-for="option in searchFieldOptions"
-        :key="option.value"
-        class="flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-colors"
-        :class="selectedSearchField === option.value ? 'bg-primary/10 text-primary font-medium' : 'hover:bg-surface-hover text-gray-700'"
-        @click="selectedSearchField = option.value; showSearchSheet = false"
-      >
-        {{ option.label }}
-      </button>
-    </div>
-  </BottomSheet>
-
   <CheckTable
+    ref="checkTableRef"
     :key="`payable-${activeFilters.select}-${props.filters?.startDate}`"
     id="payable-list"
     v-model="selectedPayables"
     :columns="columns"
     :rows="response"
     :loading="isLoading || isFetching"
+    :canBeSelected="!isMobile || selectMode"
     v-model:search_value="searchTerm"
     :search_placeholder="dynamicSearchPlaceholder"
     :on_sm_screen_column_span="{ advanceNumber: 2, shipmentCode: 2, status: 2, payableType: 3, paidTo: 3, route: 3, totalFuelAdvances: 3, totalPerDiemExpenses: 3, totalOtherExpenses: 3, transporterPrice: 3, purchaseCost: 3, total: 3 }"
@@ -203,20 +213,23 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import CheckTable from "@/components/common/CheckTable.vue";
 import Dropdown from "@/components/common/Dropdown.vue";
 import DropDownItem from "@/components/common/DropDownItem.vue";
 import Status from "@/components/common/Status.vue";
 import Select from "@/components/common/Select.vue";
+import MobileTableOptions from "@/components/common/MobileTableOptions.vue";
+import SelectModeToggle from "@/components/common/SelectModeToggle.vue";
 import { icons } from "@/utils/icons";
 import { usePagination } from "@/composables/usePagination";
+import { useIsMobile } from "@/composables/useIsMobile";
+import { useMobileTableOptions } from "@/composables/useMobileTableOptions";
 import { openModal } from "@customizer/modal-x";
 import type { TableColumn } from "@/components/common/Table.vue";
 import PayableFilters from "./PayableFilters.vue";
-import BottomSheet from "@/components/BottomSheet.vue";
 import { formatType, getPaidTo } from "./payableUtils";
-import { currencyFormatter, dateFormatter } from "@/utils/utils";
+import { currencyFormatter } from "@/utils/utils";
 
 const isoDate = (val: string | Date) => {
   if (!val) return "-";
@@ -287,8 +300,45 @@ const searchFieldOptions = [
 ];
 
 const selectedSearchField = ref("vehiclePlateNumber");
-const showSearchSheet = ref(false);
 const searchTerm = ref("");
+
+// Mobile selection mode: below the `xl` breakpoint the card layout can only show
+// the actions dropdown OR the checkbox in the card's top-right slot (CheckTable's
+// canBeSelected swap). Desktop keeps both columns; mobile defaults to actions and
+// flips to checkboxes when the user enters select mode.
+const { isMobile } = useIsMobile(1280);
+const selectMode = ref(false);
+const mobileOptions = useMobileTableOptions();
+
+watch(selectMode, (on) => {
+  if (!on) {
+    selectedPayables.value = [];
+    emit("selection-change", []);
+  }
+});
+
+// Mobile select-all: the card layout has no header checkbox, so this drives the
+// "Select all / Clear all" action row in the Options sheet. It operates on every
+// row loaded so far (mobile accumulates across infinite-scroll pages — `response`
+// only holds the latest page), matched by `_id` (CheckTable's unique_key).
+const checkTableRef = ref<any>(null);
+const loadedRows = computed<any[]>(
+  () => checkTableRef.value?.accumulatedRows ?? response.value,
+);
+
+const allLoadedSelected = computed(
+  () =>
+    loadedRows.value.length > 0 &&
+    loadedRows.value.every((r: any) =>
+      selectedPayables.value.some((s: any) => s._id === r._id),
+    ),
+);
+
+const toggleSelectAll = () => {
+  const next = allLoadedSelected.value ? [] : [...loadedRows.value];
+  selectedPayables.value = next;
+  emit("selection-change", next);
+};
 
 const dynamicSearchPlaceholder = computed(() => {
   const option = searchFieldOptions.find(
